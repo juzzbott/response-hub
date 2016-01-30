@@ -40,6 +40,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Organisations\Interface\IOrganisationRepository.cs" />
+    <Compile Include="Organisations\Interface\IOrganisationService.cs" />
+    <Compile Include="Organisations\Organisation.cs" />
+    <Compile Include="Organisations\ServiceType.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
