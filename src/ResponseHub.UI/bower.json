@@ -1,0 +1,17 @@
+{
+	"name": "Response Hub",
+	"version": "1.0.0",
+	"authors": ["Justin McKay <juzzbott@gmail.com>"],
+	"description": "Response Hub Website",
+	"license": "Commercial",
+	"ignore": [
+		"**/.*",
+    	"node_modules",
+		"bower_components"
+	],
+	"dependencies": {
+		"jquery": "2.1.4",
+		"bootstrap": "3.3.6",
+		"moment": "~2.11.1"
+	}
+}

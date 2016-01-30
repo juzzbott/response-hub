@@ -1,0 +1,133 @@
+button:focus,
+button:active {
+  outline: none !important;
+}
+body {
+  background: #fafafa;
+}
+.top-5 {
+  margin-top: 5px;
+}
+.top-10 {
+  margin-top: 10px;
+}
+.top-20 {
+  margin-top: 20px;
+}
+.bottom-5 {
+  margin-bottom: 5px;
+}
+.bottom-10 {
+  margin-bottom: 10px;
+}
+.bottom-20 {
+  margin-bottom: 20px;
+}
+.main-content {
+  margin-top: 50px;
+}
+.main-content .row-container {
+  border: 1px solid #ededed;
+  background-color: #fff;
+  padding-top: 30px;
+}
+/*
+	Job Log Classes
+*/
+.btn-new-job {
+  padding: 15px;
+  font-weight: bold;
+  color: #fff;
+}
+.btn-new-job:hover,
+.btn-new-job:active,
+.btn-new-job:focus {
+  color: #fff;
+}
+.btn-new-job.start-new-job {
+  background-color: #FF862F;
+  border: 1px solid #c85400;
+}
+.btn-new-job.start-new-job:hover {
+  background-color: #fb6900;
+}
+.btn-new-job.new-rescue-job {
+  background-color: #1C60B2;
+  border: 1px solid #0e305a;
+}
+.btn-new-job.new-rescue-job:hover {
+  background-color: #154886;
+}
+.btn-new-job.new-storm-job {
+  background-color: #00B226;
+  border: 1px solid #004c10;
+}
+.btn-new-job.new-storm-job:hover {
+  background-color: #007f1b;
+}
+.btn-new-job.new-assist-job {
+  background-color: #E82C0C;
+  border: 1px solid #871a07;
+}
+.btn-new-job.new-assist-job:hover {
+  background-color: #b82309;
+}
+.btn-new-job i {
+  font-size: 1.5em;
+  margin-bottom: 5px;
+  display: block;
+}
+#job-title-banner {
+  color: #fff;
+}
+#job-title-banner .rescue {
+  background-color: #1C60B2;
+}
+#job-title-banner .storm {
+  background-color: #00B226;
+}
+#job-title-banner .assist-agency {
+  background-color: #E82C0C;
+}
+#job-title-banner h2 {
+  margin-bottom: 20px;
+}
+@media screen and (max-width: 769px) {
+  #job-title-banner div {
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+  #job-title-banner div h2 {
+    margin-top: 5px;
+    margin-bottom: 5px;
+  }
+}
+@media screen and (max-width: 350px) {
+  #job-intervals .btn-group-lg .btn {
+    padding: 6px 12px;
+    font-size: 14px;
+    border-radius: 4px;
+  }
+}
+#job-notes ul li {
+  border-left: 3px solid #D6E3E0;
+  border-top: 1px solid #e5edeb;
+  border-right: 1px solid #e5edeb;
+  border-bottom: 1px solid #e5edeb;
+  background-color: #fafafa;
+  padding-left: 8px;
+  padding-top: 4px;
+  padding-bottom: 2px;
+  margin-bottom: 10px;
+}
+#job-notes ul li small {
+  padding-bottom: 4px;
+  color: #999;
+  display: block;
+}
+#job-notes ul li .wordback-icon {
+  padding-left: 10px;
+}
+/**
+ * Mixins
+ */

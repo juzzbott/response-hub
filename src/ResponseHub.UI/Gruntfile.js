@@ -1,0 +1,64 @@
+/// <binding ProjectOpened='watch_css, watch_js' />
+module.exports = function(grunt) {
+
+	grunt.initConfig({
+		pkg: grunt.file.readJSON('package.json'),
+		uglify: {
+			options: {
+				banner: '/*! <%= pkg.name %> <%= grunt.template.today("yyyy-mm-dd") %> */\n'
+			},
+			build: {
+				src: 'src/<%= pkg.name %>.js',
+				dest: 'build/<%= pkg.name %>.min.js'
+			}
+		},
+		concat: {
+			options: {
+				separator: '\r\n;\r\n',
+			},
+			framework_js: {
+				src: ['bower_components/jquery/dist/jquery.js', 'bower_components/bootstrap/dist/js/bootstrap.js', 'bower_components/moment/min/moment.min.js'],
+				dest: 'assets/js/framework.js'
+			},
+			script_js: {
+				separator: ';',
+				banner: 'window.jobCard=window.jobCard||{},window.jobCard.BUILD_NUMBER=1;',
+				src: ['assets/js/modules/_core.js', 'assets/js/modules/joblog.js'],
+				dest: 'assets/js/script.js'
+			},
+			framework_css: {
+				src: ['bower_components/bootstrap/dist/css/bootstrap.css'],
+				dest: 'assets/css/framework.css'
+			}
+		},
+		less: {
+			build: {
+				files: {
+					'assets/css/jobcard.css': 'assets/css/less/jobcard.less'
+				}
+			}
+		},
+		watch: {
+			css: {
+				files: 'assets/css/less/*',
+				tasks: ['less:build'],
+			},
+			js: {
+				files: 'assets/js/modules/*',
+				tasks: ['concat:script_js'],
+			}
+        }
+	});
+	
+	// Load the plugin that provides the tasks.
+	grunt.loadNpmTasks('grunt-contrib-uglify');
+	grunt.loadNpmTasks('grunt-contrib-concat');
+	grunt.loadNpmTasks('grunt-contrib-less');
+    grunt.loadNpmTasks('grunt-contrib-watch');
+	
+	//  tasks
+    grunt.registerTask('watch_css', ['watch:css']);
+    grunt.registerTask('watch_js', ['watch:js']);
+	grunt.registerTask('build', ['concat:framework_js', 'concat:script_js', 'concat:framework_css', 'less:build']);
+	
+};

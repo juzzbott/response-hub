@@ -1,0 +1,185 @@
+@ses-orange: #FF862F;
+@rescue-job-bg: #1C60B2;
+@storm-job-bg: #00B226;
+@assist-agency-job-bg: #E82C0C;
+
+button:focus,
+button:active {
+	outline: none !important;
+}
+
+body {
+	background: #fafafa;
+}
+
+.top-5 {
+	.margin-top(5px);
+}
+
+.top-10 {
+	.margin-top(10px);
+}
+
+.top-20 {
+	.margin-top(20px);
+}
+
+.bottom-5 {
+	.margin-bottom(5px);
+}
+
+.bottom-10 {
+	.margin-bottom(10px);
+}
+
+.bottom-20 {
+	.margin-bottom(20px);
+}
+
+.main-content {
+	margin-top: 50px;
+
+	.row-container {
+		border: 1px solid darken(#fafafa, 5%);
+		background-color: #fff;
+		padding-top: 30px;
+	}
+}
+
+/*
+	Job Log Classes
+*/
+.btn-new-job {
+	padding: 15px;
+	font-weight: bold;
+	color: #fff;
+
+	&:hover,
+	&:active,
+	&:focus {
+		color: #fff;
+	}
+
+	&.start-new-job {
+		background-color: @ses-orange;
+		border: 1px solid darken(@ses-orange, 20%);
+		&:hover {
+			background-color: darken(@ses-orange, 10%);
+		}
+	}
+
+	&.new-rescue-job {
+		background-color: @rescue-job-bg;
+		border: 1px solid darken(@rescue-job-bg, 20%);
+		&:hover {
+			background-color: darken(@rescue-job-bg, 10%);
+		}
+	}
+
+	&.new-storm-job {
+		background-color: @storm-job-bg;
+		border: 1px solid darken(@storm-job-bg, 20%);
+		&:hover {
+			background-color: darken(@storm-job-bg, 10%);
+		}
+	}
+
+	&.new-assist-job {
+		background-color: @assist-agency-job-bg;
+		border: 1px solid darken(@assist-agency-job-bg, 20%);
+		&:hover {
+			background-color: darken(@assist-agency-job-bg, 10%);
+		}
+	}
+
+	i {
+		font-size: 1.5em;
+		margin-bottom: 5px;
+		display: block;
+	}
+}
+
+#job-title-banner {
+	color: #fff;
+
+	.rescue {
+		background-color: @rescue-job-bg;
+	}
+
+	.storm {
+		background-color: @storm-job-bg;
+	}
+
+	.assist-agency {
+		background-color: @assist-agency-job-bg;
+	}
+
+	h2 {
+		.margin-bottom(20px);
+	}
+
+}
+
+@media screen and (max-width: 769px) {
+
+	#job-title-banner div {
+		padding-top: 10px;
+		padding-bottom: 10px;
+
+		h2 {
+			.top-5;
+			.bottom-5;
+		}
+
+	}
+
+}
+
+@media screen and (max-width: 350px) {
+
+	#job-intervals .btn-group-lg .btn {
+		padding: 6px 12px;
+		font-size: 14px;
+		border-radius: 4px;
+	}
+
+}
+
+#job-notes {
+	ul {
+		li {
+			border-left: 3px solid #D6E3E0;
+			border-top: 1px solid lighten(#d6e3e0, 5%);
+			border-right: 1px solid lighten(#d6e3e0, 5%);
+			border-bottom: 1px solid lighten(#d6e3e0, 5%);
+			background-color: #fafafa;
+			padding-left: 8px;
+			padding-top: 4px;
+			padding-bottom: 2px;
+			.bottom-10;
+			
+			small {
+				padding-bottom: 4px;
+				color: #999;
+				display: block;
+			}
+
+			.wordback-icon {
+				padding-left: 10px;
+			}
+
+		}
+	}
+}
+
+/**
+ * Mixins
+ */
+ 
+.margin-top(@margin) {
+	margin-top: @margin;
+}
+
+.margin-bottom(@margin) {
+	margin-bottom: @margin;
+}
