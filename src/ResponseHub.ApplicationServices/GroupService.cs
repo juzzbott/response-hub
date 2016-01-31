@@ -42,5 +42,30 @@ namespace Enivate.ResponseHub.ApplicationServices
 			return await _repository.CreateGroup(group);
 
 		}
+
+		/// <summary>
+		/// Gets all the groups in the repository.
+		/// </summary>
+		/// <returns></returns>
+		public async Task<IList<Group>> GetAll()
+		{
+			return await _repository.GetAll();
+		}
+
+		/// <summary>
+		/// Gets the most recently added groups in the system.
+		/// </summary>
+		/// <param name="count">The limit of results to return from the database query.</param>
+		/// <returns>The most recent groups found.</returns>
+		public async Task<IList<Group>> GetRecentlyAdded(int count)
+		{
+
+			if (count < 1)
+			{
+				throw new ArgumentOutOfRangeException("count", "The count parameter must be a positive integer.");
+			}
+
+			return await _repository.GetRecentlyAdded(count);
+		}
 	}
 }

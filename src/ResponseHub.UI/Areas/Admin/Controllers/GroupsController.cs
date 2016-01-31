@@ -34,9 +34,13 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 
 		[Route]
         // GET: Admin/Groups
-        public ActionResult Index()
+        public async Task<ActionResult> Index()
         {
-            return View();
+
+			// Get the most recent groups
+			IList<Group> recentGroups = await GroupService.GetRecentlyAdded(10);
+
+            return View(recentGroups);
         }
 
 		[Route("create")]

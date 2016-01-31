@@ -11,6 +11,10 @@ namespace Enivate.ResponseHub.Model.Groups.Interface
 
 		Task<Group> CreateGroup(string name, ServiceType service, string description);
 
+		Task<IList<Group>> GetAll();
+
+		Task<IList<Group>> GetRecentlyAdded(int count);
+
 	}
 
 }

@@ -6,10 +6,12 @@ using System.Threading.Tasks;
 
 namespace Enivate.ResponseHub.Model.Groups.Interface
 {
-	public interface IGroupRepository
+	public interface IGroupRepository : IRepository<Group>
 	{
 
 		Task<Group> CreateGroup(Group group);
+
+		Task<IList<Group>> GetRecentlyAdded(int count);
 
 	}
 

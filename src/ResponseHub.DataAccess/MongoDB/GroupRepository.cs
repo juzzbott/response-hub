@@ -4,6 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using MongoDB.Bson;
+using MongoDB.Driver;
+
 using Enivate.ResponseHub.Model.Groups;
 using Enivate.ResponseHub.Model.Groups.Interface;
 
@@ -31,5 +34,21 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 			// return the group
 			return group;
 		}
+
+		/// <summary>
+		/// Finds the most recently created groups and limits them by 'count'.
+		/// </summary>
+		/// <param name="count">The limit of results to return from the database query.</param>
+		/// <returns>The most recent groups found.</returns>
+		public async Task<IList<Group>> GetRecentlyAdded(int count)
+		{
+
+			// Find most recent groups and limit by count
+			IList<Group> groups = await Collection.Find(new BsonDocument()).Sort(Builders<Group>.Sort.Descending(i => i.Created)).Limit(count).ToListAsync();
+
+			return groups;
+
+		}
+
 	}
 }

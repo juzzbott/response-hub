@@ -1,8 +1,35 @@
-﻿
+﻿@model IList<Enivate.ResponseHub.Model.Groups.Group>
+
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "Groups";
 }
 
 <h1>Groups</h1>
 
 <a href="/admin/groups/create" class="btn btn-lg btn-default"><i class="fa fa-plus"></i></a>
+
+<table class="table table-striped">
+	<thead>
+		<tr>
+			<th>Name</th>
+			<th>Created</th>
+			<th>&nbsp;</th>
+		</tr>
+	</thead>
+	<tbody>
+		@if (Model == null || Model.Count == 0)
+		{
+			<tr>
+				<td colspan="3">No groups found.</td>
+			</tr>
+		}
+		@foreach(var group in Model)
+		{
+			<tr>
+				<td>@group.Name</td>
+				<td>@group.Created.ToString("yyyy-MM-dd")</td>
+				<td><a href="">Edit</a> | <a href="">Remove</a></td>
+			</tr>
+		}
+	</tbody>
+</table>
