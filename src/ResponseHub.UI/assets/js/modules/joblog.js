@@ -1,4 +1,4 @@
-﻿jobCard.jobLog = (function () {
+﻿responseHub.jobLog = (function () {
 
 	/**
 	 * Sets the job type of the job from the specifed jobType parameter.

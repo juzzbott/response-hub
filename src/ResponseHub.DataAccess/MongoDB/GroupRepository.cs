@@ -9,6 +9,8 @@ using Enivate.ResponseHub.Model.Groups.Interface;
 
 namespace Enivate.ResponseHub.DataAccess.MongoDB
 {
+
+	[MongoCollectionName("groups")]
 	public class GroupRepository : MongoRepository<Group>, IGroupRepository
 	{
 		

@@ -1,4 +1,4 @@
-﻿var jobCard = (function () {
+﻿var responseHub = (function () {
 
 	// The API prefix url.
 	var apiPrefix = '/api';
@@ -27,7 +27,7 @@
 		return context[func].apply(this, args);
 	}
 
-	// return the tracklas object
+	// return the response hub object
 	return {
 		apiPrefix: apiPrefix,
 		isMobile: isMobile,

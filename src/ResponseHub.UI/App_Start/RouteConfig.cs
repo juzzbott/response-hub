@@ -13,10 +13,13 @@ namespace Enivate.ResponseHub.UI
 		{
 			routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
 
+			routes.MapMvcAttributeRoutes();
+
 			routes.MapRoute(
 				name: "Default",
 				url: "{controller}/{action}/{id}",
-				defaults: new { controller = "Home", action = "Index", id = UrlParameter.Optional }
+				defaults: new { controller = "Home", action = "Index", id = UrlParameter.Optional },
+				namespaces: new [] { "Enivate.ResponseHub.UI.Controllers" }
 			);
 		}
 	}

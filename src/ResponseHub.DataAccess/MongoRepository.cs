@@ -46,7 +46,7 @@ namespace Enivate.ResponseHub.DataAccess
 			_mongoClient = new MongoClient(mongoUrl);
 			_mongoDb = _mongoClient.GetDatabase(mongoUrl.DatabaseName);
 
-			string collectionName = GetCollectionNameFromType(typeof(T));
+			string collectionName = GetCollectionName(typeof(T));
 			Collection = _mongoDb.GetCollection<T>(collectionName);
 		}
 
@@ -147,14 +147,14 @@ namespace Enivate.ResponseHub.DataAccess
 		/// </summary>
 		/// <param name="type">The type of object to get the collection name for.</param>
 		/// <returns>The collection name to use.</returns>
-		public static string GetCollectionNameFromType(Type type)
+		public string GetCollectionName(Type type)
 		{
 
 			// Get the default collection name as the object with the first letter lowercase
 			string collectionName = String.Format("{0}{1}", type.Name.Substring(0, 1).ToLower(), type.Name.Substring(1));
 
 			// Get the list of attributes for the type.
-			object[] attributes = type.GetCustomAttributes(typeof(MongoCollectionNameAttribute), true);
+			object[] attributes = this.GetType().GetCustomAttributes(typeof(MongoCollectionNameAttribute), true);
 
 			// Ensure there is attributes
 			if (attributes != null && attributes.Length > 0)

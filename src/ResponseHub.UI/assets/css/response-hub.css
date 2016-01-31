@@ -4,6 +4,7 @@ button:active {
 }
 body {
   background: #fafafa;
+  padding-top: 50px;
 }
 .top-5 {
   margin-top: 5px;
@@ -23,13 +24,34 @@ body {
 .bottom-20 {
   margin-bottom: 20px;
 }
-.main-content {
-  margin-top: 50px;
+.admin-layout .sidebar {
+  display: none;
 }
-.main-content .row-container {
-  border: 1px solid #ededed;
-  background-color: #fff;
-  padding-top: 30px;
+@media (min-width: 768px) {
+  .admin-layout .sidebar {
+    position: fixed;
+    top: 51px;
+    bottom: 0;
+    left: 0;
+    z-index: 1000;
+    display: block;
+    padding: 20px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    background-color: #f5f5f5;
+    border-right: 1px solid #eee;
+  }
+}
+.nav-sidebar a i {
+  padding-right: 12px;
+}
+.admin-layout footer {
+  position: fixed;
+  bottom: 0;
+  z-index: 1200;
+  border-top: 1px solid #ccc;
+  width: 100%;
+  background: #efefef;
 }
 /*
 	Job Log Classes

@@ -29,13 +29,14 @@ namespace Enivate.ResponseHub.ApplicationServices
 		/// <param name="name">The name of the group.</param>
 		/// <param name="service">The service the group belongs to.</param>
 		/// <returns>The created group object.</returns>
-		public async Task<Group> CreateGroup(string name, ServiceType service)
+		public async Task<Group> CreateGroup(string name, ServiceType service, string description)
 		{
 			Group group = new Group()
 			{
 				Name = name,
 				Created = DateTime.UtcNow,
-				Service = service
+				Service = service,
+				Description = description
 			};
 
 			return await _repository.CreateGroup(group);

@@ -17,24 +17,33 @@ module.exports = function(grunt) {
 				separator: '\r\n;\r\n',
 			},
 			framework_js: {
-				src: ['bower_components/jquery/dist/jquery.js', 'bower_components/bootstrap/dist/js/bootstrap.js', 'bower_components/moment/min/moment.min.js'],
+				src: [
+					'bower_components/jquery/dist/jquery.js',
+					'bower_components/jquery-validation/dist/jquery.validate.min.js',
+					'bower_components/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js',
+					'bower_components/bootstrap/dist/js/bootstrap.js',
+					'bower_components/moment/min/moment.min.js'
+				],
 				dest: 'assets/js/framework.js'
 			},
 			script_js: {
 				separator: ';',
-				banner: 'window.jobCard=window.jobCard||{},window.jobCard.BUILD_NUMBER=1;',
+				banner: 'window.responseHub=window.jobCard||{},window.responseHub.BUILD_NUMBER=1;',
 				src: ['assets/js/modules/_core.js', 'assets/js/modules/joblog.js'],
 				dest: 'assets/js/script.js'
 			},
 			framework_css: {
-				src: ['bower_components/bootstrap/dist/css/bootstrap.css'],
+				src: [
+					'bower_components/bootstrap/dist/css/bootstrap.css',
+					'bower_components/fontawesome/css/font-awesome.min.css'
+				],
 				dest: 'assets/css/framework.css'
 			}
 		},
 		less: {
 			build: {
 				files: {
-					'assets/css/jobcard.css': 'assets/css/less/jobcard.less'
+					'assets/css/response-hub.css': 'assets/css/less/response-hub.less'
 				}
 			}
 		},

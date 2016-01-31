@@ -17,5 +17,12 @@ namespace Enivate.ResponseHub.Model.Groups
 
 		public ServiceType Service { get; set; }
 
+		public string Description { get; set; }
+
+		public Group()
+		{
+			this.Id = Guid.NewGuid();
+		}
+
 	}
 }
