@@ -18,7 +18,9 @@ namespace Enivate.ResponseHub.Common
 			get
 			{
 				if (_container == null)
+				{
 					throw new NullReferenceException("The UnityConfiguration Container property must be initialised before it is referenced.");
+				}
 				return _container;
 			}
 			set

@@ -4,14 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Enivate.ResponseHub.Model.Organisations
+namespace Enivate.ResponseHub.Model.Groups.Interface
 {
-	public enum ServiceType
+	public interface IGroupRepository
 	{
 
-		StateEmergencyService = 1,
-
-		CountryFireAuthorith = 2
+		Task<Group> CreateGroup(Group group);
 
 	}
+
 }

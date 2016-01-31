@@ -4,9 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Enivate.ResponseHub.Model.Organisations
+namespace Enivate.ResponseHub.Model
 {
-	public class Organisation
+	public interface IEntity
 	{
+
+		Guid Id { get; set; }
+
 	}
 }
