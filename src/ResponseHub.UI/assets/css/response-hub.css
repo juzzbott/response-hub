@@ -5,6 +5,7 @@ button:active {
 body {
   background: #fafafa;
   padding-top: 50px;
+  font-family: 'Ubuntu', sans-serif;
 }
 .top-5 {
   margin-top: 5px;
@@ -24,34 +25,141 @@ body {
 .bottom-20 {
   margin-bottom: 20px;
 }
+/*
+	Top navbar styles
+*/
+.page-navbar {
+  background-color: #37474f;
+  border-bottom: 1px solid #4b5960;
+  color: #fafafa;
+}
+.page-navbar .navbar-brand,
+.page-navbar .btn-link {
+  color: #fafafa;
+}
+.page-navbar .navbar-brand:hover,
+.page-navbar .btn-link:hover,
+.page-navbar .navbar-brand:focus,
+.page-navbar .btn-link:focus {
+  color: #9cddd7;
+}
+/* 
+	User Menu Styles
+*/
+.user-menu {
+  position: absolute;
+  right: 50px;
+  padding: 0 10px;
+  margin-top: 0;
+  margin-right: 15px;
+  margin-bottom: 8px;
+}
+.user-menu .dropdown-toggle {
+  font-size: 2em;
+}
+.user-menu .dropdown-toggle i {
+  padding-right: 0;
+}
+.user-menu .first-name {
+  display: none;
+}
+.user-menu .dropdown-menu {
+  min-width: 200px;
+  margin-top: 8px;
+  border-radius: 0;
+}
+.user-menu .dropdown-menu a {
+  font-size: 13px;
+}
+.user-menu .dropdown-menu i {
+  color: #e2c498;
+  padding-top: 3px;
+}
+@media (min-width: 768px) {
+  .user-menu {
+    right: 0;
+    margin-top: 8px;
+  }
+  .user-menu .dropdown-toggle {
+    font-size: 1em;
+  }
+  .user-menu .dropdown-toggle i {
+    padding-right: 6px;
+  }
+  .user-menu .first-name {
+    display: inline;
+  }
+}
+/*
+	Sidebar styles
+*/
 .admin-layout .sidebar {
   display: none;
+  position: fixed;
+  top: 51px;
+  bottom: 0;
+  left: 0;
+  z-index: 1000;
+  padding: 20px 18px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  background-color: #202b30;
+  border-right: 1px solid #eee;
+  color: #808080;
+}
+.admin-layout .sidebar p.explore {
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  font-size: 13px;
+}
+.admin-layout .sidebar .nav-sidebar {
+  margin-right: -18px;
+  margin-left: -18px;
+}
+.admin-layout .sidebar .nav > li > a {
+  color: #c8c5ba;
+}
+.admin-layout .sidebar .nav > li > a i {
+  color: #e2c498;
+  padding-right: 30px;
+  font-size: 1.2em;
+  vertical-align: bottom;
+}
+.admin-layout .sidebar .nav > li > a:hover,
+.admin-layout .sidebar .nav > li > a:focus {
+  background-color: #1a2327;
 }
 @media (min-width: 768px) {
   .admin-layout .sidebar {
-    position: fixed;
-    top: 51px;
-    bottom: 0;
-    left: 0;
-    z-index: 1000;
     display: block;
-    padding: 20px;
-    overflow-x: hidden;
-    overflow-y: auto;
-    background-color: #f5f5f5;
-    border-right: 1px solid #eee;
   }
 }
 .nav-sidebar a i {
   padding-right: 12px;
 }
+.icon-link i {
+  padding-right: 6px;
+}
 .admin-layout footer {
   position: fixed;
   bottom: 0;
   z-index: 1200;
-  border-top: 1px solid #ccc;
-  width: 100%;
-  background: #efefef;
+  border-top: 1px solid #4b5960;
+  background: #37474f;
+  color: #efefef;
+  width: 25%;
+  font-size: 12px;
+  padding-top: 5px;
+  margin-left: -20px;
+  padding-left: 18px;
+}
+.admin-layout footer p {
+  margin-bottom: 6px;
+}
+@media (min-width: 1200px) {
+  .admin-layout footer {
+    width: 16.66666667%;
+  }
 }
 /*
 	Job Log Classes
