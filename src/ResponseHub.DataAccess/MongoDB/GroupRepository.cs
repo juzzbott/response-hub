@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using MongoDB.Bson;
 using MongoDB.Driver;
 
+using Enivate.ResponseHub.Logging;
+
 using Enivate.ResponseHub.Model.Groups;
 using Enivate.ResponseHub.Model.Groups.Interface;
 
@@ -16,9 +18,15 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 	[MongoCollectionName("groups")]
 	public class GroupRepository : MongoRepository<Group>, IGroupRepository
 	{
+
+		/// <summary>
+		/// The ILogger that is responsible for logging data.
+		/// </summary>
+		private ILogger _logger;
 		
-		public GroupRepository()
+		public GroupRepository(ILogger logger)
 		{
+			_logger = logger;
 		}
 
 		/// <summary>
@@ -28,6 +36,10 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 		/// <returns>The saved group.</returns>
 		public async Task<Group> CreateGroup(Group group)
 		{
+
+			// Debug logging
+			await _logger.Debug(String.Format("New Group created. Id: {0} - Name {1}", group.Id, group.Name));
+
 			// Save the group to the database.
 			group = await Save(group);
 
@@ -46,6 +58,7 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 			// Find most recent groups and limit by count
 			IList<Group> groups = await Collection.Find(new BsonDocument()).Sort(Builders<Group>.Sort.Descending(i => i.Created)).Limit(count).ToListAsync();
 
+			// return the groups found in the database.
 			return groups;
 
 		}

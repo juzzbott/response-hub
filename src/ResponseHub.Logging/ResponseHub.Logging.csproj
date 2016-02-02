@@ -4,13 +4,14 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{A77EF1A1-1492-41AC-B62E-D14F9C01014F}</ProjectGuid>
+    <ProjectGuid>{38015057-6FF4-4EE7-B101-550A99578671}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Enivate.ResponseHub.ApplicationServices</RootNamespace>
-    <AssemblyName>Enivate.ResponseHub.ApplicationServices</AssemblyName>
+    <RootNamespace>Enivate.ResponseHub.Logging</RootNamespace>
+    <AssemblyName>Enivate.ResponseHub.Logging</AssemblyName>
     <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -30,12 +31,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.AspNet.Identity.Core, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.AspNet.Identity.Core.2.2.1\lib\net45\Microsoft.AspNet.Identity.Core.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="System" />
+    <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -44,22 +43,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="GroupService.cs" />
-    <Compile Include="Identity\UserService.cs" />
+    <Compile Include="Configuration\LoggingConfiguration.cs" />
+    <Compile Include="Configuration\LoggingConfigurationSection.cs" />
+    <Compile Include="FileLogger.cs" />
+    <Compile Include="ILogger.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\ResponseHub.Logging\ResponseHub.Logging.csproj">
-      <Project>{38015057-6ff4-4ee7-b101-550a99578671}</Project>
-      <Name>ResponseHub.Logging</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\ResponseHub.Model\ResponseHub.Model.csproj">
-      <Project>{63ebc394-caed-4b0b-974c-ba56f619f853}</Project>
-      <Name>ResponseHub.Model</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

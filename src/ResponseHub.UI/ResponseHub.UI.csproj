@@ -231,6 +231,10 @@
       <Project>{cf5c523b-660b-4538-9a64-928e7601804e}</Project>
       <Name>ResponseHub.DataAccess</Name>
     </ProjectReference>
+    <ProjectReference Include="..\ResponseHub.Logging\ResponseHub.Logging.csproj">
+      <Project>{38015057-6ff4-4ee7-b101-550a99578671}</Project>
+      <Name>ResponseHub.Logging</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ResponseHub.Model\ResponseHub.Model.csproj">
       <Project>{63ebc394-caed-4b0b-974c-ba56f619f853}</Project>
       <Name>ResponseHub.Model</Name>
