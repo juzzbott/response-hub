@@ -15,6 +15,8 @@ namespace Enivate.ResponseHub.Model.Groups.Interface
 
 		Task<IList<Group>> GetRecentlyAdded(int count);
 
+		Task<Group> GetById(Guid id);
+
 	}
 
 }

@@ -67,5 +67,10 @@ namespace Enivate.ResponseHub.ApplicationServices
 
 			return await _repository.GetRecentlyAdded(count);
 		}
+
+		public async Task<Group> GetById(Guid id)
+		{
+			return await _repository.GetById(id);
+		}
 	}
 }

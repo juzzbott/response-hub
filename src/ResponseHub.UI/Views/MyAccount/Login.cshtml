@@ -1,0 +1,67 @@
+﻿@model Enivate.ResponseHub.UI.Models.MyAccount.LoginViewModel
+@using Microsoft.Owin.Security
+
+@{
+	ViewBag.Title = "Login";
+}
+
+<h1>@ViewBag.TItle</h1>
+
+<p>Login to ResponseHub using your email address and password below. Alternatively you can <a href="#fb-login">login with facebook</a>.</p>
+
+<form method="post" action="@Request.Url.PathAndQuery">
+
+	@Html.AntiForgeryToken()
+
+	<h3>Account details</h3>
+
+	@if (ViewBag.InvalidLogin == true)
+	{
+		<div class="form-error">
+			Sorry, the email address and password you have entered is invalid.
+		</div>
+	}
+
+	@Html.ValidationSummary()
+
+	<div class="form-group">
+		@Html.LabelFor(model => model.Email)
+		<div class="row">
+			<div class="col-sm-9 col-lg-6">
+				@Html.TextBoxFor(model => model.Email, new { @class = "form-control", placeholder = "you@domain.com", type = "email" })
+			</div>
+		</div>
+		@Html.ValidationMessageFor(model => model.Email)
+	</div>
+
+	<div class="form-group">
+		@Html.LabelFor(model => model.Password)
+		<div class="row">
+			<div class="col-sm-9 col-lg-6">
+				@Html.PasswordFor(model => model.Password, new { @class = "form-control" })
+			</div>
+		</div>
+		@Html.ValidationMessageFor(model => model.Password)
+	</div>
+
+	<button type="submit" class="btn btn-default btn-mobile-block">Login</button>
+
+
+	<p>
+		<br />
+		<a href="/my-account/forgotten-password">I've forgotten my password</a>
+	</p>
+
+</form>
+
+<div class="row" id="fb-login">
+	<div class="col-xs-12">
+		<h3>Login with Facebook</h3>
+
+		<form action="/my-account/facebook-login@(Request.Url.Query)" method="post">
+			@Html.AntiForgeryToken()
+			<p>If you have a Facebook account, you can use your facebook account to login to ResponseHub.</p>
+			<button type="submit" class="btn btn-default btn-icon btn-mobile-block" id="Facebook" name="provider" value="Facebook" title="Log in using your Facebook account"><i class="fa fa-facebook"></i>Login with facebook</button>
+		</form>
+	</div>
+</div>

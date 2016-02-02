@@ -7,6 +7,7 @@
 
 @sidebar-backgroud: #202b30;
 @sidebar-foreground: #c8c5ba;
+@sidebar-highlight: #e2c498;
 
 button:focus,
 button:active {
@@ -216,6 +217,30 @@ body {
 
 .main-content {
 	
+}
+
+/*
+	Form Styles
+*/
+
+.form-group {
+	label {
+		font-weight: normal;
+	}
+}
+
+.form-control {
+	border-radius: 2px;
+	border-color: #ddd;
+	background-color: #fff;
+	-webkit-box-shadow: none;
+	box-shadow: none;
+
+	&:focus {
+		-webkit-box-shadow: none;
+		box-shadow: none;
+		border-color: #bbb;
+	}
 }
 
 /*

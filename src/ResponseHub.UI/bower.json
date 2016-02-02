@@ -1,8 +1,8 @@
 {
-	"name": "Response Hub",
+	"name": "ResponseHub",
 	"version": "1.0.0",
 	"authors": ["Justin McKay <juzzbott@gmail.com>"],
-	"description": "Response Hub Website",
+	"description": "ResponseHub Website",
 	"license": "Commercial",
 	"ignore": [
 		"**/.*",

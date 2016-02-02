@@ -1,7 +1,7 @@
 {
   "name": "response-hub",
   "version": "1.0.0",
-  "description": "Website front end for the Response Hub application.",
+  "description": "Website front end for the ResponseHub application.",
   "repository": {
     "type": "git",
     "url": "https://juzzbott@bitbucket.org/responsehub/response-hub.git"

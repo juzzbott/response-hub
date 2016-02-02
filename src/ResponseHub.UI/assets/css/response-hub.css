@@ -162,6 +162,24 @@ body {
   }
 }
 /*
+	Form Styles
+*/
+.form-group label {
+  font-weight: normal;
+}
+.form-control {
+  border-radius: 2px;
+  border-color: #ddd;
+  background-color: #fff;
+  -webkit-box-shadow: none;
+  box-shadow: none;
+}
+.form-control:focus {
+  -webkit-box-shadow: none;
+  box-shadow: none;
+  border-color: #bbb;
+}
+/*
 	Job Log Classes
 */
 .btn-new-job {
