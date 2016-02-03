@@ -65,6 +65,13 @@ namespace Enivate.ResponseHub.ApplicationServices.Identity
 			}
 		}
 
+		/// <summary>
+		/// Resets the account password for the specific user.
+		/// </summary>
+		/// <param name="userId">The id of the user to reset the password for.</param>
+		/// <param name="token">The password reset token to validate in order to reset the password.</param>
+		/// <param name="newPassword">The new password value.</param>
+		/// <returns>An IdentityResult indicating the result of the password reset.</returns>
 		public override async Task<IdentityResult> ResetPasswordAsync(Guid userId, string token, string newPassword)
 		{
 
@@ -106,6 +113,13 @@ namespace Enivate.ResponseHub.ApplicationServices.Identity
 
 		}
 
+		/// <summary>
+		/// Verifies the password reset token for the specified user and ensures it's valid and not expired.
+		/// </summary>
+		/// <param name="userId">The id of the user to reset the password for.</param>
+		/// <param name="purpose">The purpose of the verification.</param>
+		/// <param name="token">The password reset token to validate in order to reset the password.</param>
+		/// <returns>True if the token is successfully verified, otherwise false.</returns>
 		public async override Task<bool> VerifyUserTokenAsync(Guid userId, string purpose, string token)
 		{
 

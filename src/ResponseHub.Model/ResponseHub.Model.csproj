@@ -47,11 +47,13 @@
     <Compile Include="Groups\Interface\IGroupRepository.cs" />
     <Compile Include="Groups\Interface\IGroupService.cs" />
     <Compile Include="Groups\Group.cs" />
+    <Compile Include="Identity\Interface\IRoleRepository.cs" />
     <Compile Include="Identity\Interface\IUserRepository.cs" />
     <Compile Include="Identity\IdentityUser.cs" />
     <Compile Include="Identity\PasswordResetToken.cs" />
     <Compile Include="IEntity.cs" />
     <Compile Include="IRepository.cs" />
+    <Compile Include="Identity\Role.cs" />
     <Compile Include="ServiceType.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

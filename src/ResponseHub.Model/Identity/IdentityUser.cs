@@ -28,10 +28,16 @@ namespace Enivate.ResponseHub.Model.Identity
 
 		public PasswordResetToken PasswordResetToken { get; set; }
 
+		public IList<string> Roles { get; set; }
+
+		public IList<UserLoginInfo> Logins { get; set; }
+
 		public IdentityUser()
 		{
 			Id = Guid.NewGuid();
+			Roles = new List<String>();
 			GroupIds = new List<Guid>();
+			Logins = new List<UserLoginInfo>();
 		}
 
 	}
