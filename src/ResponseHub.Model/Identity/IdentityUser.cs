@@ -8,7 +8,7 @@ using Microsoft.AspNet.Identity;
 
 namespace Enivate.ResponseHub.Model.Identity
 {
-	public class User : IEntity, IUser<Guid>
+	public class IdentityUser : IEntity, IUser<Guid>
 	{
 		public Guid Id { get; set; }
 
@@ -26,7 +26,9 @@ namespace Enivate.ResponseHub.Model.Identity
 
 		public IList<Guid> GroupIds { get; set; }
 
-		public User()
+		public PasswordResetToken PasswordResetToken { get; set; }
+
+		public IdentityUser()
 		{
 			Id = Guid.NewGuid();
 			GroupIds = new List<Guid>();

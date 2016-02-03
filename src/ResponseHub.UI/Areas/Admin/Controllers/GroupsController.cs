@@ -43,9 +43,10 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
         {
 
 			IUserRepository userRepo = UnityConfiguration.Container.Resolve<IUserRepository>();
-			UserService svc = new UserService(userRepo);
+			Enivate.ResponseHub.Logging.ILogger logger = UnityConfiguration.Container.Resolve<Enivate.ResponseHub.Logging.ILogger>();
+			UserService svc = new UserService(userRepo, logger);
 
-			Enivate.ResponseHub.Model.Identity.User user = new Model.Identity.User()
+			IdentityUser user = new IdentityUser()
 			{
 				Created = DateTime.UtcNow,
 				FirstName = "Test",

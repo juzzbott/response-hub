@@ -12,14 +12,14 @@ using Enivate.ResponseHub.Model.Identity.Interface;
 namespace Enivate.ResponseHub.DataAccess.MongoDB
 {
 	[MongoCollectionName("users")]
-	public class UserRepository : MongoRepository<User>, IUserStore<User, Guid>, IUserRepository
+	public class UserRepository : MongoRepository<IdentityUser>, IUserStore<IdentityUser, Guid>, IUserRepository
 	{
-		public async Task CreateAsync(User user)
+		public async Task CreateAsync(IdentityUser user)
 		{
 			await Save(user);
 		}
 
-		public async Task DeleteAsync(User user)
+		public async Task DeleteAsync(IdentityUser user)
 		{
 			await Remove(user);
 		}
@@ -29,17 +29,17 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 			
 		}
 
-		public async Task<User> FindByIdAsync(Guid userId)
+		public async Task<IdentityUser> FindByIdAsync(Guid userId)
 		{
 			return await GetById(userId);
 		}
 
-		public async Task<User> FindByNameAsync(string userName)
+		public async Task<IdentityUser> FindByNameAsync(string userName)
 		{
 			return await FindOne(i => i.UserName.ToLower() == userName.ToLower());
 		}
 
-		public Task<string> GetPasswordHashAsync(User user)
+		public Task<string> GetPasswordHashAsync(IdentityUser user)
 		{
 			if (user == null)
 			{
@@ -49,7 +49,7 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 			return Task.FromResult(user.PasswordHash);
 		}
 
-		public Task<bool> HasPasswordAsync(User user)
+		public Task<bool> HasPasswordAsync(IdentityUser user)
 		{
 			if (user == null)
 			{
@@ -61,7 +61,7 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 
 		}
 
-		public async Task SetPasswordHashAsync(User user, string passwordHash)
+		public async Task SetPasswordHashAsync(IdentityUser user, string passwordHash)
 		{
 			if (user == null)
 			{
@@ -74,7 +74,7 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 			
 		}
 
-		public async Task UpdateAsync(User user)
+		public async Task UpdateAsync(IdentityUser user)
 		{
 			await Save(user);
 		}

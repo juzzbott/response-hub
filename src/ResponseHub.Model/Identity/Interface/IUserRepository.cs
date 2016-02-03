@@ -8,26 +8,26 @@ using Microsoft.AspNet.Identity;
 
 namespace Enivate.ResponseHub.Model.Identity.Interface
 {
-	public interface IUserRepository : IRepository<User>, IUserStore<User, Guid>, IUserPasswordStore<User, Guid>
+	public interface IUserRepository : IRepository<IdentityUser>, IUserStore<IdentityUser, Guid>, IUserPasswordStore<IdentityUser, Guid>
 	{
 
-		new Task CreateAsync(User user);
+		new Task CreateAsync(IdentityUser user);
 
-		new Task DeleteAsync(User user);
+		new Task DeleteAsync(IdentityUser user);
 
 		new void Dispose();
 
-		new Task<User> FindByIdAsync(Guid userId);
+		new Task<IdentityUser> FindByIdAsync(Guid userId);
 
-		new Task<User> FindByNameAsync(string userName);
+		new Task<IdentityUser> FindByNameAsync(string userName);
 
-		new Task UpdateAsync(User user);
+		new Task UpdateAsync(IdentityUser user);
 
-		new Task<string> GetPasswordHashAsync(User user);
+		new Task<string> GetPasswordHashAsync(IdentityUser user);
 
-		new Task<bool> HasPasswordAsync(User user);
+		new Task<bool> HasPasswordAsync(IdentityUser user);
 
-		new	Task SetPasswordHashAsync(User user, string passwordHash);
+		new	Task SetPasswordHashAsync(IdentityUser user, string passwordHash);
 		
 
 	}
