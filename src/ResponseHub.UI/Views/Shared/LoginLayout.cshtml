@@ -1,0 +1,36 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>@ViewBag.Title - ResponseHub Administration</title>
+
+	<link rel="stylesheet" href="~/assets/css/framework.css" />
+	<link rel="stylesheet" href="~/assets/css/response-hub.css" />
+
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+
+	<link href='https://fonts.googleapis.com/css?family=Ubuntu:400,300,300italic,700,700italic' rel='stylesheet' type='text/css'>
+
+</head>
+<body class="admin-layout">
+
+	<div class="container body-content">
+
+		<div class="row">
+
+			<!-- Main Body -->
+			<div class="login-container">
+				@RenderBody()
+			</div>
+			<!-- END Main Body -->
+			
+		</div>
+
+	</div>
+
+	<script language="javascript" src="~/assets/js/framework.js"></script>
+	<script language="javascript" src="~/assets/js/script.js"></script>
+
+</body>
+</html>

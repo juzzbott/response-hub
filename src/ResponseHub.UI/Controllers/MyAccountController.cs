@@ -63,9 +63,34 @@ namespace Enivate.ResponseHub.UI.Controllers
 		// GET: /my-account/login
 		[Route("login")]
 		[AllowAnonymous]
-		public ActionResult Login()
+		public async Task<ActionResult> Login()
 		{
+			//await CreateNewUser();
+
 			return View();
+		}
+
+		private static async Task CreateNewUser()
+		{
+			Enivate.ResponseHub.Model.Identity.Interface.IUserRepository userRepo = UnityConfiguration.Container.Resolve<Enivate.ResponseHub.Model.Identity.Interface.IUserRepository>();
+			Enivate.ResponseHub.Logging.ILogger logger = UnityConfiguration.Container.Resolve<Enivate.ResponseHub.Logging.ILogger>();
+			UserService svc = new UserService(userRepo, logger);
+
+			PasswordHasher hasher = new PasswordHasher();
+			string passwordHash = hasher.HashPassword("wysiwyg");
+
+			IdentityUser user = new IdentityUser()
+			{
+				Created = DateTime.UtcNow,
+				FirstName = "Justin",
+				Surname = "McKay",
+				EmailAddress = "juzzbott@gmail.com",
+				UserName = "juzzbott@gmail.com",
+				PasswordHash = passwordHash
+			};
+
+			await svc.CreateAsync(user);
+			
 		}
 
 		// POST: /my-account/login

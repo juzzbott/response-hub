@@ -46,37 +46,40 @@
 	</div>
 
 	<div class="container-fluid body-content">
-
+		
 		<div class="row">
-			<div class="col-sm-3 col-lg-2 sidebar">
 
-				<p class="explore">Explore</p>
 
-				<ul class="nav nav-sidebar">
-					<li>
-						<a href="/admin/groups"><i class="fa fa-fw fa-users"></i>Groups</a>
-					</li>
-					<li>
-						<a href="/admin/users"><i class="fa fa-fw fa-user"></i>Users</a>
-					</li>
-					<li>
-						<a href="/admin/messages"><i class="fa fa-fw fa-newspaper-o"></i>Messages</a>
-					</li>
-					<li>
-						<a href="/admin/messages"><i class="fa fa-fw fa-cogs"></i>System Settings</a>
-					</li>
-				</ul>
+			@if (IsSectionDefined("Sidebar"))
+			{
 
-				<footer>
-					<p>&copy; @DateTime.Now.Year - ResponseHub</p>
-				</footer>
+				<!-- Right Column -->
+				<div class="col-sm-3 col-lg-2 sidebar">
+					@RenderSection("Sidebar")
 
-			</div>
-			<div class="col-sm-9 col-sm-offset-3 col-lg-10 col-lg-offset-2 main-content">
+					<footer>
+						<p>&copy; @DateTime.Now.Year - ResponseHub</p>
+					</footer>
 
-				@RenderBody()
+				</div>
+				<!-- END Right Column -->
 
-			</div>
+				<!-- Main Body -->
+				<div class="col-sm-9 col-sm-offset-3 col-lg-10 col-lg-offset-2 main-content">
+					@RenderBody()
+				</div>
+				<!-- END Main Body -->
+
+			}
+			else
+			{
+				<!-- Main Body -->
+				<div class="col-sm-12">
+					@RenderBody()
+				</div>
+				<!-- END Main Body -->
+			}
+
 		</div>
 
 	</div>

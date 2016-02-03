@@ -180,6 +180,33 @@ body {
   border-color: #bbb;
 }
 /*
+	Login styles
+*/
+.login-container {
+  max-width: 400px;
+  padding-right: 15px;
+  padding-left: 15px;
+  margin: 0 auto;
+}
+.login-container h2 {
+  text-align: center;
+  font-size: 26px;
+}
+.login-container p,
+.login-container h4 {
+  text-align: center;
+}
+.login-container .form-container {
+  margin-top: 30px;
+  border: 1px solid #e4e4e4;
+  background-color: #fff;
+  padding: 0 20px 20px;
+  border-radius: 2px;
+}
+.login-container #fb-login {
+  margin-top: 30px;
+}
+/*
 	Job Log Classes
 */
 .btn-new-job {

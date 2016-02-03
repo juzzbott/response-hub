@@ -30,11 +30,11 @@ namespace Enivate.ResponseHub.Model.Identity.Interface
 
 		new Task<IdentityUser> FindByNameAsync(string userName);
 
+		new Task UpdateAsync(IdentityUser user);
+
 		#endregion
 
 		#region IUserPasswordStore
-
-		new Task UpdateAsync(IdentityUser user);
 
 		new Task<string> GetPasswordHashAsync(IdentityUser user);
 

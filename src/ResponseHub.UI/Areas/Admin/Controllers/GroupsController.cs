@@ -41,21 +41,6 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
         // GET: Admin/Groups
         public async Task<ActionResult> Index()
         {
-
-			IUserRepository userRepo = UnityConfiguration.Container.Resolve<IUserRepository>();
-			Enivate.ResponseHub.Logging.ILogger logger = UnityConfiguration.Container.Resolve<Enivate.ResponseHub.Logging.ILogger>();
-			UserService svc = new UserService(userRepo, logger);
-
-			IdentityUser user = new IdentityUser()
-			{
-				Created = DateTime.UtcNow,
-				FirstName = "Test",
-				Surname = "User",
-				EmailAddress = "testuser@domain.com",
-				UserName = "testuser@domain.com"
-			};
-
-			//await svc.CreateAsync(user);
 			
 			// Get the most recent groups
 			IList<Group> recentGroups = await GroupService.GetRecentlyAdded(10);
