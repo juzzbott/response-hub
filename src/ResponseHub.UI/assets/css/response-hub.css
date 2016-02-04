@@ -6,6 +6,7 @@ body {
   background: #fafafa;
   padding-top: 50px;
   font-family: 'Ubuntu', sans-serif;
+  color: #333;
 }
 .top-5 {
   margin-top: 5px;
@@ -33,6 +34,10 @@ body {
   border-bottom: 1px solid #4b5960;
   color: #fafafa;
 }
+.page-navbar a:hover,
+.page-navbar button:hover {
+  text-decoration: none;
+}
 .page-navbar .navbar-brand,
 .page-navbar .btn-link {
   color: #fafafa;
@@ -43,16 +48,26 @@ body {
 .page-navbar .btn-link:focus {
   color: #9cddd7;
 }
+.page-navbar .navbar-collapse {
+  border-color: #4b5960;
+}
+.page-navbar .navbar-right {
+  margin-right: 80px;
+}
+.page-navbar .navbar-right a i {
+  margin-right: 8px;
+}
 /* 
 	User Menu Styles
 */
 .user-menu {
   position: absolute;
   right: 50px;
-  padding: 0 10px;
+  padding: 0;
   margin-top: 0;
   margin-right: 15px;
   margin-bottom: 8px;
+  color: #333;
 }
 .user-menu .dropdown-toggle {
   font-size: 2em;
@@ -64,12 +79,20 @@ body {
   display: none;
 }
 .user-menu .dropdown-menu {
-  min-width: 200px;
-  margin-top: 8px;
+  min-width: 260px;
+  margin-top: -4px;
   border-radius: 0;
 }
 .user-menu .dropdown-menu a {
   font-size: 13px;
+  padding: 3px 15px;
+}
+.user-menu .dropdown-menu span {
+  display: inline-block;
+  padding: 0 15px;
+}
+.user-menu .dropdown-menu .lead {
+  margin-bottom: 0;
 }
 .user-menu .dropdown-menu i {
   color: #e2c498;
@@ -86,6 +109,9 @@ body {
   .user-menu .dropdown-toggle i {
     padding-right: 6px;
   }
+  .user-menu .dropdown-menu {
+    margin-top: 8px;
+  }
   .user-menu .first-name {
     display: inline;
   }
@@ -93,7 +119,7 @@ body {
 /*
 	Sidebar styles
 */
-.admin-layout .sidebar {
+.sidebar {
   display: none;
   position: fixed;
   top: 51px;
@@ -107,30 +133,30 @@ body {
   border-right: 1px solid #eee;
   color: #808080;
 }
-.admin-layout .sidebar p.explore {
+.sidebar p.explore {
   letter-spacing: 2px;
   text-transform: uppercase;
   font-size: 13px;
 }
-.admin-layout .sidebar .nav-sidebar {
+.sidebar .nav-sidebar {
   margin-right: -18px;
   margin-left: -18px;
 }
-.admin-layout .sidebar .nav > li > a {
+.sidebar .nav > li > a {
   color: #c8c5ba;
 }
-.admin-layout .sidebar .nav > li > a i {
+.sidebar .nav > li > a i {
   color: #e2c498;
   padding-right: 30px;
   font-size: 1.2em;
   vertical-align: bottom;
 }
-.admin-layout .sidebar .nav > li > a:hover,
-.admin-layout .sidebar .nav > li > a:focus {
+.sidebar .nav > li > a:hover,
+.sidebar .nav > li > a:focus {
   background-color: #1a2327;
 }
 @media (min-width: 768px) {
-  .admin-layout .sidebar {
+  .sidebar {
     display: block;
   }
 }
@@ -140,7 +166,7 @@ body {
 .icon-link i {
   padding-right: 6px;
 }
-.admin-layout footer {
+footer {
   position: fixed;
   bottom: 0;
   z-index: 1200;
@@ -153,11 +179,11 @@ body {
   margin-left: -20px;
   padding-left: 18px;
 }
-.admin-layout footer p {
+footer p {
   margin-bottom: 6px;
 }
 @media (min-width: 1200px) {
-  .admin-layout footer {
+  footer {
     width: 16.66666667%;
   }
 }

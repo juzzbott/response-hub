@@ -1,3 +1,5 @@
+@body-color: #333;
+
 @ses-orange: #FF862F;
 @rescue-job-bg: #1C60B2;
 @storm-job-bg: #00B226;
@@ -18,6 +20,7 @@ body {
 	background: #fafafa;
 	padding-top: 50px;
 	font-family: 'Ubuntu', sans-serif;
+	color: @body-color;
 }
 
 .top-5 {
@@ -53,6 +56,11 @@ body {
 	border-bottom: 1px solid #4b5960;
 	color: #fafafa;
 
+	a:hover,
+	button:hover {
+		text-decoration: none;
+	}
+
 	.navbar-brand,
 	.btn-link {
 		color: #fafafa;
@@ -63,6 +71,17 @@ body {
 		}
 
 	}
+
+	.navbar-collapse {
+		border-color: #4b5960;
+	}
+
+	.navbar-right {
+		margin-right: 80px;
+		a i {
+			margin-right: 8px;
+		}
+	}
 }
 
 /* 
@@ -72,10 +91,11 @@ body {
 .user-menu {
 	position: absolute;
     right: 50px;
-    padding: 0 10px;
+    padding: 0;
     margin-top: 0;
     margin-right: 15px;
     margin-bottom: 8px;
+	color: @body-color;
 
 		.dropdown-toggle {
 			font-size: 2em;
@@ -91,12 +111,22 @@ body {
 		}
 
 		.dropdown-menu {
-			min-width: 200px;
-			margin-top: 8px;
+			min-width: 260px;
+			margin-top: -4px;
 			border-radius: 0;
 
 			a {
 				font-size: 13px;
+				padding: 3px 15px;
+			}
+
+			span {
+				display: inline-block;
+				padding: 0 15px;
+			}
+
+			.lead {
+				margin-bottom: 0;
 			}
 
 			i {
@@ -120,6 +150,10 @@ body {
 
 		}
 
+		.dropdown-menu {
+			margin-top: 8px;
+		}
+
 		.first-name {
 			display: inline;
 		}
@@ -131,7 +165,7 @@ body {
 	Sidebar styles
 */
 
-.admin-layout .sidebar {
+.sidebar {
 	display: none;
 	position: fixed;
 	top: 51px;
@@ -175,7 +209,7 @@ body {
 }
 
 @media (min-width: 768px) {
-	.admin-layout .sidebar {
+	.sidebar {
 		display: block;
 
 	}
@@ -191,7 +225,7 @@ body {
 	padding-right: 6px;
 }
 
-.admin-layout footer {
+footer {
 	position: fixed;
     bottom: 0;
     z-index: 1200;
@@ -210,7 +244,7 @@ body {
 }
 
 @media (min-width: 1200px) {
-	.admin-layout footer {
+	footer {
 		width: 16.66666667%;
 	}
 }

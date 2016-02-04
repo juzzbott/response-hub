@@ -24,6 +24,7 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 
 	[RouteArea("admin")]
 	[RoutePrefix("groups")]
+	[Authorize(Roles = "System Administrator")]
     public class GroupsController : Controller
     {
 

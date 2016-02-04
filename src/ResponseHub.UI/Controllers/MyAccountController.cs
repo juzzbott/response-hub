@@ -52,6 +52,15 @@ namespace Enivate.ResponseHub.UI.Controllers
 			}
 		}
 
+		private IAuthenticationManager _authenticationManager;
+		protected IAuthenticationManager AuthenticationManager
+		{
+			get
+			{
+				return _authenticationManager ?? (_authenticationManager = HttpContext.GetOwinContext().Authentication);
+			}
+		}
+
 		// GET: MyAccount
 		public ActionResult Index()
         {
@@ -63,10 +72,8 @@ namespace Enivate.ResponseHub.UI.Controllers
 		// GET: /my-account/login
 		[Route("login")]
 		[AllowAnonymous]
-		public async Task<ActionResult> Login()
+		public ActionResult Login()
 		{
-			//await CreateNewUser();
-
 			return View();
 		}
 
@@ -120,7 +127,7 @@ namespace Enivate.ResponseHub.UI.Controllers
 						user = await UserService.FindByNameAsync(model.Email);
 						// TODO: Event Log - _eventLog.LogEvent(EventTypes.LOGIN, "User '{0}' logged in successfully.", user.Id);
 		
-						string redirectTo = GetReturnUrl("/");
+						string redirectTo = GetReturnUrl("/", user);
 		
 						return new RedirectResult(redirectTo);
 		
@@ -147,6 +154,18 @@ namespace Enivate.ResponseHub.UI.Controllers
 
 		#endregion
 
+		#region Logout
+
+		[Route("logout")]
+		[AllowAnonymous]
+		public ActionResult Logout()
+		{
+			AuthenticationManager.SignOut();
+			return new RedirectResult("/my-account/login");
+		}
+
+		#endregion
+
 		#region Helpers
 
 		/// <summary>
@@ -154,7 +173,7 @@ namespace Enivate.ResponseHub.UI.Controllers
 		/// </summary>
 		/// <param name="defaultUrl"></param>
 		/// <returns></returns>
-		private string GetReturnUrl(string defaultUrl)
+		private string GetReturnUrl(string defaultUrl, IdentityUser authenticatedUser)
 		{
 
 			// If there is a return url query string, then use that, otherwise redirect to the specified path
@@ -167,6 +186,13 @@ namespace Enivate.ResponseHub.UI.Controllers
 				{
 					return queryUrl;
 				}
+			}
+
+			// We don't have any query string return urls, so we can set one here based on role
+			// For system admin users, go to the admin section
+			if (authenticatedUser != null && authenticatedUser.Roles != null && authenticatedUser.Roles.Any(i => i.Equals("System Administrator", StringComparison.CurrentCultureIgnoreCase)))
+			{
+				return "/admin";
 			}
 
 			// By default, return the default url
