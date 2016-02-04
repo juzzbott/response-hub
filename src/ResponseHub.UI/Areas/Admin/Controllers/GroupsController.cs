@@ -62,8 +62,13 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 		public async Task<ActionResult> Create(CreateGroupModel model)
 		{
 
+			// Get the service type.
+			int intServiceType;
+			Int32.TryParse(model.Service, out intServiceType);
+			ServiceType serviceType = (ServiceType)intServiceType;
+
 			// Create the group
-			Group newGroup = await GroupService.CreateGroup(model.Name, model.Service, model.Description);
+			Group newGroup = await GroupService.CreateGroup(model.Name, serviceType, model.Description);
 
 			return View(model);
 		}

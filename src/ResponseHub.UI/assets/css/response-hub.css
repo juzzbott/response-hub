@@ -205,6 +205,22 @@ footer p {
   box-shadow: none;
   border-color: #bbb;
 }
+.icon-info {
+  padding-left: 20px;
+  font-size: 13px;
+  position: relative;
+}
+.icon-info i {
+  position: absolute;
+  display: block;
+  left: 0;
+  top: 3px;
+}
+.field-validation-error {
+  color: #c41411;
+  padding: 2px 3px;
+  display: block;
+}
 /*
 	Login styles
 */
