@@ -15,6 +15,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ResponseHub.Model", "Respon
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ResponseHub.Logging", "ResponseHub.Logging\ResponseHub.Logging.csproj", "{38015057-6FF4-4EE7-B101-550A99578671}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WindowsService", "WindowsService", "{A9CE0402-08E1-467F-835D-8C26A81534E7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ResponseHub.WindowsService", "WindowsService\ResponseHub.WindowsService\ResponseHub.WindowsService.csproj", "{AC7CC788-CCD2-4EEE-931F-C6DBEB9740BF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,8 +49,15 @@ Global
 		{38015057-6FF4-4EE7-B101-550A99578671}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{38015057-6FF4-4EE7-B101-550A99578671}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{38015057-6FF4-4EE7-B101-550A99578671}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AC7CC788-CCD2-4EEE-931F-C6DBEB9740BF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AC7CC788-CCD2-4EEE-931F-C6DBEB9740BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AC7CC788-CCD2-4EEE-931F-C6DBEB9740BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AC7CC788-CCD2-4EEE-931F-C6DBEB9740BF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{AC7CC788-CCD2-4EEE-931F-C6DBEB9740BF} = {A9CE0402-08E1-467F-835D-8C26A81534E7}
 	EndGlobalSection
 EndGlobal

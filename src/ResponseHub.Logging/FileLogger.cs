@@ -185,7 +185,7 @@ namespace Enivate.ResponseHub.Logging
 			else if (logDirectory[0] == '.')
 			{
 				// Log directory is a relative path (../ or ./) so append to current directory
-				logDirectory = String.Format("{0}\\{1}", Environment.CurrentDirectory, logDirectory);
+				logDirectory = String.Format("{0}\\{1}", Environment.CurrentDirectory, logDirectory.Substring(1));
 			}
 
 			// return the log directory
