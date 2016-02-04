@@ -14,7 +14,7 @@ module.exports = function(grunt) {
 		},
 		concat: {
 			options: {
-				separator: '\r\n;\r\n',
+				separator: '\r\n\r\n',
 			},
 			framework_js: {
 				src: [
@@ -37,7 +37,7 @@ module.exports = function(grunt) {
 					'bower_components/bootstrap/dist/css/bootstrap.css',
 					'bower_components/fontawesome/css/font-awesome.min.css'
 				],
-				dest: 'assets/css/framework.css'
+				dest: 'assets/css/framework.css',
 			}
 		},
 		less: {
