@@ -217,9 +217,34 @@ footer p {
   top: 3px;
 }
 .field-validation-error {
-  color: #c41411;
+  color: #de3226;
   padding: 2px 3px;
   display: block;
+}
+.form-error,
+.validation-summary-errors {
+  color: #de3226;
+  padding: 2px 3px;
+  display: block;
+  border: 1px solid #de3226;
+  background-color: #fef7f6;
+  margin: 20px 0;
+  border-radius: 2px;
+}
+.form-error ul,
+.validation-summary-errors ul {
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+}
+.input-validation-error {
+  border-color: #de3226;
+  background-color: #fef7f6;
+}
+.input-validation-error:focus,
+.input-validation-error:active {
+  background-color: #fff;
+  border-color: #de3226;
 }
 /*
 	Login styles

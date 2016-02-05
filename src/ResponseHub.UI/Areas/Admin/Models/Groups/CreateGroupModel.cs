@@ -17,6 +17,8 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Models.Groups
 
 		[Required(ErrorMessage = "You must select a service the group belongs to.", AllowEmptyStrings = false)]
 		public string Service { get; set; }
+		
+		public string Capcode { get; set; }
 
 		public IList<SelectListItem> AvailableServices { get; set; }
 
@@ -26,12 +28,16 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Models.Groups
 		[EmailAddress(ErrorMessage = "You must enter a valid email address.")]
 		public string GroupAdministratorEmail { get; set; }
 
+		public GroupAdministratorViewModel GroupAdministrator { get; set; }
+
 		public CreateGroupModel()
 		{
 			AvailableServices = new List<SelectListItem>();
 			AvailableServices.Add(new SelectListItem() { Value = "", Text = "Please select" });
 			AvailableServices.Add(new SelectListItem() { Value = "1", Text = "State Emergency Service" });
 			AvailableServices.Add(new SelectListItem() { Value = "2", Text = "Country Fire Authority" });
+
+			GroupAdministrator = new GroupAdministratorViewModel();
 
 		}
 

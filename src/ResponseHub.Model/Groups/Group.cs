@@ -11,6 +11,8 @@ namespace Enivate.ResponseHub.Model.Groups
 
 		public Guid Id { get; set; }
 
+		public string Capcode { get; set; }
+
 		public string Name { get; set; }
 
 		public DateTime Created { get; set; }
@@ -21,7 +23,7 @@ namespace Enivate.ResponseHub.Model.Groups
 
 		public Group()
 		{
-			this.Id = Guid.NewGuid();
+			Id = Guid.NewGuid();
 		}
 
 	}

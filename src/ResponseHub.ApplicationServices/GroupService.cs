@@ -72,5 +72,10 @@ namespace Enivate.ResponseHub.ApplicationServices
 		{
 			return await _repository.GetById(id);
 		}
+
+		public async Task<bool> CheckIfGroupExists(string name, ServiceType service)
+		{
+			return await _repository.CheckIfGroupExists(name, service);
+		}
 	}
 }

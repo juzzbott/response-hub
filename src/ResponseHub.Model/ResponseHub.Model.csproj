@@ -50,6 +50,7 @@
     <Compile Include="Identity\Interface\IRoleRepository.cs" />
     <Compile Include="Identity\Interface\IUserRepository.cs" />
     <Compile Include="Identity\IdentityUser.cs" />
+    <Compile Include="Identity\Interface\IUserService.cs" />
     <Compile Include="Identity\PasswordResetToken.cs" />
     <Compile Include="IEntity.cs" />
     <Compile Include="IRepository.cs" />

@@ -17,6 +17,8 @@ namespace Enivate.ResponseHub.Model.Groups.Interface
 
 		Task<Group> GetById(Guid id);
 
+		Task<bool> CheckIfGroupExists(string name, ServiceType service);
+
 	}
 
 }

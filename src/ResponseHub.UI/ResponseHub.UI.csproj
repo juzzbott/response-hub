@@ -183,6 +183,7 @@
     <Compile Include="Areas\Admin\Controllers\GroupsController.cs" />
     <Compile Include="Areas\Admin\Controllers\HomeController.cs" />
     <Compile Include="Areas\Admin\Models\Groups\CreateGroupModel.cs" />
+    <Compile Include="Areas\Admin\Models\Groups\GroupAdministratorViewModel.cs" />
     <Compile Include="Areas\Admin\Models\Groups\SingleGroupViewModel.cs" />
     <Compile Include="Controllers\MyAccountController.cs" />
     <Compile Include="Filters\ResponseHubPageAttribute.cs" />
@@ -291,6 +292,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Shared\LoginLayout.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Areas\Admin\Views\Groups\GroupAdministrator.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

@@ -12,7 +12,7 @@ using Enivate.ResponseHub.Model.Identity.Interface;
 
 namespace Enivate.ResponseHub.ApplicationServices.Identity
 {
-	public class UserService : UserManager<IdentityUser, Guid>
+	public class UserService : UserManager<IdentityUser, Guid>, IUserService
 	{
 
 		private IUserRepository _repository;

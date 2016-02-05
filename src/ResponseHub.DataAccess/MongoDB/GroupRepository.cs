@@ -9,6 +9,7 @@ using MongoDB.Driver;
 
 using Enivate.ResponseHub.Logging;
 
+using Enivate.ResponseHub.Model;
 using Enivate.ResponseHub.Model.Groups;
 using Enivate.ResponseHub.Model.Groups.Interface;
 
@@ -61,6 +62,13 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 			// return the groups found in the database.
 			return groups;
 
+		}
+
+		public async Task<bool> CheckIfGroupExists(string name, ServiceType service)
+		{
+			Group group = await FindOne(i => i.Name.ToUpper() == name.ToUpper() && i.Service == service);
+
+			return (group != null);
 		}
 
 	}

@@ -28,6 +28,8 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
     public class GroupsController : Controller
     {
 
+		private const string CreateGroupViewModelSesionKey = "CreateGroupViewModel";
+
 		private IGroupService _groupService;
 		protected IGroupService GroupService
 		{
@@ -37,6 +39,14 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 			}
 		}
 
+		private IUserService _userService;
+		protected IUserService UserService
+		{
+			get
+			{
+				return _userService ?? (_userService = UnityConfiguration.Container.Resolve<IUserService>());
+			}
+		}
 
 		[Route]
         // GET: Admin/Groups
@@ -67,10 +77,74 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 			Int32.TryParse(model.Service, out intServiceType);
 			ServiceType serviceType = (ServiceType)intServiceType;
 
-			// Create the group
-			Group newGroup = await GroupService.CreateGroup(model.Name, serviceType, model.Description);
+			// Ensure the group name/service combination is unique
+			bool groupExists = await GroupService.CheckIfGroupExists(model.Name, serviceType);
 
-			return View(model);
+			// If the group exists, then display the group exists message
+			if (groupExists)
+			{
+				ModelState.AddModelError("", "Sorry, there is already a group by that name in the selected service.");
+				return View(model);
+			}
+
+			// Store the CreateGroupViewModel in session for the next screen
+			Session[CreateGroupViewModelSesionKey] = model;
+
+			// Redirect to the group administrator screen
+			return new RedirectResult("/admin/groups/create/group-administrator");
+
+			
+			//// Create the group
+			//Group newGroup = await GroupService.CreateGroup(model.Name, serviceType, model.Description);
+			//
+			//return View(model);
+		}
+
+		[Route("create/group-administrator")]
+		public async Task<ActionResult> GroupAdministrator()
+		{
+
+			// Get the CreateGroupViewModel from session
+			CreateGroupModel model = (CreateGroupModel)Session[CreateGroupViewModelSesionKey];
+
+			// If the view model is null, redirect back to the create screen
+			if (model == null)
+			{
+				return new RedirectResult("/admin/groups/create");
+			}
+
+			// Get the identity user related to the specified group admin
+			IdentityUser groupAdminUser = await UserService.FindByEmailAsync(model.GroupAdministratorEmail);
+			
+			// If there is a group user, then add to the model.
+			if (groupAdminUser != null)
+			{
+				model.GroupAdministrator.UserId = groupAdminUser.Id;
+				model.GroupAdministrator.FirstName = groupAdminUser.FirstName;
+				model.GroupAdministrator.Surname = groupAdminUser.Surname;
+				model.GroupAdministrator.EmailAddress = model.GroupAdministratorEmail;
+			}
+
+			return View(model.GroupAdministrator);
+		}
+
+		[Route("create/group-administrator")]
+		[ValidateAntiForgeryToken]
+		[HttpPost]
+		public async Task<ActionResult> GroupAdministrator(GroupAdministratorViewModel model)
+		{
+			// Get the CreateGroupViewModel from session
+			CreateGroupModel createGroupModel = (CreateGroupModel)Session[CreateGroupViewModelSesionKey];
+
+			// If the view model is null, redirect back to the create screen
+			if (createGroupModel == null)
+			{
+				return new RedirectResult("/admin/groups/create");
+			}
+
+
+
+			return new RedirectResult("/admin/groups");
 		}
 
 		[Route("{id:guid}")]

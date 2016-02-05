@@ -11,7 +11,8 @@
 @sidebar-foreground: #c8c5ba;
 @sidebar-highlight: #e2c498;
 
-@validation-error-color: #c41411;
+@validation-error-color: #de3226;
+@validation-error-highlight: #fef7f6;
 
 button:focus,
 button:active {
@@ -296,6 +297,35 @@ footer {
 	color: @validation-error-color;
 	padding: 2px 3px;
 	display: block;
+}
+
+.form-error,
+.validation-summary-errors {
+	color: @validation-error-color;
+	padding: 2px 3px;
+	display: block;
+	border: 1px solid @validation-error-color;
+    background-color: @validation-error-highlight;
+	margin: 20px 0;
+	border-radius: 2px;
+
+	ul {
+		margin: 0;
+		padding: 0;
+		list-style-type: none;
+	}
+
+}
+
+.input-validation-error {
+    border-color: @validation-error-color;
+    background-color: @validation-error-highlight;
+
+	&:focus,
+	&:active {
+		background-color: #fff;
+		border-color: @validation-error-color;
+	}
 }
 
 /*

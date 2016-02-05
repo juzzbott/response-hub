@@ -13,6 +13,8 @@ namespace Enivate.ResponseHub.Model.Groups.Interface
 
 		Task<IList<Group>> GetRecentlyAdded(int count);
 
+		Task<bool> CheckIfGroupExists(string name, ServiceType service);
+
 	}
 
 }

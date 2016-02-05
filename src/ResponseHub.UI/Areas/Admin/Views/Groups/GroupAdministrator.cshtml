@@ -1,0 +1,56 @@
+﻿@model Enivate.ResponseHub.UI.Areas.Admin.Models.Groups.GroupAdministratorViewModel
+
+@{
+    ViewBag.Title = "Assign group administrators";
+}
+
+<h2>@ViewBag.Title</h2>
+
+<form action="/admin/groups/create-administrator">
+
+	@Html.AntiForgeryToken()
+
+	@if (Model.UserId != Guid.Empty)
+	{
+		
+		<p>A user account with the email address exists. Please confirm that you wish to make the user below the group administrator.</p>
+		<dl class="dl-horizontal">
+			<dt>Email address</dt>
+			<dd>@Model.EmailAddress</dd>
+			<dt>First name</dt>
+			<dd>@Model.FirstName</dd>
+			<dt>Surname</dt>
+			<dd>@Model.Surname</dd>
+		</dl>
+
+	}
+	else
+	{
+		<p>There is no user account registered with the email address you supplied.</p>
+		<p>Enter the users details below, and an email will be sent to them with instructions on completing thier account registration.</p>
+
+		<div class="form-group">
+			<label for="Name">First name *</label>
+			<div class="row">
+				<div class="col-sm-8 col-md-6 col-lg-4">
+					@Html.TextBoxFor(model => model.FirstName, new { @class = "form-control", placeholder = "John" })
+				</div>
+			</div>
+			@Html.ValidationMessageFor(model => model.FirstName)
+		</div>
+
+		<div class="form-group">
+			<label for="Name">Surname *</label>
+			<div class="row">
+				<div class="col-sm-8 col-md-6 col-lg-4">
+					@Html.TextBoxFor(model => model.Surname, new { @class = "form-control", placeholder = "Smith" })
+				</div>
+			</div>
+			@Html.ValidationMessageFor(model => model.Surname)
+		</div>
+	}
+
+	<button type="submit" class="btn btn-default">Create group</button>
+	<a href="/admin/groups" class="btn btn-link">Cancel</a>
+
+</form>
