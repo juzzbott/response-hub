@@ -6,22 +6,30 @@ using System.Threading.Tasks;
 
 namespace Enivate.ResponseHub.Model.Messages
 {
-	public class PagerMessage
+	public class Message : IEntity
 	{
 
-		public string Address { get; set; }
+		public Guid Id { get; set; }
 
 		public DateTime Timestamp { get; set; }
 
-		public string Mode { get; set; }
-
-		public string Type { get; set; }
-
-		public int Bitrate { get; set; }
+		public string Capcode { get; set; }
 
 		public string MessageContent { get; set; }
 
-		public string ShaHash { get; set; }
+		public string JobNumber { get; set; }
+
+		public Location Location { get; set; }
+
+		public MessagePriority Priority { get; set; }
+
+		public Message()
+		{
+			Location = new Location();
+
+			// Default to administration.
+			Priority = MessagePriority.Administration;
+		}
 
 	}
 }

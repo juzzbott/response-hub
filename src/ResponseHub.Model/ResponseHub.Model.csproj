@@ -55,9 +55,13 @@
     <Compile Include="IEntity.cs" />
     <Compile Include="IRepository.cs" />
     <Compile Include="Identity\Role.cs" />
+    <Compile Include="Messages\Location.cs" />
     <Compile Include="Messages\Message.cs" />
+    <Compile Include="Messages\MessagePriority.cs" />
+    <Compile Include="Messages\PocsagMessage.cs" />
     <Compile Include="ServiceType.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Spatial\Coordinate.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

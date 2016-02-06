@@ -6,11 +6,13 @@ using System.Threading.Tasks;
 
 using Xunit;
 
+using Enivate.ResponseHub.WindowsService.Tests.Fixtures;
+
 namespace Enivate.ResponseHub.WindowsService.Tests
 {
 
 	
-	public class ParserTests
+	public class ParserTests : ICollectionFixture<UnityCollectionFixture>
 	{
 
 		[Theory(DisplayName = "")]
