@@ -81,7 +81,11 @@
     <Compile Include="SpatialTests.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="App.config" />
     <None Include="packages.config" />
+    <None Include="Unity.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\ResponseHub.Common\ResponseHub.Common.csproj">
@@ -96,6 +100,13 @@
       <Project>{63ebc394-caed-4b0b-974c-ba56f619f853}</Project>
       <Name>ResponseHub.Model</Name>
     </ProjectReference>
+    <ProjectReference Include="..\ResponseHub.WindowsService\ResponseHub.WindowsService.csproj">
+      <Project>{ac7cc788-ccd2-4eee-931f-c6dbeb9740bf}</Project>
+      <Name>ResponseHub.WindowsService</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
