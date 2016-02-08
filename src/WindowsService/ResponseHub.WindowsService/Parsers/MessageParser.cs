@@ -17,12 +17,12 @@ namespace Enivate.ResponseHub.WindowsService.Parsers
 		/// <summary>
 		/// Spatial map reference vision regular expression pattern
 		/// </summary>
-		public const string SpatialVisionRegex = ".*\\s+(SVVB|SV\\s?C)\\s+(\\d{1,4})\\s+([A-Z]\\d{1,2})\\s+";
+		public const string SpatialVisionRegex = ".*\\s+((SVVB|SVVB C|SV\\s?C)\\s+(\\d{1,4})\\s+([A-Z]\\d{1,2}))\\s+";
 
 		/// <summary>
 		/// Melway map reference regular expression pattern.
 		/// </summary>
-		public const string MelwayRegex = ".*\\s+(M|MEL)\\s+(\\d{1,3})\\s+([A-Z]\\d{1,2})\\s+";
+		public const string MelwayRegex = ".*\\s+((M|MEL)\\s+(\\d{1,3})\\s+([A-Z]\\d{1,2}))\\s+";
 
 		/// <summary>
 		/// Character code prefix for Emergency pager messages.
@@ -126,8 +126,8 @@ namespace Enivate.ResponseHub.WindowsService.Parsers
 				// Populate the location from the map reference.
 				location = PopulateLocationFromMapReference(mapRefMatch.Groups[1].Value, 
 					MapType.Melway, 
-					Int32.Parse(mapRefMatch.Groups[2].Value), // We know this is an integer as the regex matched against digits. 
-					mapRefMatch.Groups[3].Value);
+					Int32.Parse(mapRefMatch.Groups[3].Value), // We know this is an integer as the regex matched against digits. 
+					mapRefMatch.Groups[4].Value);
 			}
 
 
@@ -135,6 +135,14 @@ namespace Enivate.ResponseHub.WindowsService.Parsers
 			return location;
 		}
 
+		/// <summary>
+		/// Populates the location object based on the values found in the message body.
+		/// </summary>
+		/// <param name="fullMapRef">The full map reference value.</param>
+		/// <param name="mapType">The type of map the map reference relates to.</param>
+		/// <param name="mapPage">The page number of the map reference.</param>
+		/// <param name="gridReference">THe grid reference on the page of the map reference (e.g. A1, B5 etc).</param>
+		/// <returns>The location from the pager message details.</returns>
 		private Location PopulateLocationFromMapReference(string fullMapRef, MapType mapType, int mapPage, string gridReference)
 		{
 

@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Xunit;
 
 using Enivate.ResponseHub.Model.Messages;
+using Enivate.ResponseHub.Model.Spatial;
 using Enivate.ResponseHub.WindowsService.Parsers;
 using Enivate.ResponseHub.WindowsService.Tests.Fixtures;
 
@@ -34,7 +35,7 @@ namespace Enivate.ResponseHub.WindowsService.Tests
 			Message parsedMessage = parser.ParseMessage(pagerMessage);
 
 			// Ensure the job numbers match.
-			Assert.Equal(parsedMessage.JobNumber, actualJobNumber);
+			Assert.Equal(parsedMessage.JobNumber, actualJobNumber, true);
 
 		}
 
@@ -55,6 +56,46 @@ namespace Enivate.ResponseHub.WindowsService.Tests
 
 			// Ensure the message priority matches
 			Assert.Equal(parsedMessage.Priority, actualPriority);
+		}
+
+		[Trait("Category", "Parser tests")]
+		[Theory(DisplayName = "Can parse pager message - Location information")]
+		[InlineData("GLENMORE RD PARWAN SVVB C 6608 E2 (747184) BACC1 CPARW [BACC]", "SVVB C 6608 E2", MapType.SpatialVision, 6608, "E2")]
+		[InlineData("RACECOURSE RD SVC 6439 K15 TREE DOWN BLOCKING 1 EAST BOUND LANE [BACC]", "SVC 6439 K15" , MapType.SpatialVision, 6439, "K15")]
+		[InlineData("RACECOURSE RD M 316 B4 TREE DOWN BLOCKING 1 EAST BOUND LANE [BACC]", "M 316 B4", MapType.Melway, 316, "B4")]
+		public void CanParsePagerMessages_Location(string messageContent, string mapReference, MapType mapType, int mapPage, string gridReference)
+		{
+			// Create the pager message
+			PagerMessage pagerMessage = CreateTestPagerMessage(messageContent);
+
+			// Parse the pager message
+			MessageParser parser = new MessageParser();
+			Message parsedMessage = parser.ParseMessage(pagerMessage);
+
+			// Ensure the message parses a valid location object
+			Assert.NotNull(parsedMessage.Location);
+			Assert.Equal(parsedMessage.Location.MapReference, mapReference, true);
+			Assert.Equal(parsedMessage.Location.MapType, mapType);
+			Assert.Equal(parsedMessage.Location.MapPage, mapPage);
+			Assert.Equal(parsedMessage.Location.GridReference, gridReference, true);
+		}
+
+
+
+		[Trait("Category", "Parser tests")]
+		[Theory(DisplayName = "Can parse pager message - Unknown location information")]
+		[InlineData("QDThis is a test page. [BACC]")]
+		public void CanParsePagerMessages_UnknownLocation(string messageContent)
+		{
+			// Create the pager message
+			PagerMessage pagerMessage = CreateTestPagerMessage(messageContent);
+
+			// Parse the pager message
+			MessageParser parser = new MessageParser();
+			Message parsedMessage = parser.ParseMessage(pagerMessage);
+
+			// Ensure the Location object is null as we don't have any location information
+			Assert.Null(parsedMessage.Location);
 		}
 
 		#region Helpers
