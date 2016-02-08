@@ -1,17 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Enivate.ResponseHub.Model.Spatial
 {
-	public class Coordinate
+	public enum MapType
 	{
 
-		public double Latitude { get; set; }
+		Unknown = 1,
 
-		public double Longitude { get; set; }
+		[Description("Spatial Vision")]
+		SpatialVision = 2,
+
+		Melway = 3
 
 	}
 }

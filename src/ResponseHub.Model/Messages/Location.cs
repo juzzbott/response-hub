@@ -13,17 +13,19 @@ namespace Enivate.ResponseHub.Model.Messages
 
 		public string MapReference { get; set; }
 
-		public string MapType { get; set; }
+		public MapType MapType { get; set; }
 
-		public string MapPage { get; set; }
+		public int MapPage { get; set; }
+
+		public string GridReference { get; set; }
 
 		public string AddressInfo { get; set; }
 
-		public Coordinate Coordinates { get; set; }
+		public Coordinates Coordinates { get; set; }
 
 		public Location()
 		{
-			this.Coordinates = new Coordinate();
+			this.Coordinates = new Coordinates();
 		}
 
 	}

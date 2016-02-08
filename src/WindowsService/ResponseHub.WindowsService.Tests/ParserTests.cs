@@ -17,6 +17,7 @@ namespace Enivate.ResponseHub.WindowsService.Tests
 	public class ParserTests : IClassFixture<UnityCollectionFixture>
 	{
 
+		[Trait("Category", "Parser tests")]
 		[Theory(DisplayName = "Can parse pager message - Job Numbers")]
 		[InlineData("S160132353 SES BACCHUS MARSH TREE DOWN / TRF HAZARD TANYA BARTAM 0432256742 / WESTERN FWY BALLAN /CARTONS RD //RACECOURSE RD SVVB C 6439 K15 TREE DOWN BLOCKING 1 EAST BOUND LANE [BACC]", "S160132353")]
 		[InlineData("ALERT F160103773 PARW1 RESCC1 * CAR ACCIDENT - POSS PERSON TRAPPED CNR GEELONG-BACCHUS MARSH RD/GLENMORE RD PARWAN SVC 6608 E2 (747184) BACC1 CPARW [BACC]", "F160103773")]
@@ -25,7 +26,47 @@ namespace Enivate.ResponseHub.WindowsService.Tests
 		public void CanParsePagerMessages_JobNumbers(string messageContent, string actualJobNumber)
 		{
 
-			PagerMessage pagerMessage = new PagerMessage()
+			// Create the pager message
+			PagerMessage pagerMessage = CreateTestPagerMessage(messageContent);
+
+			// Parse the pager message
+			MessageParser parser = new MessageParser();
+			Message parsedMessage = parser.ParseMessage(pagerMessage);
+
+			// Ensure the job numbers match.
+			Assert.Equal(parsedMessage.JobNumber, actualJobNumber);
+
+		}
+
+		[Trait("Category", "Parser tests")]
+		[Theory(DisplayName = "Can parse pager message - Message Priority")]
+		[InlineData("@@ALERT F160103773 PARW1 RESCC1 * CAR ACCIDENT - POSS PERSON TRAPPED CNR GEELONG-BACCHUS MARSH RD/GLENMORE RD PARWAN SVC 6608 E2 (747184) BACC1 CPARW [BACC]", MessagePriority.Emergency)]
+		[InlineData("HbS160132353 SES BACCHUS MARSH TREE DOWN / TRF HAZARD TANYA BARTAM 0432256742 / WESTERN FWY BALLAN /CARTONS RD //RACECOURSE RD SVVB C 6439 K15 TREE DOWN BLOCKING 1 EAST BOUND LANE [BACC]", MessagePriority.NonEmergency)]
+		[InlineData("QDThis is a test page. [BACC]", MessagePriority.Administration)]
+		[InlineData("This is a test page. [BACC]", MessagePriority.Administration)]
+		public void CanParsePagerMessages_MessagePriority(string messageContent, MessagePriority actualPriority)
+		{
+			// Create the pager message
+			PagerMessage pagerMessage = CreateTestPagerMessage(messageContent);
+
+			// Parse the pager message
+			MessageParser parser = new MessageParser();
+			Message parsedMessage = parser.ParseMessage(pagerMessage);
+
+			// Ensure the message priority matches
+			Assert.Equal(parsedMessage.Priority, actualPriority);
+		}
+
+		#region Helpers
+
+		/// <summary>
+		/// Creates the test pager message based on the message content.
+		/// </summary>
+		/// <param name="messageContent">The content of the pager message.</param>
+		/// <returns>The mock pager message object</returns>
+		private static PagerMessage CreateTestPagerMessage(string messageContent)
+		{
+			return new PagerMessage()
 			{
 				Address = "00012345",
 				Bitrate = 512,
@@ -35,14 +76,9 @@ namespace Enivate.ResponseHub.WindowsService.Tests
 				Timestamp = DateTime.UtcNow,
 				Type = ""
 			};
-
-			// Parse the pager message
-			Message parsedMessage = MessageParser.ParseMessage(pagerMessage);
-
-			// Ensure the job numbers match.
-			Assert.Equal(parsedMessage.JobNumber, actualJobNumber);
-
 		}
+
+		#endregion
 
 	}
 }
