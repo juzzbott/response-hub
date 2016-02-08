@@ -14,7 +14,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Enivate.ResponseHub.UI</RootNamespace>
-    <AssemblyName>Enivate.ResponseHub.UI</AssemblyName>
+    <AssemblyName>ResponseHub.UI</AssemblyName>
     <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <MvcBuildViews>false</MvcBuildViews>
     <UseIISExpress>true</UseIISExpress>

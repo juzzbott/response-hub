@@ -8,7 +8,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Enivate.ResponseHub.Model</RootNamespace>
-    <AssemblyName>Enivate.ResponseHub.Model</AssemblyName>
+    <AssemblyName>ResponseHub.Model</AssemblyName>
     <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>

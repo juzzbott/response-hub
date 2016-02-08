@@ -8,7 +8,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Enivate.ResponseHub.Logging</RootNamespace>
-    <AssemblyName>Enivate.ResponseHub.Logging</AssemblyName>
+    <AssemblyName>ResponseHub.Logging</AssemblyName>
     <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
