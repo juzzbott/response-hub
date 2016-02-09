@@ -120,12 +120,14 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="MapReferenceCache.cs" />
     <Compile Include="MessageService.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="MessageService.Designer.cs">
       <DependentUpon>MessageService.cs</DependentUpon>
     </Compile>
+    <Compile Include="Parsers\MapIndexParser.cs" />
     <Compile Include="Parsers\MessageParser.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -133,6 +135,18 @@
   <ItemGroup>
     <None Include="App.config">
       <SubType>Designer</SubType>
+    </None>
+    <None Include="App_Data\MapIndexFiles\SpatialVision\MAPBOOK_PAGEGRID_50_ED4.dbf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="App_Data\MapIndexFiles\SpatialVision\MAPBOOK_PAGEGRID_50_ED4.prj">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="App_Data\MapIndexFiles\SpatialVision\MAPBOOK_PAGEGRID_50_ED4.shp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="App_Data\MapIndexFiles\SpatialVision\MAPBOOK_PAGEGRID_50_ED4.shx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="packages.config" />
     <None Include="Unity.config">
@@ -165,6 +179,7 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

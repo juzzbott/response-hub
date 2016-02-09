@@ -39,9 +39,6 @@ namespace Enivate.ResponseHub.WindowsService
 			ServicesToRun = new ServiceBase[]
 			{
 				new MessageService()
-				{
-					ServiceName = "ResponseHub"
-				}
 			};
 			
 			if (_runInConsole)
