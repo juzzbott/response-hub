@@ -28,7 +28,7 @@
 		{
 			<tr>
 				<td><a href="/admin/groups/@group.Id"><strong>@group.Name</strong></a></td>
-				<td>@Enum.GetName(typeof(Enivate.ResponseHub.Model.ServiceType), group.Service)</td>
+				<td>@Html.EnumDescription(group.Service)</td>
 				<td>@group.Created.ToString("yyyy-MM-dd")</td>
 				<td><a href="">Edit</a> | <a href="">Remove</a></td>
 			</tr>

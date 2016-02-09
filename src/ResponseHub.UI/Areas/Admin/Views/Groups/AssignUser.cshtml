@@ -6,22 +6,40 @@
 
 <h2>@ViewBag.Title</h2>
 
-<form action="/admin/groups/create-administrator">
+<form action="@ViewBag.FormAction" method="post">
 
 	@Html.AntiForgeryToken()
 
 	@if (Model.UserId != Guid.Empty)
 	{
-		
+
+		@Html.HiddenFor(model => model.EmailAddress)
+		@Html.HiddenFor(model => model.FirstName)
+		@Html.HiddenFor(model => model.Surname)
+
 		<p>A user account with the email address exists. Please confirm that you wish to make the user below the group administrator.</p>
-		<dl class="dl-horizontal">
-			<dt>Email address</dt>
-			<dd>@Model.EmailAddress</dd>
-			<dt>First name</dt>
-			<dd>@Model.FirstName</dd>
-			<dt>Surname</dt>
-			<dd>@Model.Surname</dd>
-		</dl>
+		<div class="row">
+			<div class="col-lg-6">
+				
+				<table class="table table-responsive">
+					<thead>
+						<tr>
+							<td><strong>Email address</strong></td>
+							<td><strong>First name</strong></td>
+							<td><strong>Surname</strong></td>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>@Model.EmailAddress</td>
+							<td>@Model.FirstName</td>
+							<td>@Model.Surname</td>
+						</tr>
+					</tbody>
+				</table>
+
+			</div>
+		</div>
 
 	}
 	else

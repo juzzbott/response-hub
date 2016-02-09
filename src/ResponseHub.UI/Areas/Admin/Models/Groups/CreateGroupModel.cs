@@ -18,6 +18,7 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Models.Groups
 		[Required(ErrorMessage = "You must select a service the group belongs to.", AllowEmptyStrings = false)]
 		public string Service { get; set; }
 		
+		[Required(ErrorMessage = "You must enter a capcode / pager address for this group.")]
 		public string Capcode { get; set; }
 
 		public IList<SelectListItem> AvailableServices { get; set; }

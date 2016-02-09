@@ -32,12 +32,13 @@
 	</div>
 
 	<div class="form-group">
-		<label for="Name">Capcode</label>
+		<label for="Name">Capcode *</label>
 		<div class="row">
 			<div class="col-sm-8 col-md-6 col-lg-4">
 				@Html.TextBoxFor(model => model.Capcode, new { @class = "form-control", placeholder = "00000xxx", maxlength="9" })
 			</div>
 		</div>
+		@Html.ValidationMessageFor(model => model.Capcode)
 	</div>
 
 	<div class="form-group row">

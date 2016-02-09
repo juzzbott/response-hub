@@ -9,7 +9,7 @@ namespace Enivate.ResponseHub.Model.Groups.Interface
 	public interface IGroupService
 	{
 
-		Task<Group> CreateGroup(string name, ServiceType service, string description);
+		Task<Group> CreateGroup(string name, ServiceType service, string capCode, Guid groupAdministratorId, string description);
 
 		Task<IList<Group>> GetAll();
 

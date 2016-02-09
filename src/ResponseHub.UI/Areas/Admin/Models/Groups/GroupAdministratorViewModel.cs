@@ -19,5 +19,7 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Models.Groups
 
 		public string EmailAddress { get; set; }
 
+		public bool UserExists { get; set; }
+
 	}
 }

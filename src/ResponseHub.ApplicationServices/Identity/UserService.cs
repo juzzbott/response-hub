@@ -279,5 +279,34 @@ namespace Enivate.ResponseHub.ApplicationServices.Identity
 
 		#endregion
 
+		#region IUserService
+
+		/// <summary>
+		/// Creates a new user object
+		/// </summary>
+		/// <param name="emailAddress"></param>
+		/// <param name="firstName"></param>
+		/// <param name="surname"></param>
+		/// <param name="roles"></param>
+		/// <returns></returns>
+		public async Task<IdentityUser> CreateAsync(string emailAddress, string firstName, string surname, IList<string> roles)
+		{
+			// Create the IdentityUser object
+			IdentityUser user = new IdentityUser()
+			{
+				Created = DateTime.UtcNow,
+				EmailAddress = emailAddress,
+				FirstName = firstName,
+				Surname = surname,
+				UserName = emailAddress,
+				Roles = roles
+			};
+
+			// Add the user
+			return await _repository.Add(user);
+		}
+
+		#endregion
+
 	}
 }

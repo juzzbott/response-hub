@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
@@ -8,6 +9,7 @@ using System.Web.Mvc;
 using Microsoft.Practices.Unity;
 
 using Enivate.ResponseHub.Common;
+using Enivate.ResponseHub.Logging;
 using Enivate.ResponseHub.Model;
 using Enivate.ResponseHub.Model.Groups;
 using Enivate.ResponseHub.Model.Groups.Interface;
@@ -17,7 +19,7 @@ using Enivate.ResponseHub.Model.Identity;
 using Enivate.ResponseHub.Model.Identity.Interface;
 
 using Enivate.ResponseHub.UI.Areas.Admin.Models.Groups;
-using System.Net;
+
 
 namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 {
@@ -48,6 +50,15 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 			}
 		}
 
+		private ILogger _log;
+		protected ILogger Log
+		{
+			get
+			{
+				return _log ?? (_log = UnityConfiguration.Container.Resolve<ILogger>());
+			}
+		}
+
 		[Route]
         // GET: Admin/Groups
         public async Task<ActionResult> Index()
@@ -71,6 +82,12 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 		[ValidateAntiForgeryToken]
 		public async Task<ActionResult> Create(CreateGroupModel model)
 		{
+
+			// If the model is not valid, return view.
+			if (!ModelState.IsValid)
+			{
+				return View(model);
+			}
 
 			// Get the service type.
 			int intServiceType;
@@ -104,6 +121,8 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 		public async Task<ActionResult> GroupAdministrator()
 		{
 
+			ViewBag.FormAction = "/admin/groups/create/group-administrator";
+
 			// Get the CreateGroupViewModel from session
 			CreateGroupModel model = (CreateGroupModel)Session[CreateGroupViewModelSesionKey];
 
@@ -125,7 +144,7 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 				model.GroupAdministrator.EmailAddress = model.GroupAdministratorEmail;
 			}
 
-			return View(model.GroupAdministrator);
+			return View("AssignUser", model.GroupAdministrator);
 		}
 
 		[Route("create/group-administrator")]
@@ -133,6 +152,15 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 		[HttpPost]
 		public async Task<ActionResult> GroupAdministrator(GroupAdministratorViewModel model)
 		{
+
+			ViewBag.FormAction = "/admin/groups/create/group-administrator";
+
+			// If the model is not valid, return view.
+			if (!ModelState.IsValid)
+			{
+				return View("AssignUser", model);
+			}
+
 			// Get the CreateGroupViewModel from session
 			CreateGroupModel createGroupModel = (CreateGroupModel)Session[CreateGroupViewModelSesionKey];
 
@@ -142,9 +170,48 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 				return new RedirectResult("/admin/groups/create");
 			}
 
+			// Store the group administrator
+			Guid groupAdministratorId;
 
+			// If the group administrator user does not exist, then create the user now
+			if (!model.UserExists)
+			{
 
-			return new RedirectResult("/admin/groups");
+				// Create the new user
+				IdentityUser newUser = await UserService.CreateAsync(model.EmailAddress, model.FirstName, model.Surname, new List<string>() { "Group Administrator" });
+
+				// Set the group administrator to the new user id
+				groupAdministratorId = newUser.Id;
+
+			}
+			else
+			{
+				// Get the identity user related to the specified group admin
+				IdentityUser groupAdminUser = await UserService.FindByEmailAsync(createGroupModel.GroupAdministratorEmail);
+
+				// If the group admin user is null, return an error, otherwise set the group admin id.
+				if (groupAdminUser == null)
+				{
+					ModelState.AddModelError("", "There was a system error creating the group.");
+					await Log.Error(String.Format("Unable to create group. Existing user with email ''  could not be found.", createGroupModel.GroupAdministratorEmail));
+					return View("AssignUser", model);
+				}
+				else
+				{
+					groupAdministratorId = groupAdminUser.Id;
+				}
+			}
+
+			// Get the service type from the model
+			int groupServiceId;
+			Int32.TryParse(createGroupModel.Service, out groupServiceId);
+			ServiceType service = (ServiceType)groupServiceId;
+
+			// Create the group
+			await GroupService.CreateGroup(createGroupModel.Name, service, createGroupModel.Capcode, groupAdministratorId, createGroupModel.Description);
+
+			// redirect back to group index page
+			return new RedirectResult("/admin/groups?group_created=1");
 		}
 
 		[Route("{id:guid}")]

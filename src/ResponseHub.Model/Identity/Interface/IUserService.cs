@@ -15,6 +15,8 @@ namespace Enivate.ResponseHub.Model.Identity.Interface
 	public interface IUserService
 	{
 
+		#region UserManager members
+
 		IClaimsIdentityFactory<IdentityUser, Guid> ClaimsIdentityFactory { get; set; }
 		TimeSpan DefaultAccountLockoutTimeSpan { get; set; }
 		IIdentityMessageService EmailService { get; set; }
@@ -100,6 +102,14 @@ namespace Enivate.ResponseHub.Model.Identity.Interface
 		Task<bool> VerifyChangePhoneNumberTokenAsync(Guid userId, string token, string phoneNumber);
 		Task<bool> VerifyTwoFactorTokenAsync(Guid userId, string twoFactorProvider, string token);
 		Task<bool> VerifyUserTokenAsync(Guid userId, string purpose, string token);
+
+		#endregion
+
+		#region IUserService members
+
+		Task<IdentityUser> CreateAsync(string emailAddress, string firstName, string surname, IList<string> roles);
+
+		#endregion
 
 	}
 }
