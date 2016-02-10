@@ -19,14 +19,14 @@ using Enivate.ResponseHub.Model.Identity;
 using Enivate.ResponseHub.Model.Identity.Interface;
 
 using Enivate.ResponseHub.UI.Areas.Admin.Models.Groups;
-
+using Enivate.ResponseHub.UI.Filters;
 
 namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 {
 
 	[RouteArea("admin")]
 	[RoutePrefix("groups")]
-	[Authorize(Roles = "System Administrator")]
+	[ClaimsAuthorize(Roles = RoleTypes.SystemAdministrator)]
     public class GroupsController : Controller
     {
 
@@ -233,7 +233,7 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 			{
 				Name = group.Name,
 				Description = group.Description,
-				Service = group.Service
+				Service = EnumValue.GetEnumDescription(group.Service),
 			};
 
 			return View(model);

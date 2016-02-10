@@ -11,7 +11,7 @@ namespace Enivate.ResponseHub.Model.Identity
 	public class RoleTypes
 	{
 
-		public const string PublicUser = "Public User";
+		public const string GeneralUser = "General User";
 
 		public const string GroupAdministrator = "Group Administrator";
 

@@ -22,7 +22,6 @@ namespace Enivate.ResponseHub.UI.Controllers
 {
 
 	[RoutePrefix("my-account")]
-	[Authorize]
     public class MyAccountController : Controller
     {
 

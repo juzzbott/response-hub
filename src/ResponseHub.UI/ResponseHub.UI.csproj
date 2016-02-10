@@ -186,6 +186,7 @@
     <Compile Include="Areas\Admin\Models\Groups\GroupAdministratorViewModel.cs" />
     <Compile Include="Areas\Admin\Models\Groups\SingleGroupViewModel.cs" />
     <Compile Include="Controllers\MyAccountController.cs" />
+    <Compile Include="Filters\ClaimsAuthorizeAttribute.cs" />
     <Compile Include="Filters\ResponseHubPageAttribute.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
