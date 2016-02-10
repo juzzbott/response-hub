@@ -15,6 +15,7 @@ using Enivate.ResponseHub.Common;
 using Enivate.ResponseHub.Logging;
 using Enivate.ResponseHub.Model.Identity;
 using Enivate.ResponseHub.Model.Identity.Interface;
+using System.Security.Claims;
 
 namespace Enivate.ResponseHub.UI.Filters
 {
@@ -27,7 +28,7 @@ namespace Enivate.ResponseHub.UI.Filters
 			if (filterContext != null && filterContext.HttpContext != null)
 			{
 
-				IIdentity userIdentity = filterContext.HttpContext.User.Identity; 
+				ClaimsIdentity userIdentity = (ClaimsIdentity)filterContext.HttpContext.User.Identity; 
 
 				// If the user is authenticated, then get the user object from the database and set the full name into the view bag.
 				if (userIdentity.IsAuthenticated)

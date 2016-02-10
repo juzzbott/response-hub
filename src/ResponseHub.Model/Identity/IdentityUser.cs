@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 using Microsoft.AspNet.Identity;
+using System.Security.Claims;
 
 namespace Enivate.ResponseHub.Model.Identity
 {
@@ -28,14 +29,14 @@ namespace Enivate.ResponseHub.Model.Identity
 
 		public PasswordResetToken PasswordResetToken { get; set; }
 
-		public IList<string> Roles { get; set; }
+		public IList<Claim> Claims { get; set; }
 
 		public IList<UserLoginInfo> Logins { get; set; }
 
 		public IdentityUser()
 		{
 			Id = Guid.NewGuid();
-			Roles = new List<String>();
+			Claims = new List<Claim>();
 			GroupIds = new List<Guid>();
 			Logins = new List<UserLoginInfo>();
 		}

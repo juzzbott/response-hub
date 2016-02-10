@@ -59,7 +59,6 @@
   <ItemGroup>
     <Compile Include="MongoDB\GroupRepository.cs" />
     <Compile Include="MongoCollectionNameAttribute.cs" />
-    <Compile Include="MongoDB\RoleRepository.cs" />
     <Compile Include="MongoDB\UserRepository.cs" />
     <Compile Include="MongoRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

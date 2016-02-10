@@ -8,12 +8,14 @@ using Microsoft.AspNet.Identity;
 
 namespace Enivate.ResponseHub.Model.Identity
 {
-	public class Role : IEntity, IRole<Guid>
+	public class RoleTypes
 	{
 
-		public Guid Id { get; set; }
+		public const string PublicUser = "Public User";
 
-		public string Name { get; set; }
+		public const string GroupAdministrator = "Group Administrator";
+
+		public const string SystemAdministrator = "System Administrator";
 
 	}
 }

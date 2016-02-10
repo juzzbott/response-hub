@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,6 +9,7 @@ using Microsoft.AspNet.Identity;
 
 using Enivate.ResponseHub.Model.Identity;
 using Enivate.ResponseHub.Model.Identity.Interface;
+using System.Security.Claims;
 
 namespace Enivate.ResponseHub.DataAccess.MongoDB
 {
@@ -204,61 +206,6 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 
 		#endregion
 
-		#region IUserRoleStore
-
-		/// <summary>
-		/// Adds the user to the specified role.
-		/// </summary>
-		/// <param name="user">The user to add the role to.</param>
-		/// <param name="roleName">The name of the role to add the user to.</param>
-		/// <returns></returns>
-		public async Task AddToRoleAsync(IdentityUser user, string roleName)
-		{
-			// If the role does not exist in the list, add it
-			if (!user.Roles.Contains(roleName, StringComparer.CurrentCultureIgnoreCase))
-			{
-				user.Roles.Add(roleName);
-				await UpdateAsync(user);
-			}
-			return;
-		}
-
-		/// <summary>
-		/// Removes the user from the specified role.
-		/// </summary>
-		/// <param name="user">The user to remove the role from.</param>
-		/// <param name="roleName">The name of the role to remove the user from.</param>
-		/// <returns></returns>
-		public async Task RemoveFromRoleAsync(IdentityUser user, string roleName)
-		{
-			user.Roles.Remove(roleName);
-			await UpdateAsync(user);
-			return;
-		}
-
-		/// <summary>
-		/// Returns the list of roles the user is a member of.
-		/// </summary>
-		/// <param name="user">The user to get the roles for.</param>
-		/// <returns></returns>
-		public Task<IList<string>> GetRolesAsync(IdentityUser user)
-		{
-			return Task.Run(() => user.Roles);
-		}
-
-		/// <summary>
-		/// Determines if the user is currently in the specified role or not.
-		/// </summary>
-		/// <param name="user">The user to check if is in the role.</param>
-		/// <param name="roleName">The name of the role to check for.</param>
-		/// <returns>True if the user is in the role, otherwise false.</returns>
-		public Task<bool> IsInRoleAsync(IdentityUser user, string roleName)
-		{
-			return Task.Run(() => user.Roles.Contains(roleName, StringComparer.CurrentCultureIgnoreCase));
-		}
-
-		#endregion
-
 		#region IUserLockoutStore
 
 		/// <summary>
@@ -337,6 +284,61 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 			return Task.FromResult<bool>(false);
 		}
 
+		#endregion
+
+		#region IUserClaimStore 
+
+		/// <summary>
+		///  Adds the claim to the user if it does not current exist. Both the type and value will be used to determine if a claim exists.
+		/// </summary>
+		/// <param name="user">The user to add the claim to.</param>
+		/// <param name="claim">The claim to add to the user.</param>
+		/// <returns></returns>
+		public async Task AddClaimAsync(IdentityUser user, Claim claim)
+		{
+			// If the existing claim does not exist, add it
+			if (!user.Claims.Any(i => i.Type.Equals(claim.Type, StringComparison.CurrentCultureIgnoreCase) && i.Value.Equals(claim.Value, StringComparison.CurrentCultureIgnoreCase)))
+			{
+				user.Claims.Add(claim);
+				await UpdateAsync(user);
+			}
+		}
+
+		/// <summary>
+		/// Gets the users claims.
+		/// </summary>
+		/// <param name="user">The user to get the claims for.</param>
+		/// <returns></returns>
+		public Task<IList<Claim>> GetClaimsAsync(IdentityUser user)
+		{
+			return Task.FromResult(user.Claims);
+		}
+
+		/// <summary>
+		/// Removes the claim from user. The Type and Value will be matched when removing the claim.
+		/// </summary>
+		/// <param name="user">The user to remove the claim from.</param>
+		/// <param name="claim">The claim to remove.</param>
+		/// <returns></returns>
+		public async Task RemoveClaimAsync(IdentityUser user, Claim claim)
+		{
+
+			// Find the claim to remove based on the type and value
+			Claim claimToRemove = user.Claims.FirstOrDefault(i => i.Type.Equals(claim.Type, StringComparison.CurrentCultureIgnoreCase) &&
+				i.Value.Equals(claim.Value, StringComparison.CurrentCultureIgnoreCase));
+
+			// If the claim exists, remove it
+			if (claimToRemove != null)
+			{
+				// Remove the claim
+				user.Claims.Remove(claim);
+
+				// Update the user
+				await UpdateAsync(user);
+
+			}
+		}
+		
 		#endregion
 
 	}

@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 using Microsoft.AspNet.Identity;
+using System.Security.Claims;
 
 namespace Enivate.ResponseHub.Model.Identity.Interface
 {
@@ -13,9 +14,9 @@ namespace Enivate.ResponseHub.Model.Identity.Interface
 		IUserPasswordStore<IdentityUser, Guid>,
 		IUserLoginStore<IdentityUser, Guid>,
 		IUserEmailStore<IdentityUser, Guid>,
-		IUserRoleStore<IdentityUser, Guid>,
 		IUserLockoutStore<IdentityUser, Guid>,
-		IUserTwoFactorStore<IdentityUser, Guid>
+		IUserTwoFactorStore<IdentityUser, Guid>,
+		IUserClaimStore<IdentityUser, Guid>
 	{
 
 		#region IUserStore
@@ -70,18 +71,6 @@ namespace Enivate.ResponseHub.Model.Identity.Interface
 
 		#endregion
 
-		#region IUserRoleStore
-
-		new Task AddToRoleAsync(IdentityUser user, string roleName);
-
-		new Task<IList<string>> GetRolesAsync(IdentityUser user);
-
-		new Task<bool> IsInRoleAsync(IdentityUser user, string roleName);
-
-		new Task RemoveFromRoleAsync(IdentityUser user, string roleName);
-
-		#endregion
-
 		#region IUserLockoutStore
 
 		new Task<int> GetAccessFailedCountAsync(IdentityUser user);
@@ -99,12 +88,19 @@ namespace Enivate.ResponseHub.Model.Identity.Interface
 		new Task SetLockoutEndDateAsync(IdentityUser user, DateTimeOffset lockoutEnd);
 
 		#endregion
-
 		#region IUserTwoFactorStore
 
 		new Task<bool> GetTwoFactorEnabledAsync(IdentityUser user);
 
 		new Task SetTwoFactorEnabledAsync(IdentityUser user, bool enabled);
+
+		#endregion
+
+		#region IUserClaimStore
+
+		new Task AddClaimAsync(IdentityUser user, Claim claim);
+		new Task<IList<Claim>> GetClaimsAsync(IdentityUser user);
+		new Task RemoveClaimAsync(IdentityUser user, Claim claim);
 
 		#endregion
 

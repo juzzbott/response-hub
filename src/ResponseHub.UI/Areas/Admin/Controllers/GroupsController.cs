@@ -142,6 +142,7 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 				model.GroupAdministrator.FirstName = groupAdminUser.FirstName;
 				model.GroupAdministrator.Surname = groupAdminUser.Surname;
 				model.GroupAdministrator.EmailAddress = model.GroupAdministratorEmail;
+				model.GroupAdministrator.UserExists = true;
 			}
 
 			return View("AssignUser", model.GroupAdministrator);
@@ -178,7 +179,7 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 			{
 
 				// Create the new user
-				IdentityUser newUser = await UserService.CreateAsync(model.EmailAddress, model.FirstName, model.Surname, new List<string>() { "Group Administrator" });
+				IdentityUser newUser = await UserService.CreateAsync(model.EmailAddress, model.FirstName, model.Surname, new List<string>() { RoleTypes.GroupAdministrator });
 
 				// Set the group administrator to the new user id
 				groupAdministratorId = newUser.Id;

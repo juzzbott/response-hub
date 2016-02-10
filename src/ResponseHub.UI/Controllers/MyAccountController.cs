@@ -16,6 +16,7 @@ using Enivate.ResponseHub.Common;
 using Enivate.ResponseHub.Logging;
 using Enivate.ResponseHub.Model.Identity;
 using Enivate.ResponseHub.UI.Models.MyAccount;
+using System.Security.Claims;
 
 namespace Enivate.ResponseHub.UI.Controllers
 {
@@ -190,7 +191,7 @@ namespace Enivate.ResponseHub.UI.Controllers
 
 			// We don't have any query string return urls, so we can set one here based on role
 			// For system admin users, go to the admin section
-			if (authenticatedUser != null && authenticatedUser.Roles != null && authenticatedUser.Roles.Any(i => i.Equals("System Administrator", StringComparison.CurrentCultureIgnoreCase)))
+			if (authenticatedUser != null && authenticatedUser.Claims != null && authenticatedUser.Claims.Any(i => i.Value.Equals(RoleTypes.SystemAdministrator) && i.Type == ClaimTypes.Role))
 			{
 				return "/admin";
 			}

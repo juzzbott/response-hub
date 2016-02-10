@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,6 +10,8 @@ using Microsoft.AspNet.Identity;
 using Enivate.ResponseHub.Logging;
 using Enivate.ResponseHub.Model.Identity;
 using Enivate.ResponseHub.Model.Identity.Interface;
+using System.Security.Claims;
+using Enivate.ResponseHub.Common.Constants;
 
 namespace Enivate.ResponseHub.ApplicationServices.Identity
 {
@@ -291,6 +294,25 @@ namespace Enivate.ResponseHub.ApplicationServices.Identity
 		/// <returns></returns>
 		public async Task<IdentityUser> CreateAsync(string emailAddress, string firstName, string surname, IList<string> roles)
 		{
+
+			// If the roles list is null, instantiate to empty list
+			if (roles == null)
+			{
+				roles = new List<string>();
+			}
+
+			string claimIssuer = ConfigurationManager.AppSettings[ConfigurationKeys.ClaimsIssuer];
+			if (String.IsNullOrWhiteSpace(claimIssuer))
+			{
+				claimIssuer = "ResponseHub";
+			}
+
+			IList<Claim> claims = new List<Claim>();
+			foreach(string role in roles)
+			{
+				claims.Add(new Claim(ClaimTypes.Role, role, ClaimValueTypes.String, claimIssuer));
+			}
+
 			// Create the IdentityUser object
 			IdentityUser user = new IdentityUser()
 			{
@@ -299,7 +321,6 @@ namespace Enivate.ResponseHub.ApplicationServices.Identity
 				FirstName = firstName,
 				Surname = surname,
 				UserName = emailAddress,
-				Roles = roles
 			};
 
 			// Add the user
