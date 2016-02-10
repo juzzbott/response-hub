@@ -10,23 +10,24 @@ using Microsoft.AspNet.Identity;
 using Enivate.ResponseHub.Model.Identity;
 using Enivate.ResponseHub.Model.Identity.Interface;
 using System.Security.Claims;
+using Enivate.ResponseHub.DataAccess.MongoDB.DataObjects.Users;
 
 namespace Enivate.ResponseHub.DataAccess.MongoDB
 {
 	[MongoCollectionName("users")]
-	public class UserRepository : MongoRepository<IdentityUser>, IUserRepository
+	public class UserRepository : MongoRepository<IdentityUserDto>, IUserRepository
 	{
 
 		#region IUserStore
 
 		public async Task CreateAsync(IdentityUser user)
 		{
-			await Save(user);
+			await Save(MapToDbObject(user));
 		}
 
 		public async Task DeleteAsync(IdentityUser user)
 		{
-			await Remove(user);
+			await Remove(MapToDbObject(user));
 		}
 
 		public void Dispose()
@@ -36,17 +37,21 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 
 		public async Task<IdentityUser> FindByIdAsync(Guid userId)
 		{
-			return await GetById(userId);
+			IdentityUserDto dbObj = await GetById(userId);
+
+			return MapToModel(dbObj);
 		}
 
 		public async Task<IdentityUser> FindByNameAsync(string userName)
 		{
-			return await FindOne(i => i.UserName.ToLower() == userName.ToLower());
+			IdentityUserDto dbObj = await FindOne(i => i.UserName.ToLower() == userName.ToLower());
+
+			return MapToModel(dbObj);
 		}
 
 		public async Task UpdateAsync(IdentityUser user)
 		{
-			await Save(user);
+			await Save(MapToDbObject(user));
 		}
 
 		#endregion
@@ -118,9 +123,9 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 
 		public async Task<IdentityUser> FindAsync(UserLoginInfo login)
 		{
-			IList<IdentityUser> userWithLogin = await Find(u => u.Logins.Any(l => l.LoginProvider == login.LoginProvider && l.ProviderKey == login.ProviderKey));
+			IList<IdentityUserDto> userWithLogin = await Find(u => u.Logins.Any(l => l.LoginProvider == login.LoginProvider && l.ProviderKey == login.ProviderKey));
 
-			return (IdentityUser)userWithLogin.FirstOrDefault();
+			return (IdentityUser)MapToModel(userWithLogin.FirstOrDefault());
 		}
 
 		#endregion
@@ -142,7 +147,9 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 			}
 
 			// Get the user from the repository
-			return await FindOne(i => i.UserName.ToUpperInvariant() == email.ToUpperInvariant());
+			IdentityUserDto dbObj = await FindOne(i => i.UserName.ToUpperInvariant() == email.ToUpperInvariant());
+
+			return MapToModel(dbObj);
 
 		}
 
@@ -338,7 +345,117 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 
 			}
 		}
-		
+
+		#endregion
+
+		#region Mappers
+
+		/// <summary>
+		/// Maps the IdentityUser DTO object to the IdentityUser model object.
+		/// </summary>
+		/// <param name="dbObject"></param>
+		/// <returns></returns>
+		public IdentityUser MapToModel(IdentityUserDto dbObject)
+		{
+
+			if (dbObject == null)
+			{
+				return null;
+			}
+
+			IdentityUser user = new IdentityUser()
+			{
+				Created = dbObject.Created,
+				EmailAddress = dbObject.EmailAddress,
+				FirstName = dbObject.FirstName,
+				GroupIds = dbObject.GroupIds,
+				Id = dbObject.Id,
+				Logins = dbObject.Logins,
+				PasswordHash = dbObject.PasswordHash,
+				PasswordResetToken = dbObject.PasswordResetToken,
+				Surname = dbObject.Surname,
+				UserName = dbObject.UserName
+			};
+
+			// Map the claims
+			user.Claims = dbObject.Claims.Select(i => MapClaimToModel(i)).ToList();
+
+			// return the user.
+			return user;
+
+		}
+
+		/// <summary>
+		/// Maps the IdentityUser model object to the IdentityUser DTO object.
+		/// </summary>
+		/// <param name="modelObj"></param>
+		/// <returns></returns>
+		public IdentityUserDto MapToDbObject(IdentityUser modelObj)
+		{
+
+
+			if (modelObj == null)
+			{
+				return null;
+			}
+
+			IdentityUserDto user = new IdentityUserDto()
+			{
+				Created = modelObj.Created,
+				EmailAddress = modelObj.EmailAddress,
+				FirstName = modelObj.FirstName,
+				GroupIds = modelObj.GroupIds,
+				Id = modelObj.Id,
+				Logins = modelObj.Logins,
+				PasswordHash = modelObj.PasswordHash,
+				PasswordResetToken = modelObj.PasswordResetToken,
+				Surname = modelObj.Surname,
+				UserName = modelObj.UserName
+			};
+
+			// Map the claims
+			user.Claims = modelObj.Claims.Select(i => MapClaimToDbObject(i)).ToList();
+
+			// return the user.
+			return user;
+		}
+
+		/// <summary>
+		/// Maps a Claim DTO object to the Identity claim object.
+		/// </summary>
+		/// <param name="dbObject"></param>
+		/// <returns></returns>
+		public Claim MapClaimToModel(ClaimDto dbObject)
+		{
+			
+			if (dbObject == null)
+			{
+				return null;
+			}
+
+			return new Claim(dbObject.Type, dbObject.Value, ClaimValueTypes.String, dbObject.Issuer);
+		}
+
+		/// <summary>
+		/// Maps an Identity claim object to the Claim DTO object.
+		/// </summary>
+		/// <param name="claim"></param>
+		/// <returns></returns>
+		public ClaimDto MapClaimToDbObject(Claim claim)
+		{
+			if (claim == null)
+			{
+				return null;
+			}
+
+			return new ClaimDto()
+			{
+				Issuer = claim.Issuer,
+				Type = claim.Type,
+				Value = claim.Value
+			};
+		}
+
 		#endregion
 
 	}

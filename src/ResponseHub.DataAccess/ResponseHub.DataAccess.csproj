@@ -57,6 +57,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="MongoDB\DataObjects\Users\ClaimDto.cs" />
+    <Compile Include="MongoDB\DataObjects\Users\IdentityUserDto.cs" />
     <Compile Include="MongoDB\GroupRepository.cs" />
     <Compile Include="MongoCollectionNameAttribute.cs" />
     <Compile Include="MongoDB\UserRepository.cs" />

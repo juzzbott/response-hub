@@ -324,7 +324,10 @@ namespace Enivate.ResponseHub.ApplicationServices.Identity
 			};
 
 			// Add the user
-			return await _repository.Add(user);
+			await _repository.CreateAsync(user);
+
+			// return user
+			return user;
 		}
 
 		#endregion

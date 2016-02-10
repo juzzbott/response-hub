@@ -9,8 +9,7 @@ using System.Security.Claims;
 
 namespace Enivate.ResponseHub.Model.Identity.Interface
 {
-	public interface IUserRepository : IRepository<IdentityUser>, 
-		IUserStore<IdentityUser, Guid>, 
+	public interface IUserRepository : IUserStore<IdentityUser, Guid>, 
 		IUserPasswordStore<IdentityUser, Guid>,
 		IUserLoginStore<IdentityUser, Guid>,
 		IUserEmailStore<IdentityUser, Guid>,
