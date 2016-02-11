@@ -60,7 +60,7 @@ namespace Enivate.ResponseHub.WindowsService
 			double.TryParse(ConfigurationManager.AppSettings[_intervalKey], out timerInterval);
 
 			// Load the index maps into memory
-			LoadIndexMaps();
+			//LoadIndexMaps();
 
 			// Initialise the timer
 			_msgServiceTimer = new Timer(timerInterval);

@@ -61,6 +61,7 @@
     <Compile Include="MongoDB\DataObjects\Users\IdentityUserDto.cs" />
     <Compile Include="MongoDB\GroupRepository.cs" />
     <Compile Include="MongoCollectionNameAttribute.cs" />
+    <Compile Include="MongoDB\PagerMessageRepository.cs" />
     <Compile Include="MongoDB\UserRepository.cs" />
     <Compile Include="MongoRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

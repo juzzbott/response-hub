@@ -6,8 +6,10 @@ using System.Threading.Tasks;
 
 namespace Enivate.ResponseHub.Model.Messages
 {
-	public class PagerMessage
+	public class PagerMessage : IEntity
 	{
+
+		public Guid Id { get; set; }
 
 		public string Address { get; set; }
 
