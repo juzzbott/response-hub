@@ -136,18 +136,6 @@
     <None Include="App.config">
       <SubType>Designer</SubType>
     </None>
-    <None Include="App_Data\MapIndexFiles\SpatialVision\MAPBOOK_PAGEGRID_50_ED4.dbf">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="App_Data\MapIndexFiles\SpatialVision\MAPBOOK_PAGEGRID_50_ED4.prj">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="App_Data\MapIndexFiles\SpatialVision\MAPBOOK_PAGEGRID_50_ED4.shp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="App_Data\MapIndexFiles\SpatialVision\MAPBOOK_PAGEGRID_50_ED4.shx">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Include="packages.config" />
     <None Include="Unity.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

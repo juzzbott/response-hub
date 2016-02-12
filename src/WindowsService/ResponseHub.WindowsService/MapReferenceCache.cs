@@ -17,23 +17,23 @@ namespace Enivate.ResponseHub.WindowsService
 		/// <summary>
 		/// The collection of Spatial Vision map references.
 		/// </summary>
-		public IDictionary<int, IList<MapReference>> SpatialVision { get; set; }
+		public IDictionary<string, IList<MapIndex>> SpatialVision { get; set; }
 
 		/// <summary>
 		/// The collection of Melway map references.
 		/// </summary>
-		public IDictionary<int, IList<MapReference>> Melway { get; set; }
+		public IDictionary<string, IList<MapIndex>> Melway { get; set; }
 
 		/// <summary>
 		/// Creates a new instance of the MapReferenceCache.
 		/// </summary>
 		private MapReferenceCache()
 		{
-			SpatialVision = new Dictionary<int, IList<MapReference>>();
-			Melway = new Dictionary<int, IList<MapReference>>();
+			SpatialVision = new Dictionary<string, IList<MapIndex>>();
+			Melway = new Dictionary<string, IList<MapIndex>>();
 		}
 
-		public void AddMapReference(MapType mapType, MapReference mapReference)
+		public void AddMapReference(MapType mapType, MapIndex mapReference)
 		{
 
 			if (mapType == MapType.Unknown)
@@ -41,7 +41,7 @@ namespace Enivate.ResponseHub.WindowsService
 				return;
 			}
 
-			IDictionary<int, IList<MapReference>> collection;
+			IDictionary<string, IList<MapIndex>> collection;
 
 			switch (mapType)
 			{
@@ -61,7 +61,7 @@ namespace Enivate.ResponseHub.WindowsService
 			// Now that we have the collection, first we need to check if the map page exists
 			if (!collection.ContainsKey(mapReference.PageNumber))
 			{
-				collection.Add(mapReference.PageNumber, new List<MapReference>());
+				collection.Add(mapReference.PageNumber, new List<MapIndex>());
 			}
 
 			// Now we can add the map reference to the list of references for the specific page
@@ -69,7 +69,7 @@ namespace Enivate.ResponseHub.WindowsService
 
 		}
 
-		public bool CacheItemExists(MapType mapType, MapReference mapReference)
+		public bool CacheItemExists(MapType mapType, MapIndex mapReference)
 		{
 			if (mapType == MapType.Unknown || mapReference == null)
 			{

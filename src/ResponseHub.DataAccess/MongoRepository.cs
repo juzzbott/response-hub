@@ -32,14 +32,17 @@ namespace Enivate.ResponseHub.DataAccess
 		/// </summary>
 		protected IMongoDatabase _mongoDb;
 
+		public MongoRepository() : this(ConfigurationManager.ConnectionStrings["MongoServer"].ConnectionString)
+		{
+		}
+
 		/// <summary>
-		/// Creates a new instance of the UserRepository object.
+		/// Creates a new instance of the MongoRepository object.
 		/// </summary>
-		public MongoRepository()
+		public MongoRepository(string connectionString)
 		{
 
 			// Load the configuration to read the connection string
-			string connectionString = ConfigurationManager.ConnectionStrings["MongoServer"].ConnectionString;
 			MongoUrl mongoUrl = new MongoUrl(connectionString);
 
 			// Specify the mongo client, db and collection objects.

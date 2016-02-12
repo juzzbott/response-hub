@@ -10,12 +10,12 @@ namespace Enivate.ResponseHub.Model.Spatial
 	public enum MapType
 	{
 
-		Unknown = 1,
+		Unknown = 0,
 
 		[Description("Spatial Vision")]
-		SpatialVision = 2,
+		SpatialVision = 1,
 
-		Melway = 3
+		Melway = 2
 
 	}
 }

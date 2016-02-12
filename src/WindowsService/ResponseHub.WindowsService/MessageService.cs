@@ -102,16 +102,16 @@ namespace Enivate.ResponseHub.WindowsService
 					Int32.TryParse(feature.DataRow[5].ToString(), out scale);
 				
 					// iterate through the features of the map index, and create the MapReference object. 
-					MapReference mapRef = new MapReference()
-					{
-						GridReference = feature.DataRow[3].ToString(),
-						PageNumber = pageNumber,
-						Scale = scale,
-						UtmNumber = mgaZone
-					};
+					//MapIndex mapRef = new MapReference()
+					//{
+					//	GridReference = feature.DataRow[3].ToString(),
+					//	PageNumber = pageNumber,
+					//	Scale = scale,
+					//	UtmNumber = mgaZone
+					//};
 				
 					// Add map ref to cache.
-					MapReferenceCache.Instance.AddMapReference(MapType.SpatialVision, mapRef);
+					//MapReferenceCache.Instance.AddMapReference(MapType.SpatialVision, mapRef);
 				
 				}
 
