@@ -131,7 +131,7 @@ namespace Enivate.ResponseHub.WindowsService
 			}
 			catch (Exception ex)
 			{
-				_log.Error(String.Format("Unable to load map index file: {0}", filename));
+				_log.Error(String.Format("Unable to load map index file: {0}", filename), ex);
 
 				// rethrow exeption to exit
 				throw;

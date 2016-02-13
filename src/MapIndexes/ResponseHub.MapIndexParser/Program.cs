@@ -15,7 +15,6 @@ using System.Data;
 using MongoDB.Driver;
 using Enivate.ResponseHub.DataAccess.MongoDB;
 using Enivate.ResponseHub.Logging;
-using System.Threading;
 
 namespace Enivate.ResponseHub.MapIndexParser
 {
@@ -24,7 +23,7 @@ namespace Enivate.ResponseHub.MapIndexParser
 
 		private static string _dbConnectionString;
 
-		private static bool _clearMapIndexes;
+		private static MapIndexRepository _mapIndexRepository;
 		
 		static void Main(string[] args)
 		{
@@ -51,8 +50,17 @@ namespace Enivate.ResponseHub.MapIndexParser
 					return;
 				}
 
+				// Create the MapIndexRepository
+				_mapIndexRepository = new MapIndexRepository(new FileLogger(), _dbConnectionString);
+
 				// Check if we need to clear the indexes first.
-				_clearMapIndexes = args.Contains("-R");
+				if (args.Contains("-R"))
+				{
+					Task.Run(async () =>
+					{
+						await _mapIndexRepository.ClearCollection();
+					});
+				}
 
 				MapType mapType = GetMapTypeFromArgument(args);
 
@@ -77,8 +85,17 @@ namespace Enivate.ResponseHub.MapIndexParser
 					return;
 				}
 
+				// Create the MapIndexRepository
+				_mapIndexRepository = new MapIndexRepository(new FileLogger(), _dbConnectionString);
+
 				// Check if we need to clear the indexes first.
-				_clearMapIndexes = args.Contains("-R");
+				if (args.Contains("-R"))
+				{
+					Task.Run(async () =>
+					{
+						await _mapIndexRepository.ClearCollection();
+					});
+				}
 
 				// Process only a single shapefile
 				string shapeFileListPath = Path.GetFullPath(args[1]);
@@ -427,18 +444,6 @@ namespace Enivate.ResponseHub.MapIndexParser
 			int batches = ((mapIndexes.Count / itemsPerBatch) + 1);
 			int batchesComplete = 0;
 			
-			// Create the MapIndexRepository
-			MapIndexRepository repo = new MapIndexRepository(new FileLogger(), _dbConnectionString);
-
-			// If the -R parameter exists, we need to clear the collection first.
-			if (_clearMapIndexes)
-			{
-				//Task.Run(async () => 
-				//{
-				//	await 
-				//});
-				repo.ClearCollection();
-			}
 
 			// Loop while batches complete < total number of batches
 			while (batchesComplete < batches)
@@ -446,21 +451,18 @@ namespace Enivate.ResponseHub.MapIndexParser
 
 				IList<MapIndex> batchInsert = mapIndexes.Skip(batchesComplete * itemsPerBatch).Take(itemsPerBatch).ToList();
 
-				BatchInsertMapIndexes(batchInsert, repo);
+				BatchInsertMapIndexes(batchInsert);
 				batchesComplete++;
 			}
 
 		}
 
-		private static void BatchInsertMapIndexes(IList<MapIndex> mapIndexes, MapIndexRepository repo)
+		private static void BatchInsertMapIndexes(IList<MapIndex> mapIndexes)
 		{
-
-			// Insert the batch.
-			//Task.Run(async () =>
-			//{
-			//	await 
-			//});
-			repo.BatchInsert(mapIndexes);
+			Task.Run(async () =>
+			{
+				await _mapIndexRepository.BatchInsert(mapIndexes);
+			});
 			Thread.Sleep(100);
 		}
 
