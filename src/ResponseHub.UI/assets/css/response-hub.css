@@ -249,15 +249,23 @@ footer p {
 /*
 	Login styles
 */
+.login-layout {
+  background-color: #202b30;
+  color: #ccc;
+}
 .login-container {
   max-width: 400px;
   padding-right: 15px;
   padding-left: 15px;
   margin: 0 auto;
 }
+.login-container a {
+  color: #9cddd7;
+}
 .login-container h2 {
   text-align: center;
   font-size: 26px;
+  color: #e2c498;
 }
 .login-container p,
 .login-container h4 {
@@ -265,9 +273,9 @@ footer p {
 }
 .login-container .form-container {
   margin-top: 30px;
-  border: 1px solid #e4e4e4;
-  background-color: #fff;
-  padding: 0 20px 20px;
+  border: 1px solid #5f6c73;
+  background-color: #485257;
+  padding: 15px 20px 20px;
   border-radius: 2px;
 }
 .login-container #fb-login {
