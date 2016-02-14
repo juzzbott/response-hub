@@ -20,6 +20,7 @@ using Enivate.ResponseHub.Model.Identity.Interface;
 
 using Enivate.ResponseHub.UI.Areas.Admin.Models.Groups;
 using Enivate.ResponseHub.UI.Filters;
+using Enivate.ResponseHub.UI.Models.Users;
 
 namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 {
@@ -228,12 +229,31 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 				throw new HttpException((int)HttpStatusCode.NotFound, "The requested page cannot be found.");
 			}
 
+			// Get the list of users in the group from the Users property of the group
+			IList<IdentityUser> groupUsers = await UserService.GetUsersByIds(group.Users.Select(i => i.UserId));
+
+			// Create the list of GroupUserViewModels for the users in the group
+			IList<GroupUserViewModel> groupUserModels = new List<GroupUserViewModel>();
+			foreach(IdentityUser groupUser in groupUsers)
+			{
+				groupUserModels.Add(new GroupUserViewModel() {
+					EmailAddress = groupUser.EmailAddress,
+					FirstName = groupUser.FirstName,
+					GroupRole = group.Users.FirstOrDefault(i => i.UserId == groupUser.Id).Role,
+					Id = groupUser.Id,
+					Surname = groupUser.Surname
+				});
+			}
+
 			// Create the model for the single view
 			SingleGroupViewModel model = new SingleGroupViewModel()
 			{
+				Id = group.Id,
 				Name = group.Name,
 				Description = group.Description,
 				Service = EnumValue.GetEnumDescription(group.Service),
+				Capcode = group.Capcode,
+				Users = groupUserModels
 			};
 
 			return View(model);

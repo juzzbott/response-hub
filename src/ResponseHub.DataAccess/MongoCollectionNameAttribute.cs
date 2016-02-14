@@ -14,7 +14,7 @@ namespace Enivate.ResponseHub.DataAccess
 
 		public MongoCollectionNameAttribute(string collectionName)
 		{
-			this.CollectionName = collectionName;
+			CollectionName = collectionName;
 		}
 
 	}

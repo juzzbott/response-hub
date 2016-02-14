@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 
-using Enivate.ResponseHub.Model;
+using Enivate.ResponseHub.UI.Models.Users;
 
 namespace Enivate.ResponseHub.UI.Areas.Admin.Models.Groups
 {
@@ -19,6 +17,13 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Models.Groups
 		public string Description { get; set; }
 
 		public string Capcode { get; set; }
+
+		public IList<GroupUserViewModel> Users { get; set; }
+
+		public SingleGroupViewModel()
+		{
+			Users = new List<GroupUserViewModel>();
+		}
 
 	}
 }

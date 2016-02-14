@@ -21,9 +21,12 @@ namespace Enivate.ResponseHub.Model.Groups
 
 		public string Description { get; set; }
 
+		public IList<UserMapping> Users { get; set; }
+
 		public Group()
 		{
 			Id = Guid.NewGuid();
+			Users = new List<UserMapping>();
 		}
 
 	}

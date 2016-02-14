@@ -1,13 +1,57 @@
 ﻿@model Enivate.ResponseHub.UI.Areas.Admin.Models.Groups.SingleGroupViewModel
 @{
-    ViewBag.Title = Model.Name;
+	ViewBag.Title = Model.Name;
 }
 
 <h1>@Model.Name</h1>
-<div class="service">@Model.Service</div>
+<p class="service"><strong>Service: </strong><span class="mobile-block">@Model.Service</span></p>
+<p class="capcode"><strong>Capcode: </strong><span class="mobile-block">@Model.Capcode</span></p>
 
 <div class="row">
 	<div class="col-sm-12">@Model.Description</div>
 </div>
 
 <h3>Members</h3>
+
+<p><a href="/admin/groups/@Model.Id/add-member" class="btn btn-primary btn-lg icon-link"><i class="fa fa-user-plus"></i>Add member</a></p>
+<div class="row">
+	<div class="col-lg-10 col-xl-6">
+		<p class="section-help">
+			Adding a new member to this group will allow that user to view jobs assigned to this groups capcode. <br />
+			You can either add a new user, or an existing user from another group.
+		</p>
+	</div>
+</div>
+
+<table class="table table-responsive table-striped table-hover">
+	<thead>
+		<tr>
+			<th>Name</th>
+			<th>Email</th>
+			<th>Security</th>
+			<th>&nbsp;</th>
+		</tr>
+	</thead>
+	<tbody>
+
+		@if (Model.Users == null || Model.Users.Count == 0)
+		{
+			<tr>
+				<td colspan="4">This group does not contain any users.</td>
+			</tr>
+		}
+		else
+		{
+			foreach (var user in Model.Users)
+			{
+				<tr>
+					<td><a href="/profile/@user.Id">@user.FullName</a></td>
+					<td>@user.EmailAddress</td>
+					<td>@user.GroupRole</td>
+					<td><a href="/admin/users/@user.Id/edit"><i class="fa fa-pencil"></i></a> <a href="/admin/users/@user.Id/delete"><i class="fa fa-user-times"></i></a></td>
+				</tr>
+			}
+		}
+
+	</tbody>
+</table>

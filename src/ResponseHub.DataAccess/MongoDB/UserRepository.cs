@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -9,8 +10,11 @@ using Microsoft.AspNet.Identity;
 
 using Enivate.ResponseHub.Model.Identity;
 using Enivate.ResponseHub.Model.Identity.Interface;
-using System.Security.Claims;
 using Enivate.ResponseHub.DataAccess.MongoDB.DataObjects.Users;
+
+using MongoDB.Driver;
+using MongoDB.Driver.Linq;
+using MongoDB.Bson;
 
 namespace Enivate.ResponseHub.DataAccess.MongoDB
 {
@@ -348,6 +352,23 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 
 		#endregion
 
+		#region Response Hub members
+
+		/// <summary>
+		/// Gets the collection of users based on the user ids.
+		/// </summary>
+		/// <param name="userIds"></param>
+		/// <returns></returns>
+		public async Task<IList<IdentityUser>> GetUsersByIds(IEnumerable<Guid> userIds)
+		{
+			// Find the the list of user dtos based on the collection of User Ids.
+			IList<IdentityUserDto> userDtos = await Collection.Find(Builders<IdentityUserDto>.Filter.In(i => i.Id, userIds)).ToListAsync();
+
+			return userDtos.Select(i => MapToModel(i)).ToList();
+		}
+
+		#endregion
+
 		#region Mappers
 
 		/// <summary>
@@ -368,7 +389,6 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 				Created = dbObject.Created,
 				EmailAddress = dbObject.EmailAddress,
 				FirstName = dbObject.FirstName,
-				GroupIds = dbObject.GroupIds,
 				Id = dbObject.Id,
 				Logins = dbObject.Logins,
 				PasswordHash = dbObject.PasswordHash,
@@ -404,7 +424,6 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 				Created = modelObj.Created,
 				EmailAddress = modelObj.EmailAddress,
 				FirstName = modelObj.FirstName,
-				GroupIds = modelObj.GroupIds,
 				Id = modelObj.Id,
 				Logins = modelObj.Logins,
 				PasswordHash = modelObj.PasswordHash,

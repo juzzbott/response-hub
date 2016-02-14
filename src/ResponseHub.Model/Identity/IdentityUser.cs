@@ -25,8 +25,6 @@ namespace Enivate.ResponseHub.Model.Identity
 
 		public DateTime Created { get; set; }
 
-		public IList<Guid> GroupIds { get; set; }
-
 		public PasswordResetToken PasswordResetToken { get; set; }
 
 		public IList<Claim> Claims { get; set; }
@@ -37,7 +35,6 @@ namespace Enivate.ResponseHub.Model.Identity
 		{
 			Id = Guid.NewGuid();
 			Claims = new List<Claim>();
-			GroupIds = new List<Guid>();
 			Logins = new List<UserLoginInfo>();
 		}
 

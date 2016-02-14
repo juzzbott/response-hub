@@ -330,6 +330,16 @@ namespace Enivate.ResponseHub.ApplicationServices.Identity
 			return user;
 		}
 
+		/// <summary>
+		/// Gets the collection of users based on the user ids.
+		/// </summary>
+		/// <param name="userIds"></param>
+		/// <returns></returns>
+		public async Task<IList<IdentityUser>> GetUsersByIds(IEnumerable<Guid> userIds)
+		{
+			return await _repository.GetUsersByIds(userIds);
+		}
+
 		#endregion
 
 	}

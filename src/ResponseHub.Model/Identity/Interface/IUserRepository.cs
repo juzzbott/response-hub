@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 using Microsoft.AspNet.Identity;
@@ -87,6 +85,7 @@ namespace Enivate.ResponseHub.Model.Identity.Interface
 		new Task SetLockoutEndDateAsync(IdentityUser user, DateTimeOffset lockoutEnd);
 
 		#endregion
+
 		#region IUserTwoFactorStore
 
 		new Task<bool> GetTwoFactorEnabledAsync(IdentityUser user);
@@ -100,6 +99,12 @@ namespace Enivate.ResponseHub.Model.Identity.Interface
 		new Task AddClaimAsync(IdentityUser user, Claim claim);
 		new Task<IList<Claim>> GetClaimsAsync(IdentityUser user);
 		new Task RemoveClaimAsync(IdentityUser user, Claim claim);
+
+		#endregion
+
+		#region Response Hub methods
+
+		Task<IList<IdentityUser>> GetUsersByIds(IEnumerable<Guid> userIds);
 
 		#endregion
 

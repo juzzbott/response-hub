@@ -109,6 +109,8 @@ namespace Enivate.ResponseHub.Model.Identity.Interface
 
 		Task<IdentityUser> CreateAsync(string emailAddress, string firstName, string surname, IList<string> roles);
 
+		Task<IList<IdentityUser>> GetUsersByIds(IEnumerable<Guid> userIds);
+
 		#endregion
 
 	}
