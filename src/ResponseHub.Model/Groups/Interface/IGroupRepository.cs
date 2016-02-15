@@ -15,6 +15,8 @@ namespace Enivate.ResponseHub.Model.Groups.Interface
 
 		Task<bool> CheckIfGroupExists(string name, ServiceType service);
 
+		Task AddUserToGroup(UserMapping userMapping, Guid groupId);
+
 	}
 
 }

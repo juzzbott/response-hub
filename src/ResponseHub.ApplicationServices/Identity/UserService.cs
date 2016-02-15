@@ -12,6 +12,7 @@ using Enivate.ResponseHub.Model.Identity;
 using Enivate.ResponseHub.Model.Identity.Interface;
 using System.Security.Claims;
 using Enivate.ResponseHub.Common.Constants;
+using Enivate.ResponseHub.Common;
 
 namespace Enivate.ResponseHub.ApplicationServices.Identity
 {
@@ -321,6 +322,8 @@ namespace Enivate.ResponseHub.ApplicationServices.Identity
 				FirstName = firstName,
 				Surname = surname,
 				UserName = emailAddress,
+				Claims = claims,
+				ActivationCode = HashGenerator.GetSha256HashString(Guid.NewGuid().ToString(), 1)
 			};
 
 			// Add the user

@@ -17,5 +17,21 @@ namespace Enivate.ResponseHub.UI.Helpers
 			return new MvcHtmlString(EnumValue.GetEnumDescription(enumObject));
 		}
 
+		public static MvcHtmlString BackUrlOrDefault(this HtmlHelper helper, string defaultUrl)
+		{
+			// By default, set to the default Url
+			string url = defaultUrl;
+
+			// If the context and url referrer is set, then use that url.
+			if (HttpContext.Current != null && HttpContext.Current.Request.UrlReferrer != null)
+			{
+				url = HttpContext.Current.Request.UrlReferrer.PathAndQuery;
+			}
+
+			// return the url
+			return new MvcHtmlString(url);
+
+		}
+
 	}
 }

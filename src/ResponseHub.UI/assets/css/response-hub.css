@@ -250,6 +250,9 @@ body {
     display: inline;
   }
 }
+.cursor-pointer {
+  cursor: pointer;
+}
 /*
 	Top navbar styles
 */
@@ -496,6 +499,9 @@ footer p {
   margin: 0;
   padding: 0;
   list-style-type: none;
+}
+.validation-summary-errors {
+  padding: 10px;
 }
 .input-validation-error {
   border-color: #de3226;

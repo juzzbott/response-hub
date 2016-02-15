@@ -5,7 +5,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 
-using Enivate.ResponseHub.Model;
+using Enivate.ResponseHub.UI.Areas.Admin.Models.Users;
 
 namespace Enivate.ResponseHub.UI.Areas.Admin.Models.Groups
 {
@@ -29,7 +29,7 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Models.Groups
 		[EmailAddress(ErrorMessage = "You must enter a valid email address.")]
 		public string GroupAdministratorEmail { get; set; }
 
-		public GroupAdministratorViewModel GroupAdministrator { get; set; }
+		public ConfirmUserViewModel GroupAdministrator { get; set; }
 
 		public CreateGroupModel()
 		{
@@ -38,7 +38,7 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Models.Groups
 			AvailableServices.Add(new SelectListItem() { Value = "1", Text = "State Emergency Service" });
 			AvailableServices.Add(new SelectListItem() { Value = "2", Text = "Country Fire Authority" });
 
-			GroupAdministrator = new GroupAdministratorViewModel();
+			GroupAdministrator = new ConfirmUserViewModel();
 
 		}
 

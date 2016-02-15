@@ -4,22 +4,21 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
 
-namespace Enivate.ResponseHub.UI.Areas.Admin.Models.Groups
+namespace Enivate.ResponseHub.UI.Areas.Admin.Models.Users
 {
-	public class GroupAdministratorViewModel
+	public class ConfirmUserViewModel
 	{
 
-		public Guid UserId { get; set; }
-
-		[Required(ErrorMessage = "Please enter the group administrator first name")]
+		[Required(ErrorMessage = "Please enter the first name for the user")]
 		public string FirstName { get; set; }
 
-		[Required(ErrorMessage = "Please enter the group administrator surname")]
+		[Required(ErrorMessage = "Please enter the surname for the user")]
 		public string Surname { get; set; }
 
 		public string EmailAddress { get; set; }
 
 		public bool UserExists { get; set; }
 
+		public string Role { get; set; }
 	}
 }

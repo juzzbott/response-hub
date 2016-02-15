@@ -19,6 +19,7 @@ using Enivate.ResponseHub.Model.Identity;
 using Enivate.ResponseHub.Model.Identity.Interface;
 
 using Enivate.ResponseHub.UI.Areas.Admin.Models.Groups;
+using Enivate.ResponseHub.UI.Areas.Admin.Models.Users;
 using Enivate.ResponseHub.UI.Filters;
 using Enivate.ResponseHub.UI.Models.Users;
 
@@ -32,6 +33,8 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
     {
 
 		private const string CreateGroupViewModelSesionKey = "CreateGroupViewModel";
+
+		private const string AddMemberViewModelSessionKey = "NewUserViewModel";
 
 		private IGroupService _groupService;
 		protected IGroupService GroupService
@@ -70,6 +73,8 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 
             return View(recentGroups);
         }
+
+		#region Create group
 
 		[Route("create")]
 		public ActionResult Create()
@@ -122,6 +127,7 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 		public async Task<ActionResult> GroupAdministrator()
 		{
 
+			// Set the form action
 			ViewBag.FormAction = "/admin/groups/create/group-administrator";
 
 			// Get the CreateGroupViewModel from session
@@ -139,28 +145,36 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 			// If there is a group user, then add to the model.
 			if (groupAdminUser != null)
 			{
-				model.GroupAdministrator.UserId = groupAdminUser.Id;
 				model.GroupAdministrator.FirstName = groupAdminUser.FirstName;
 				model.GroupAdministrator.Surname = groupAdminUser.Surname;
 				model.GroupAdministrator.EmailAddress = model.GroupAdministratorEmail;
 				model.GroupAdministrator.UserExists = true;
 			}
 
-			return View("AssignUser", model.GroupAdministrator);
+			return View("~/Areas/Admin/Views/Users/ConfirmUser", model.GroupAdministrator);
 		}
 
 		[Route("create/group-administrator")]
 		[ValidateAntiForgeryToken]
 		[HttpPost]
-		public async Task<ActionResult> GroupAdministrator(GroupAdministratorViewModel model)
+		public async Task<ActionResult> GroupAdministrator(ConfirmUserViewModel model)
 		{
 
+			// Set the form action
 			ViewBag.FormAction = "/admin/groups/create/group-administrator";
+			ViewBag.SubmitButtonTitle = "Create group";
 
 			// If the model is not valid, return view.
 			if (!ModelState.IsValid)
 			{
-				return View("AssignUser", model);
+				return View("~/Areas/Admin/Views/Users/ConfirmUser", model);
+			}
+
+			// If there is "System Administrator" in the role list, show error message
+			if (model.Role.Equals(RoleTypes.SystemAdministrator, StringComparison.CurrentCultureIgnoreCase))
+			{
+				ModelState.AddModelError("", "There was an error setting the role for the user.");
+				return View("~/Areas/Admin/Views/Users/ConfirmUser", model);
 			}
 
 			// Get the CreateGroupViewModel from session
@@ -196,7 +210,7 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 				{
 					ModelState.AddModelError("", "There was a system error creating the group.");
 					await Log.Error(String.Format("Unable to create group. Existing user with email ''  could not be found.", createGroupModel.GroupAdministratorEmail));
-					return View("AssignUser", model);
+					return View("~/Areas/Admin/Views/Users/ConfirmUser", model);
 				}
 				else
 				{
@@ -212,11 +226,19 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 			// Create the group
 			await GroupService.CreateGroup(createGroupModel.Name, service, createGroupModel.Capcode, groupAdministratorId, createGroupModel.Description);
 
+			// Clear the session url
+			Session.Remove(CreateGroupViewModelSesionKey);
+
 			// redirect back to group index page
 			return new RedirectResult("/admin/groups?group_created=1");
 		}
 
+		#endregion
+
+		#region View group
+
 		[Route("{id:guid}")]
+		[HttpGet]
 		public async Task<ActionResult> ViewGroup(Guid id)
 		{
 
@@ -260,6 +282,203 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 
 
 		}
+
+		#endregion
+
+		#region New user
+
+		[Route("{groupId:guid}/add-member")]
+		[HttpGet]
+		public async Task<ActionResult> AddMember(Guid groupId)
+		{
+			// Get the group
+			Group group = await GroupService.GetById(groupId);
+
+			// If the group is null, return 404 not found error
+			if (group == null)
+			{
+				throw new HttpException((int)HttpStatusCode.NotFound, "The requested page cannot be found.");
+			}
+
+			NewUserViewModel model = new NewUserViewModel();
+			model.AvailableRoles = GetAvailableRoles();
+			return View("~/Areas/Admin/Views/Users/NewUser.cshtml", model);
+		}
+
+
+		[Route("{groupId:guid}/add-member")]
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public async Task<ActionResult> AddMember(Guid groupId, NewUserViewModel model)
+		{
+
+			// Get the group
+			Group group = await GroupService.GetById(groupId);
+
+			// If the group is null, return 404 not found error
+			if (group == null)
+			{
+				throw new HttpException((int)HttpStatusCode.NotFound, "The requested page cannot be found.");
+			}
+
+			// Set the form action
+			ViewBag.FormAction = String.Format("/admin/groups/{0}/confirm-member", groupId);
+
+			// Get the available roles for the user.
+			model.AvailableRoles = GetAvailableRoles();
+
+			// If the model is not valid, return view.
+			if (!ModelState.IsValid)
+			{
+				return View("~/Areas/Admin/Views/Users/NewUser.cshtml", model);
+			}
+
+			// If there is "System Administrator" in the role list, show error message
+			if (model.Role.Equals(RoleTypes.SystemAdministrator, StringComparison.CurrentCultureIgnoreCase))
+			{
+				ModelState.AddModelError("", "There was an error setting the role for the user.");
+				return View("~/Areas/Admin/Views/Users/NewUser.cshtml", model);
+			}
+
+			// Get the identity user related to the specified group admin
+			IdentityUser newUser = await UserService.FindByEmailAsync(model.EmailAddress);
+		
+			// If the user exists, and there is already a user mapping in the group for this user, show error message
+			if (newUser != null && group.Users.Any(i => i.UserId == newUser.Id))
+			{
+				ModelState.AddModelError("", "The email address you have entered is already a member of this group.");
+				return View("~/Areas/Admin/Views/Users/NewUser.cshtml", model);
+			}
+
+			// Add the model to the session for the next screen
+			Session[AddMemberViewModelSessionKey] = model;
+
+			return new RedirectResult(String.Format("/admin/groups/{0}/confirm-member", groupId));
+		}
+
+		[Route("{groupId:guid}/confirm-member")]
+		[HttpGet]
+		public async Task<ActionResult> ConfirmMember(Guid groupId)
+		{
+
+			// Get the group
+			Group group = await GroupService.GetById(groupId);
+
+			// If the group is null, return 404 not found error
+			if (group == null)
+			{
+				throw new HttpException((int)HttpStatusCode.NotFound, "The requested page cannot be found.");
+			}
+
+			// Set the form action
+			ViewBag.FormAction = String.Format("/admin/groups/{0}/confirm-member", groupId);
+
+			// Get the CreateGroupViewModel from session
+			NewUserViewModel newUserModel = (NewUserViewModel)Session[AddMemberViewModelSessionKey];
+
+			// If the view model is null, redirect back to the Group home screen
+			if (newUserModel == null)
+			{
+				return new RedirectResult(String.Format("/admin/groups/{0}", groupId));
+			}
+
+			// Get the identity user related to the specified group admin
+			IdentityUser newUser = await UserService.FindByEmailAsync(newUserModel.EmailAddress);
+
+			// Create the model
+			ConfirmUserViewModel model = new ConfirmUserViewModel()
+			{
+				EmailAddress = newUserModel.EmailAddress,
+				Role = newUserModel.Role
+			};
+
+			// If the user exists, add the users information to display.
+			if (newUser != null)
+			{
+				model.UserExists = true;
+				model.FirstName = newUser.FirstName;
+				model.Surname = newUser.Surname;
+			}
+
+			return View("~/Areas/Admin/Views/Users/ConfirmUser.cshtml", model);
+
+		}
+
+		[Route("{groupId:guid}/confirm-member")]
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public async Task<ActionResult> ConfirmMember(Guid groupId, ConfirmUserViewModel model)
+		{
+
+			// Get the group
+			Group group = await GroupService.GetById(groupId);
+
+			// If the group is null, return 404 not found error
+			if (group == null)
+			{
+				throw new HttpException((int)HttpStatusCode.NotFound, "The requested page cannot be found.");
+			}
+
+			// Set the form action
+			ViewBag.FormAction = String.Format("/admin/groups/{0}/confirm-member", groupId);
+
+			// If the model is not valid, return view.
+			if (!ModelState.IsValid)
+			{
+				return View("~/Areas/Admin/Views/Users/ConfirmUser.cshtml", model);
+			}
+
+			// If there is "System Administrator" in the role list, show error message
+			if (model.Role.Equals(RoleTypes.SystemAdministrator, StringComparison.CurrentCultureIgnoreCase))
+			{
+				ModelState.AddModelError("", "There was an error setting the role for the user.");
+				return View("~/Areas/Admin/Views/Users/ConfirmUser.cshtml", model);
+			}
+			
+			// Get the identity user related to the specified group admin
+			IdentityUser newUser = await UserService.FindByEmailAsync(model.EmailAddress);
+
+			// If the user exists, and there is already a user mapping in the group for this user, show error message
+			if (newUser != null && group.Users.Any(i => i.UserId == newUser.Id))
+			{
+				ModelState.AddModelError("", "The email address you have entered is already a member of this group.");
+				return View("~/Areas/Admin/Views/Users/ConfirmUser.cshtml", model);
+			}
+			else if (newUser != null)
+			{
+				// Create the user mapping for the existing user
+				await GroupService.AddUserToGroup(newUser.Id, model.Role, groupId);
+			}
+			else
+			{
+
+				// Create the new user, and then create the group mapping for the new user.
+				newUser = await UserService.CreateAsync(model.EmailAddress, model.FirstName, model.Surname, new List<string>() { model.Role });
+
+				// Now that we have the newUser, create the user mapping.
+				await GroupService.AddUserToGroup(newUser.Id, model.Role, groupId);
+
+			}
+
+			// remove the newUserModel from the session
+			Session.Remove(AddMemberViewModelSessionKey);
+
+			// redirect back to group view page
+			return new RedirectResult(String.Format("/admin/groups/{0}?member_added=1", groupId));
+		}
+
+		private IList<SelectListItem> GetAvailableRoles()
+		{
+			IList<SelectListItem> availableRoles = new List<SelectListItem>();
+			availableRoles.Add(new SelectListItem() { Text = "Select role", Value = "" });
+			availableRoles.Add(new SelectListItem() { Text = RoleTypes.GeneralUser, Value = RoleTypes.GeneralUser });
+			availableRoles.Add(new SelectListItem() { Text = RoleTypes.GroupAdministrator, Value = RoleTypes.GroupAdministrator });
+
+			// return the available roles
+			return availableRoles;
+		}
+
+		#endregion
 
 	}
 }

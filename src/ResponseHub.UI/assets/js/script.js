@@ -27,6 +27,15 @@ var responseHub = (function () {
 		return context[func].apply(this, args);
 	}
 
+	function bindModals() {
+		$('#confirm-delete').on('show.bs.modal', function (e) {
+			$(this).find('.btn-ok').attr('href', $(e.relatedTarget).data('href'));
+		});
+	}
+
+	// Bind the modal
+	bindModals();
+
 	// return the response hub object
 	return {
 		apiPrefix: apiPrefix,
@@ -35,7 +44,7 @@ var responseHub = (function () {
 	}
 
 })();
-;
+
 responseHub.jobLog = (function () {
 
 	/**

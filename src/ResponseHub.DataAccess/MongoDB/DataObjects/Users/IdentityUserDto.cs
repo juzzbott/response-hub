@@ -26,19 +26,18 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB.DataObjects.Users
 
 		public DateTime Created { get; set; }
 
-		public IList<Guid> GroupIds { get; set; }
-
 		public PasswordResetToken PasswordResetToken { get; set; }
 
 		public IList<ClaimDto> Claims { get; set; }
 
 		public IList<UserLoginInfo> Logins { get; set; }
 
+		public string ActivationCode { get; set; }
+
 		public IdentityUserDto()
 		{
 			Id = Guid.NewGuid();
 			Claims = new List<ClaimDto>();
-			GroupIds = new List<Guid>();
 			Logins = new List<UserLoginInfo>();
 		}
 

@@ -71,5 +71,13 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 			return (group != null);
 		}
 
+		public async Task AddUserToGroup(UserMapping userMapping, Guid groupId)
+		{
+			// Update the group to include the new user mapping.
+			await Collection.UpdateOneAsync(
+				Builders<Group>.Filter.Eq(i => i.Id, groupId),
+				Builders<Group>.Update.Push(i => i.Users, userMapping));
+		}
+
 	}
 }

@@ -77,5 +77,16 @@ namespace Enivate.ResponseHub.ApplicationServices
 		{
 			return await _repository.CheckIfGroupExists(name, service);
 		}
+
+		public async Task AddUserToGroup(Guid userId, string role, Guid groupId)
+		{
+			UserMapping mapping = new UserMapping()
+			{
+				Role = role,
+				UserId = userId
+			};
+
+			await _repository.AddUserToGroup(mapping, groupId);
+		}
 	}
 }

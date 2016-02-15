@@ -31,6 +31,8 @@ namespace Enivate.ResponseHub.Model.Identity
 
 		public IList<UserLoginInfo> Logins { get; set; }
 
+		public string ActivationCode { get; set; }
+
 		public IdentityUser()
 		{
 			Id = Guid.NewGuid();
