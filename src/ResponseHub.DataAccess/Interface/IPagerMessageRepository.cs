@@ -4,7 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Enivate.ResponseHub.Model.Messages.Interface
+using Enivate.ResponseHub.Model.Messages;
+
+namespace Enivate.ResponseHub.DataAccess.Interface
 {
 	public interface IPagerMessageRepository : IRepository<PagerMessage>
 	{

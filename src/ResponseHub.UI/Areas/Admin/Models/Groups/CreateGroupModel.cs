@@ -6,6 +6,7 @@ using System.Web;
 using System.Web.Mvc;
 
 using Enivate.ResponseHub.UI.Areas.Admin.Models.Users;
+using Enivate.ResponseHub.Model.Groups;
 
 namespace Enivate.ResponseHub.UI.Areas.Admin.Models.Groups
 {
@@ -31,6 +32,11 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Models.Groups
 
 		public ConfirmUserViewModel GroupAdministrator { get; set; }
 
+		[Required(ErrorMessage = "Please select a region for the group.")]
+		public Guid Region { get; set; }
+
+		public IList<SelectListItem> AvailableRegions { get; set; }
+
 		public CreateGroupModel()
 		{
 			AvailableServices = new List<SelectListItem>();
@@ -39,6 +45,8 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Models.Groups
 			AvailableServices.Add(new SelectListItem() { Value = "2", Text = "Country Fire Authority" });
 
 			GroupAdministrator = new ConfirmUserViewModel();
+
+			this.AvailableRegions = new List<SelectListItem>();
 
 		}
 

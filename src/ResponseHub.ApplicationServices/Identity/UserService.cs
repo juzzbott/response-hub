@@ -2,15 +2,16 @@
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
 using Microsoft.AspNet.Identity;
 
+using Enivate.ResponseHub.DataAccess.Interface;
 using Enivate.ResponseHub.Logging;
 using Enivate.ResponseHub.Model.Identity;
 using Enivate.ResponseHub.Model.Identity.Interface;
-using System.Security.Claims;
 using Enivate.ResponseHub.Common.Constants;
 using Enivate.ResponseHub.Common;
 

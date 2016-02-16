@@ -4,8 +4,10 @@ using System.Threading.Tasks;
 
 using Microsoft.AspNet.Identity;
 using System.Security.Claims;
+using Enivate.ResponseHub.Model.Identity;
+using Enivate.ResponseHub.DataAccess.MongoDB.DataObjects.Users;
 
-namespace Enivate.ResponseHub.Model.Identity.Interface
+namespace Enivate.ResponseHub.DataAccess.Interface
 {
 	public interface IUserRepository : IUserStore<IdentityUser, Guid>, 
 		IUserPasswordStore<IdentityUser, Guid>,
@@ -13,7 +15,8 @@ namespace Enivate.ResponseHub.Model.Identity.Interface
 		IUserEmailStore<IdentityUser, Guid>,
 		IUserLockoutStore<IdentityUser, Guid>,
 		IUserTwoFactorStore<IdentityUser, Guid>,
-		IUserClaimStore<IdentityUser, Guid>
+		IUserClaimStore<IdentityUser, Guid>,
+		IRepository<IdentityUserDto>
 	{
 
 		#region IUserStore

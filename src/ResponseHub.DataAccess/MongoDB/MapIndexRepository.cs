@@ -6,11 +6,12 @@ using System.Threading.Tasks;
 
 using Enivate.ResponseHub.DataAccess.MongoDB.DataObjects.Spatial;
 using Enivate.ResponseHub.Model.Spatial;
-using Enivate.ResponseHub.Model.Spatial.Interface;
 
-using MongoDB.Driver.GeoJsonObjectModel;
-using Enivate.ResponseHub.Logging;
 using MongoDB.Bson;
+using MongoDB.Driver.GeoJsonObjectModel;
+
+using Enivate.ResponseHub.DataAccess.Interface;
+using Enivate.ResponseHub.Logging;
 
 namespace Enivate.ResponseHub.DataAccess.MongoDB
 {

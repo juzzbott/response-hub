@@ -79,7 +79,7 @@ namespace Enivate.ResponseHub.UI.Controllers
 
 		private static async Task CreateNewUser()
 		{
-			Enivate.ResponseHub.Model.Identity.Interface.IUserRepository userRepo = UnityConfiguration.Container.Resolve<Enivate.ResponseHub.Model.Identity.Interface.IUserRepository>();
+			Enivate.ResponseHub.DataAccess.Interface.IUserRepository userRepo = UnityConfiguration.Container.Resolve<Enivate.ResponseHub.DataAccess.Interface.IUserRepository>();
 			Enivate.ResponseHub.Logging.ILogger logger = UnityConfiguration.Container.Resolve<Enivate.ResponseHub.Logging.ILogger>();
 			UserService svc = new UserService(userRepo, logger);
 

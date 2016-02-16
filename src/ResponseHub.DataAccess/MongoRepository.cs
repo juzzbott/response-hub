@@ -6,6 +6,7 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
+using Enivate.ResponseHub.DataAccess.Interface;
 using Enivate.ResponseHub.Model;
 
 using MongoDB.Bson;
@@ -58,7 +59,7 @@ namespace Enivate.ResponseHub.DataAccess
 		/// </summary>
 		/// <param name="entity"></param>
 		/// <returns></returns>
-		public async Task<T> Add(T entity)
+		public virtual async Task<T> Add(T entity)
 		{
 			await Collection.InsertOneAsync(entity);
 			return entity;
@@ -68,7 +69,7 @@ namespace Enivate.ResponseHub.DataAccess
 		/// Returns an enumeration of all the objects in the collection.
 		/// </summary>
 		/// <returns></returns>
-		public async Task<IList<T>> GetAll()
+		public virtual async Task<IList<T>> GetAll()
 		{
 			return await Collection.Find<T>(new BsonDocument()).ToListAsync();
 		}
@@ -78,7 +79,7 @@ namespace Enivate.ResponseHub.DataAccess
 		/// </summary>
 		/// <param name="query"></param>
 		/// <returns></returns>
-		public async Task<IList<T>> Find(Expression<Func<T, bool>> query)
+		public virtual async Task<IList<T>> Find(Expression<Func<T, bool>> query)
 		{
 			// Return the enumerable of the collection
 			return await Collection.Find<T>(query).ToListAsync();
@@ -89,7 +90,7 @@ namespace Enivate.ResponseHub.DataAccess
 		/// </summary>
 		/// <param name="query"></param>
 		/// <returns></returns>
-		public async Task<T> FindOne(Expression<Func<T, bool>> query)
+		public virtual async Task<T> FindOne(Expression<Func<T, bool>> query)
 		{
 			// Return the enumerable of the collection
 			T result = await Collection.Find<T>(query).FirstOrDefaultAsync();
@@ -102,7 +103,7 @@ namespace Enivate.ResponseHub.DataAccess
 		/// </summary>
 		/// <param name="id">The Id of the item to return.</param>
 		/// <returns>The IApplicationUser that matches the id.</returns>
-		public async Task<T> GetById(Guid id)
+		public virtual async Task<T> GetById(Guid id)
 		{
 
 			// Ensure an id is passed
@@ -122,7 +123,7 @@ namespace Enivate.ResponseHub.DataAccess
 		/// Removes the specified user from the collection.
 		/// </summary>
 		/// <param name="user">The user object to remove from the collection.</param>
-		public async Task Remove(T entity)
+		public virtual async Task Remove(T entity)
 		{
 			// Remove the object from the collection based on the user id.
 			await Collection.DeleteOneAsync<T>(i => i.Id == entity.Id);
@@ -133,7 +134,7 @@ namespace Enivate.ResponseHub.DataAccess
 		/// </summary>
 		/// <param name="entity">The user object to save to the collection.</param>
 		/// <returns>The saved user object.</returns>
-		public async Task<T> Save(T entity)
+		public virtual async Task<T> Save(T entity)
 		{
 			// Save the object to the collection.
 			ReplaceOneResult result = await Collection.ReplaceOneAsync(Builders<T>.Filter.Eq(i => i.Id, entity.Id), entity, new UpdateOptions() { IsUpsert = true });

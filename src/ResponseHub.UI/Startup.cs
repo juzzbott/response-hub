@@ -13,9 +13,9 @@ using Microsoft.Practices.Unity;
 
 using Enivate.ResponseHub.ApplicationServices.Identity;
 using Enivate.ResponseHub.Common;
+using Enivate.ResponseHub.DataAccess.Interface;
 using Enivate.ResponseHub.Logging;
 using Enivate.ResponseHub.Model.Identity;
-using Enivate.ResponseHub.Model.Identity.Interface;
 using Microsoft.Owin.Security.DataProtection;
 
 [assembly: OwinStartupAttribute(typeof(Enivate.ResponseHub.UI.Startup))]

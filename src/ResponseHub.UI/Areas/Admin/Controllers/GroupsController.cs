@@ -77,9 +77,11 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 		#region Create group
 
 		[Route("create")]
-		public ActionResult Create()
+		public async Task<ActionResult> Create()
 		{
 			CreateGroupModel model = new CreateGroupModel();
+			model.AvailableRegions = await GetAvailableRegions();
+
 			return View(model);
 		}
 
@@ -88,6 +90,10 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 		[ValidateAntiForgeryToken]
 		public async Task<ActionResult> Create(CreateGroupModel model)
 		{
+
+
+			// Get the regions select list.
+			model.AvailableRegions = await GetAvailableRegions();
 
 			// If the model is not valid, return view.
 			if (!ModelState.IsValid)
@@ -141,7 +147,10 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 
 			// Get the identity user related to the specified group admin
 			IdentityUser groupAdminUser = await UserService.FindByEmailAsync(model.GroupAdministratorEmail);
-			
+
+			// Set the role as Group Administrator by default.
+			model.GroupAdministrator.Role = RoleTypes.GroupAdministrator;
+
 			// If there is a group user, then add to the model.
 			if (groupAdminUser != null)
 			{
@@ -151,7 +160,7 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 				model.GroupAdministrator.UserExists = true;
 			}
 
-			return View("~/Areas/Admin/Views/Users/ConfirmUser", model.GroupAdministrator);
+			return View("~/Areas/Admin/Views/Users/ConfirmUser.cshtml", model.GroupAdministrator);
 		}
 
 		[Route("create/group-administrator")]
@@ -167,14 +176,14 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 			// If the model is not valid, return view.
 			if (!ModelState.IsValid)
 			{
-				return View("~/Areas/Admin/Views/Users/ConfirmUser", model);
+				return View("~/Areas/Admin/Views/Users/ConfirmUser.cshtml", model);
 			}
 
 			// If there is "System Administrator" in the role list, show error message
 			if (model.Role.Equals(RoleTypes.SystemAdministrator, StringComparison.CurrentCultureIgnoreCase))
 			{
 				ModelState.AddModelError("", "There was an error setting the role for the user.");
-				return View("~/Areas/Admin/Views/Users/ConfirmUser", model);
+				return View("~/Areas/Admin/Views/Users/ConfirmUser.cshtml", model);
 			}
 
 			// Get the CreateGroupViewModel from session
@@ -210,7 +219,7 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 				{
 					ModelState.AddModelError("", "There was a system error creating the group.");
 					await Log.Error(String.Format("Unable to create group. Existing user with email ''  could not be found.", createGroupModel.GroupAdministratorEmail));
-					return View("~/Areas/Admin/Views/Users/ConfirmUser", model);
+					return View("~/Areas/Admin/Views/Users/ConfirmUser.cshtml", model);
 				}
 				else
 				{
@@ -222,15 +231,50 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 			int groupServiceId;
 			Int32.TryParse(createGroupModel.Service, out groupServiceId);
 			ServiceType service = (ServiceType)groupServiceId;
+			
+			// Get the region based on the posted value
+			IList<Region> regions = await GroupService.GetRegions();
+			Region region = regions.FirstOrDefault(i => i.Id == createGroupModel.Region);
+
+			// If the region is null, log the error and return error message
+			if (region == null)
+			{
+				await _log.Error(String.Format("Unable to create group. Region '{0}' does not exist.", createGroupModel.Region));
+				ModelState.AddModelError("", "There was a system error creating the group.");
+				return View("~/Areas/Admin/Views/Users/ConfirmUser.cshtml", model);
+			}
 
 			// Create the group
-			await GroupService.CreateGroup(createGroupModel.Name, service, createGroupModel.Capcode, groupAdministratorId, createGroupModel.Description);
+			await GroupService.CreateGroup(createGroupModel.Name, service, createGroupModel.Capcode, groupAdministratorId, createGroupModel.Description, region);
 
 			// Clear the session url
 			Session.Remove(CreateGroupViewModelSesionKey);
 
 			// redirect back to group index page
 			return new RedirectResult("/admin/groups?group_created=1");
+		}
+
+
+
+		/// <summary>
+		/// Gets the list of regions in a select list for use on the screens.
+		/// </summary>
+		/// <returns></returns>
+		private async Task<IList<SelectListItem>> GetAvailableRegions()
+		{
+
+			IList<Region> regions = await GroupService.GetRegions();
+
+			// Create the list of select items
+			IList<SelectListItem> items = new List<SelectListItem>();
+			items.Add(new SelectListItem() { Text = "Please select", Value = "" });
+			foreach (Region region in regions)
+			{
+				items.Add(new SelectListItem() { Text = region.Name, Value = region.Id.ToString() });
+			}
+
+			// return the list of items
+			return items;
 		}
 
 		#endregion

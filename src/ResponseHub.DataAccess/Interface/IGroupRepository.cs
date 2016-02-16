@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
-namespace Enivate.ResponseHub.Model.Groups.Interface
+using Enivate.ResponseHub.DataAccess.MongoDB.DataObjects.Groups;
+using Enivate.ResponseHub.Model.Groups;
+using Enivate.ResponseHub.Model;
+
+namespace Enivate.ResponseHub.DataAccess.Interface
 {
-	public interface IGroupRepository : IRepository<Group>
+	public interface IGroupRepository
 	{
 
 		Task<Group> CreateGroup(Group group);
@@ -16,6 +18,10 @@ namespace Enivate.ResponseHub.Model.Groups.Interface
 		Task<bool> CheckIfGroupExists(string name, ServiceType service);
 
 		Task AddUserToGroup(UserMapping userMapping, Guid groupId);
+
+		Task<IList<Group>> GetAll();
+
+		Task<Group> GetById(Guid id);
 
 	}
 

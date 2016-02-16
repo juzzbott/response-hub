@@ -8,13 +8,12 @@ using System.Threading.Tasks;
 
 using Microsoft.AspNet.Identity;
 
+using Enivate.ResponseHub.DataAccess.Interface;
 using Enivate.ResponseHub.Model.Identity;
-using Enivate.ResponseHub.Model.Identity.Interface;
 using Enivate.ResponseHub.DataAccess.MongoDB.DataObjects.Users;
 
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
-using MongoDB.Bson;
 
 namespace Enivate.ResponseHub.DataAccess.MongoDB
 {

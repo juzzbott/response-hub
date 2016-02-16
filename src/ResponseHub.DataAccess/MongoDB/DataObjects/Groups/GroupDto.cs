@@ -1,12 +1,14 @@
-﻿using System;
+﻿using Enivate.ResponseHub.Model;
+using Enivate.ResponseHub.Model.Groups;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Enivate.ResponseHub.Model.Groups
+namespace Enivate.ResponseHub.DataAccess.MongoDB.DataObjects.Groups
 {
-	public class Group : IEntity
+	public class GroupDto : IEntity
 	{
 
 		public Guid Id { get; set; }
@@ -23,9 +25,9 @@ namespace Enivate.ResponseHub.Model.Groups
 
 		public IList<UserMapping> Users { get; set; }
 
-		public Region Region { get; set; }
+		public Guid RegionId { get; set; }
 
-		public Group()
+		public GroupDto()
 		{
 			Id = Guid.NewGuid();
 			Users = new List<UserMapping>();

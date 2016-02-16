@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 using Enivate.ResponseHub.Model;
 
-namespace Enivate.ResponseHub.Model
+namespace Enivate.ResponseHub.DataAccess.Interface
 {
 	public interface IRepository<T> where T : IEntity
 	{

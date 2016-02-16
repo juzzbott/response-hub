@@ -6,18 +6,19 @@ using System.Threading.Tasks;
 
 using MongoDB.Bson;
 using MongoDB.Driver;
+using MongoDB.Driver.Linq;
 
 using Enivate.ResponseHub.Logging;
-
 using Enivate.ResponseHub.Model;
 using Enivate.ResponseHub.Model.Groups;
-using Enivate.ResponseHub.Model.Groups.Interface;
+using Enivate.ResponseHub.DataAccess.MongoDB.DataObjects.Groups;
+using Enivate.ResponseHub.DataAccess.Interface;
 
 namespace Enivate.ResponseHub.DataAccess.MongoDB
 {
 
 	[MongoCollectionName("groups")]
-	public class GroupRepository : MongoRepository<Group>, IGroupRepository
+	public class GroupRepository : MongoRepository<GroupDto>, IGroupRepository
 	{
 
 		/// <summary>
@@ -28,6 +29,18 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 		public GroupRepository(ILogger logger)
 		{
 			_logger = logger;
+		}
+
+		public new async Task<IList<Group>> GetAll()
+		{
+			IList<GroupDto> allResults = await base.GetAll();
+			return (IList<Group>)allResults.Select(async i => await MapDtoToModel(i)).ToList();
+		}
+
+		public new async Task<Group> GetById(Guid id)
+		{
+			GroupDto group = await base.GetById(id);
+			return await MapDtoToModel(group);
 		}
 
 		/// <summary>
@@ -42,10 +55,10 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 			await _logger.Debug(String.Format("New Group created. Id: {0} - Name {1}", group.Id, group.Name));
 
 			// Save the group to the database.
-			group = await Save(group);
+			GroupDto groupDto = await Save(MapModelToDto(group));
 
 			// return the group
-			return group;
+			return await MapDtoToModel(groupDto);
 		}
 
 		/// <summary>
@@ -57,26 +70,78 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 		{
 
 			// Find most recent groups and limit by count
-			IList<Group> groups = await Collection.Find(new BsonDocument()).Sort(Builders<Group>.Sort.Descending(i => i.Created)).Limit(count).ToListAsync();
+			IList<GroupDto> groups = await Collection.Find(new BsonDocument()).Sort(Builders<GroupDto>.Sort.Descending(i => i.Created)).Limit(count).ToListAsync();
 
 			// return the groups found in the database.
-			return groups;
+			IList<Group> mappedGroups = new List<Group>();
+			foreach(GroupDto group in groups)
+			{
+				mappedGroups.Add(await MapDtoToModel(group));
+			}
+
+			// return the mapped groups
+			return mappedGroups;
 
 		}
 
 		public async Task<bool> CheckIfGroupExists(string name, ServiceType service)
 		{
-			Group group = await FindOne(i => i.Name.ToUpper() == name.ToUpper() && i.Service == service);
+			GroupDto group = await FindOne(i => i.Name.ToUpper() == name.ToUpper() && i.Service == service);
 
 			return (group != null);
 		}
 
+		/// <summary>
+		/// Adds the user mapping to the group.
+		/// </summary>
+		/// <param name="userMapping">The user mapping to add to the group.</param>
+		/// <param name="groupId">The id of the group to remove the mapping from.</param>
+		/// <returns></returns>
 		public async Task AddUserToGroup(UserMapping userMapping, Guid groupId)
 		{
 			// Update the group to include the new user mapping.
 			await Collection.UpdateOneAsync(
-				Builders<Group>.Filter.Eq(i => i.Id, groupId),
-				Builders<Group>.Update.Push(i => i.Users, userMapping));
+				Builders<GroupDto>.Filter.Eq(i => i.Id, groupId),
+				Builders<GroupDto>.Update.Push(i => i.Users, userMapping));
+		}
+
+		/// <summary>
+		/// Maps the model object to the DTO object.
+		/// </summary>
+		/// <param name="modelObj"></param>
+		/// <returns></returns>
+		private GroupDto MapModelToDto(Group modelObj)
+		{
+			return new GroupDto()
+			{
+				Capcode = modelObj.Capcode,
+				Created = modelObj.Created,
+				Description = modelObj.Description,
+				Id = modelObj.Id,
+				Name = modelObj.Name,
+				RegionId = modelObj.Region.Id,
+				Service = modelObj.Service,
+				Users = modelObj.Users
+			};
+		}
+
+		private async Task<Group> MapDtoToModel(GroupDto modelObj)
+		{
+
+			// Get the region from the dto region id
+			IList<Region> regions = await _mongoDb.GetCollection<Region>("regions").Find(new BsonDocument()).ToListAsync();
+
+			return new Group()
+			{
+				Capcode = modelObj.Capcode,
+				Created = modelObj.Created,
+				Description = modelObj.Description,
+				Id = modelObj.Id,
+				Name = modelObj.Name,
+				Region = regions.FirstOrDefault(i => i.Id == modelObj.RegionId),
+				Service = modelObj.Service,
+				Users = modelObj.Users
+			};
 		}
 
 	}

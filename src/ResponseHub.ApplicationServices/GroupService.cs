@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+
+using Enivate.ResponseHub.DataAccess.Interface;
 using Enivate.ResponseHub.Model;
 using Enivate.ResponseHub.Model.Groups;
 using Enivate.ResponseHub.Model.Groups.Interface;
@@ -14,13 +16,16 @@ namespace Enivate.ResponseHub.ApplicationServices
 
 		private IGroupRepository _repository;
 
+		private IRegionRepository _regionRepository;
+
 		/// <summary>
 		/// Creates a new instance of the Group application service.
 		/// </summary>
 		/// <param name="repository">The repository used to persist group data.</param>
-		public GroupService(IGroupRepository repository)
+		public GroupService(IGroupRepository repository, IRegionRepository regionRepository)
 		{
 			_repository = repository;
+			_regionRepository = regionRepository;
 		}
 
 		/// <summary>
@@ -29,14 +34,15 @@ namespace Enivate.ResponseHub.ApplicationServices
 		/// <param name="name">The name of the group.</param>
 		/// <param name="service">The service the group belongs to.</param>
 		/// <returns>The created group object.</returns>
-		public async Task<Group> CreateGroup(string name, ServiceType service, string capcode, Guid groupAdministratorId, string description)
+		public async Task<Group> CreateGroup(string name, ServiceType service, string capcode, Guid groupAdministratorId, string description, Region region)
 		{
 			Group group = new Group()
 			{
 				Name = name,
 				Created = DateTime.UtcNow,
 				Service = service,
-				Description = description
+				Description = description,
+				Region = region
 			};
 
 			return await _repository.CreateGroup(group);
@@ -87,6 +93,11 @@ namespace Enivate.ResponseHub.ApplicationServices
 			};
 
 			await _repository.AddUserToGroup(mapping, groupId);
+		}
+
+		public async Task<IList<Region>> GetRegions()
+		{
+			return await _regionRepository.GetAll();
 		}
 	}
 }
