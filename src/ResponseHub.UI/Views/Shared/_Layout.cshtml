@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>@ViewBag.Title - ResponseHub Administration</title>
+	<title>@ViewBag.Title - ResponseHub</title>
 
 	<link rel="stylesheet" href="~/assets/css/framework.css" />
 	<link rel="stylesheet" href="~/assets/css/response-hub.css" />
@@ -49,39 +49,35 @@
 	</div>
 
 	<div class="container-fluid body-content">
-		
+
 		<div class="row">
 
 
-			@if (IsSectionDefined("Sidebar"))
-			{
 
-				<!-- Right Column -->
-				<div class="col-sm-3 col-lg-2 sidebar">
+
+			<!-- Right Column -->
+			<div class="col-sm-3 col-lg-2 sidebar">
+
+				@if (IsSectionDefined("Sidebar"))
+				{
 					@RenderSection("Sidebar")
+				}
+				else
+				{
+					@Html.Partial("~/Views/Shared/DefaultSidebar.cshtml")
+				}
 
-					<footer>
-						<p>&copy; @DateTime.Now.Year - ResponseHub</p>
-					</footer>
+				<footer>
+					<p>&copy; @DateTime.Now.Year - ResponseHub</p>
+				</footer>
 
-				</div>
-				<!-- END Right Column -->
-
-				<!-- Main Body -->
-				<div class="col-sm-9 col-sm-offset-3 col-lg-10 col-lg-offset-2 main-content">
-					@RenderBody()
-				</div>
-				<!-- END Main Body -->
-
-			}
-			else
-			{
-				<!-- Main Body -->
-				<div class="col-sm-12">
-					@RenderBody()
-				</div>
-				<!-- END Main Body -->
-			}
+			</div>
+			<!-- END Right Column -->
+			<!-- Main Body -->
+			<div class="col-sm-9 col-sm-offset-3 col-lg-10 col-lg-offset-2 main-content">
+				@RenderBody()
+			</div>
+			<!-- END Main Body -->
 
 		</div>
 

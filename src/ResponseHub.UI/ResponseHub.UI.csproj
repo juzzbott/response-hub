@@ -187,7 +187,9 @@
     <Compile Include="Areas\Admin\Models\Users\NewUserViewModel.cs" />
     <Compile Include="Areas\Admin\Models\Groups\SingleGroupViewModel.cs" />
     <Compile Include="Controllers\Api\PagerMessageController.cs" />
+    <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\MyAccountController.cs" />
+    <Compile Include="Controllers\WallboardController.cs" />
     <Compile Include="Filters\ClaimsAuthorizeAttribute.cs" />
     <Compile Include="Filters\ResponseHubPageAttribute.cs" />
     <Compile Include="Global.asax.cs">
@@ -303,6 +305,18 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Areas\Admin\Views\Users\NewUser.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Home\Index.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Shared\DefaultSidebar.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Wallboard\Index.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Shared\WallboardLayout.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
