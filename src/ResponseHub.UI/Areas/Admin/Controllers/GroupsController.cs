@@ -121,12 +121,7 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 
 			// Redirect to the group administrator screen
 			return new RedirectResult("/admin/groups/create/group-administrator");
-
 			
-			//// Create the group
-			//Group newGroup = await GroupService.CreateGroup(model.Name, serviceType, model.Description);
-			//
-			//return View(model);
 		}
 
 		[Route("create/group-administrator")]
