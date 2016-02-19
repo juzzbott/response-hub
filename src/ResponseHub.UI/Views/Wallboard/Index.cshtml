@@ -1,5 +1,30 @@
-﻿
+﻿@model Enivate.ResponseHub.UI.Models.Wallboard.WallboardViewModel
+
 @{
 	ViewBag.Title = "Wallboard";
 	Layout = "~/Views/Shared/WallboardLayout.cshtml";
+
+	var message = Model.Messages.FirstOrDefault();
+
 }
+
+<h2>
+	@if (message.Priority == Enivate.ResponseHub.Model.Messages.MessagePriority.Emergency)
+	{
+		<i class="fa fa-exclamation-triangle p-message-emergency"></i>
+	}
+	else if (message.Priority == Enivate.ResponseHub.Model.Messages.MessagePriority.NonEmergency)
+	{
+		<i class="fa fa-exclamation-circle p-message-non-emergency"></i>
+	}
+	else
+	{
+		<i class="fa fa-info-circle p-message-admin"></i>
+	}	
+	@message.JobNumber
+	<small class="pull-right">@message.Timestamp.ToLocalTime().ToString("dd-MM-yyyy HH:mm:ss")</small>
+</h2>
+
+<p class="lead">@message.MessageBody</p>
+
+<div id="map"></div>

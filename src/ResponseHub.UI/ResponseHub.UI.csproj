@@ -196,17 +196,27 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Helpers\HtmlHelpers.cs" />
+    <Compile Include="Models\Messages\ParsedMessageViewModel.cs" />
     <Compile Include="Models\MyAccount\LoginViewModel.cs" />
     <Compile Include="Models\Users\GroupUserViewModel.cs" />
+    <Compile Include="Models\Wallboard\WallboardViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="assets\css\framework.css" />
+    <Content Include="assets\css\lib\leaflet.css" />
     <Content Include="assets\css\response-hub.css" />
     <Content Include="assets\fonts\fontawesome-webfont.svg" />
+    <Content Include="assets\images\leaflet\layers-2x.png" />
+    <Content Include="assets\images\leaflet\layers.png" />
+    <Content Include="assets\images\leaflet\marker-icon-2x.png" />
+    <Content Include="assets\images\leaflet\marker-icon.png" />
+    <Content Include="assets\images\leaflet\marker-shadow.png" />
     <Content Include="assets\js\framework.js" />
+    <Content Include="assets\js\lib\leaflet.js" />
     <Content Include="assets\js\modules\joblog.js" />
+    <Content Include="assets\js\modules\wallboard.js" />
     <Content Include="assets\js\modules\_core.js" />
     <Content Include="assets\js\script.js" />
     <Content Include="favicon.ico" />
@@ -225,7 +235,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="assets\images\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
@@ -317,6 +326,12 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Shared\WallboardLayout.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Wallboard\MessageList.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Wallboard\Warnings.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

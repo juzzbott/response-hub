@@ -22,20 +22,22 @@ module.exports = function(grunt) {
 					'bower_components/jquery-validation/dist/jquery.validate.min.js',
 					'bower_components/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js',
 					'bower_components/bootstrap/dist/js/bootstrap.js',
-					'bower_components/moment/min/moment.min.js'
+					'bower_components/moment/min/moment.min.js',
+					'assets/js/lib/leaflet.js'
 				],
 				dest: 'assets/js/framework.js'
 			},
 			script_js: {
 				separator: ';',
-				banner: 'window.responseHub=window.jobCard||{},window.responseHub.BUILD_NUMBER=1;',
-				src: ['assets/js/modules/_core.js', 'assets/js/modules/joblog.js'],
+				banner: '',
+				src: ['assets/js/modules/_core.js', 'assets/js/modules/joblog.js', 'assets/js/modules/wallboard.js'],
 				dest: 'assets/js/script.js'
 			},
 			framework_css: {
 				src: [
 					'bower_components/bootstrap/dist/css/bootstrap.css',
-					'bower_components/fontawesome/css/font-awesome.min.css'
+					'bower_components/fontawesome/css/font-awesome.min.css',
+					'assets/css/lib/leaflet.css'
 				],
 				dest: 'assets/css/framework.css',
 			}

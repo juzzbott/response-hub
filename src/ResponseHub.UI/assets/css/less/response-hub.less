@@ -269,6 +269,7 @@
     }
 }
 
+@body-bg: #fafafa;
 @body-color: #333;
 
 @ses-orange: #FF862F;
@@ -292,7 +293,7 @@ button:active {
 }
 
 body {
-	background: #fafafa;
+	background: @body-bg;
 	padding-top: 50px;
 	font-family: 'Ubuntu', sans-serif;
 	color: @body-color;
@@ -827,6 +828,97 @@ footer {
 
 		}
 	}
+}
+
+/**
+	Wallboard styles
+*/
+
+.wallboard-layout {
+
+	.wallboard-sidebar {
+		background-color: #fff;
+		border-right: 1px solid #ccc;
+	}
+
+	.message-list-options {
+		padding-top: 5px;
+	}
+
+	.message-list {
+		background: #fff;
+
+		li {
+			cursor: pointer;
+
+			&.selected,
+			&:hover {
+				background-color: #f3f5f9;
+			}
+
+		}
+
+		.p-message {
+			clear: both;
+			position: relative;
+			padding: 10px 15px 15px;
+			border-bottom: 1px solid @sidebar-foreground;
+
+			i {
+				font-size: 20px;
+				padding-right: 5px;
+			}
+
+			span {
+				font-size: 16px;
+			}
+
+		}
+
+		.p-message-meta { 
+			padding: 0 15px;
+
+			.group-heading {
+				float: left;
+			}
+
+			.message-date {
+				float: right;
+				padding-top: 10px;
+			}
+		}
+
+	}
+
+	i.p-message-emergency {
+		color: #b60500;
+	}
+
+	i.p-message-non-emergency {
+		color: #e28405;
+	}
+
+	i.p-message-admin {
+		color: #143599;
+	}
+
+	.wallboard-main > h2 > i {
+		padding-right: 10px;
+	}
+
+	.wallboard-warnings {
+		background-color: #fff;
+		border-left: 1px solid #ccc;
+	}
+
+	#map {
+		height: 600px;
+	}
+
+	.warning-types {
+		margin-bottom: 10px;
+	}
+
 }
 
 /**

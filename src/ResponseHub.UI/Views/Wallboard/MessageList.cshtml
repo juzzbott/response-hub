@@ -1,0 +1,49 @@
+﻿@model Enivate.ResponseHub.UI.Models.Wallboard.WallboardViewModel
+
+<div class="row message-list-options">
+	<div class="col-xs-6">
+		<div class="checkbox">
+			<label>
+				<input type="checkbox" checked="checked" /> Auto-refresh
+			</label>
+		</div>
+	</div>
+	<div class="col-xs-6 pull-right">
+		<select class="form-control">
+			<option value="10">10 Seconds</option>
+			<option value="30" selected="selected">30 Seconds</option>
+			<option value="60">60 Seconds</option>
+		</select>
+	</div>
+</div>
+
+<div class="row">
+	<ul class="list-unstyled message-list">
+		@for(int i = 0; i < Model.Messages.Count; i++)
+		{
+			var message = Model.Messages[i];
+
+		<li class="@(i == 0 ? "selected" : "")">
+			<div class="p-message-meta">
+				<h4 class="group-heading">@message.CapcodeGroupName</h4>
+				<p class="text-info message-date">@message.Timestamp.ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss")</p>
+			</div>
+			<div class="p-message">
+				@if (message.Priority == Enivate.ResponseHub.Model.Messages.MessagePriority.Emergency)
+				{
+				<i class="fa fa-exclamation-triangle p-message-emergency"></i>
+				}
+				else if (message.Priority == Enivate.ResponseHub.Model.Messages.MessagePriority.NonEmergency)
+				{
+					<i class="fa fa-exclamation-circle p-message-non-emergency"></i>
+				}
+				else
+				{
+					<i class="fa fa-info-circle p-message-admin"></i>
+				}
+				<span>@message.MessageBody</span> 
+			</div>
+		</li>
+		}
+	</ul>
+</div>

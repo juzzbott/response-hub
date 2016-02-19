@@ -645,5 +645,70 @@ footer p {
   padding-left: 10px;
 }
 /**
+	Wallboard styles
+*/
+.wallboard-layout .wallboard-sidebar {
+  background-color: #fff;
+  border-right: 1px solid #ccc;
+}
+.wallboard-layout .message-list-options {
+  padding-top: 5px;
+}
+.wallboard-layout .message-list {
+  background: #fff;
+}
+.wallboard-layout .message-list li {
+  cursor: pointer;
+}
+.wallboard-layout .message-list li.selected,
+.wallboard-layout .message-list li:hover {
+  background-color: #f3f5f9;
+}
+.wallboard-layout .message-list .p-message {
+  clear: both;
+  position: relative;
+  padding: 10px 15px 15px;
+  border-bottom: 1px solid #c8c5ba;
+}
+.wallboard-layout .message-list .p-message i {
+  font-size: 20px;
+  padding-right: 5px;
+}
+.wallboard-layout .message-list .p-message span {
+  font-size: 16px;
+}
+.wallboard-layout .message-list .p-message-meta {
+  padding: 0 15px;
+}
+.wallboard-layout .message-list .p-message-meta .group-heading {
+  float: left;
+}
+.wallboard-layout .message-list .p-message-meta .message-date {
+  float: right;
+  padding-top: 10px;
+}
+.wallboard-layout i.p-message-emergency {
+  color: #b60500;
+}
+.wallboard-layout i.p-message-non-emergency {
+  color: #e28405;
+}
+.wallboard-layout i.p-message-admin {
+  color: #143599;
+}
+.wallboard-layout .wallboard-main > h2 > i {
+  padding-right: 10px;
+}
+.wallboard-layout .wallboard-warnings {
+  background-color: #fff;
+  border-left: 1px solid #ccc;
+}
+.wallboard-layout #map {
+  height: 600px;
+}
+.wallboard-layout .warning-types {
+  margin-bottom: 10px;
+}
+/**
  * Mixins
  */
