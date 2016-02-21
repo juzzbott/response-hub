@@ -1,5 +1,18 @@
 ﻿responseHub.wallboard = (function () {
 
+	function showHideWarnings(warningsContainer) {
+
+		// If the container has the hidden class, remove it, otherwise add it
+		if ($('.' + warningsContainer).hasClass('hidden')) {
+			$('.' + warningsContainer).removeClass('hidden')
+		}
+		else
+		{
+			$('.' + warningsContainer).addClass('hidden')
+		}
+
+	}
+
 	function setContainerHeights(width) {
 
 		// If the width is < 768 then just set the heights to auto
@@ -43,5 +56,9 @@
 	// Bind and load the UI
 	bindUI();
 	loadUI();
+
+	return {
+		showHideWarnings: showHideWarnings
+	}
 
 })();

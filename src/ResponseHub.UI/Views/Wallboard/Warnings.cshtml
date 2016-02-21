@@ -4,34 +4,43 @@
 <div class="row warning-types">
 	<div class="col-xs-12">
 		<label class="checkbox-inline">
-			<input type="checkbox" id="warnings-bom" value="warnings-bom" checked="checked"> Bureau of Meteorology
+			<input type="checkbox" id="warnings-bom" value="warnings-bom" checked="checked" onclick="responseHub.wallboard.showHideWarnings('bom-warnings');"> Bureau of Meteorology
 		</label>
 		<label class="checkbox-inline">
-			<input type="checkbox" id="warnings-ses" value="option2" checked="checked"> SES
+			<input type="checkbox" id="warnings-ses" value="option2" checked="checked" onclick="responseHub.wallboard.showHideWarnings('ses-warnings');"> SES
 		</label>
 		<label class="checkbox-inline">
-			<input type="checkbox" id="warnings-cfa" value="option3"> CFA
+			<input type="checkbox" id="warnings-cfa" value="option3" onclick="responseHub.wallboard.showHideWarnings('cfa-warnings');"> CFA
 		</label>
 	</div>
 </div>
 
-<p><strong>Bureau of Meteorology</strong></p>
+<div class="bom-warnings">
 
-<ul class="warnings-list list-unstyled">
-	<li>No warnings</li>
-</ul>
+	<p><strong>Bureau of Meteorology</strong></p>
+	<ul class="warnings-list list-unstyled">
+		<li>No warnings</li>
+	</ul>
 
-<p><strong>Victoria State Emergency Service</strong></p>
+</div>
 
-<ul class="warnings-list list-unstyled">
-	<li>No warnings</li>
-</ul>
+<div class="ses-warnings">
 
-<p><strong>Country Fire Authority</strong></p>
+	<p><strong>Victoria State Emergency Service</strong></p>
+	<ul class="warnings-list list-unstyled">
+		<li>No warnings</li>
+	</ul>
 
-<ul class="warnings-list list-unstyled">
-	<li>No warnings</li>
-</ul>
+</div>
+
+<div class="cfa-warnings hidden">
+
+	<p><strong>Country Fire Authority</strong></p>
+	<ul class="warnings-list list-unstyled">
+		<li>No warnings</li>
+	</ul>
+
+</div>
 
 <h2>Radar</h2>
 
