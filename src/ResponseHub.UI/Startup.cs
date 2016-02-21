@@ -11,7 +11,7 @@ using Owin;
 
 using Microsoft.Practices.Unity;
 
-using Enivate.ResponseHub.ApplicationServices.Identity;
+using Enivate.ResponseHub.ApplicationServices;
 using Enivate.ResponseHub.Common;
 using Enivate.ResponseHub.DataAccess.Interface;
 using Enivate.ResponseHub.Logging;

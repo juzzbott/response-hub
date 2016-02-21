@@ -1,18 +1,34 @@
-﻿using Enivate.ResponseHub.Model.Messages;
-using Enivate.ResponseHub.UI.Models.Messages;
-using Enivate.ResponseHub.UI.Models.Wallboard;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 
+using Microsoft.Practices.Unity;
+
+using Enivate.ResponseHub.Common;
+using Enivate.ResponseHub.Model.Messages;
+using Enivate.ResponseHub.Model.Warnings.Interface;
+using Enivate.ResponseHub.UI.Models.Messages;
+using Enivate.ResponseHub.UI.Models.Wallboard;
+using Enivate.ResponseHub.Model.Warnings;
+
 namespace Enivate.ResponseHub.UI.Controllers
 {
     public class WallboardController : Controller
     {
-        // GET: Wallboard
-        public ActionResult Index()
+
+		private IWarningService _warningService;
+		protected IWarningService WarningService
+		{
+			get
+			{
+				return _warningService ?? (_warningService = UnityConfiguration.Container.Resolve<IWarningService>());
+			}
+		}
+
+		// GET: Wallboard
+		public ActionResult Index()
         {
 
 			WallboardViewModel model = new WallboardViewModel();
@@ -45,6 +61,9 @@ namespace Enivate.ResponseHub.UI.Controllers
 				Priority = MessagePriority.Administration,
 				Timestamp = DateTime.UtcNow.AddHours(-20)
 			});
+
+			// Get the warnings
+			IList<IWarning> warnings = WarningService.GetWarnings(WarningSource.CountryFireAuthority | WarningSource.StateEmergencyService);
 
 			return View(model);
         }

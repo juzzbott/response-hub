@@ -15,7 +15,7 @@ using Enivate.ResponseHub.Model.Identity.Interface;
 using Enivate.ResponseHub.Common.Constants;
 using Enivate.ResponseHub.Common;
 
-namespace Enivate.ResponseHub.ApplicationServices.Identity
+namespace Enivate.ResponseHub.ApplicationServices
 {
 	public class UserService : UserManager<IdentityUser, Guid>, IUserService
 	{

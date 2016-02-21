@@ -64,6 +64,9 @@
     <Compile Include="Spatial\MapIndex.cs" />
     <Compile Include="Spatial\Coordinates.cs" />
     <Compile Include="Spatial\MapType.cs" />
+    <Compile Include="Warnings\Interface\IWarningService.cs" />
+    <Compile Include="Warnings\IWarning.cs" />
+    <Compile Include="Warnings\WarningSource.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

@@ -1,4 +1,5 @@
-﻿using Enivate.ResponseHub.UI.Models.Messages;
+﻿using Enivate.ResponseHub.Model.Warnings;
+using Enivate.ResponseHub.UI.Models.Messages;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,6 +11,8 @@ namespace Enivate.ResponseHub.UI.Models.Wallboard
 	{
 
 		public IList<ParsedMessageViewModel> Messages { get; set; }
+
+		public IDictionary<WarningSource, IWarning> Warnings { get; set; }
 
 		public WallboardViewModel()
 		{

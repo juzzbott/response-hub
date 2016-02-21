@@ -47,6 +47,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -56,6 +57,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Configuration\WarningElementCollection.cs" />
+    <Compile Include="Configuration\ConfigurationSettings.cs" />
+    <Compile Include="Configuration\WarningsConfigurationSection.cs" />
+    <Compile Include="Configuration\WarningSourceElement.cs" />
     <Compile Include="Constants\ConfigurationKeys.cs" />
     <Compile Include="EnumValue.cs" />
     <Compile Include="HashGenerator.cs" />

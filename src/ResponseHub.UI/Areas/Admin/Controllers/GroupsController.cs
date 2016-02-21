@@ -14,7 +14,7 @@ using Enivate.ResponseHub.Model;
 using Enivate.ResponseHub.Model.Groups;
 using Enivate.ResponseHub.Model.Groups.Interface;
 
-using Enivate.ResponseHub.ApplicationServices.Identity;
+using Enivate.ResponseHub.ApplicationServices;
 using Enivate.ResponseHub.Model.Identity;
 using Enivate.ResponseHub.Model.Identity.Interface;
 

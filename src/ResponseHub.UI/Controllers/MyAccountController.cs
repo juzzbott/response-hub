@@ -11,7 +11,7 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 
-using Enivate.ResponseHub.ApplicationServices.Identity;
+using Enivate.ResponseHub.ApplicationServices;
 using Enivate.ResponseHub.Common;
 using Enivate.ResponseHub.Logging;
 using Enivate.ResponseHub.Model.Identity;
@@ -165,9 +165,7 @@ namespace Enivate.ResponseHub.UI.Controllers
 		}
 
 		#endregion
-
-
-
+		
 		#region Helpers
 
 		/// <summary>
