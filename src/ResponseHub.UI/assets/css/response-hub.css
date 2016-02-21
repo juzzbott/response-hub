@@ -369,6 +369,16 @@ body {
   margin-right: -18px;
   margin-left: -18px;
 }
+.sidebar .nav > li.active {
+  background-color: #161d21;
+}
+.sidebar .nav > li.active a i {
+  color: #d7ad70;
+}
+.sidebar .nav > li.active a:hover i,
+.sidebar .nav > li.active a:focus i {
+  color: #e2c498;
+}
 .sidebar .nav > li > a {
   color: #c8c5ba;
 }
@@ -708,6 +718,38 @@ footer p {
 }
 .wallboard-layout .warning-types {
   margin-bottom: 10px;
+}
+/***
+ * Password Strength
+**/
+.password-strength {
+  clear: both;
+  width: 250px;
+  margin: 10px 0;
+}
+.password-strength .strength-bar {
+  height: 10px;
+  width: 70px;
+  margin-right: 7px;
+  background-color: #ddd;
+  border: 1px solid #ccc;
+  float: left;
+  border-radius: 2px;
+}
+.password-strength.weak .strength-bar.first {
+  background-color: #ea2d43;
+  border-color: #821a26;
+}
+.password-strength.medium .strength-bar.first,
+.password-strength.medium .strength-bar.second {
+  background-color: #fae388;
+  border-color: #fad43c;
+}
+.password-strength.strong .strength-bar.first,
+.password-strength.strong .strength-bar.second,
+.password-strength.strong .strength-bar.third {
+  background-color: #05c463;
+  border-color: #26a880;
 }
 /**
  * Mixins

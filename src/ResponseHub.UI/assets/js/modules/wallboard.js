@@ -40,6 +40,12 @@
 
 	function loadUI() {
 
+		// If the body class does not contain the 'wallboard-layout' class, exit as we aren't in wallboard view.
+
+		if (!$('body').hasClass('wallboard-layout')) {
+			return;
+		}
+
 		// Initially set the container heights
 		setContainerHeights($(window).width());
 

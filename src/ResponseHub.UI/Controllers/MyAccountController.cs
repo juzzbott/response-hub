@@ -165,7 +165,164 @@ namespace Enivate.ResponseHub.UI.Controllers
 		}
 
 		#endregion
-		
+
+		#region Change password
+
+		[Route("change-password")]
+		public async Task<ActionResult> ChangePassword()
+		{
+
+			// Get the user id and the user entity
+			Guid userId = new Guid(User.Identity.GetUserId());
+			IdentityUser user = await UserService.FindByIdAsync(userId);
+
+			// If there is no user currently assigned to the user account (i.e. login from Facebook), give the user the option to create a password.
+			if (user != null && String.IsNullOrEmpty(user.PasswordHash))
+			{
+				// Show Create password
+				return View("CreatePassword");
+			}
+			else
+			{
+				// Show shange password
+				return View();
+			}
+		}
+
+		[Route("change-password")]
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public async Task<ActionResult> ChangePassword(ChangePasswordViewModel model)
+		{
+
+			// Ensure the model is valid
+			if (!ModelState.IsValid)
+			{
+				return View();
+			}
+
+			// Get the user id and the user entity
+			Guid userId = new Guid(User.Identity.GetUserId());
+			IdentityUser user = await UserService.FindByIdAsync(userId);
+
+			// Ensure the password is valid
+			bool passwordValid = await UserService.CheckPasswordAsync(user, model.AccountPassword);
+			if (!passwordValid)
+			{
+				ModelState.AddModelError("", "Sorry, the account password you have entered is incorrect.");
+				return View(model);
+			}
+
+			try
+			{
+
+				// Change the user password.
+				IdentityResult result = await UserService.ChangePasswordAsync(userId, model.AccountPassword, model.NewPassword);
+
+				if (result.Succeeded)
+				{
+
+					try
+					{
+						// Send the outbound message
+						//await sendPasswordChangedMessage(user);
+					}
+					catch (Exception ex)
+					{
+						await _log.Error("Unable to send password changed mail message.", ex);
+					}
+
+					//_eventLog.LogEvent(EventTypes.CHANGE_PASSWORD, "User '{0}' changed password. IP Address of user: {1}", userId, Request.UserHostAddress);
+					return new RedirectResult("/my-account/change-password/complete");
+				}
+				else
+				{
+					ModelState.AddModelError("", "Sorry, there was an error updating your account password.");
+					return View(model);
+				}
+
+			}
+			catch (Exception ex)
+			{
+				await _log.Error(String.Format("There was an error updating the account password for user: '{0}'.", userId), ex);
+				ModelState.AddModelError("", "Sorry, there was an error updating your account password.");
+				return View(model);
+			}
+
+		}
+
+		[Route("create-password")]
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public async Task<ActionResult> CreatePassword(CreatePasswordViewModel model)
+		{
+
+			// Ensure the model is valid
+			if (!ModelState.IsValid)
+			{
+				return View();
+			}
+
+			// Get the user id and the user entity
+			Guid userId = new Guid(User.Identity.GetUserId());
+			IdentityUser user = await UserService.FindByIdAsync(userId);
+
+			if (user == null || user.PasswordHash != null)
+			{
+				ModelState.AddModelError("", "Sorry, we are unable to create a password for your account at this time.");
+				return View(model);
+			}
+
+			try
+			{
+
+				// Create the user
+				PasswordHasher hasher = new PasswordHasher();
+				string passwordHash = hasher.HashPassword(model.NewPassword);
+
+				// Change the user password.
+				IdentityResult result = await UserService.CreatePasswordAsync(user, passwordHash);
+
+				if (result.Succeeded)
+				{
+
+					try
+					{
+						// Send the outbound message
+						//await sendPasswordCreatedMessage(user);
+					}
+					catch (Exception ex)
+					{
+						await _log.Error("Unable to send password created mail message.", ex);
+					}
+
+					//_eventLog.LogEvent(EventTypes.CREATE_PASSWORD, "User '{0}' created a password. IP Address of user: {1}", userId, Request.UserHostAddress);
+					return new RedirectResult("/my-account/change-password/complete");
+				}
+				else
+				{
+					ModelState.AddModelError("", "Sorry, there was an error creating your account password.");
+					return View(model);
+				}
+
+			}
+			catch (Exception ex)
+			{
+				await _log.Error(String.Format("There was an error creating the account password for user: '{0}'.", userId), ex);
+				ModelState.AddModelError("", "Sorry, there was an error creating your account password.");
+				return View(model);
+			}
+
+		}
+
+		[Route("change-password/complete")]
+		public ActionResult ChangePasswordComplete()
+		{
+			return View();
+		}
+
+		#endregion
+
 		#region Helpers
 
 		/// <summary>

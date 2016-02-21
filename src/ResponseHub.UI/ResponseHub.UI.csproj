@@ -197,6 +197,8 @@
     </Compile>
     <Compile Include="Helpers\HtmlHelpers.cs" />
     <Compile Include="Models\Messages\ParsedMessageViewModel.cs" />
+    <Compile Include="Models\MyAccount\ChangePasswordViewModel.cs" />
+    <Compile Include="Models\MyAccount\CreatePasswordViewModel.cs" />
     <Compile Include="Models\MyAccount\LoginViewModel.cs" />
     <Compile Include="Models\Users\GroupUserViewModel.cs" />
     <Compile Include="Models\Wallboard\WallboardViewModel.cs" />
@@ -332,6 +334,15 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Wallboard\Warnings.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\MyAccount\ChangePassword.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\MyAccount\CreatePassword.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\MyAccount\ChangePasswordComplete.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

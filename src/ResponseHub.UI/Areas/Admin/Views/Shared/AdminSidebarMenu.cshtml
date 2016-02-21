@@ -1,16 +1,16 @@
 ﻿<p class="explore">System Administration</p>
 
 <ul class="nav nav-sidebar">
-	<li>
+	<li class="@(ViewContext.RouteData.Values["Controller"].ToString() == "Groups" ? "active" : "")">
 		<a href="/admin/groups"><i class="fa fa-fw fa-users"></i>Groups</a>
 	</li>
-	<li>
+	<li class="@(ViewContext.RouteData.Values["Controller"].ToString() == "Users" ? "active" : "")">
 		<a href="/admin/users"><i class="fa fa-fw fa-user"></i>Users</a>
 	</li>
-	<li>
+	<li class="@(ViewContext.RouteData.Values["Controller"].ToString() == "Messages" ? "active" : "")">
 		<a href="/admin/messages"><i class="fa fa-fw fa-newspaper-o"></i>Messages</a>
 	</li>
-	<li>
+	<li class="@(ViewContext.RouteData.Values["Controller"].ToString() == "Settings" ? "active" : "")">
 		<a href="/admin/messages"><i class="fa fa-fw fa-cogs"></i>System Settings</a>
 	</li>
 </ul>

@@ -30,7 +30,7 @@ module.exports = function(grunt) {
 			script_js: {
 				separator: ';',
 				banner: '',
-				src: ['assets/js/modules/_core.js', 'assets/js/modules/joblog.js', 'assets/js/modules/wallboard.js'],
+				src: ['assets/js/modules/_core.js', 'assets/js/modules/joblog.js', 'assets/js/modules/wallboard.js', 'assets/js/modules/password-strength.js'],
 				dest: 'assets/js/script.js'
 			},
 			framework_css: {

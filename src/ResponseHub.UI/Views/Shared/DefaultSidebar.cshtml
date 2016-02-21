@@ -10,7 +10,7 @@
 	<li>
 		<a href="/wallboard"><i class="fa fa-fw fa-desktop"></i>Wallboard view</a>
 	</li>
-	<li>
+	<li class="@(ViewContext.RouteData.Values["Controller"].ToString() == "MyAccount" ? "active" : "")">
 		<a href="/my-account"><i class="fa fa-fw fa-user"></i>My account</a>
 	</li>
 </ul>
