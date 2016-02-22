@@ -218,6 +218,7 @@
     <Content Include="assets\js\framework.js" />
     <Content Include="assets\js\lib\leaflet.js" />
     <Content Include="assets\js\modules\joblog.js" />
+    <Content Include="assets\js\modules\password-strength.js" />
     <Content Include="assets\js\modules\wallboard.js" />
     <Content Include="assets\js\modules\_core.js" />
     <Content Include="assets\js\script.js" />
