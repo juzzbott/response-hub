@@ -397,7 +397,7 @@
   <Target Name="BuildLocal">
     <ItemGroup>
       <CopyDlls Include="bin\*.dll" />
-      <CopyFiles Include="**\*.openssh;**\*.resx;**\*.xml;**\*.aspx;**\*.ascx;**\*.master;**\*.js;**\*.css;**\*.asax;**\*.config;**\img\*.*;favicon.ico;**\*.html;**\img\*\*.*;**\*.txt;**\*.asmx;**\*.pdf;**\*.csv;**\*.ashx;**\*.cshtml" Exclude="**\bower_components\**;**\node_modules\**;**\obj\**;**\Web.*.config;**\Gruntfile.js" />
+      <CopyFiles Include="**\*.openssh;**\*.resx;**\*.xml;**\*.aspx;**\*.ascx;**\*.master;**\*.js;**\*.css;**\*.asax;**\*.config;**\img\*.*;favicon.ico;**\*.html;**\img\*\*.*;**\*.txt;**\*.asmx;**\*.pdf;**\*.csv;**\*.ashx;**\*.cshtml;**\bin\roslyn\*.*;**\assets\fonts\*.*" Exclude="**\bower_components\**;**\node_modules\**;**\obj\**;**\Web.*.config;**\Gruntfile.js" />
     </ItemGroup>
     <Message Text="Copy Dlls" Importance="high" />
     <Copy SourceFiles="@(CopyDlls)" DestinationFiles="@(CopyDlls->'$(DeploymentFolder)\%(RelativeDir)%(Filename)%(Extension)')" ContinueOnError="false" SkipUnchangedFiles="true" />
