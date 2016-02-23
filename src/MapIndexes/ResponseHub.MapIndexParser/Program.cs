@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -9,10 +10,11 @@ using System.Threading.Tasks;
 using DotSpatial.Data;
 using DotSpatial.Projections;
 
-using Enivate.ResponseHub.Common;
-using Enivate.ResponseHub.Model.Spatial;
-using System.Data;
 using MongoDB.Driver;
+
+using Enivate.ResponseHub.Common;
+using Enivate.ResponseHub.MapIndexParser.Parsers;
+using Enivate.ResponseHub.Model.Spatial;
 using Enivate.ResponseHub.DataAccess.MongoDB;
 using Enivate.ResponseHub.Logging;
 
@@ -43,24 +45,8 @@ namespace Enivate.ResponseHub.MapIndexParser
 			else if (args[0].ToLower() == "-shp")
 			{
 
-				// Ensure -db option exists
-				if (!EnsureDbConnectionString(args))
-				{
-					DisplayInvalidUsage();
-					return;
-				}
-
-				// Create the MapIndexRepository
-				_mapIndexRepository = new MapIndexRepository(new FileLogger(), _dbConnectionString);
-
-				// Check if we need to clear the indexes first.
-				if (args.Contains("-R"))
-				{
-					Task.Run(async () =>
-					{
-						await _mapIndexRepository.ClearCollection();
-					});
-				}
+				// Initialise the import
+				InitialiseImport(args);
 
 				MapType mapType = GetMapTypeFromArgument(args);
 
@@ -77,31 +63,26 @@ namespace Enivate.ResponseHub.MapIndexParser
 			}
 			else if (args[0].ToLower() == "-lf")
 			{
-				
-				// Ensure -db option exists
-				if (!EnsureDbConnectionString(args))
-				{
-					DisplayInvalidUsage();
-					return;
-				}
 
-				// Create the MapIndexRepository
-				_mapIndexRepository = new MapIndexRepository(new FileLogger(), _dbConnectionString);
-
-				// Check if we need to clear the indexes first.
-				if (args.Contains("-R"))
-				{
-					Task.Run(async () =>
-					{
-						await _mapIndexRepository.ClearCollection();
-					});
-				}
+				// Initialise the import
+				InitialiseImport(args);
 
 				// Process only a single shapefile
 				string shapeFileListPath = Path.GetFullPath(args[1]);
 
 				// Process the list of shape files.
 				ProcessShapeFileList(shapeFileListPath);
+			}
+			else if (args[0].ToLower() == "-melway")
+			{
+
+				// Initialise the import
+				InitialiseImport(args);
+
+				// Parse the melways indexes
+				MelwayParser parser = new MelwayParser();
+				parser.GetMapIndexes();
+
 			}
 			else
 			{
@@ -110,6 +91,28 @@ namespace Enivate.ResponseHub.MapIndexParser
 			}
 
 
+		}
+
+		private static void InitialiseImport(string[] args)
+		{
+			// Ensure -db option exists
+			if (!EnsureDbConnectionString(args))
+			{
+				DisplayInvalidUsage();
+				return;
+			}
+
+			// Create the MapIndexRepository
+			//_mapIndexRepository = new MapIndexRepository(new FileLogger(), _dbConnectionString);
+
+			// Check if we need to clear the indexes first.
+			if (args.Contains("-R"))
+			{
+				Task.Run(async () =>
+				{
+					await _mapIndexRepository.ClearCollection();
+				});
+			}
 		}
 
 		/// <summary>
@@ -490,6 +493,7 @@ namespace Enivate.ResponseHub.MapIndexParser
 			Console.WriteLine("-map\t\t\t\tThe map type. 1 = Spatial Vision, 2 = Melway.");
 			Console.WriteLine("-lf <path_to_listfile>\t\tPath to a file that contains the paths to multiple shapefiles to parse. ");
 			Console.WriteLine("\t\t\t\tEach shape file should be on its own line.");
+			Console.WriteLine("-melway\t\t\t Parses the Melway services for the map indexes.");
 			Console.WriteLine("-db <db_conn_string>\t\tConnection string used to connect to the database.");
 			Console.WriteLine();
 			Console.WriteLine("Options parameters:");
@@ -504,7 +508,7 @@ namespace Enivate.ResponseHub.MapIndexParser
 		/// </summary>
 		private static void DisplayInvalidUsage()
 		{
-			Console.WriteLine("ResponseHub map index parser - Invalid arguments. Parameters: [-shp <path_to_shapefile> -map [1 = SpatialVision|2 = Melway] | -lf <path_to_list_file>] -db <conn_string>  [-R]");
+			Console.WriteLine("ResponseHub map index parser - Invalid arguments. Parameters: -shp <path_to_shapefile> -map [1 = SpatialVision] | -lf <path_to_list_file> | -melway -db <conn_string>  [-R]");
 			Console.WriteLine("Use the option '-h' for further information.");
 		}
 
