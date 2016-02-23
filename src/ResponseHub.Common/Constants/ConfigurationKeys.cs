@@ -11,5 +11,8 @@ namespace Enivate.ResponseHub.Common.Constants
 
 		public const string ClaimsIssuer = "ClaimsIssuer";
 
+		public const string BomRadarImageFtpLocation = "BoM.RadarImageFtpLocation";
+		public const string BomCacheDirectory = "BoM.CacheDirectory";
+
 	}
 }

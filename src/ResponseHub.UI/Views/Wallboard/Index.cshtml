@@ -11,20 +11,20 @@
 <h2>
 	@if (message.Priority == Enivate.ResponseHub.Model.Messages.MessagePriority.Emergency)
 	{
-		<i class="fa fa-exclamation-triangle p-message-emergency"></i>
+		<i id="message-type" class="fa fa-exclamation-triangle p-message-emergency"></i>
 	}
 	else if (message.Priority == Enivate.ResponseHub.Model.Messages.MessagePriority.NonEmergency)
 	{
-		<i class="fa fa-exclamation-circle p-message-non-emergency"></i>
+		<i id="message-type" class="fa fa-exclamation-circle p-message-non-emergency"></i>
 	}
 	else
 	{
-		<i class="fa fa-info-circle p-message-admin"></i>
+		<i id="message-type" class="fa fa-info-circle p-message-admin"></i>
 	}	
-	@message.JobNumber
-	<small class="pull-right">@message.Timestamp.ToLocalTime().ToString("dd-MM-yyyy HH:mm:ss")</small>
+	<span class="job-number">@message.JobNumber</span>
+	<small class="job-date pull-right">@message.Timestamp.ToLocalTime().ToString("dd-MM-yyyy HH:mm:ss")</small>
 </h2>
 
-<p class="lead">@message.MessageBody</p>
+<p class="lead job-message-body">@message.MessageBody</p>
 
 <div id="map"></div>

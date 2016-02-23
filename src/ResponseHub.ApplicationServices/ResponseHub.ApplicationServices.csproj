@@ -64,6 +64,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="GroupService.cs" />
+    <Compile Include="RadarImageService.cs" />
     <Compile Include="UserService.cs" />
     <Compile Include="PagerMessageService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

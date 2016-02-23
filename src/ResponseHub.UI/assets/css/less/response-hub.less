@@ -874,18 +874,18 @@ footer {
 		.p-message {
 			clear: both;
 			position: relative;
-			padding: 10px 15px 15px;
+			padding: 0 15px 15px;
 			border-bottom: 1px solid @sidebar-foreground;
+			margin-bottom: 0;
+
+			h2, h3 {
+				margin-top: 0;
+			}
 
 			i {
-				font-size: 20px;
 				padding-right: 5px;
 			}
-
-			span {
-				font-size: 16px;
-			}
-
+			
 		}
 
 		.p-message-meta { 
@@ -930,6 +930,19 @@ footer {
 
 	.warning-types {
 		margin-bottom: 10px;
+	}
+
+	.radar-container {
+		position: relative;
+
+		.radar-image {
+			position: absolute;
+			left: 0;
+			top: 0;
+			width: 512px;
+			height: 512px;
+		}
+
 	}
 
 }

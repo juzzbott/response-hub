@@ -25,7 +25,7 @@ namespace Enivate.ResponseHub.Model.Messages
 
 		public Location()
 		{
-			this.Coordinates = new Coordinates();
+			Coordinates = new Coordinates();
 		}
 
 	}

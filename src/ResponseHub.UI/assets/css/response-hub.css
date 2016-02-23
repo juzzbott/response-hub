@@ -677,15 +677,16 @@ footer p {
 .wallboard-layout .message-list .p-message {
   clear: both;
   position: relative;
-  padding: 10px 15px 15px;
+  padding: 0 15px 15px;
   border-bottom: 1px solid #c8c5ba;
+  margin-bottom: 0;
+}
+.wallboard-layout .message-list .p-message h2,
+.wallboard-layout .message-list .p-message h3 {
+  margin-top: 0;
 }
 .wallboard-layout .message-list .p-message i {
-  font-size: 20px;
   padding-right: 5px;
-}
-.wallboard-layout .message-list .p-message span {
-  font-size: 16px;
 }
 .wallboard-layout .message-list .p-message-meta {
   padding: 0 15px;
@@ -718,6 +719,16 @@ footer p {
 }
 .wallboard-layout .warning-types {
   margin-bottom: 10px;
+}
+.wallboard-layout .radar-container {
+  position: relative;
+}
+.wallboard-layout .radar-container .radar-image {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 512px;
+  height: 512px;
 }
 /***
  * Password Strength

@@ -244,3 +244,6 @@ node_modules
 
 # Optional REPL history
 .node_repl_history
+
+# ResponseHub specific
+App_Data/Cache/**/*.xml
