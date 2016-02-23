@@ -25,6 +25,7 @@
     <UseGlobalApplicationHostFile />
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
+    <DeploymentFolder>C:\inetpub\wwwroot\ResponseHub</DeploymentFolder>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -386,4 +387,28 @@
   </Target>
   <Target Name="AfterBuild">
   </Target> -->
+  <Target Name="AfterBuild">
+    <!-- Local Build Steps -->
+    <Message Text="Afterbuild Started" />
+    <CallTarget Condition=" '$(Configuration)' == 'Debug' " RunEachTargetSeparately="true" Targets="BuildLocal" ContinueOnError="false" />
+    <Message Text="Starting Transforms" />
+  </Target>
+  <!-- Local Build Steps -->
+  <Target Name="BuildLocal">
+    <ItemGroup>
+      <CopyDlls Include="bin\*.dll" />
+      <CopyFiles Include="**\*.openssh;**\*.resx;**\*.xml;**\*.aspx;**\*.ascx;**\*.master;**\*.js;**\*.css;**\*.asax;**\*.config;**\img\*.*;favicon.ico;**\*.html;**\img\*\*.*;**\*.txt;**\*.asmx;**\*.pdf;**\*.csv;**\*.ashx;**\*.cshtml" Exclude="**\bower_components\**;**\node_modules\**;**\obj\**;**\Web.*.config;**\Gruntfile.js" />
+    </ItemGroup>
+    <Message Text="Copy Dlls" Importance="high" />
+    <Copy SourceFiles="@(CopyDlls)" DestinationFiles="@(CopyDlls->'$(DeploymentFolder)\%(RelativeDir)%(Filename)%(Extension)')" ContinueOnError="false" SkipUnchangedFiles="true" />
+    <Message Text="Copy Other Files" Importance="high" />
+    <Copy SourceFiles="@(CopyFiles)" DestinationFiles="@(CopyFiles->'$(DeploymentFolder)\%(RecursiveDir)%(Filename)%(Extension)')" ContinueOnError="false" SkipUnchangedFiles="true" />
+    <Message Text="Copy current build configuration patch files" Importance="high" />
+    <Message Text="Copy Complete" Importance="high" />
+    <Message Text="Starting Transforms" />
+    <Message Text="Deploying to $(DeploymentFolder)\Web.config" />
+    <Message Text="Transforming environment level config (Web.debug.config)" />
+    <TransformXml Source="$(DeploymentFolder)\Web.config" Transform="$(SolutionDir)ResponseHub.UI\Web.$(Configuration).config" Destination="$(DeploymentFolder)\Web.config" StackTrace="true" />
+    <Message Text="Transforms Completed" />
+  </Target>
 </Project>
