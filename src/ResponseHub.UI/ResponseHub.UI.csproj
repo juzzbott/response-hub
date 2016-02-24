@@ -25,7 +25,7 @@
     <UseGlobalApplicationHostFile />
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
-    <DeploymentFolder>C:\inetpub\wwwroot\ResponseHub</DeploymentFolder>
+    <DeploymentFolder>C:\inetpub\websites\ResponseHub</DeploymentFolder>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -388,12 +388,12 @@
   </Target>
   <Target Name="AfterBuild">
   </Target> -->
-  <Target Name="AfterBuild">
+  <!-- <Target Name="AfterBuild"> -->
     <!-- Local Build Steps -->
-    <Message Text="Afterbuild Started" />
+   <!-- <Message Text="Afterbuild Started" />
     <CallTarget Condition=" '$(Configuration)' == 'Debug' " RunEachTargetSeparately="true" Targets="BuildLocal" ContinueOnError="false" />
     <Message Text="Starting Transforms" />
-  </Target>
+  </Target> -->
   <!-- Local Build Steps -->
   <Target Name="BuildLocal">
     <ItemGroup>
