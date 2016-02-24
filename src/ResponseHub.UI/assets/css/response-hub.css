@@ -68,6 +68,12 @@ body {
 .page-navbar .navbar-right a i {
   margin-right: 8px;
 }
+.page-navbar.navbar-default .navbar-nav > li > a {
+  color: #63c9c0;
+}
+.page-navbar.navbar-default .navbar-nav > li > a:hover {
+  color: #9cddd7;
+}
 /* 
 	User Menu Styles
 */
@@ -443,12 +449,6 @@ footer p {
 */
 .wallboard-layout .page-navbar .navbar-right {
   margin-right: 0;
-}
-.wallboard-layout .navbar-default .navbar-nav > li > a {
-  color: #63c9c0;
-}
-.wallboard-layout .navbar-default .navbar-nav > li > a:hover {
-  color: #9cddd7;
 }
 .wallboard-layout .wallboard-sidebar {
   background-color: #fff;
