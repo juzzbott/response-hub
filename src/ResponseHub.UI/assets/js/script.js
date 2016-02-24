@@ -298,6 +298,13 @@ responseHub.wallboard = (function () {
 
 	function loopRadarImageUrls() {
 
+		// If there are no radar images, then show error message
+		if (radarImages == null || radarImages.length == 0) {
+			$('.radar-container').empty();
+			$('.radar-container').append('<div class="error-summary ">Unable to load radar information.</div>');
+			return;
+		}
+
 		// Iterate through the radar images and set the prefix
 		for (var i = 0; i < radarImages.length; i++) {
 			radarImages[i] = 'http://ws.cdn.bom.gov.au/radar/' + radarImages[i];

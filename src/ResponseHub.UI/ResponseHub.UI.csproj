@@ -208,6 +208,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="assets\css\framework.css" />
+    <Content Include="assets\css\lib\bootstrap-grid-xl.css" />
     <Content Include="assets\css\lib\leaflet.css" />
     <Content Include="assets\css\response-hub.css" />
     <Content Include="assets\fonts\fontawesome-webfont.svg" />

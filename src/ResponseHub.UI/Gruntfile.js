@@ -36,6 +36,7 @@ module.exports = function(grunt) {
 			framework_css: {
 				src: [
 					'bower_components/bootstrap/dist/css/bootstrap.css',
+					'assets/css/lib/bootstrap-grid-xl.css',
 					'bower_components/fontawesome/css/font-awesome.min.css',
 					'assets/css/lib/leaflet.css'
 				],

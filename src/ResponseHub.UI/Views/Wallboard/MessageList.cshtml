@@ -42,7 +42,8 @@
 					{
 						<i class="fa fa-info-circle p-message-admin"></i>
 					}
-					<span>@(String.IsNullOrEmpty(message.JobNumber) ? "No job number" : message.JobNumber)</span> 
+					<span class="job-number">@(String.IsNullOrEmpty(message.JobNumber) ? "No job number" : message.JobNumber)</span> 
+					<span class="job-status"><i class="fa fa-arrow-circle-o-right"></i></span>
 				</h3>
 				<small class="text-muted">@message.MessageBodyShort</small>
 			</div>
