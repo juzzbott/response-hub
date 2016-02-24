@@ -1,5 +1,6 @@
 ﻿using Enivate.ResponseHub.Model;
 using Enivate.ResponseHub.Model.Groups;
+using MongoDB.Driver.GeoJsonObjectModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,6 +27,8 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB.DataObjects.Groups
 		public IList<UserMapping> Users { get; set; }
 
 		public Guid RegionId { get; set; }
+
+		public GeoJson2DGeographicCoordinates HeadquartersCoordinates { get; set; }
 
 		public GroupDto()
 		{

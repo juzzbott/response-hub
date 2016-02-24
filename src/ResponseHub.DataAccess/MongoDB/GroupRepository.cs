@@ -13,6 +13,8 @@ using Enivate.ResponseHub.Model;
 using Enivate.ResponseHub.Model.Groups;
 using Enivate.ResponseHub.DataAccess.MongoDB.DataObjects.Groups;
 using Enivate.ResponseHub.DataAccess.Interface;
+using MongoDB.Driver.GeoJsonObjectModel;
+using Enivate.ResponseHub.Model.Spatial;
 
 namespace Enivate.ResponseHub.DataAccess.MongoDB
 {
@@ -121,11 +123,12 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 				Name = modelObj.Name,
 				RegionId = modelObj.Region.Id,
 				Service = modelObj.Service,
-				Users = modelObj.Users
+				Users = modelObj.Users,
+				HeadquartersCoordinates = new GeoJson2DGeographicCoordinates(modelObj.HeadquartersCoordinates.Longitude, modelObj.HeadquartersCoordinates.Latitude)
 			};
 		}
 
-		private async Task<Group> MapDtoToModel(GroupDto modelObj)
+		private async Task<Group> MapDtoToModel(GroupDto dbObj)
 		{
 
 			// Get the region from the dto region id
@@ -133,14 +136,15 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 
 			return new Group()
 			{
-				Capcode = modelObj.Capcode,
-				Created = modelObj.Created,
-				Description = modelObj.Description,
-				Id = modelObj.Id,
-				Name = modelObj.Name,
-				Region = regions.FirstOrDefault(i => i.Id == modelObj.RegionId),
-				Service = modelObj.Service,
-				Users = modelObj.Users
+				Capcode = dbObj.Capcode,
+				Created = dbObj.Created,
+				Description = dbObj.Description,
+				Id = dbObj.Id,
+				Name = dbObj.Name,
+				Region = regions.FirstOrDefault(i => i.Id == dbObj.RegionId),
+				Service = dbObj.Service,
+				Users = dbObj.Users,
+				HeadquartersCoordinates = new Coordinates(dbObj.HeadquartersCoordinates.Latitude, dbObj.HeadquartersCoordinates.Longitude)
 			};
 		}
 

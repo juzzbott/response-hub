@@ -14,7 +14,6 @@ using Enivate.ResponseHub.Model;
 using Enivate.ResponseHub.Model.Groups;
 using Enivate.ResponseHub.Model.Groups.Interface;
 
-using Enivate.ResponseHub.ApplicationServices;
 using Enivate.ResponseHub.Model.Identity;
 using Enivate.ResponseHub.Model.Identity.Interface;
 
@@ -22,6 +21,7 @@ using Enivate.ResponseHub.UI.Areas.Admin.Models.Groups;
 using Enivate.ResponseHub.UI.Areas.Admin.Models.Users;
 using Enivate.ResponseHub.UI.Filters;
 using Enivate.ResponseHub.UI.Models.Users;
+using Enivate.ResponseHub.Model.Spatial;
 
 namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 {
@@ -82,7 +82,7 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 			CreateGroupModel model = new CreateGroupModel();
 			model.AvailableRegions = await GetAvailableRegions();
 
-			return View(model);
+			return View("CreateEdit", model);
 		}
 
 		[Route("create")]
@@ -98,7 +98,7 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 			// If the model is not valid, return view.
 			if (!ModelState.IsValid)
 			{
-				return View(model);
+				return View("CreateEdit", model);
 			}
 
 			// Get the service type.
@@ -113,7 +113,7 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 			if (groupExists)
 			{
 				ModelState.AddModelError("", "Sorry, there is already a group by that name in the selected service.");
-				return View(model);
+				return View("CreateEdit", model);
 			}
 
 			// Store the CreateGroupViewModel in session for the next screen
@@ -146,12 +146,14 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 			// Set the role as Group Administrator by default.
 			model.GroupAdministrator.Role = RoleTypes.GroupAdministrator;
 
+			// Set the Email address regardless of if the user exists or not, as it was set in the previous screen.
+			model.GroupAdministrator.EmailAddress = model.GroupAdministratorEmail;
+
 			// If there is a group user, then add to the model.
 			if (groupAdminUser != null)
 			{
 				model.GroupAdministrator.FirstName = groupAdminUser.FirstName;
 				model.GroupAdministrator.Surname = groupAdminUser.Surname;
-				model.GroupAdministrator.EmailAddress = model.GroupAdministratorEmail;
 				model.GroupAdministrator.UserExists = true;
 			}
 
@@ -198,7 +200,7 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 			{
 
 				// Create the new user
-				IdentityUser newUser = await UserService.CreateAsync(model.EmailAddress, model.FirstName, model.Surname, new List<string>() { RoleTypes.GroupAdministrator });
+				IdentityUser newUser = await UserService.CreateAsync(model.EmailAddress, model.FirstName, model.Surname, new List<string>() { RoleTypes.GroupAdministrator, RoleTypes.GeneralUser });
 
 				// Set the group administrator to the new user id
 				groupAdministratorId = newUser.Id;
@@ -239,8 +241,11 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 				return View("~/Areas/Admin/Views/Users/ConfirmUser.cshtml", model);
 			}
 
+			// Create the headquarters coords
+			Coordinates coords = new Coordinates(createGroupModel.Latitude.Value, createGroupModel.Longitude.Value);
+
 			// Create the group
-			await GroupService.CreateGroup(createGroupModel.Name, service, createGroupModel.Capcode, groupAdministratorId, createGroupModel.Description, region);
+			await GroupService.CreateGroup(createGroupModel.Name, service, createGroupModel.Capcode, groupAdministratorId, createGroupModel.Description, region, coords);
 
 			// Clear the session url
 			Session.Remove(CreateGroupViewModelSesionKey);

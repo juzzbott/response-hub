@@ -6,7 +6,6 @@ using System.Web;
 using System.Web.Mvc;
 
 using Enivate.ResponseHub.UI.Areas.Admin.Models.Users;
-using Enivate.ResponseHub.Model.Groups;
 
 namespace Enivate.ResponseHub.UI.Areas.Admin.Models.Groups
 {
@@ -37,10 +36,18 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Models.Groups
 
 		public IList<SelectListItem> AvailableRegions { get; set; }
 
+		/// <summary>
+		/// Nullable type is used so that the value does not default to Zero on the form, as 0, 0 is a valid GPS coordinate. 
+		/// Required field will ensure the user enters a value.
+		/// </summary>
 		[Required(ErrorMessage = "Please enter a latitude coordinate for the group HQ.")]
 		[Range(-90, 90, ErrorMessage = "Please enter a latitude coordinate between -90 and 90.")]
 		public double? Latitude { get; set; }
 
+		/// <summary>
+		/// Nullable type is used so that the value does not default to Zero on the form, as 0, 0 is a valid GPS coordinate. 
+		/// Required field will ensure the user enters a value.
+		/// </summary>
 		[Required(ErrorMessage = "Please enter a longitude coordinate for the group HQ.")]
 		[Range(-180, 180, ErrorMessage = "Please enter a longitude coordinate between -180 and 180.")]
 		public double? Longitude { get; set; }
@@ -54,7 +61,7 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Models.Groups
 
 			GroupAdministrator = new ConfirmUserViewModel();
 
-			this.AvailableRegions = new List<SelectListItem>();
+			AvailableRegions = new List<SelectListItem>();
 
 		}
 

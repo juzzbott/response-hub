@@ -8,6 +8,8 @@ using Enivate.ResponseHub.DataAccess.Interface;
 using Enivate.ResponseHub.Model;
 using Enivate.ResponseHub.Model.Groups;
 using Enivate.ResponseHub.Model.Groups.Interface;
+using Enivate.ResponseHub.Model.Spatial;
+using Enivate.ResponseHub.Model.Identity;
 
 namespace Enivate.ResponseHub.ApplicationServices
 {
@@ -34,16 +36,25 @@ namespace Enivate.ResponseHub.ApplicationServices
 		/// <param name="name">The name of the group.</param>
 		/// <param name="service">The service the group belongs to.</param>
 		/// <returns>The created group object.</returns>
-		public async Task<Group> CreateGroup(string name, ServiceType service, string capcode, Guid groupAdministratorId, string description, Region region)
+		public async Task<Group> CreateGroup(string name, ServiceType service, string capcode, Guid groupAdministratorId, string description, Region region, Coordinates headquartersCoords)
 		{
 			Group group = new Group()
 			{
 				Name = name,
 				Created = DateTime.UtcNow,
 				Service = service,
+				Capcode = capcode,
 				Description = description,
-				Region = region
+				Region = region,
+				HeadquartersCoordinates = headquartersCoords
 			};
+
+			// Add the user mapping for the group administrator
+			group.Users.Add(new UserMapping()
+			{
+				Role = RoleTypes.GroupAdministrator,
+				UserId = groupAdministratorId
+			});
 
 			return await _repository.CreateGroup(group);
 

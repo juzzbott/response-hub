@@ -302,7 +302,7 @@
     <Content Include="Areas\Admin\Views\Groups\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Areas\Admin\Views\Groups\Create.cshtml" />
+    <Content Include="Areas\Admin\Views\Groups\CreateEdit.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Areas\Admin\Views\Groups\ViewGroup.cshtml" />

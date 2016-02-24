@@ -226,6 +226,12 @@ footer p {
 .main-content {
   padding-bottom: 50px;
 }
+.content-container {
+  padding: 0 20px;
+  background: #fff;
+  margin-top: 20px;
+  border: 1px solid #ddd;
+}
 /*
 	Page content styles
 */
@@ -265,6 +271,9 @@ footer p {
 /*
 	Form Styles
 */
+form {
+  padding-bottom: 20px;
+}
 h2.legend,
 h3.legend,
 h4.legend {
@@ -595,6 +604,9 @@ h4.legend {
   .latitude-control {
     margin-top: 15px;
   }
+}
+.search-group-form {
+  margin-top: 20px;
 }
 /**
  * Mixins

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Enivate.ResponseHub.Model.Spatial;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -24,6 +25,8 @@ namespace Enivate.ResponseHub.Model.Groups
 		public IList<UserMapping> Users { get; set; }
 
 		public Region Region { get; set; }
+
+		public Coordinates HeadquartersCoordinates { get; set; }
 
 		public Group()
 		{
