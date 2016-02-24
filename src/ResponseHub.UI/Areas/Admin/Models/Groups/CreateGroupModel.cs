@@ -37,6 +37,14 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Models.Groups
 
 		public IList<SelectListItem> AvailableRegions { get; set; }
 
+		[Required(ErrorMessage = "Please enter a latitude coordinate for the group HQ.")]
+		[Range(-90, 90, ErrorMessage = "Please enter a latitude coordinate between -90 and 90.")]
+		public double? Latitude { get; set; }
+
+		[Required(ErrorMessage = "Please enter a longitude coordinate for the group HQ.")]
+		[Range(-180, 180, ErrorMessage = "Please enter a longitude coordinate between -180 and 180.")]
+		public double? Longitude { get; set; }
+
 		public CreateGroupModel()
 		{
 			AvailableServices = new List<SelectListItem>();

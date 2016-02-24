@@ -219,7 +219,9 @@
     <Content Include="assets\images\leaflet\marker-shadow.png" />
     <Content Include="assets\js\framework.js" />
     <Content Include="assets\js\lib\leaflet.js" />
+    <Content Include="assets\js\modules\groups.js" />
     <Content Include="assets\js\modules\joblog.js" />
+    <Content Include="assets\js\modules\maps.js" />
     <Content Include="assets\js\modules\password-strength.js" />
     <Content Include="assets\js\modules\wallboard.js" />
     <Content Include="assets\js\modules\_core.js" />
@@ -389,8 +391,8 @@
   <Target Name="AfterBuild">
   </Target> -->
   <!-- <Target Name="AfterBuild"> -->
-    <!-- Local Build Steps -->
-   <!-- <Message Text="Afterbuild Started" />
+  <!-- Local Build Steps -->
+  <!-- <Message Text="Afterbuild Started" />
     <CallTarget Condition=" '$(Configuration)' == 'Debug' " RunEachTargetSeparately="true" Targets="BuildLocal" ContinueOnError="false" />
     <Message Text="Starting Transforms" />
   </Target> -->
