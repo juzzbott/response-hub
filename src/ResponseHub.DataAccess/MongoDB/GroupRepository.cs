@@ -131,6 +131,16 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 			return mappedGroups;
 		}
 
+		/// <summary>
+		/// Updates a group in the database with the specified group values.
+		/// </summary>
+		/// <param name="group">The group to save to the database.</param>
+		/// <returns></returns>
+		public async Task UpdateGroup(Group group)
+		{
+			await Save(MapModelToDto(group));
+		}
+
 		#region Object mapping functions
 
 		/// <summary>
@@ -144,6 +154,7 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 			{
 				Capcode = modelObj.Capcode,
 				Created = modelObj.Created,
+				Updated = modelObj.Updated,
 				Description = modelObj.Description,
 				Id = modelObj.Id,
 				Name = modelObj.Name,
@@ -154,8 +165,19 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 			};
 		}
 
+		/// <summary>
+		/// Maps the Dto object to the Model object.
+		/// </summary>
+		/// <param name="dbObj"></param>
+		/// <returns></returns>
 		private async Task<Group> MapDtoToModel(GroupDto dbObj)
 		{
+
+			// If the database object is null, nothing we can do, so just return null.
+			if (dbObj == null)
+			{
+				return null;
+			}
 
 			// Get the region from the dto region id
 			IList<Region> regions = await _mongoDb.GetCollection<Region>("regions").Find(new BsonDocument()).ToListAsync();
@@ -164,6 +186,7 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 			{
 				Capcode = dbObj.Capcode,
 				Created = dbObj.Created,
+				Updated = dbObj.Updated,
 				Description = dbObj.Description,
 				Id = dbObj.Id,
 				Name = dbObj.Name,

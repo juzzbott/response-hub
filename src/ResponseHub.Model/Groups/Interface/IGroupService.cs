@@ -26,6 +26,8 @@ namespace Enivate.ResponseHub.Model.Groups.Interface
 
 		Task<IList<Group>> FindByName(string name);
 
+		Task UpdateGroup(Group group);
+
 	}
 
 }

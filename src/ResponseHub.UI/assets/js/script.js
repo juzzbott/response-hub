@@ -269,8 +269,6 @@ responseHub.maps = (function () {
 	 */
 	function initMap() {
 
-		console.log("init map");
-
 		// Set the default images dir
 		L.Icon.Default.imagePath = '/assets/images/leaflet';
 
@@ -278,11 +276,7 @@ responseHub.maps = (function () {
 			$('#map-canvas').css('height', '450px');
 		}
 
-		console.log("Type check of mapConfig");
-		console.log(mapConfig);
-
 		if (typeof mapConfig != "undefined") {
-			console.log("display map");
 			displayMap(mapConfig);
 		}
 
@@ -290,7 +284,6 @@ responseHub.maps = (function () {
 
 	// Initialise the map
 	$(document).ready(function () {
-		console.log("document ready");
 		initMap();
 	});
 

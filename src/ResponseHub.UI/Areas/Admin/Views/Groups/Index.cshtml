@@ -46,7 +46,7 @@
 				<td><a href="/admin/groups/@group.Id"><strong>@group.Name</strong></a></td>
 				<td>@Html.EnumDescription(group.Service)</td>
 				<td>@group.Created.ToString("yyyy-MM-dd")</td>
-				<td><a href="">Edit</a> | <a href="">Remove</a></td>
+				<td><a href="/admin/groups/@group.Id/edit" class="btn btn-link"><i class="fa fa-pencil-square-o"></i></a><a data-href="/admin/group/@group.Id/delete" class="btn btn-link"><i class="fa fa-times"></i></a></td>
 			</tr>
 		}
 	</tbody>

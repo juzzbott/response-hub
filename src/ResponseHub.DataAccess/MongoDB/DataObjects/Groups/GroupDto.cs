@@ -20,6 +20,8 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB.DataObjects.Groups
 
 		public DateTime Created { get; set; }
 
+		public DateTime Updated { get; set; }
+
 		public ServiceType Service { get; set; }
 
 		public string Description { get; set; }

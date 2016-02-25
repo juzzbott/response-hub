@@ -25,6 +25,13 @@ namespace Enivate.ResponseHub.DataAccess.Interface
 
 		Task<IList<Group>> FindByName(string name);
 
+		/// <summary>
+		/// Updates a group in the database with the specified group values.
+		/// </summary>
+		/// <param name="group">The group to save to the database.</param>
+		/// <returns></returns>
+		Task UpdateGroup(Group group);
+
 	}
 
 }

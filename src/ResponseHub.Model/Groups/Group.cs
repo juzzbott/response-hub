@@ -18,6 +18,8 @@ namespace Enivate.ResponseHub.Model.Groups
 
 		public DateTime Created { get; set; }
 
+		public DateTime Updated { get; set; }
+
 		public ServiceType Service { get; set; }
 
 		public string Description { get; set; }

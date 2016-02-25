@@ -29,8 +29,8 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 	[RouteArea("admin")]
 	[RoutePrefix("groups")]
 	[ClaimsAuthorize(Roles = RoleTypes.SystemAdministrator)]
-    public class GroupsController : Controller
-    {
+	public class GroupsController : Controller
+	{
 
 		private const string CreateGroupViewModelSesionKey = "CreateGroupViewModel";
 
@@ -64,9 +64,9 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 		}
 
 		[Route]
-        // GET: Admin/Groups
-        public async Task<ActionResult> Index()
-        {
+		// GET: Admin/Groups
+		public async Task<ActionResult> Index()
+		{
 
 			List<Group> groups = new List<Group>();
 
@@ -80,8 +80,8 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 				groups.AddRange(await GroupService.FindByName(Request.QueryString["q"]));
 			}
 
-            return View(groups);
-        }
+			return View(groups);
+		}
 
 		#region Create group
 
@@ -90,6 +90,11 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 		{
 			CreateGroupModel model = new CreateGroupModel();
 			model.AvailableRegions = await GetAvailableRegions();
+
+			// Set the form action and the addGroupAdministrator flag.
+			ViewBag.AddGroupAdministrator = true;
+			ViewBag.FormAction = "/admin/groups/create";
+			ViewBag.Title = "Create new group";
 
 			return View("CreateEdit", model);
 		}
@@ -100,6 +105,10 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 		public async Task<ActionResult> Create(CreateGroupModel model)
 		{
 
+			// Set the form action and the addGroupAdministrator flag.
+			ViewBag.AddGroupAdministrator = true;
+			ViewBag.FormAction = "/admin/groups/create";
+			ViewBag.Title = "Create new group";
 
 			// Get the regions select list.
 			model.AvailableRegions = await GetAvailableRegions();
@@ -130,7 +139,7 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 
 			// Redirect to the group administrator screen
 			return new RedirectResult("/admin/groups/create/group-administrator");
-			
+
 		}
 
 		[Route("create/group-administrator")]
@@ -237,7 +246,7 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 			int groupServiceId;
 			Int32.TryParse(createGroupModel.Service, out groupServiceId);
 			ServiceType service = (ServiceType)groupServiceId;
-			
+
 			// Get the region based on the posted value
 			IList<Region> regions = await GroupService.GetRegions();
 			Region region = regions.FirstOrDefault(i => i.Id == createGroupModel.Region);
@@ -298,7 +307,7 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 			// Get the group
 			Group group = await GroupService.GetById(id);
 
-			// If the place is null, throw 404
+			// If the group is null, throw 404
 			if (group == null)
 			{
 				throw new HttpException((int)HttpStatusCode.NotFound, "The requested page cannot be found.");
@@ -309,9 +318,10 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 
 			// Create the list of GroupUserViewModels for the users in the group
 			IList<GroupUserViewModel> groupUserModels = new List<GroupUserViewModel>();
-			foreach(IdentityUser groupUser in groupUsers)
+			foreach (IdentityUser groupUser in groupUsers)
 			{
-				groupUserModels.Add(new GroupUserViewModel() {
+				groupUserModels.Add(new GroupUserViewModel()
+				{
 					EmailAddress = groupUser.EmailAddress,
 					FirstName = groupUser.FirstName,
 					GroupRole = group.Users.FirstOrDefault(i => i.UserId == groupUser.Id).Role,
@@ -395,7 +405,7 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 
 			// Get the identity user related to the specified group admin
 			IdentityUser newUser = await UserService.FindByEmailAsync(model.EmailAddress);
-		
+
 			// If the user exists, and there is already a user mapping in the group for this user, show error message
 			if (newUser != null && group.Users.Any(i => i.UserId == newUser.Id))
 			{
@@ -487,7 +497,7 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 				ModelState.AddModelError("", "There was an error setting the role for the user.");
 				return View("~/Areas/Admin/Views/Users/ConfirmUser.cshtml", model);
 			}
-			
+
 			// Get the identity user related to the specified group admin
 			IdentityUser newUser = await UserService.FindByEmailAsync(model.EmailAddress);
 
@@ -529,6 +539,108 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 
 			// return the available roles
 			return availableRoles;
+		}
+
+		#endregion
+
+		#region Edit group
+
+		[Route("{id:guid}/edit")]
+		[HttpGet]
+		public async Task<ActionResult> Edit(Guid id)
+		{
+
+			// Get the group based on the id
+			Group group = await GroupService.GetById(id);
+
+			// If the group is null, throw not found exception
+			if (group == null)
+			{
+				throw new HttpException((int)HttpStatusCode.NotFound, "The requested page cannot be found.");
+			}
+
+			// Create and populate the model
+			CreateGroupModel model = new CreateGroupModel();
+			model.AvailableRegions = await GetAvailableRegions();
+			model.Capcode = group.Capcode;
+			model.Description = group.Description;
+			model.Latitude = group.HeadquartersCoordinates.Latitude;
+			model.Longitude = group.HeadquartersCoordinates.Longitude;
+			model.Name = group.Name;
+			model.Region = group.Region.Id;
+			model.Service = ((int)group.Service).ToString();
+
+			// Set the form action and the page title.
+			ViewBag.FormAction = String.Format("/admin/groups/{0}/edit", id);
+			ViewBag.Title = "Edit group";
+
+			return View("CreateEdit", model);
+		}
+
+		[Route("{id:guid}/edit")]
+		[HttpPost]
+		public async Task<ActionResult> Edit(Guid id, CreateGroupModel model)
+		{
+
+			// Set the form action and the page title.
+			ViewBag.FormAction = String.Format("/admin/groups/{0}/edit", id);
+			ViewBag.Title = "Edit group";
+
+			// Get the group based on the id
+			Group group = await GroupService.GetById(id);
+
+			// If the group is null, throw not found exception
+			if (group == null)
+			{
+				throw new HttpException((int)HttpStatusCode.NotFound, "The requested page cannot be found.");
+			}
+
+			// Get the service type from the model
+			int groupServiceId;
+			Int32.TryParse(model.Service, out groupServiceId);
+			ServiceType service = (ServiceType)groupServiceId;
+
+			// Get the region based on the posted value
+			IList<Region> regions = await GroupService.GetRegions();
+			Region region = regions.FirstOrDefault(i => i.Id == model.Region);
+
+			// If the region is null, log the error and return error message
+			if (region == null)
+			{
+				await _log.Error(String.Format("Unable to update group. Region '{0}' does not exist.", model.Region));
+				ModelState.AddModelError("", "There was a system error updating the group.");
+				return View("CreateEdit", model);
+			}
+
+			// Create the headquarters coords
+			Coordinates coords = new Coordinates(model.Latitude.Value, model.Longitude.Value);
+
+			try
+			{
+
+				// Update the values of the group
+				group.Name = model.Name;
+				group.Capcode = model.Capcode;
+				group.Description = model.Description;
+				group.Updated = DateTime.UtcNow;
+				group.HeadquartersCoordinates = coords;
+				group.Region = region;
+				group.Service = service;
+
+				// Save the group to the database
+				await GroupService.UpdateGroup(group);
+				
+				return new RedirectResult(String.Format("/admin/groups/{0}?saved=1", id));
+
+			}
+			catch (Exception ex)
+			{
+				await _log.Error(String.Format("Unable to update group. System exception: {0}", ex.Message), ex);
+				ModelState.AddModelError("", "There was a system error updating the group.");
+				return View("CreateEdit", model);
+			}
+
+
 		}
 
 		#endregion

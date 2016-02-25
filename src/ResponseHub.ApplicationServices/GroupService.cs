@@ -42,6 +42,7 @@ namespace Enivate.ResponseHub.ApplicationServices
 			{
 				Name = name,
 				Created = DateTime.UtcNow,
+				Updated = DateTime.UtcNow,
 				Service = service,
 				Capcode = capcode,
 				Description = description,
@@ -85,16 +86,34 @@ namespace Enivate.ResponseHub.ApplicationServices
 			return await _repository.GetRecentlyAdded(count);
 		}
 
+		/// <summary>
+		/// Gets the specific group from the ID.
+		/// </summary>
+		/// <param name="id">The ID of the group to return.</param>
+		/// <returns>The group is found by ID, otherwise null.</returns>
 		public async Task<Group> GetById(Guid id)
 		{
 			return await _repository.GetById(id);
 		}
 
+		/// <summary>
+		/// Determines if the group name exists for the specified service already within the system.
+		/// </summary>
+		/// <param name="name">The name of the group.</param>
+		/// <param name="service">The service type to check.</param>
+		/// <returns>True if the group name exists, otherwise false.</returns>
 		public async Task<bool> CheckIfGroupExists(string name, ServiceType service)
 		{
 			return await _repository.CheckIfGroupExists(name, service);
 		}
 
+		/// <summary>
+		/// Adds the specified user to the group.
+		/// </summary>
+		/// <param name="userId">The ID of the user to add to the group.</param>
+		/// <param name="role">The role of the user within the group.</param>
+		/// <param name="groupId">The Id of the group to add the user to.</param>
+		/// <returns></returns>
 		public async Task AddUserToGroup(Guid userId, string role, Guid groupId)
 		{
 			UserMapping mapping = new UserMapping()
@@ -106,14 +125,42 @@ namespace Enivate.ResponseHub.ApplicationServices
 			await _repository.AddUserToGroup(mapping, groupId);
 		}
 
+		/// <summary>
+		/// Gets all the regions that a group can be a member of.
+		/// </summary>
+		/// <returns></returns>
 		public async Task<IList<Region>> GetRegions()
 		{
 			return await _regionRepository.GetAll();
 		}
 
+		/// <summary>
+		/// Finds groups by name. This is a text based search and will match any of the words in the group name.
+		/// </summary>
+		/// <param name="name">The name of the group to search for.</param>
+		/// <returns>The list of groups that match against the group name.</returns>
 		public async Task<IList<Group>> FindByName(string name)
 		{
 			return await _repository.FindByName(name);
+		}
+
+		/// <summary>
+		/// Updates the group in the database.
+		/// </summary>
+		/// <param name="group">The group to update in the database.</param>
+		/// <returns></returns>
+		public async Task UpdateGroup(Group group)
+		{
+
+			// If the group is null or the group id is empty guid, throw exception as the group should be saved first.
+			if (group == null || group.Id == Guid.Empty)
+			{
+				throw new Exception("The group must exist before it can be updated.");
+			}
+
+			// Save the group to the database.
+			await _repository.UpdateGroup(group);
+
 		}
 	}
 }

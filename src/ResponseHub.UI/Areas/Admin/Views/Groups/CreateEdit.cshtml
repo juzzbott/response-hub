@@ -1,11 +1,8 @@
 ﻿@model Enivate.ResponseHub.UI.Areas.Admin.Models.Groups.CreateGroupModel
-@{
-    ViewBag.Title = "Create new group";
-}
 
 <h2>@ViewBag.Title</h2>
 
-<form action="/admin/groups/create" method="post">
+<form action="@ViewBag.FormAction" method="post">
 
 	@Html.AntiForgeryToken()
 
@@ -104,27 +101,47 @@
 		</div>
 	</div>
 
-	<h3 class="legend">Group administrator</h3>
+	@if (ViewBag.AddGroupAdministrator == true)
+	{
 
-	<div class="row">
-		<div class="col-lg-10 col-xl-6">
-			<p>Enter the email address of the administrator for this group. If the user currently exists, you will be asked to confirm the group administrator.</p>
-			<p>If the user does not exist, the user will receive an email with details on how to complete their account creation.</p>
-		</div>
-	</div>
+		<h3 class="legend">Group administrator</h3>
 
-	<div class="form-group">
-		<label for="Name">Group administrator *</label>
 		<div class="row">
-			<div class="col-sm-8 col-md-6 col-lg-4">
-				@Html.TextBoxFor(model => model.GroupAdministratorEmail, new { @class = "form-control", placeholder = "user@domain.com" })
+			<div class="col-lg-10 col-xl-6">
+				<p>Enter the email address of the administrator for this group. If the user currently exists, you will be asked to confirm the group administrator.</p>
+				<p>If the user does not exist, the user will receive an email with details on how to complete their account creation.</p>
 			</div>
 		</div>
-		@Html.ValidationMessageFor(model => model.GroupAdministratorEmail)
-	</div>
 
-	<button type="submit" class="btn btn-default">Next</button>
-	<a href="/admin/groups" class="btn btn-link">Cancel</a>
+		<div class="form-group">
+			<label for="Name">Group administrator *</label>
+			<div class="row">
+				<div class="col-sm-8 col-md-6 col-lg-4">
+					@Html.TextBoxFor(model => model.GroupAdministratorEmail, new { @class = "form-control", placeholder = "user@domain.com" })
+				</div>
+			</div>
+			@Html.ValidationMessageFor(model => model.GroupAdministratorEmail)
+		</div>
+
+	}
+	else
+	{
+		<!-- Add the Group Administration email to pass validation -->
+		<input type="hidden" name="GroupAdministratorEmail" value="not_required@domain.com" />
+	}
+
+	@if (ViewBag.AddGroupAdministrator == true)
+	{
+		<button type="submit" class="btn btn-default">Next</button>
+		<a href="/admin/groups" class="btn btn-link">Cancel</a>
+	}
+	else
+	{
+		<div class="top-20">
+			<button type="submit" class="btn btn-default">Save</button>
+			<a href="/admin/groups" class="btn btn-link">Cancel</a>
+		</div>
+	}
 
 </form>
 
