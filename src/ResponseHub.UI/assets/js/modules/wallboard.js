@@ -43,9 +43,9 @@
 		if (jobNumber == "") {
 			jobNumber = "<em>No job number</em>";
 		}
-		$('.job-number').html(jobNumber);
-		$('.job-message-body').text($(elem).data('message'));
-		$('.job-date').text($(elem).data('date'));
+		$('.wallboard-main .job-number').html(jobNumber);
+		$('.wallboard-main .job-message-body').text($(elem).data('message'));
+		$('.wallboard-main .job-date').text($(elem).data('date'));
 
 		$('#message-type').attr('class', '');
 		if ($(elem).data('priority').toLowerCase() == 'emergency') {
@@ -81,14 +81,6 @@
 
 		// Initially set the container heights
 		setContainerHeights($(window).width());
-
-		var map = L.map('map').setView([-37.674636, 144.434981], 15);
-		topoMapLayer = L.tileLayer('http://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
-			attribution: 'Imagery from <a href="http://mapbox.com/about/maps/">MapBox</a> &mdash; Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-			subdomains: 'abcd',
-			id: 'juzzbott.mn24imf3',
-			accessToken: 'pk.eyJ1IjoianV6emJvdHQiLCJhIjoiMDlmN2JlMzMxMWI2YmNmNGY2NjFkZGFiYTFiZWVmNTQifQ.iKlZsVrsih0VuiUCzLZ1Lg'
-		}).addTo(map);
 
 		// Set the list item click event for message list
 		$('.message-list li').click(function () {
@@ -138,7 +130,7 @@
 	// Bind and load the UI
 	bindUI();
 	loadUI();
-
+	
 	return {
 		showHideWarnings: showHideWarnings
 	}

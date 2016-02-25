@@ -27,4 +27,15 @@
 
 <p class="lead job-message-body">@message.MessageBody</p>
 
-<div id="map"></div>
+<div id="map-canvas" style="height: 550px;"></div>
+<script type="text/javascript">
+	var mapConfig = {
+		lat: -37.674636,
+		lon: 144.434981,
+		zoom: 15,
+		minZoom: 4,
+		scrollWheel: true,
+		mapContainer: 'map-canvas',
+		loadCallback: null
+	};
+</script>

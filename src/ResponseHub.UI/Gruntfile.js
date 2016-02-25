@@ -32,9 +32,9 @@ module.exports = function(grunt) {
 				banner: '',
 				src: [
 					'assets/js/modules/_core.js',
+					'assets/js/modules/maps.js',
 					'assets/js/modules/joblog.js',
 					'assets/js/modules/wallboard.js',
-					'assets/js/modules/maps.js',
 					'assets/js/modules/groups.js',
 					'assets/js/modules/password-strength.js'
 				],
