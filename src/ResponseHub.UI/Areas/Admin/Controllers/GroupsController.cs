@@ -67,11 +67,20 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
         // GET: Admin/Groups
         public async Task<ActionResult> Index()
         {
-			
-			// Get the most recent groups
-			IList<Group> recentGroups = await GroupService.GetRecentlyAdded(10);
 
-            return View(recentGroups);
+			List<Group> groups = new List<Group>();
+
+			if (String.IsNullOrEmpty(Request.QueryString["q"]))
+			{
+				// Get the most recent groups
+				groups.AddRange(await GroupService.GetRecentlyAdded(10));
+			}
+			else
+			{
+				groups.AddRange(await GroupService.FindByName(Request.QueryString["q"]));
+			}
+
+            return View(groups);
         }
 
 		#region Create group

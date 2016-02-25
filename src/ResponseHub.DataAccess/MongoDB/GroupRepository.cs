@@ -108,6 +108,32 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 		}
 
 		/// <summary>
+		/// Finds the groups that match the name entered.
+		/// </summary>
+		/// <param name="name">The name to find the group by.</param>
+		/// <returns>The list of groups matching the result.</returns>
+		public async Task<IList<Group>> FindByName(string name)
+		{
+
+			// Get the results of the text search.
+			PagedResultSet<GroupDto> results = await TextSearch(name, Int32.MaxValue, 0, false);
+
+			// Create the list of groups
+			List<Group> mappedGroups = new List<Group>();
+
+			// For each result, map to a Group model object.
+			foreach(GroupDto result in results.Items)
+			{
+				mappedGroups.Add(await MapDtoToModel(result));
+			}
+
+			// return the mapped groups.
+			return mappedGroups;
+		}
+
+		#region Object mapping functions
+
+		/// <summary>
 		/// Maps the model object to the DTO object.
 		/// </summary>
 		/// <param name="modelObj"></param>
@@ -147,6 +173,8 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 				HeadquartersCoordinates = new Coordinates(dbObj.HeadquartersCoordinates.Latitude, dbObj.HeadquartersCoordinates.Longitude)
 			};
 		}
+
+		#endregion
 
 	}
 }

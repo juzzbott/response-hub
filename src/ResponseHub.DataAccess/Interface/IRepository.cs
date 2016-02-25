@@ -26,5 +26,7 @@ namespace Enivate.ResponseHub.DataAccess.Interface
 
 		Task<T> GetById(Guid id);
 
+		Task<PagedResultSet<T>> TextSearch(string keywords, int limit, int skip, bool countTotal);
+
 	}
 }

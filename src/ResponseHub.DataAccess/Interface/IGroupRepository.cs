@@ -23,6 +23,8 @@ namespace Enivate.ResponseHub.DataAccess.Interface
 
 		Task<Group> GetById(Guid id);
 
+		Task<IList<Group>> FindByName(string name);
+
 	}
 
 }

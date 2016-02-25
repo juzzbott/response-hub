@@ -143,6 +143,35 @@ namespace Enivate.ResponseHub.DataAccess
 			return entity;
 		}
 
+
+		public async Task<PagedResultSet<T>> TextSearch(string keywords, int limit, int skip, bool countTotal)
+		{
+
+			// Create the search filter
+			FilterDefinition<T> filter = Builders<T>.Filter.Text(keywords);
+
+			long totalCount = 0;
+			if (countTotal)
+			{
+				totalCount = await Collection.Find<T>(filter).CountAsync();
+			}
+
+			// Return the find results.
+			IList<T> results = await Collection.Find<T>(filter).Skip(skip).Limit(limit).ToListAsync();
+
+			// Create the result object and return it
+			PagedResultSet<T> resultSet = new PagedResultSet<T>()
+			{
+				Items = results,
+				Limit = limit,
+				Skip = skip,
+				TotalResults = (int)totalCount
+			};
+
+			return resultSet;
+
+		}
+
 		#region Helper Functions
 
 		/// <summary>

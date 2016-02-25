@@ -24,6 +24,8 @@ namespace Enivate.ResponseHub.Model.Groups.Interface
 
 		Task<IList<Region>> GetRegions();
 
+		Task<IList<Group>> FindByName(string name);
+
 	}
 
 }

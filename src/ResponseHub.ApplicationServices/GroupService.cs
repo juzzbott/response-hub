@@ -110,5 +110,10 @@ namespace Enivate.ResponseHub.ApplicationServices
 		{
 			return await _regionRepository.GetAll();
 		}
+
+		public async Task<IList<Group>> FindByName(string name)
+		{
+			return await _repository.FindByName(name);
+		}
 	}
 }
