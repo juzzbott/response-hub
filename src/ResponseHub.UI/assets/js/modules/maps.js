@@ -196,6 +196,9 @@
 	 */
 	function getCurrentLocation(latSelector, lngSelector) {
 
+		$('#btn-current-location').attr("disabled", "disabled");
+		$('.current-location-spinner').removeClass('hidden');
+
 		if (navigator.geolocation) {
 			navigator.geolocation.getCurrentPosition(function (pos) {
 
@@ -205,6 +208,9 @@
 				// Set the lat/lng in the text boxes
 				$(latSelector).val(currentLat);
 				$(lngSelector).val(currentLng);
+
+				$('.current-location-spinner').addClass('hidden');
+				$('#btn-current-location').removeAttr("disabled");
 
 			});
 		}

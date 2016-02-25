@@ -340,6 +340,14 @@ h4.legend {
   background-color: #fff;
   border-color: #de3226;
 }
+.current-location-spinner {
+  margin-left: 10px;
+}
+.btn.disabled,
+.btn[disabled],
+fieldset[disabled] .btn {
+  cursor: default;
+}
 /*
 	Login styles
 */
