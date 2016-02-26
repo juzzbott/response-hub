@@ -44,13 +44,13 @@ namespace Enivate.ResponseHub.Caching
 		{
 
 			// If the item is null, then return
-			if (entity == null)
+			if (entity == null || entity.Id == Guid.Empty)
 			{
 				return;
 			}
 
 			// Get the cache key for the entity
-			string key = getEntityCacheKey(entity);
+			string key = CacheUtility.GetEntityCacheKey(entity);
 
 			// Add the entity to cache
 			AddItem(key, entity, expiry);
@@ -118,16 +118,16 @@ namespace Enivate.ResponseHub.Caching
 		/// <typeparam name="T">The type of the entity.</typeparam>
 		/// <param name="id">The ID of the entity to get from the cache.</param>
 		/// <returns>The entity obejct if found or null if expired or non-existant.</returns>
-		public static T GetEntity<T>(string id) where T : IEntity
+		public static T GetEntity<T>(Guid id) where T : IEntity
 		{
 			// If the id is null or empty, return
-			if (String.IsNullOrEmpty(id))
+			if (id == Guid.Empty)
 			{
 				return default(T);
 			}
 
 			// Get the cache key based on the type and id.
-			string key = getEntityCacheKey(typeof(T), id);
+			string key = CacheUtility.GetEntityCacheKey(typeof(T), id.ToString());
 
 			// Return the cache item.
 			return GetItem<T>(key);
@@ -173,7 +173,7 @@ namespace Enivate.ResponseHub.Caching
 			}
 
 			// Get the cache key for the entity
-			string key = getEntityCacheKey(entity);
+			string key = CacheUtility.GetEntityCacheKey(entity);
 
 			// Remvoe the entity from the cache.
 			RemoveItem(key);
@@ -195,36 +195,6 @@ namespace Enivate.ResponseHub.Caching
 		}
 
 		#endregion
-
-		#region Helpers 
-
-		/// <summary>
-		/// Gets the cache key for the entity object.
-		/// </summary>
-		/// <param name="entity">The IEtnity object to generate the cache key for.</param>
-		/// <returns>The cache key for the entity.</returns>
-		private static string getEntityCacheKey(IEntity entity)
-		{
-			return getEntityCacheKey(entity.GetType(), entity.Id.ToString());
-		}
-
-		/// <summary>
-		/// Gets the cache key for the entity object.
-		/// </summary>
-		/// <param name="entityType">The IEtnity object to generate the cache key for.</param>
-		/// <param name="id">The ID of the entity to get the cache item for.</param>
-		/// <returns>The cache key for the entity.</returns>
-		private static string getEntityCacheKey(Type entityType, string id)
-		{
-			// Get the name of the type
-			string typeName = entityType.Name;
-
-			// Create the cache key based on the type name and id
-			string key = String.Format("{0}_{1}", typeName, id);
-			return key;
-		}
-
-		#endregion
-
+		
 	}
 }

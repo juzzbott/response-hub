@@ -71,6 +71,10 @@
     <Compile Include="WarningService.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\ResponseHub.Caching\ResponseHub.Caching.csproj">
+      <Project>{adde3186-948d-4296-8f92-b4ef9d3379b9}</Project>
+      <Name>ResponseHub.Caching</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ResponseHub.Common\ResponseHub.Common.csproj">
       <Project>{64b4f6f9-8e0e-4475-8895-d7d4b0c1da4b}</Project>
       <Name>ResponseHub.Common</Name>

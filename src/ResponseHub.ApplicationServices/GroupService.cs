@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using Enivate.ResponseHub.Caching;
 using Enivate.ResponseHub.DataAccess.Interface;
 using Enivate.ResponseHub.Model;
 using Enivate.ResponseHub.Model.Groups;
@@ -15,6 +16,9 @@ namespace Enivate.ResponseHub.ApplicationServices
 {
 	public class GroupService : IGroupService
 	{
+
+		private const string RecentlyAddedGroupsCacheKey = "RecentlyAddedGroups";
+		private const string AllRegionsCacheKey = "AllRegions";
 
 		private IGroupRepository _repository;
 
@@ -57,7 +61,16 @@ namespace Enivate.ResponseHub.ApplicationServices
 				UserId = groupAdministratorId
 			});
 
-			return await _repository.CreateGroup(group);
+			// Create the new group
+			Group newGroup = await _repository.CreateGroup(group);
+
+			// If the new group exists, we need to clear the recently added group cache
+			if (newGroup != null)
+			{
+				CacheManager.RemoveItem(RecentlyAddedGroupsCacheKey);
+			}
+
+			return newGroup;
 
 		}
 
@@ -83,7 +96,23 @@ namespace Enivate.ResponseHub.ApplicationServices
 				throw new ArgumentOutOfRangeException("count", "The count parameter must be a positive integer.");
 			}
 
-			return await _repository.GetRecentlyAdded(count);
+			// If the cache has the recently added items, get from cache
+			IList<Group> groups = CacheManager.GetItem<IList<Group>>(RecentlyAddedGroupsCacheKey);
+
+			// If the groups are null, then load from db and add to the cache
+			if (groups == null)
+			{
+				// Get the groups from the db
+				groups = await _repository.GetRecentlyAdded(count);
+
+				// If the groups arent null and contains items, add to the cache
+				if (groups != null && groups.Count > 0)
+				{
+					CacheManager.AddItem(RecentlyAddedGroupsCacheKey, groups);
+				}
+			}
+
+			return groups;
 		}
 
 		/// <summary>
@@ -93,7 +122,26 @@ namespace Enivate.ResponseHub.ApplicationServices
 		/// <returns>The group is found by ID, otherwise null.</returns>
 		public async Task<Group> GetById(Guid id)
 		{
-			return await _repository.GetById(id);
+
+			// Get the group from cache if it exists
+			Group group = CacheManager.GetEntity<Group>(id);
+
+			// If the group is null, get from the database, and add to the cache for next load
+			if (group == null)
+			{
+				// Get the group from the db
+				group = await _repository.GetById(id);
+
+				// If the group is not null, store it in cache for next use.
+				if (group != null)
+				{
+					CacheManager.AddItem(group);
+				}
+
+			}
+
+			// return the group
+			return group;
 		}
 
 		/// <summary>
@@ -131,7 +179,24 @@ namespace Enivate.ResponseHub.ApplicationServices
 		/// <returns></returns>
 		public async Task<IList<Region>> GetRegions()
 		{
-			return await _regionRepository.GetAll();
+
+			// Try and get the regions from the cache
+			IList<Region> regions = CacheManager.GetItem<IList<Region>>(AllRegionsCacheKey);
+
+			// If the regions are null, cache doesn't exist, so load from DB.
+			if (regions == null)
+			{
+				// Get from db
+				regions = await _regionRepository.GetAll();
+
+				// Add to the cache
+				if (regions != null)
+				{
+					CacheManager.AddItem(AllRegionsCacheKey, regions);
+				}
+			}
+
+			return regions;
 		}
 
 		/// <summary>
@@ -160,6 +225,10 @@ namespace Enivate.ResponseHub.ApplicationServices
 
 			// Save the group to the database.
 			await _repository.UpdateGroup(group);
+
+			// Remove the group from cache so that a fresh reload occurs
+			CacheManager.RemoveItem(RecentlyAddedGroupsCacheKey);
+			CacheManager.RemoveEntity(group);
 
 		}
 	}
