@@ -3,7 +3,6 @@
 @{
     ViewBag.Title = "Groups";
 }
-
 <h1>Groups</h1>
 
 <a href="/admin/groups/create" class="btn btn-primary btn-icon btn-lg top-10"><i class="fa fa-plus"></i> Create group</a>
@@ -24,29 +23,43 @@
 	</form>
 </div>
 
+@if (!String.IsNullOrEmpty(Request.QueryString["q"]))
+{
+
+	<div class="row">
+		<div class="col-xs-12">
+			<p class="lead bottom-5">Displaying @Model.Count result@(Model.Count != 1 ? "s" : "") for <strong>'@Request.QueryString["q"]'</strong></p>
+			<p><a href="/admin/groups" class="btn-icon text-muted"><i class="fa fa-times-circle-o"></i>Clear search results</a></p>
+		</div>
+	</div>
+
+}
+
 <table class="table table-striped table-hover">
 	<thead>
 		<tr>
 			<th>Name</th>
+			<th>Capcode</th>
 			<th>Service</th>
 			<th>Created</th>
-			<th>&nbsp;</th>
+			<th>Actions</th>
 		</tr>
 	</thead>
 	<tbody>
 		@if (Model == null || Model.Count == 0)
 		{
 			<tr>
-				<td colspan="4">No groups found.</td>
+				<td colspan="5">No groups found.</td>
 			</tr>
 		}
 		@foreach(var group in Model)
 		{
 			<tr>
 				<td><a href="/admin/groups/@group.Id"><strong>@group.Name</strong></a></td>
+				<td>@group.Capcode</td>
 				<td>@Html.EnumDescription(group.Service)</td>
 				<td>@group.Created.ToString("yyyy-MM-dd")</td>
-				<td><a href="/admin/groups/@group.Id/edit" class="btn btn-link"><i class="fa fa-pencil-square-o"></i></a><a data-href="/admin/group/@group.Id/delete" class="btn btn-link"><i class="fa fa-times"></i></a></td>
+				<td><a href="/admin/groups/@group.Id/edit" title="Edit group"><i class="fa fa-pencil-square-o"></i></a></td>
 			</tr>
 		}
 	</tbody>

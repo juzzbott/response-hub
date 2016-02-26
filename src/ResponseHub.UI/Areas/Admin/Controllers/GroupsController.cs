@@ -338,7 +338,9 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 				Description = group.Description,
 				Service = EnumValue.GetEnumDescription(group.Service),
 				Capcode = group.Capcode,
-				Users = groupUserModels
+				Users = groupUserModels,
+				Region = group.Region.Name,
+				HeadquartersCoordinates = group.HeadquartersCoordinates
 			};
 
 			return View(model);
