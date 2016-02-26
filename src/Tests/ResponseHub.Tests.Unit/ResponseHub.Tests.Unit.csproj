@@ -8,7 +8,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Enivate.ResponseHub.Tests.Unit</RootNamespace>
-    <AssemblyName>Enivate.ResponseHub.Tests.Unit</AssemblyName>
+    <AssemblyName>ResponseHub.Tests.Unit</AssemblyName>
     <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -64,31 +64,31 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\MapIndexes\ResponseHub.MapIndexParser\ResponseHub.MapIndexParser.csproj">
+    <ProjectReference Include="..\..\MapIndexes\ResponseHub.MapIndexParser\ResponseHub.MapIndexParser.csproj">
       <Project>{6bf6d3a0-1797-4d46-a27c-e073d6a531b4}</Project>
       <Name>ResponseHub.MapIndexParser</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\ResponseHub.ApplicationServices\ResponseHub.ApplicationServices.csproj">
+    <ProjectReference Include="..\..\ResponseHub.ApplicationServices\ResponseHub.ApplicationServices.csproj">
       <Project>{a77ef1a1-1492-41ac-b62e-d14f9c01014f}</Project>
       <Name>ResponseHub.ApplicationServices</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\ResponseHub.Caching\ResponseHub.Caching.csproj">
+    <ProjectReference Include="..\..\ResponseHub.Caching\ResponseHub.Caching.csproj">
       <Project>{adde3186-948d-4296-8f92-b4ef9d3379b9}</Project>
       <Name>ResponseHub.Caching</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\ResponseHub.Common\ResponseHub.Common.csproj">
+    <ProjectReference Include="..\..\ResponseHub.Common\ResponseHub.Common.csproj">
       <Project>{64b4f6f9-8e0e-4475-8895-d7d4b0c1da4b}</Project>
       <Name>ResponseHub.Common</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\ResponseHub.DataAccess\ResponseHub.DataAccess.csproj">
+    <ProjectReference Include="..\..\ResponseHub.DataAccess\ResponseHub.DataAccess.csproj">
       <Project>{cf5c523b-660b-4538-9a64-928e7601804e}</Project>
       <Name>ResponseHub.DataAccess</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\ResponseHub.Logging\ResponseHub.Logging.csproj">
+    <ProjectReference Include="..\..\ResponseHub.Logging\ResponseHub.Logging.csproj">
       <Project>{38015057-6ff4-4ee7-b101-550a99578671}</Project>
       <Name>ResponseHub.Logging</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\ResponseHub.Model\ResponseHub.Model.csproj">
+    <ProjectReference Include="..\..\ResponseHub.Model\ResponseHub.Model.csproj">
       <Project>{63ebc394-caed-4b0b-974c-ba56f619f853}</Project>
       <Name>ResponseHub.Model</Name>
     </ProjectReference>
