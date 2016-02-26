@@ -25,6 +25,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MapIndexes", "MapIndexes", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ResponseHub.MapIndexParser", "MapIndexes\ResponseHub.MapIndexParser\ResponseHub.MapIndexParser.csproj", "{6BF6D3A0-1797-4D46-A27C-E073D6A531B4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ResponseHub.Caching", "ResponseHub.Caching\ResponseHub.Caching.csproj", "{ADDE3186-948D-4296-8F92-B4EF9D3379B9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -67,6 +69,10 @@ Global
 		{6BF6D3A0-1797-4D46-A27C-E073D6A531B4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6BF6D3A0-1797-4D46-A27C-E073D6A531B4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6BF6D3A0-1797-4D46-A27C-E073D6A531B4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ADDE3186-948D-4296-8F92-B4EF9D3379B9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ADDE3186-948D-4296-8F92-B4EF9D3379B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ADDE3186-948D-4296-8F92-B4EF9D3379B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ADDE3186-948D-4296-8F92-B4EF9D3379B9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
