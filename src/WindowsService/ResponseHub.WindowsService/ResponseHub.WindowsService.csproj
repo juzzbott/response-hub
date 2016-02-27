@@ -128,6 +128,7 @@
       <DependentUpon>MessageService.cs</DependentUpon>
     </Compile>
     <Compile Include="Parsers\MessageParser.cs" />
+    <Compile Include="Parsers\PagerMessageParser.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

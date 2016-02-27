@@ -18,7 +18,7 @@ namespace Enivate.ResponseHub.WindowsService.Tests
 	public class ParserTests : IClassFixture<UnityCollectionFixture>
 	{
 
-		[Trait("Category", "Parser tests")]
+		[Trait("Category", "Parser tests - Parsed messages")]
 		[Theory(DisplayName = "Can parse pager message - Job Numbers")]
 		[InlineData("S160132353 SES BACCHUS MARSH TREE DOWN / TRF HAZARD TANYA BARTAM 0432256742 / WESTERN FWY BALLAN /CARTONS RD //RACECOURSE RD SVVB C 6439 K15 TREE DOWN BLOCKING 1 EAST BOUND LANE [BACC]", "S160132353")]
 		[InlineData("ALERT F160103773 PARW1 RESCC1 * CAR ACCIDENT - POSS PERSON TRAPPED CNR GEELONG-BACCHUS MARSH RD/GLENMORE RD PARWAN SVC 6608 E2 (747184) BACC1 CPARW [BACC]", "F160103773")]
@@ -39,7 +39,7 @@ namespace Enivate.ResponseHub.WindowsService.Tests
 
 		}
 
-		[Trait("Category", "Parser tests")]
+		[Trait("Category", "Parser tests - Parsed messages")]
 		[Theory(DisplayName = "Can parse pager message - Message Priority")]
 		[InlineData("@@ALERT F160103773 PARW1 RESCC1 * CAR ACCIDENT - POSS PERSON TRAPPED CNR GEELONG-BACCHUS MARSH RD/GLENMORE RD PARWAN SVC 6608 E2 (747184) BACC1 CPARW [BACC]", MessagePriority.Emergency)]
 		[InlineData("HbS160132353 SES BACCHUS MARSH TREE DOWN / TRF HAZARD TANYA BARTAM 0432256742 / WESTERN FWY BALLAN /CARTONS RD //RACECOURSE RD SVVB C 6439 K15 TREE DOWN BLOCKING 1 EAST BOUND LANE [BACC]", MessagePriority.NonEmergency)]
@@ -58,7 +58,7 @@ namespace Enivate.ResponseHub.WindowsService.Tests
 			Assert.Equal(parsedMessage.Priority, actualPriority);
 		}
 
-		[Trait("Category", "Parser tests")]
+		[Trait("Category", "Parser tests - Parsed messages")]
 		[Theory(DisplayName = "Can parse pager message - Location information")]
 		[InlineData("GLENMORE RD PARWAN SVVB C 6608 E2 (747184) BACC1 CPARW [BACC]", "SVVB C 6608 E2", MapType.SpatialVision, 6608, "E2")]
 		[InlineData("RACECOURSE RD SVC 6439 K15 TREE DOWN BLOCKING 1 EAST BOUND LANE [BACC]", "SVC 6439 K15" , MapType.SpatialVision, 6439, "K15")]
@@ -82,7 +82,7 @@ namespace Enivate.ResponseHub.WindowsService.Tests
 
 
 
-		[Trait("Category", "Parser tests")]
+		[Trait("Category", "Parser tests - Parsed messages")]
 		[Theory(DisplayName = "Can parse pager message - Unknown location information")]
 		[InlineData("QDThis is a test page. [BACC]")]
 		public void CanParsePagerMessages_UnknownLocation(string messageContent)
@@ -96,6 +96,36 @@ namespace Enivate.ResponseHub.WindowsService.Tests
 
 			// Ensure the Location object is null as we don't have any location information
 			Assert.Null(parsedMessage.Location);
+		}
+
+		[Trait("Category", "Parser tests - Raw pager messages")]
+		[Theory(DisplayName = "Can parse raw pager messages")]
+		[InlineData("0566760 08:01:00 26-02-16 POCSAG-1  ALPHA   512  @@ALERT F160207784 ALARC1 CADW1 HINDU SOCIETY OF VICTORIA INC ASE - PUMP HOUSE, - INPUT - PUMP HOUSE 52 BOUNDARY RD CARRUM DOWNS /BOUNDARY LANE //OPTIC WAY M 98 F10 (400832) CCADW CFTONS CPATRS [CADW]")]
+		[InlineData("0581320 07:58:42 26-02-16 POCSAG-1  ALPHA   512  QDReminder that tonight is pool night come down and have fun with mates all welcome starts around 1800 hours signed BH 042403852")]
+		[InlineData("1525176 07:51:41 26-02-16 POCSAG-1  ALPHA   512  HbCORO15 G&SC3 SMOKE ISSUING FROM GRASS BRODERICK-GEELONG RING IN RAMP ON CORIO M 432 G3 (703844) F160207780 CCOROS")]
+		[InlineData("0242537 09:33:54 26-02-16 POCSAG-1  ALPHA   512  HbGeelong DO please call Ken Smith SWDO 0417 509 017 re support Corio with line seach 3 - 4 members required. [GEEL]")]
+		[InlineData("1398103 09:44:30 26-02-16 POCSAG-3 NUMERIC  512  TONE ONLY")]
+		[InlineData("0572104 10:28:02 26-02-16 POCSAG-1  ALPHA   512  QDAnyone helping with the Twilight Night at the Toolern Vale Primary Schoo4?z7w434???(vrhse advise your availability between 4 & 8 pm. Contact Joanne on 0409568603 Thanks Jo [TOOL]")]
+		[InlineData("0003227 10:57:07 26-02-16 POCSAG-1  ALPHA   512  @@)&)E51TIMEUPDATE1098000100008000&K0:390:1:0210&&?:")]
+		[InlineData("1353287 10:56:13 26-02-16 POCSAG-2 NUMERIC  512  5-*0*163[92-U2868] 2]5580")]
+		public void CanParseRawPagerMessage(string rawMessage)
+		{
+
+			// Create the pager message parser
+			PagerMessageParser parser = new PagerMessageParser();
+			PagerMessage message = parser.ParsePagerMessage(rawMessage);
+			
+			// Ensure we have valid message data
+			Assert.NotNull(message);
+			Assert.False(String.IsNullOrEmpty(message.Address), "Address is null or empty");
+			Assert.True(message.Timestamp != DateTime.MinValue, "TimeStamp is min datetime value");
+			Assert.True(message.Id != Guid.Empty, "Id is empty guid");
+			Assert.True(message.Bitrate > 0, "Bitrate is zero");
+			Assert.False(String.IsNullOrEmpty(message.Type), "Type is null or empty");
+			Assert.False(String.IsNullOrEmpty(message.Mode), "Mode is null or empty");
+			Assert.False(String.IsNullOrEmpty(message.MessageContent), "MessageContent is null or empty");
+			Assert.False(String.IsNullOrEmpty(message.ShaHash), "ShaHash is null or empty");
+			
 		}
 
 		#region Helpers

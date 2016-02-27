@@ -25,5 +25,10 @@ namespace Enivate.ResponseHub.Model.Messages
 
 		public string ShaHash { get; set; }
 
+		public PagerMessage()
+		{
+			Id = Guid.NewGuid();
+		}
+
 	}
 }
