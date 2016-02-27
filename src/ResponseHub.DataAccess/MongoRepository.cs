@@ -43,6 +43,9 @@ namespace Enivate.ResponseHub.DataAccess
 		public MongoRepository(string connectionString)
 		{
 
+			// Change the mongo defaults to use standard binary guid instead of legacy guid.
+			BsonDefaults.GuidRepresentation = GuidRepresentation.Standard;
+
 			// Load the configuration to read the connection string
 			MongoUrl mongoUrl = new MongoUrl(connectionString);
 
