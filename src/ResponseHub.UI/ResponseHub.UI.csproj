@@ -189,6 +189,7 @@
     <Compile Include="Areas\Admin\Models\Groups\SingleGroupViewModel.cs" />
     <Compile Include="Controllers\Api\PagerMessageController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\MediaController.cs" />
     <Compile Include="Controllers\MyAccountController.cs" />
     <Compile Include="Controllers\WallboardController.cs" />
     <Compile Include="Filters\ClaimsAuthorizeAttribute.cs" />
@@ -242,6 +243,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Views\Media\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
