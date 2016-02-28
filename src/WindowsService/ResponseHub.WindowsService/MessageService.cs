@@ -20,6 +20,8 @@ using Enivate.ResponseHub.Logging;
 using Enivate.ResponseHub.Logging.Configuration;
 using Enivate.ResponseHub.Model.Spatial;
 using DotSpatial.Projections;
+using Enivate.ResponseHub.WindowsService.Parsers;
+using Enivate.ResponseHub.Model.Messages;
 
 namespace Enivate.ResponseHub.WindowsService
 {
@@ -36,6 +38,13 @@ namespace Enivate.ResponseHub.WindowsService
 		/// </summary>
 		private string _intervalKey = "Timer.Interval";
 
+		/// <summary>
+		/// The last inserted message hash.z
+		/// </summary>
+		private string _lastInsertedMessageSha = "";
+
+		private List<PagerMessage> _messagesToSubmit;
+
 		private ILogger _log;
 		protected ILogger Log
 		{
@@ -45,9 +54,17 @@ namespace Enivate.ResponseHub.WindowsService
 			}
 		}
 
+		private PagerMessageParser _pagerMessageParser;
+
 		public MessageService()
 		{
 			InitializeComponent();
+
+			// Initialise the list of pager messages to submit.
+			_messagesToSubmit = new List<PagerMessage>();
+
+			// Instantiate the message parser
+			_pagerMessageParser = new PagerMessageParser();
 
 			// If there is no interval setting, then throw exception
 			if (String.IsNullOrEmpty(ConfigurationManager.AppSettings[_intervalKey]))
@@ -58,87 +75,14 @@ namespace Enivate.ResponseHub.WindowsService
 			// Get the timer interval
 			double timerInterval;
 			double.TryParse(ConfigurationManager.AppSettings[_intervalKey], out timerInterval);
-
-			// Load the index maps into memory
-			//LoadIndexMaps();
-
+			
 			// Initialise the timer
 			_msgServiceTimer = new Timer(timerInterval);
 			_msgServiceTimer.AutoReset = true;
 			_msgServiceTimer.Elapsed += _msgServiceTimer_Elapsed;
 
 		}
-
-		/// <summary>
-		/// Loads the index maps from disk into memory as a collection of searchable map references.
-		/// </summary>
-		private void LoadIndexMaps()
-		{
-
-			// Set the filename variable
-			string filename = Environment.CurrentDirectory + "\\App_Data\\MapIndexFiles\\SpatialVision\\MAPBOOK_PAGEGRID_50_ED4.shp";
-			string projectionFile = Environment.CurrentDirectory + "\\App_Data\\MapIndexFiles\\SpatialVision\\MAPBOOK_PAGEGRID_50_ED4.prj";
-
-			try
-			{
-
-				DateTime startDate = DateTime.Now;
-
-				// Load the shape file and project to GDA94
-				Shapefile indexMapFile = Shapefile.OpenFile(filename);
-				indexMapFile.Reproject(KnownCoordinateSystems.Geographic.Australia.GeocentricDatumofAustralia1994);				
-
-				foreach(IFeature feature in indexMapFile.Features.ToList())
-				{
-				
-					// Get the map values
-					int pageNumber;
-					Int32.TryParse(feature.DataRow[2].ToString(), out pageNumber);
-					
-					int mgaZone;
-					Int32.TryParse(feature.DataRow[4].ToString(), out mgaZone);
-					
-					int scale;
-					Int32.TryParse(feature.DataRow[5].ToString(), out scale);
-				
-					// iterate through the features of the map index, and create the MapReference object. 
-					//MapIndex mapRef = new MapReference()
-					//{
-					//	GridReference = feature.DataRow[3].ToString(),
-					//	PageNumber = pageNumber,
-					//	Scale = scale,
-					//	UtmNumber = mgaZone
-					//};
-				
-					// Add map ref to cache.
-					//MapReferenceCache.Instance.AddMapReference(MapType.SpatialVision, mapRef);
-				
-				}
-
-				DateTime endDate = DateTime.Now;
-				TimeSpan diff = (endDate - startDate);
-
-				using (StreamWriter writer = new StreamWriter(Environment.CurrentDirectory + "\\times.txt"))
-				{
-					writer.WriteLine("Start date: " + startDate.ToString("HH:mm:ss.fff"));
-					writer.WriteLine("Start date: " + endDate.ToString("HH:mm:ss.fff"));
-					writer.WriteLine("Difference milliseconds: " + diff.TotalMilliseconds.ToString());
-				}
-
-				// Close the index map file.
-				indexMapFile.Close();
-
-			}
-			catch (Exception ex)
-			{
-				_log.Error(String.Format("Unable to load map index file: {0}", filename), ex);
-
-				// rethrow exeption to exit
-				throw;
-			}
-			
-		}
-
+		
 		protected override void OnStart(string[] args)
 		{
 			StartService(args);
@@ -194,6 +138,112 @@ namespace Enivate.ResponseHub.WindowsService
 		{
 
 			Log.Debug("Timer elapsed.");
+
+			try {
+
+				// Get the current log file filename
+				string logFilePath = GetLogFilePath(DateTime.Now);
+
+				// If the log file is empty, or the file doesn't exist, then log the issue and return
+				if (String.IsNullOrEmpty(logFilePath) || !File.Exists(logFilePath))
+				{
+					Log.Error(String.Format("The log file '{0}' does not exist.", logFilePath));
+					return;
+				}
+
+				// Get the messages from the log file.
+				IList<string> rawMessages = GetMessagesFromLogFile(logFilePath);
+
+				// Loop through the messages
+				foreach (string message in rawMessages)
+				{
+					// If the message is null or empty, continue
+					if (String.IsNullOrEmpty(message))
+					{
+						continue;
+					}
+
+					try
+					{
+
+						// Get the pager message
+						PagerMessage pagerMessage = _pagerMessageParser.ParsePagerMessage(message);
+
+						// If the pager message is numeric, skip it
+						if (pagerMessage.Type.ToUpper() != "ALPHA")
+						{
+							Log.Debug("Skipping non-alpha message.");
+							continue;
+						}
+
+						// If the pager sha matches the last inserted sha, then exit the loop, as no need to process any further messages.
+						if (pagerMessage.ShaHash.Equals(_lastInsertedMessageSha, StringComparison.CurrentCultureIgnoreCase))
+						{
+							break;
+						}
+
+						// Add the pager message to submit
+						_messagesToSubmit.Add(pagerMessage);
+
+					}
+					catch (Exception ex)
+					{
+						Log.Error(String.Format("Unable to parse pager message. Raw message data: {0}", message), ex);
+					}
+
+				}
+
+				// Submit the messages
+				SubmitMessages();
+
+			}
+			catch (Exception ex)
+			{
+				Log.Error(String.Format("Error processing log file on timer elapse. Message: {0}", ex.Message), ex);
+			}
+
+		}
+
+		private void SubmitMessages()
+		{
+			throw new NotImplementedException();
+		}
+
+		/// <summary>
+		/// Gets the list of pager messages from the log file. The messages are reversed in order, so that the most recent log entries are at the top of the list, so to minimise iterations.
+		/// </summary>
+		/// <param name="logFilePath">The path the to the log file to get messages from.</param>
+		/// <returns>The list of raw pager messages that need to be parsed.</returns>
+		private IList<string> GetMessagesFromLogFile(string logFilePath)
+		{
+			// Create the list of messages
+			List<string> messages = new List<string>();
+
+			// Begin using the stream reader
+			// Ensure that we don't lock the file if the PDW application tries to write to the file.
+			FileStream fs = new FileStream(logFilePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+			using (StreamReader reader = new StreamReader(fs))
+			{
+				messages.Add(reader.ReadLine());
+			}
+
+			// Reverse so that newest are at the top
+			messages.Reverse();
+
+			// return the messages
+			return messages;
+		}
+
+		/// <summary>
+		/// Gets the log file based on the specified date.
+		/// </summary>
+		/// <param name="date">The date of the log file.</param>
+		/// <returns>The path to the log file.</returns>
+		private string GetLogFilePath(DateTime date)
+		{
+			string basePath = ConfigurationManager.AppSettings["PDW.LogDirectory"];
+
+			return String.Format("{0}\\yyMMdd.log");
 
 		}
 	}
