@@ -14,12 +14,15 @@ namespace Enivate.ResponseHub.Tests.Unit
 	{
 
 		[Theory(DisplayName = "Can parse mail address - From raw format.")]
-		[InlineData("Test User [test@domain.com]", "Test User", "test@domain.com")]
-		[InlineData("Test[test@domain.com]", "Test", "test@domain.com")]
+		[InlineData("Test User {test@domain.com}", "Test User", "test@domain.com")]
+		[InlineData("Test{test@domain.com}", "Test", "test@domain.com")]
 		[InlineData("test@domain.com", "", "test@domain.com")]
 		[Trait("Category", "MailProvider Tests")]
 		public void CanParseAddress_FromRawFormat(string rawMailAddress, string actualName, string actualEmail)
 		{
+
+			// Bamboo can't handle [] when parsing the unit tests, so we need to replace them.
+			rawMailAddress = rawMailAddress.Replace('{', '[').Replace('}', ']');
 
 			// Get the mail address object
 			MailProvider provider = new MailProvider();
@@ -33,12 +36,16 @@ namespace Enivate.ResponseHub.Tests.Unit
 		}
 
 		[Theory(DisplayName = "Can parse multiple mail addresses - From raw format.")]
-		[InlineData("Test User [test@domain.com], Test User [test@domain.com], Test User [test@domain.com]", 3)]
-		[InlineData("Test[test@domain.com], Test[test@domain.com]", 2)]
-		[InlineData("Testy[test@domain.com]", 1)]
+		[InlineData("Test User {test@domain.com}, Test User {test@domain.com}, Test User {test@domain.com}", 3)]
+		[InlineData("Test{test@domain.com}, Test{test@domain.com}", 2)]
+		[InlineData("Testy{test@domain.com}", 1)]
 		[Trait("Category", "MailProvider Tests")]
 		public void CanParseMultipleAddresses_FromRawFormat(string rawAddresses, int count)
 		{
+
+			// Bamboo can't handle [] when parsing the unit tests, so we need to replace them.
+			rawAddresses = rawAddresses.Replace('{', '[').Replace('}', ']');
+
 			// Get the mail address object
 			MailProvider provider = new MailProvider();
 			MailAddressCollection addresses = provider.GetMailAddressCollection(rawAddresses);
