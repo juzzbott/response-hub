@@ -6,10 +6,13 @@ using System.Threading.Tasks;
 
 using Xunit;
 
+using Moq;
+
 using Enivate.ResponseHub.Model.Messages;
 using Enivate.ResponseHub.Model.Spatial;
 using Enivate.ResponseHub.WindowsService.Parsers;
 using Enivate.ResponseHub.WindowsService.Tests.Fixtures;
+using Enivate.ResponseHub.DataAccess.Interface;
 
 namespace Enivate.ResponseHub.WindowsService.Tests
 {
@@ -31,7 +34,7 @@ namespace Enivate.ResponseHub.WindowsService.Tests
 			PagerMessage pagerMessage = CreateTestPagerMessage(messageContent);
 
 			// Parse the pager message
-			JobMessageParser parser = new JobMessageParser();
+			JobMessageParser parser = new JobMessageParser(new Mock<IMapIndexRepository>().Object);
 			JobMessage parsedMessage = parser.ParseMessage(pagerMessage);
 
 			// Ensure the job numbers match.
@@ -51,7 +54,7 @@ namespace Enivate.ResponseHub.WindowsService.Tests
 			PagerMessage pagerMessage = CreateTestPagerMessage(messageContent);
 
 			// Parse the pager message
-			JobMessageParser parser = new JobMessageParser();
+			JobMessageParser parser = new JobMessageParser(new Mock<IMapIndexRepository>().Object);
 			JobMessage parsedMessage = parser.ParseMessage(pagerMessage);
 
 			// Ensure the message priority matches
@@ -60,16 +63,16 @@ namespace Enivate.ResponseHub.WindowsService.Tests
 
 		[Trait("Category", "Parser tests - Parsed messages")]
 		[Theory(DisplayName = "Can parse pager message - Location information")]
-		[InlineData("GLENMORE RD PARWAN SVVB C 6608 E2 (747184) BACC1 CPARW [BACC]", "SVVB C 6608 E2", MapType.SpatialVision, 6608, "E2")]
-		[InlineData("RACECOURSE RD SVC 6439 K15 TREE DOWN BLOCKING 1 EAST BOUND LANE [BACC]", "SVC 6439 K15" , MapType.SpatialVision, 6439, "K15")]
-		[InlineData("RACECOURSE RD M 316 B4 TREE DOWN BLOCKING 1 EAST BOUND LANE [BACC]", "M 316 B4", MapType.Melway, 316, "B4")]
-		public void CanParsePagerMessages_Location(string messageContent, string mapReference, MapType mapType, int mapPage, string gridReference)
+		[InlineData("GLENMORE RD PARWAN SVVB C 6608A E2 (747184) BACC1 CPARW [BACC]", "SVVB C 6608A E2", MapType.SpatialVision, "6608A", "E2")]
+		[InlineData("RACECOURSE RD SVC 6439 K15 TREE DOWN BLOCKING 1 EAST BOUND LANE [BACC]", "SVC 6439 K15" , MapType.SpatialVision, "6439", "K15")]
+		[InlineData("RACECOURSE RD M 316 B4 TREE DOWN BLOCKING 1 EAST BOUND LANE [BACC]", "M 316 B4", MapType.Melway, "316", "B4")]
+		public void CanParsePagerMessages_Location(string messageContent, string mapReference, MapType mapType, string mapPage, string gridReference)
 		{
 			// Create the pager message
 			PagerMessage pagerMessage = CreateTestPagerMessage(messageContent);
 
 			// Parse the pager message
-			JobMessageParser parser = new JobMessageParser();
+			JobMessageParser parser = new JobMessageParser(new Mock<IMapIndexRepository>().Object);
 			JobMessage parsedMessage = parser.ParseMessage(pagerMessage);
 
 			// Ensure the message parses a valid location object
@@ -91,7 +94,7 @@ namespace Enivate.ResponseHub.WindowsService.Tests
 			PagerMessage pagerMessage = CreateTestPagerMessage(messageContent);
 
 			// Parse the pager message
-			JobMessageParser parser = new JobMessageParser();
+			JobMessageParser parser = new JobMessageParser(new Mock<IMapIndexRepository>().Object);
 			JobMessage parsedMessage = parser.ParseMessage(pagerMessage);
 
 			// Ensure the Location object is null as we don't have any location information

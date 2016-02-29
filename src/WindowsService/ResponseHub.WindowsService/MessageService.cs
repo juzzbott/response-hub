@@ -19,6 +19,7 @@ using Enivate.ResponseHub.Model.Messages;
 
 using Newtonsoft.Json;
 using System.Threading.Tasks;
+using Enivate.ResponseHub.DataAccess.Interface;
 
 namespace Enivate.ResponseHub.WindowsService
 {
@@ -72,7 +73,16 @@ namespace Enivate.ResponseHub.WindowsService
 				return _log ?? (_log = UnityConfiguration.Container.Resolve<ILogger>());
 			}
 		}
-		
+
+		private IMapIndexRepository _mapIndexRepository;
+		protected IMapIndexRepository MapIndexRepository
+		{
+			get
+			{
+				return _mapIndexRepository ?? (_mapIndexRepository = UnityConfiguration.Container.Resolve<IMapIndexRepository>());
+			}
+		}
+
 		public MessageService()
 		{
 			InitializeComponent();
@@ -83,7 +93,7 @@ namespace Enivate.ResponseHub.WindowsService
 
 			// Instantiate the message parsers
 			_pagerMessageParser = new PagerMessageParser();
-			_jobMessageParser = new JobMessageParser();
+			_jobMessageParser = new JobMessageParser(MapIndexRepository);
 
 			// If there is no interval setting, then throw exception
 			if (String.IsNullOrEmpty(ConfigurationManager.AppSettings[_intervalKey]))

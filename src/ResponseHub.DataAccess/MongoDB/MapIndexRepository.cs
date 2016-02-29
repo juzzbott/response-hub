@@ -68,6 +68,19 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 			await Collection.DeleteManyAsync(new BsonDocument());
 		}
 
+		/// <summary>
+		/// Gets the map index based on the page number.
+		/// </summary>
+		/// <param name="mapPage">The page number of the map index to find.</param>
+		/// <returns></returns>
+		public async Task<MapIndex> GetMapIndexByPageNumber(MapType mapType, string mapPage)
+		{
+
+			// Get the map index from the db and return it.
+			MapIndexDto mapIndex = await FindOne(i => i.MapType == mapType && i.PageNumber.ToLower() == mapPage.ToLower());
+			return MapDataObjectToModel(mapIndex);
+		}
+
 		#region Model mapping
 
 		/// <summary>

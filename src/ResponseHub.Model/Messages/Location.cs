@@ -15,7 +15,7 @@ namespace Enivate.ResponseHub.Model.Messages
 
 		public MapType MapType { get; set; }
 
-		public int MapPage { get; set; }
+		public string MapPage { get; set; }
 
 		public string GridReference { get; set; }
 

@@ -1,4 +1,5 @@
 ﻿// Map indexes
+db.map_indexes.createIndex({ "PageNumber": 1 }, { background: true });
 db.map_indexes.createIndex({ "GridReferences.Coordinates": "2dsphere" }, { background: true, name: "Coords_2dsphere" });
 
 // Groups

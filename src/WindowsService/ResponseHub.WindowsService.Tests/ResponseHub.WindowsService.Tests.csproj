@@ -49,6 +49,10 @@
       <HintPath>..\..\packages\Unity.4.0.1\lib\net45\Microsoft.Practices.Unity.RegistrationByConvention.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Moq, Version=4.2.1510.2205, Culture=neutral, PublicKeyToken=69f491c39445e920, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Moq.4.2.1510.2205\lib\net40\Moq.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -91,6 +95,10 @@
     <ProjectReference Include="..\..\ResponseHub.Common\ResponseHub.Common.csproj">
       <Project>{64b4f6f9-8e0e-4475-8895-d7d4b0c1da4b}</Project>
       <Name>ResponseHub.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ResponseHub.DataAccess\ResponseHub.DataAccess.csproj">
+      <Project>{cf5c523b-660b-4538-9a64-928e7601804e}</Project>
+      <Name>ResponseHub.DataAccess</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\ResponseHub.Logging\ResponseHub.Logging.csproj">
       <Project>{38015057-6ff4-4ee7-b101-550a99578671}</Project>

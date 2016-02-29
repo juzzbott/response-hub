@@ -17,20 +17,20 @@ namespace Enivate.ResponseHub.WindowsService
 		/// <summary>
 		/// The collection of Spatial Vision map references.
 		/// </summary>
-		public IDictionary<string, IList<MapIndex>> SpatialVision { get; set; }
+		public IDictionary<string, MapIndex> SpatialVision { get; set; }
 
 		/// <summary>
 		/// The collection of Melway map references.
 		/// </summary>
-		public IDictionary<string, IList<MapIndex>> Melway { get; set; }
+		public IDictionary<string, MapIndex> Melway { get; set; }
 
 		/// <summary>
 		/// Creates a new instance of the MapReferenceCache.
 		/// </summary>
 		private MapReferenceCache()
 		{
-			SpatialVision = new Dictionary<string, IList<MapIndex>>();
-			Melway = new Dictionary<string, IList<MapIndex>>();
+			SpatialVision = new Dictionary<string, MapIndex>();
+			Melway = new Dictionary<string, MapIndex>();
 		}
 
 		public void AddMapReference(MapType mapType, MapIndex mapReference)
@@ -41,7 +41,7 @@ namespace Enivate.ResponseHub.WindowsService
 				return;
 			}
 
-			IDictionary<string, IList<MapIndex>> collection;
+			IDictionary<string, MapIndex> collection;
 
 			switch (mapType)
 			{
@@ -61,22 +61,48 @@ namespace Enivate.ResponseHub.WindowsService
 			// Now that we have the collection, first we need to check if the map page exists
 			if (!collection.ContainsKey(mapReference.PageNumber))
 			{
-				collection.Add(mapReference.PageNumber, new List<MapIndex>());
+				collection.Add(mapReference.PageNumber, new MapIndex());
 			}
 
 			// Now we can add the map reference to the list of references for the specific page
-			collection[mapReference.PageNumber].Add(mapReference);
+			collection[mapReference.PageNumber] = mapReference;
 
 		}
 
-		public bool CacheItemExists(MapType mapType, MapIndex mapReference)
+		/// <summary>
+		/// Gets the cache item from memory.
+		/// </summary>
+		/// <param name="mapType">The map type to check for.</param>
+		/// <param name="pageNumber">The page number for the map reference object.</param>
+		/// <returns>True if the map reference exists in the cache, otherwise false.</returns>
+		public MapIndex GetCacheItem(MapType mapType, string pageNumber)
 		{
-			if (mapType == MapType.Unknown || mapReference == null)
+			if (mapType == MapType.Unknown || String.IsNullOrEmpty(pageNumber))
 			{
-				return false;
+				return null;
 			}
 
-			throw new NotImplementedException();
+			switch (mapType)
+			{
+				case MapType.SpatialVision:
+					if (SpatialVision.ContainsKey(pageNumber))
+					{
+						return SpatialVision[pageNumber];
+					}
+					break;
+
+				case MapType.Melway:
+					if (Melway.ContainsKey(pageNumber))
+					{
+						return Melway[pageNumber];
+					}
+					break;
+					
+			}
+
+			// If no map type is known, just return
+			return null;
+
 		}
 
 		/// <summary>

@@ -15,5 +15,6 @@ namespace Enivate.ResponseHub.DataAccess.Interface
 
 		Task ClearCollection();
 
+		Task<MapIndex> GetMapIndexByPageNumber(MapType mapType, string mapPage);
 	}
 }

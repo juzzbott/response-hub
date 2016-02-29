@@ -5,9 +5,9 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-
 using Enivate.ResponseHub.Model.Messages;
 using Enivate.ResponseHub.Model.Spatial;
+using Enivate.ResponseHub.DataAccess.Interface;
 
 namespace Enivate.ResponseHub.WindowsService.Parsers
 {
@@ -17,12 +17,12 @@ namespace Enivate.ResponseHub.WindowsService.Parsers
 		/// <summary>
 		/// Spatial map reference vision regular expression pattern
 		/// </summary>
-		public const string SpatialVisionRegex = ".*\\s+((SVVB|SVVB C|SV\\s?C)\\s+(\\d{1,4})\\s+([A-Z]\\d{1,2}))\\s+";
+		public const string SpatialVisionRegex = ".*\\s+((SVVB|SVVB C|SV\\s?C)\\s+(\\d{1,4}[A-Z]?)\\s+([A-Z]\\d{1,2}))\\s+";
 
 		/// <summary>
 		/// Melway map reference regular expression pattern.
 		/// </summary>
-		public const string MelwayRegex = ".*\\s+((M|MEL)\\s+(\\d{1,3})\\s+([A-Z]\\d{1,2}))\\s+";
+		public const string MelwayRegex = ".*\\s+((M|MEL)\\s+(\\d{1,3}[A-Z]?)\\s+([A-Z]\\d{1,2}))\\s+";
 
 		/// <summary>
 		/// Character code prefix for Emergency pager messages.
@@ -39,6 +39,22 @@ namespace Enivate.ResponseHub.WindowsService.Parsers
 		/// </summary>
 		public const string AdministrationPrefix = "QD";
 
+		private IMapIndexRepository _repository;
+
+		/// <summary>
+		/// Creates a new instance of the JobMessageParser class.
+		/// </summary>
+		/// <param name="repository"></param>
+		public JobMessageParser(IMapIndexRepository repository)
+		{
+			_repository = repository;
+		}
+
+		/// <summary>
+		/// Parses the job message from the pager message.
+		/// </summary>
+		/// <param name="pagerMessage">The pager message to parse into a JobMessage object.</param>
+		/// <returns>The job message object.</returns>
 		public JobMessage ParseMessage(PagerMessage pagerMessage)
 		{
 			
@@ -111,7 +127,7 @@ namespace Enivate.ResponseHub.WindowsService.Parsers
 				// Populate the location from the map reference.
 				location = PopulateLocationFromMapReference(mapRefMatch.Groups[1].Value, 
 					MapType.SpatialVision, 
-					Int32.Parse(mapRefMatch.Groups[3].Value), // We know this is an integer as the regex matched against digits.
+					mapRefMatch.Groups[3].Value, 
 					mapRefMatch.Groups[4].Value);
 
 				// return the location
@@ -126,7 +142,7 @@ namespace Enivate.ResponseHub.WindowsService.Parsers
 				// Populate the location from the map reference.
 				location = PopulateLocationFromMapReference(mapRefMatch.Groups[1].Value, 
 					MapType.Melway, 
-					Int32.Parse(mapRefMatch.Groups[3].Value), // We know this is an integer as the regex matched against digits. 
+					mapRefMatch.Groups[3].Value, 
 					mapRefMatch.Groups[4].Value);
 			}
 
@@ -143,7 +159,7 @@ namespace Enivate.ResponseHub.WindowsService.Parsers
 		/// <param name="mapPage">The page number of the map reference.</param>
 		/// <param name="gridReference">THe grid reference on the page of the map reference (e.g. A1, B5 etc).</param>
 		/// <returns>The location from the pager message details.</returns>
-		private Location PopulateLocationFromMapReference(string fullMapRef, MapType mapType, int mapPage, string gridReference)
+		private Location PopulateLocationFromMapReference(string fullMapRef, MapType mapType, string mapPage, string gridReference)
 		{
 
 			// Create the location object
@@ -156,10 +172,57 @@ namespace Enivate.ResponseHub.WindowsService.Parsers
 			};
 
 			// Get the coordinates from the index maps
+			MapIndex mapIndex = GetMapIndex(mapType, mapPage);
+
+			if (mapIndex != null)
+			{
+
+				// get the grid reference from the map index.
+				GridReference gridRefFromIndex = mapIndex.GridReferences.FirstOrDefault(i => i.GridSquare.ToLower() == gridReference.ToLower());
+
+				// Set the properties of the location
+				location.Coordinates = new Coordinates(gridRefFromIndex.Latitude, gridRefFromIndex.Longitude);
+
+			}
 
 			// return the location
 			return location;
 
+		}
+
+		/// <summary>
+		/// Gets the map index from the cache. If the cache object doesn't exist, then load it from the database.
+		/// </summary>
+		/// <param name="mapType">The map type to get the index for.</param>
+		/// <param name="mapPage">The map page to get the index for.</param>
+		/// <returns>The map index for the specified page number and type.</returns>
+		private MapIndex GetMapIndex(MapType mapType, string mapPage)
+		{
+			// Get the map index from the cache
+			MapIndex mapIndex = MapReferenceCache.Instance.GetCacheItem(mapType, mapPage);
+
+			// If the map index is null, get from the database
+			if (mapIndex == null)
+			{
+
+				// Get from the repository.
+				mapIndex = null;
+
+				Task.Run(async () =>
+				{
+					await _repository.GetMapIndexByPageNumber(mapType, mapPage);
+				});
+
+				// if the mapIndex exists, add to the cache for next time
+				if (mapIndex != null)
+				{
+					MapReferenceCache.Instance.AddMapReference(mapType, mapIndex);
+				}
+
+			}
+
+			// return the map index
+			return mapIndex;
 		}
 
 		/// <summary>
