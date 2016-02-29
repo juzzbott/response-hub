@@ -31,6 +31,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{F118DA4A
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ResponseHub.Tests.Unit", "Tests\ResponseHub.Tests.Unit\ResponseHub.Tests.Unit.csproj", "{C1273DE7-873C-4FC6-B5B2-79D27B2B71EA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ResponseHub.Mail", "ResponseHub.Mail\ResponseHub.Mail.csproj", "{BAC4BA31-D159-4C2D-A508-BFE3522BFE1D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -81,6 +83,10 @@ Global
 		{C1273DE7-873C-4FC6-B5B2-79D27B2B71EA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C1273DE7-873C-4FC6-B5B2-79D27B2B71EA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C1273DE7-873C-4FC6-B5B2-79D27B2B71EA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BAC4BA31-D159-4C2D-A508-BFE3522BFE1D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BAC4BA31-D159-4C2D-A508-BFE3522BFE1D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BAC4BA31-D159-4C2D-A508-BFE3522BFE1D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BAC4BA31-D159-4C2D-A508-BFE3522BFE1D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
