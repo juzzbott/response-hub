@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Enivate.ResponseHub.Model.Messages
 {
-	public class Message : IEntity
+	public class JobMessage : IEntity
 	{
 
 		public Guid Id { get; set; }
@@ -23,8 +23,12 @@ namespace Enivate.ResponseHub.Model.Messages
 
 		public MessagePriority Priority { get; set; }
 
-		public Message()
+		public JobMessage()
 		{
+
+			// Instantiate the id
+			Id = Guid.NewGuid();
+
 			Location = new Location();
 
 			// Default to administration.

@@ -11,7 +11,7 @@ using Enivate.ResponseHub.Model.Spatial;
 
 namespace Enivate.ResponseHub.WindowsService.Parsers
 {
-	public class MessageParser
+	public class JobMessageParser
 	{
 
 		/// <summary>
@@ -39,11 +39,11 @@ namespace Enivate.ResponseHub.WindowsService.Parsers
 		/// </summary>
 		public const string AdministrationPrefix = "QD";
 
-		public Message ParseMessage(PagerMessage pagerMessage)
+		public JobMessage ParseMessage(PagerMessage pagerMessage)
 		{
 			
 			// Create the message 
-			Message msg = new Message()
+			JobMessage msg = new JobMessage()
 			{
 				Capcode = pagerMessage.Address,
 				Timestamp = pagerMessage.Timestamp

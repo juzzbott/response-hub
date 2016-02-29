@@ -31,8 +31,8 @@ namespace Enivate.ResponseHub.WindowsService.Tests
 			PagerMessage pagerMessage = CreateTestPagerMessage(messageContent);
 
 			// Parse the pager message
-			MessageParser parser = new MessageParser();
-			Message parsedMessage = parser.ParseMessage(pagerMessage);
+			JobMessageParser parser = new JobMessageParser();
+			JobMessage parsedMessage = parser.ParseMessage(pagerMessage);
 
 			// Ensure the job numbers match.
 			Assert.Equal(parsedMessage.JobNumber, actualJobNumber, true);
@@ -51,8 +51,8 @@ namespace Enivate.ResponseHub.WindowsService.Tests
 			PagerMessage pagerMessage = CreateTestPagerMessage(messageContent);
 
 			// Parse the pager message
-			MessageParser parser = new MessageParser();
-			Message parsedMessage = parser.ParseMessage(pagerMessage);
+			JobMessageParser parser = new JobMessageParser();
+			JobMessage parsedMessage = parser.ParseMessage(pagerMessage);
 
 			// Ensure the message priority matches
 			Assert.Equal(parsedMessage.Priority, actualPriority);
@@ -69,8 +69,8 @@ namespace Enivate.ResponseHub.WindowsService.Tests
 			PagerMessage pagerMessage = CreateTestPagerMessage(messageContent);
 
 			// Parse the pager message
-			MessageParser parser = new MessageParser();
-			Message parsedMessage = parser.ParseMessage(pagerMessage);
+			JobMessageParser parser = new JobMessageParser();
+			JobMessage parsedMessage = parser.ParseMessage(pagerMessage);
 
 			// Ensure the message parses a valid location object
 			Assert.NotNull(parsedMessage.Location);
@@ -91,8 +91,8 @@ namespace Enivate.ResponseHub.WindowsService.Tests
 			PagerMessage pagerMessage = CreateTestPagerMessage(messageContent);
 
 			// Parse the pager message
-			MessageParser parser = new MessageParser();
-			Message parsedMessage = parser.ParseMessage(pagerMessage);
+			JobMessageParser parser = new JobMessageParser();
+			JobMessage parsedMessage = parser.ParseMessage(pagerMessage);
 
 			// Ensure the Location object is null as we don't have any location information
 			Assert.Null(parsedMessage.Location);

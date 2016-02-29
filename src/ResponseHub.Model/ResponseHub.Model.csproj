@@ -55,7 +55,7 @@
     <Compile Include="Identity\RoleTypes.cs" />
     <Compile Include="Messages\Interface\IPagerMessageService.cs" />
     <Compile Include="Messages\Location.cs" />
-    <Compile Include="Messages\Message.cs" />
+    <Compile Include="Messages\JobMessage.cs" />
     <Compile Include="Messages\MessagePriority.cs" />
     <Compile Include="Messages\PagerMessage.cs" />
     <Compile Include="RadarImages\Interface\IRadarImageService.cs" />
