@@ -8,4 +8,4 @@ db.groups.createIndex({ HeadquartersCoordinates: "2dsphere" }, { background: tru
 db.groups.createIndex({ "Users.UserId": 1 }, { background: true, name: "Users_UserId" })
 
 // Users
-db.users.createIndex({ FirstName: "text", Surname: "text", EmailAddress: "text" }, { background: true });
+db.users.createIndex({ FirstName: "text", Surname: "text", EmailAddress: "text" }, { background: true, name: "users_text" });

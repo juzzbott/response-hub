@@ -113,6 +113,8 @@ namespace Enivate.ResponseHub.DataAccess.Interface
 
 		Task ActivateAccount(Guid id);
 
+		Task<IList<IdentityUser>> SearchUsers(string keywords);
+
 		#endregion
 
 	}

@@ -364,6 +364,16 @@ namespace Enivate.ResponseHub.ApplicationServices
 			await _repository.ActivateAccount(id);
 		}
 
+		/// <summary>
+		/// Searches for users that have an Email Address, Firstname or Surname that match the keywords.
+		/// </summary>
+		/// <param name="keywords"></param>
+		/// <returns></returns>
+		public async Task<IList<IdentityUser>> SearchUsers(string keywords)
+		{
+			return await _repository.SearchUsers(keywords);
+		}
+
 		#endregion
 
 	}

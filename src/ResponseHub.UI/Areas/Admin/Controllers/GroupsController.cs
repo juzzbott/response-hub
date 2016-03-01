@@ -355,7 +355,22 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 			}
 
 			// Get the list of users in the group from the Users property of the group
-			IList<IdentityUser> groupUsers = await UserService.GetUsersByIds(group.Users.Select(i => i.UserId));
+			List<IdentityUser> groupUsers = new List<IdentityUser>();
+			
+			if (String.IsNullOrEmpty(Request.QueryString["q"]))
+			{
+				// Get all the users for the group
+				groupUsers.AddRange(await UserService.GetUsersByIds(group.Users.Select(i => i.UserId)));
+			}
+			else
+			{
+
+				// Get the search results
+				IList<IdentityUser> searchResults = await UserService.SearchUsers(Request.QueryString["q"]);
+
+				// Only add the users that have a user id in the group
+				groupUsers.AddRange(searchResults.Where(i => group.Users.Select(u => u.UserId).Contains(i.Id)));
+			}
 
 			// Create the list of GroupUserViewModels for the users in the group
 			IList<GroupUserViewModel> groupUserModels = new List<GroupUserViewModel>();

@@ -381,10 +381,39 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 			return (user != null ? MapToModel(user) : null);
 		}
 
+		/// <summary>
+		/// Activates the account for the user.
+		/// </summary>
+		/// <param name="id"></param>
+		/// <returns></returns>
 		public async Task ActivateAccount(Guid id)
 		{
 			// Update the activation token to null to indicate activated user.
 			await Collection.UpdateOneAsync(Builders<IdentityUserDto>.Filter.Eq(i => i.Id, id), Builders<IdentityUserDto>.Update.Set(i => i.ActivationCode, null));
+		}
+
+		/// <summary>
+		/// Gets the list of users that match the search results.
+		/// </summary>
+		/// <param name="keywords"></param>
+		/// <returns></returns>
+		public async Task<IList<IdentityUser>> SearchUsers(string keywords)
+		{
+
+			// Specify the keywords as lower case
+			PagedResultSet<IdentityUserDto> results = await TextSearch(keywords, Int32.MaxValue, 0, false);
+
+			// Create the list of groups
+			List<IdentityUser> mappedUsers = new List<IdentityUser>();
+
+			// For each result, map to a Group model object.
+			foreach (IdentityUserDto result in results.Items)
+			{
+				mappedUsers.Add(MapToModel(result));
+			}
+
+			// return the mapped groups.
+			return mappedUsers;
 		}
 
 		#endregion

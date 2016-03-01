@@ -57,16 +57,36 @@
 <h3>Members</h3>
 
 <p><a href="/admin/groups/@Model.Id/add-member" class="btn btn-primary btn-lg icon-link"><i class="fa fa-user-plus"></i>Add member</a></p>
-<div class="row">
-	<div class="col-lg-10 col-xl-6">
-		<p class="section-help">
-			Adding a new member to this group will allow that user to view jobs assigned to this groups capcode. <br />
-			You can either add a new user, or an existing user from another group.
-		</p>
-	</div>
+
+<div class="search-group-form">
+	<h4>Search users</h4>
+	<form class="form-inline" method="get" action="@Request.Path">
+		<div class="row">
+			<div class="col-sm-6 col-lg-4">
+				<div class="input-group">
+					<input type="text" class="form-control" placeholder="Search keywords..." name="q" id="GroupSearch" value="@Request.QueryString["q"]">
+					<span class="input-group-btn">
+						<button class="btn btn-default btn-icon" type="submit"><i class="fa fa-search"></i>Search</button>
+					</span>
+				</div><!-- /input-group -->
+			</div><!-- /.col-lg-6 -->
+		</div><!-- /.row -->
+	</form>
 </div>
 
-<table class="table table-responsive table-striped table-hover top-20">
+@if (!String.IsNullOrEmpty(Request.QueryString["q"]))
+{
+
+	<div class="row">
+		<div class="col-xs-12">
+			<p class="lead bottom-5">Displaying @Model.Users.Count result@(Model.Users.Count != 1 ? "s" : "") for <strong>'@Request.QueryString["q"]'</strong></p>
+			<p><a href="@Request.Path" class="btn-icon text-muted"><i class="fa fa-times-circle-o"></i>Clear search results</a></p>
+		</div>
+	</div>
+
+}
+
+<table class="table table-responsive table-striped table-hover">
 	<thead>
 		<tr>
 			<th>Name</th>
