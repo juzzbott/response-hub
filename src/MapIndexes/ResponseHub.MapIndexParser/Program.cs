@@ -8,7 +8,6 @@ using System.Threading;
 using System.Threading.Tasks;
 
 using DotSpatial.Data;
-using DotSpatial.Projections;
 
 using MongoDB.Driver;
 
@@ -29,7 +28,6 @@ namespace Enivate.ResponseHub.MapIndexParser
 		
 		static void Main(string[] args)
 		{
-
 			// if no args, show help and return
 			if (args == null || args.Length == 0)
 			{
@@ -59,7 +57,11 @@ namespace Enivate.ResponseHub.MapIndexParser
 
 				// Process only a single shapefile
 				string shapeFilePath = Path.GetFullPath(args[1]);
-				ProcessShapeFile(shapeFilePath, mapType);
+				SpatialVisionParser parser = new SpatialVisionParser();
+				parser.ProcessShapeFile(shapeFilePath, mapType);
+
+				// Insert the map indexes
+				InsertMapIndexes(parser.MapIndexes.Select(i => i.Value).ToList());
 			}
 			else if (args[0].ToLower() == "-lf")
 			{
@@ -71,7 +73,11 @@ namespace Enivate.ResponseHub.MapIndexParser
 				string shapeFileListPath = Path.GetFullPath(args[1]);
 
 				// Process the list of shape files.
-				ProcessShapeFileList(shapeFileListPath);
+				SpatialVisionParser parser = new SpatialVisionParser();
+				parser.ProcessShapeFileList(shapeFileListPath);
+
+				// Insert the map indexes
+				InsertMapIndexes(parser.MapIndexes.Select(i => i.Value).ToList());
 			}
 			else if (args[0].ToLower() == "-melway")
 			{
@@ -82,6 +88,9 @@ namespace Enivate.ResponseHub.MapIndexParser
 				// Parse the melways indexes
 				MelwayParser parser = new MelwayParser();
 				parser.GetMapIndexes();
+				
+				// Insert the map indexes
+				InsertMapIndexes(parser.MapIndexes.Select(i => i.Value).ToList());
 
 			}
 			else
@@ -102,8 +111,8 @@ namespace Enivate.ResponseHub.MapIndexParser
 				return;
 			}
 
-			// Create the MapIndexRepository
-			//_mapIndexRepository = new MapIndexRepository(new FileLogger(), _dbConnectionString);
+			// Instantiate the mongo repo.
+			_mapIndexRepository = new MapIndexRepository(new FileLogger(), _dbConnectionString);
 
 			// Check if we need to clear the indexes first.
 			if (args.Contains("-R"))
@@ -189,258 +198,17 @@ namespace Enivate.ResponseHub.MapIndexParser
 
 			return dbParameterExists;
 		}
-
-		#region Shape file parsing
-
-		/// <summary>
-		/// Processes a list of shapefiles to be inserted into the mongo 
-		/// </summary>
-		/// <param name="shapeFileListPath">The file path to the shape file list.</param>
-		private static void ProcessShapeFileList(string shapeFileListPath)
-		{
-			// If the shapeFileListPath is null or empty, show error message
-			if (String.IsNullOrEmpty(shapeFileListPath))
-			{
-				Console.WriteLine("Shapefile list path is empty.");
-				return;
-			}
-
-			// If the path to the shape file list does not exist, display error and return
-			if (!File.Exists(shapeFileListPath))
-			{
-				Console.Write(String.Format("Shapefile list path '{0}' not found.", shapeFileListPath));
-				return;
-			}
-
-			IDictionary<string, MapType> shapeFiles = new Dictionary<string, MapType>();
-			bool validFile = true;
-			// Open the file for reading and read all the lines into a list of strings
-			using (StreamReader reader = new StreamReader(shapeFileListPath))
-			{
-				string line;
-				// Read the lines until there is no more lines.
-				while ((line = reader.ReadLine()) != null)
-				{
-
-					string[] lineParts = line.Split(new char[] { ':' }, StringSplitOptions.RemoveEmptyEntries);
-
-					// If there are not 2 elements in the array, then the list file is invalid.
-					if (lineParts.Length != 2)
-					{
-						validFile = false;
-					}
-					else
-					{
-
-						// If the key already exists, skip it so we are not processing the same file twice
-						if (shapeFiles.Keys.Any(i => i.ToLower() == lineParts[1].ToLower()))
-						{
-							Console.WriteLine(String.Format("Skipping duplicate file '{0}'", lineParts[1]));
-							continue;
-						}
-
-						// Get the map type from the first item in the array
-						int mapTypeInt;
-						Int32.TryParse(lineParts[0], out mapTypeInt);
-
-						// Add to the dictionary of shape files.
-						shapeFiles.Add(lineParts[1], (MapType)mapTypeInt);
-					}
-
-				}
-			}
-
-			if (!validFile)
-			{
-				Console.WriteLine(String.Format("Invalid list file format detected. List files should be in the format of [1|2]:path_to_shape_file. One entry per line."));
-				return;
-			}
-
-			// If there are no shape files, warn the user and return
-			if (shapeFiles.Count == 0)
-			{
-				Console.WriteLine("No shapefile paths found in shapefile list.");
-				return;
-			}
-
-			// Output the amount of shape files.
-			Console.WriteLine();
-			Console.WriteLine(String.Format("{0} shapefile{1} found. Processing...", shapeFiles.Count, (shapeFiles.Count != 1 ? "s" : "")));
-
-			// For each shape file, process it
-			foreach(KeyValuePair<string, MapType> shapeFile in shapeFiles)
-			{
-				string shapeFilePath = Path.GetFullPath(shapeFile.Key);
-				ProcessShapeFile(shapeFilePath, shapeFile.Value);
-			}
-
-		}
-
-		/// <summary>
-		/// Process the individual shape file.
-		/// </summary>
-		/// <param name="shapeFilePath">The path to the shapefile.</param>
-		/// <param name="mapType">The type of map to parse.</param>
-		private static void ProcessShapeFile(string shapeFilePath, MapType mapType)
-		{
-
-			// Add some spacing to the log
-			Console.WriteLine();
-
-			// If the shapeFile is null or empty, show error message
-			if (String.IsNullOrEmpty(shapeFilePath))
-			{
-				Console.WriteLine("Shapefile path is empty.");
-				return;
-			}
-
-			// If the path to the shape file does not exist, display error and return
-			if (!File.Exists(shapeFilePath))
-			{
-				Console.WriteLine(String.Format("Shapefile path '{0}' not found.", shapeFilePath));
-				return;
-			}
-
-			if (mapType == MapType.Unknown)
-			{
-				Console.WriteLine(String.Format("Unknown map type for map file '{0}'"));
-				return;
-			}
-
-			Console.WriteLine(String.Format("Processing shape file '{0}' - MapType: {1}", shapeFilePath, EnumValue.GetEnumDescription(mapType)));
-
-			// Load the shape file and project to GDA94
-			Shapefile indexMapFile = Shapefile.OpenFile(shapeFilePath);
-			indexMapFile.Reproject(KnownCoordinateSystems.Geographic.Australia.GeocentricDatumofAustralia1994);
-
-			// Create the dictionary of map indexes
-			IDictionary<string, MapIndex> mapIndexes = new Dictionary<string, MapIndex>();
-
-			// Set the start date
-			DateTime startDate = DateTime.Now;
-
-			// Get the map index from the Feature data
-			for(int i = 0; i < indexMapFile.DataTable.Rows.Count; i++)
-			{
-
-				// Get the feature
-				IFeature feature = indexMapFile.Features.ElementAt(i);
-
-				// Map the feature to the grid reference
-				MapFeatureToMapIndex(feature, mapType, ref mapIndexes);
-			}
-
-			// Set the end date
-			DateTime endDate = DateTime.Now;
-
-			int totalPages = mapIndexes.Count;
-			int totalGridReferences = mapIndexes.Sum(i => i.Value.GridReferences.Count);
-			double gridReferenesPerPage = ((double)totalGridReferences / (double)totalPages);
-			TimeSpan duration = (endDate - startDate);
-
-			Console.WriteLine();
-			Console.WriteLine("Index map totals.");
-			Console.WriteLine(String.Format("Total pages: {0}", totalPages));
-			Console.WriteLine(String.Format("Total grid references: {0}", totalGridReferences));
-			Console.WriteLine(String.Format("Grid references per page: {0}", gridReferenesPerPage));
-			Console.WriteLine(String.Format("Duration: {0}", duration));
-
-			InsertMapIndexes(mapIndexes.Select(i => i.Value).ToList());
-
-			// Add some spacing to the log
-			Console.WriteLine();
-			Console.WriteLine();
-
-		}
-
-		/// <summary>
-		/// Maps the shapefile Feature object to a MapIndex file.
-		/// </summary>
-		/// <param name="feature"></param>
-		/// <param name="mapType"></param>
-		/// <param name="mapIndexes"></param>
-		private static void MapFeatureToMapIndex(IFeature feature, MapType mapType, ref IDictionary<string, MapIndex> mapIndexes)
-		{
-
-			// If the feature or mapIndexes is null, then return 
-			if (feature == null || mapIndexes == null)
-			{
-				return;
-			}
-
-			try
-			{
-
-				// Get the map values
-				string pageNumber = feature.DataRow[2].ToString();
-
-				int mgaZone;
-				Int32.TryParse(feature.DataRow[4].ToString(), out mgaZone);
-
-				int scale;
-				Int32.TryParse(feature.DataRow[5].ToString(), out scale);
-				
-				// Check if the map reference at page number exists... if it doesnt, create it
-				if (!mapIndexes.ContainsKey(pageNumber))
-				{
-					mapIndexes[pageNumber] = new MapIndex()
-					{
-						MapType = mapType,
-						PageNumber = pageNumber,
-						Scale = scale,
-						UtmNumber = mgaZone
-					};
-				}
-
-				// Create the grid reference
-				GridReference gridRefObj = MapGridReference(feature);
-
-				// Set the grid reference
-				mapIndexes[pageNumber].GridReferences.Add(gridRefObj);
-
-				Console.WriteLine(String.Format("Parsed map page: {0} Grid reference: {1}", pageNumber, gridRefObj.GridSquare));
-
-			}
-			catch (Exception ex)
-			{
-				Console.WriteLine("Unable to parse feature.");
-				Console.WriteLine(ex.ToString());
-			}
-
-		}
-
-		/// <summary>
-		/// Maps the map reference from the GridSquare feature.
-		/// </summary>
-		/// <param name="feature">The feature to map to the grid reference.</param>
-		/// <returns>The mapped grid reference</returns>
-		private static GridReference MapGridReference(IFeature feature)
-		{
-			// Get the grid reference
-			string gridReference = feature.DataRow[3].ToString();
-
-			// Get the centre point of the polygon for the grid reference
-			IFeature centroid = feature.Centroid();
-
-			// Create the GridReference
-			GridReference gridReferenceObj = new GridReference()
-			{
-				GridSquare = gridReference,
-				Latitude = centroid.Coordinates[0].Y,
-				Longitude = centroid.Coordinates[0].X
-
-			};
-
-			return gridReferenceObj;
-
-		}
-
-		#endregion
-
+		
 		#region Store in database
 
 		private static void InsertMapIndexes(IList<MapIndex> mapIndexes)
 		{
+
+			// If there are no map indexes, then return
+			if (mapIndexes == null || mapIndexes.Count == 0)
+			{
+				return;
+			}
 
 			// Set the items per batch, and determine the amount of batches in totoal
 			int itemsPerBatch = 50;
@@ -462,10 +230,7 @@ namespace Enivate.ResponseHub.MapIndexParser
 
 		private static void BatchInsertMapIndexes(IList<MapIndex> mapIndexes)
 		{
-			Task.Run(async () =>
-			{
-				await _mapIndexRepository.BatchInsert(mapIndexes);
-			});
+			_mapIndexRepository.BatchInsert(mapIndexes);
 			Thread.Sleep(100);
 		}
 

@@ -98,6 +98,7 @@
   <ItemGroup>
     <Compile Include="Parsers\IMapIndexParser.cs" />
     <Compile Include="Parsers\MelwayParser.cs" />
+    <Compile Include="Parsers\SpatialVisionParser.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
