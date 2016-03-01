@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using System.Threading.Tasks.Dataflow;
 
 using Enivate.ResponseHub.Model.Spatial;
 
@@ -58,7 +59,7 @@ namespace Enivate.ResponseHub.MapIndexParser.Parsers
 			for (int i = minPage; i < (maxPage + 1); i++)
 			{
 
-				GetPageIndexes(i.ToString());
+				GetPageIndexes(i.ToString()).Wait();
 
 			}
 		}
@@ -67,7 +68,7 @@ namespace Enivate.ResponseHub.MapIndexParser.Parsers
 		/// Gets the indexes on a specific page.
 		/// </summary>
 		/// <param name="pageNumber"></param>
-		private void GetPageIndexes(string pageNumber)
+		private async Task GetPageIndexes(string pageNumber)
 		{
 
 			// If the page number doesn't exist in the dictionary of map indexes, create it
@@ -82,15 +83,23 @@ namespace Enivate.ResponseHub.MapIndexParser.Parsers
 				};
 			}
 
+			// Create the task block.
+			var taskBlock = new ActionBlock<Tuple<string, char, int>>(_ => GetSingleIndexFromWeb(_), new ExecutionDataflowBlockOptions() { MaxDegreeOfParallelism = 10 });
+
 			// Loop through the X list
 			foreach (char x in _pageXList)
 			{
 				// Loop through the Y list
 				foreach(int y in _pageYList)
 				{
-					GetSingleIndexFromWeb(pageNumber, x, y);
+					Tuple<string, char, int> gridData = new Tuple<string, char, int>(pageNumber, x, y);
+					taskBlock.Post(gridData);
 				}
 			}
+
+			taskBlock.Complete(); //Signal completion
+			await taskBlock.Completion; // Async await for completion.
+
 		}
 
 		/// <summary>
@@ -99,11 +108,11 @@ namespace Enivate.ResponseHub.MapIndexParser.Parsers
 		/// <param name="pageNumber">The page number for the index</param>
 		/// <param name="x">The X (A - K) value</param>
 		/// <param name="y">The Y (1 - 12) value.</param>
-		private void GetSingleIndexFromWeb(string pageNumber, char x, int y)
+		private void GetSingleIndexFromWeb(Tuple<string, char, int> gridData)
 		{
 
 			// Build the URL
-			string url = String.Format(_webUrlFormat, pageNumber, x, y);
+			string url = String.Format(_webUrlFormat, gridData.Item1, gridData.Item2, gridData.Item3);
 
 			// Build the web request
 			HttpWebRequest request = WebRequest.CreateHttp(url);
@@ -133,10 +142,10 @@ namespace Enivate.ResponseHub.MapIndexParser.Parsers
 					GridReference gridRef = ParseJsonResponse(reader.ReadToEnd());
 
 					// Add the grid reference to the list of grid references in the map index.
-					MapIndexes[pageNumber].GridReferences.Add(gridRef);
+					MapIndexes[gridData.Item1].GridReferences.Add(gridRef);
 
 					// Show indication the parsing it complete.
-					Console.WriteLine(String.Format("Parsed map page: {0} Grid reference: {1}{2}", pageNumber, x, y));
+					Console.WriteLine(String.Format("Parsed map page: {0} Grid reference: {1}{2}", gridData.Item1, gridData.Item2, gridData.Item3));
 				}
 
 			}
