@@ -62,7 +62,8 @@
     <Compile Include="Configuration\WarningsConfigurationSection.cs" />
     <Compile Include="Configuration\WarningSourceElement.cs" />
     <Compile Include="Constants\ConfigurationKeys.cs" />
-    <Compile Include="EnumValue.cs" />
+    <Compile Include="Constants\MailTemplates.cs" />
+    <Compile Include="Extensions\EnumExtensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="HashGenerator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

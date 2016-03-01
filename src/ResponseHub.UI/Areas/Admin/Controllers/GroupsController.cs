@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -9,19 +10,20 @@ using System.Web.Mvc;
 using Microsoft.Practices.Unity;
 
 using Enivate.ResponseHub.Common;
+using Enivate.ResponseHub.Common.Constants;
+using Enivate.ResponseHub.Common.Extensions;	
 using Enivate.ResponseHub.Logging;
 using Enivate.ResponseHub.Model;
 using Enivate.ResponseHub.Model.Groups;
 using Enivate.ResponseHub.Model.Groups.Interface;
-
 using Enivate.ResponseHub.Model.Identity;
 using Enivate.ResponseHub.Model.Identity.Interface;
-
+using Enivate.ResponseHub.Model.Spatial;
+using Enivate.ResponseHub.Mail;
 using Enivate.ResponseHub.UI.Areas.Admin.Models.Groups;
 using Enivate.ResponseHub.UI.Areas.Admin.Models.Users;
 using Enivate.ResponseHub.UI.Filters;
 using Enivate.ResponseHub.UI.Models.Users;
-using Enivate.ResponseHub.Model.Spatial;
 
 namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 {
@@ -211,34 +213,30 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 			}
 
 			// Store the group administrator
-			Guid groupAdministratorId;
+			IdentityUser groupAdmin = null;
 
 			// If the group administrator user does not exist, then create the user now
 			if (!model.UserExists)
 			{
 
 				// Create the new user
-				IdentityUser newUser = await UserService.CreateAsync(model.EmailAddress, model.FirstName, model.Surname, new List<string>() { RoleTypes.GroupAdministrator, RoleTypes.GeneralUser });
+				groupAdmin = await UserService.CreateAsync(model.EmailAddress, model.FirstName, model.Surname, new List<string>() { RoleTypes.GroupAdministrator, RoleTypes.GeneralUser });
 
-				// Set the group administrator to the new user id
-				groupAdministratorId = newUser.Id;
+				// Send the email to the user
+				await SendAccountActivationEmail(groupAdmin);
 
 			}
 			else
 			{
 				// Get the identity user related to the specified group admin
-				IdentityUser groupAdminUser = await UserService.FindByEmailAsync(createGroupModel.GroupAdministratorEmail);
+				groupAdmin = await UserService.FindByEmailAsync(createGroupModel.GroupAdministratorEmail);
 
 				// If the group admin user is null, return an error, otherwise set the group admin id.
-				if (groupAdminUser == null)
+				if (groupAdmin == null)
 				{
 					ModelState.AddModelError("", "There was a system error creating the group.");
 					await Log.Error(String.Format("Unable to create group. Existing user with email ''  could not be found.", createGroupModel.GroupAdministratorEmail));
 					return View("~/Areas/Admin/Views/Users/ConfirmUser.cshtml", model);
-				}
-				else
-				{
-					groupAdministratorId = groupAdminUser.Id;
 				}
 			}
 
@@ -263,7 +261,10 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 			Coordinates coords = new Coordinates(createGroupModel.Latitude.Value, createGroupModel.Longitude.Value);
 
 			// Create the group
-			await GroupService.CreateGroup(createGroupModel.Name, service, createGroupModel.Capcode, groupAdministratorId, createGroupModel.Description, region, coords);
+			await GroupService.CreateGroup(createGroupModel.Name, service, createGroupModel.Capcode, groupAdmin.Id, createGroupModel.Description, region, coords);
+
+			// Send the new group email to the group admin
+			await SendGroupCreatedEmail(groupAdmin, createGroupModel.Name, service, createGroupModel.Capcode);
 
 			// Clear the session url
 			Session.Remove(CreateGroupViewModelSesionKey);
@@ -272,8 +273,48 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 			return new RedirectResult("/admin/groups?group_created=1");
 		}
 
+		/// <summary>
+		/// Sends the account activation email to the new user.
+		/// </summary>
+		/// <param name="newUser">The new user to send the account for.</param>
+		/// <returns>Async task.</returns>
+		private async Task SendAccountActivationEmail(IdentityUser newUser)
+		{
 
+			// Create the tuple for the to override
+			Tuple<string, string> to = new Tuple<string, string>(newUser.EmailAddress, newUser.FullName);
 
+			string baseSiteUrl = ConfigurationManager.AppSettings[ConfigurationKeys.BaseWebsiteUrl] ?? "";
+
+			// Create the replacements
+			IDictionary<string, string> replacements = new Dictionary<string, string>();
+			replacements.Add("#FirstName#", newUser.FirstName);
+			replacements.Add("#ActivationLink#", String.Format("{0}/my-account/activate/{1}", baseSiteUrl, newUser.ActivationCode.ToLower()));
+
+			// Create the mail provider and send the message
+			MailProvider mailProvider = new MailProvider();
+			await mailProvider.SendMailMessage(MailTemplates.ActivateAccount, replacements, to, null);
+
+		}
+
+		private async Task SendGroupCreatedEmail(IdentityUser groupAdmin, string groupName, ServiceType service, string capcode)
+		{
+			// Create the tuple for the to override
+			Tuple<string, string> to = new Tuple<string, string>(groupAdmin.EmailAddress, groupAdmin.FullName);
+			
+			// Create the replacements
+			IDictionary<string, string> replacements = new Dictionary<string, string>();
+			replacements.Add("#FirstName#", groupAdmin.FirstName);
+			replacements.Add("#GroupName#", groupName);
+			replacements.Add("#ServiceType#", service.GetEnumDescription());
+			replacements.Add("#Capcode#", capcode);
+
+			// Create the mail provider and send the message
+			MailProvider mailProvider = new MailProvider();
+			await mailProvider.SendMailMessage(MailTemplates.GroupCreated, replacements, to, null);
+
+		}
+				
 		/// <summary>
 		/// Gets the list of regions in a select list for use on the screens.
 		/// </summary>
@@ -336,7 +377,7 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 				Id = group.Id,
 				Name = group.Name,
 				Description = group.Description,
-				Service = EnumValue.GetEnumDescription(group.Service),
+				Service = EnumExtensions.GetEnumDescription(group.Service),
 				Capcode = group.Capcode,
 				Users = groupUserModels,
 				Region = group.Region.Name,

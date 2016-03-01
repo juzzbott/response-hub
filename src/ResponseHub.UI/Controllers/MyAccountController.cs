@@ -323,6 +323,17 @@ namespace Enivate.ResponseHub.UI.Controllers
 
 		#endregion
 
+		#region Activate Account
+
+		[Route("activate/{token:length(64)}")]
+		[AllowAnonymous]
+		public ActionResult ActivateAccount(string token)
+		{
+			return View();
+		}
+
+		#endregion
+
 		#region Helpers
 
 		/// <summary>

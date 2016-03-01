@@ -12,7 +12,7 @@ using DotSpatial.Projections;
 
 using MongoDB.Driver;
 
-using Enivate.ResponseHub.Common;
+using Enivate.ResponseHub.Common.Extensions;
 using Enivate.ResponseHub.MapIndexParser.Parsers;
 using Enivate.ResponseHub.Model.Spatial;
 using Enivate.ResponseHub.DataAccess.MongoDB;
@@ -29,6 +29,9 @@ namespace Enivate.ResponseHub.MapIndexParser
 		
 		static void Main(string[] args)
 		{
+
+			// Instantiate the map index repo.
+			_mapIndexRepository = new MapIndexRepository(new FileLogger());
 
 			// if no args, show help and return
 			if (args == null || args.Length == 0)
@@ -307,7 +310,7 @@ namespace Enivate.ResponseHub.MapIndexParser
 				return;
 			}
 
-			Console.WriteLine(String.Format("Processing shape file '{0}' - MapType: {1}", shapeFilePath, EnumValue.GetEnumDescription(mapType)));
+			Console.WriteLine(String.Format("Processing shape file '{0}' - MapType: {1}", shapeFilePath, mapType.GetEnumDescription()));
 
 			// Load the shape file and project to GDA94
 			Shapefile indexMapFile = Shapefile.OpenFile(shapeFilePath);

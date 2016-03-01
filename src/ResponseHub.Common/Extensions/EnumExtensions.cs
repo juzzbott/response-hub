@@ -6,9 +6,9 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Enivate.ResponseHub.Common
+namespace Enivate.ResponseHub.Common.Extensions
 {
-	public class EnumValue
+	public static class EnumExtensions
 	{
 
 		/// <summary>
@@ -17,7 +17,7 @@ namespace Enivate.ResponseHub.Common
 		/// </summary>
 		/// <param name="enumObject"></param>
 		/// <returns></returns>
-		public static string GetEnumDescription(object enumObject)
+		public static string GetEnumDescription(this Enum enumObject)
 		{
 			// If the enumObject is not an enum, then return empty string
 			if (enumObject == null || !enumObject.GetType().IsEnum)

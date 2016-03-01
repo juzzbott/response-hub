@@ -23,6 +23,14 @@ namespace Enivate.ResponseHub.Model.Identity
 
 		public string Surname { get; set; }
 
+		public string FullName
+		{
+			get
+			{
+				return String.Format("{0} {1}", FirstName, Surname);
+			}
+		}
+
 		public DateTime Created { get; set; }
 
 		public PasswordResetToken PasswordResetToken { get; set; }

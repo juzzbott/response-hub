@@ -1,5 +1,4 @@
-﻿using Enivate.ResponseHub.Common;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -7,14 +6,16 @@ using System.Reflection;
 using System.Web;
 using System.Web.Mvc;
 
+using Enivate.ResponseHub.Common.Extensions;
+
 namespace Enivate.ResponseHub.UI.Helpers
 {
 	public static class HtmlHelpers
 	{
 
-		public static MvcHtmlString EnumDescription(this HtmlHelper helper, object enumObject)
+		public static MvcHtmlString EnumDescription(this HtmlHelper helper, Enum enumObject)
 		{
-			return new MvcHtmlString(EnumValue.GetEnumDescription(enumObject));
+			return new MvcHtmlString(enumObject.GetEnumDescription());
 		}
 
 		public static MvcHtmlString BackUrlOrDefault(this HtmlHelper helper, string defaultUrl)
