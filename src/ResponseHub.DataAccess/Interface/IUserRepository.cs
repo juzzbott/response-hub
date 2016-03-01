@@ -109,6 +109,10 @@ namespace Enivate.ResponseHub.DataAccess.Interface
 
 		Task<IList<IdentityUser>> GetUsersByIds(IEnumerable<Guid> userIds);
 
+		Task<IdentityUser> GetUserByActivationToken(string activationToken);
+
+		Task ActivateAccount(Guid id);
+
 		#endregion
 
 	}

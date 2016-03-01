@@ -22,8 +22,8 @@ namespace Enivate.ResponseHub.UI.Controllers
 {
 
 	[RoutePrefix("my-account")]
-    public class MyAccountController : Controller
-    {
+	public class MyAccountController : Controller
+	{
 
 		private ILogger _log;
 		protected ILogger Log
@@ -63,9 +63,9 @@ namespace Enivate.ResponseHub.UI.Controllers
 
 		// GET: MyAccount
 		public ActionResult Index()
-        {
-            return View();
-        }
+		{
+			return View();
+		}
 
 		#region Login
 
@@ -97,7 +97,7 @@ namespace Enivate.ResponseHub.UI.Controllers
 			};
 
 			await svc.CreateAsync(user);
-			
+
 		}
 
 		// POST: /my-account/login
@@ -111,38 +111,38 @@ namespace Enivate.ResponseHub.UI.Controllers
 			{
 				return View(model);
 			}
-		
+
 			try
 			{
-		
+
 				// Log the user in
 				IdentityUser user;
 				SignInStatus result = await SignInManager.PasswordSignInAsync(model.Email, model.Password, true, false);
-		
+
 				// Determine the result of the sign in
 				switch (result)
 				{
-		
+
 					case SignInStatus.Success:
 						user = await UserService.FindByNameAsync(model.Email);
 						// TODO: Event Log - _eventLog.LogEvent(EventTypes.LOGIN, "User '{0}' logged in successfully.", user.Id);
-		
+
 						string redirectTo = GetReturnUrl("/", user);
-		
+
 						return new RedirectResult(redirectTo);
-		
+
 					case SignInStatus.LockedOut:
 						user = await UserService.FindByNameAsync(model.Email);
 						// TODO: Event Log - _eventLog.LogEvent(EventTypes.LOGIN, "User '{0}' unable to login. Account locked.", user.Id);
 						return View("LockedOut");
-		
+
 					case SignInStatus.Failure:
 					default:
 						// TODO: Event Log - _eventLog.LogEvent(EventTypes.LOGIN, "Failed login attempt. Email: {0} | User IP: {1} | User Agent: {2}", model.Email, Request.UserHostAddress, Request.UserAgent);
 						ViewBag.InvalidLogin = true;
 						return View(model);
 				}
-		
+
 			}
 			catch (Exception ex)
 			{
@@ -327,7 +327,75 @@ namespace Enivate.ResponseHub.UI.Controllers
 
 		[Route("activate/{token:length(64)}")]
 		[AllowAnonymous]
-		public ActionResult ActivateAccount(string token)
+		public async Task<ActionResult> ActivateAccount(string token)
+		{
+
+			// Get the identity by the activation token
+			IdentityUser user = await UserService.GetUserByActivationToken(token);
+
+			// If the user is null, show the invalid token message
+			if (user == null)
+			{
+				ViewBag.InvalidActivationToken = true;
+			}
+			
+			return View();
+		}
+
+		[Route("activate/{token:length(64)}")]
+		[AllowAnonymous]
+		[HttpPost]
+		public async Task<ActionResult> ActivateAccount(string token, CreatePasswordViewModel model)
+		{
+
+			if (!ModelState.IsValid)
+			{
+				return View(model);
+			}
+
+			// Get the identity by the activation token
+			IdentityUser user = await UserService.GetUserByActivationToken(token);
+
+			// If the user is null, show the invalid token message
+			if (user == null)
+			{
+				ViewBag.InvalidActivationToken = true;
+				return View();
+			}
+
+			// Create the user password
+			PasswordHasher hasher = new PasswordHasher();
+			string passwordHash = hasher.HashPassword(model.NewPassword);
+
+			// Change the user password.
+			IdentityResult result = await UserService.CreatePasswordAsync(user, passwordHash);
+
+			if (result.Succeeded)
+			{
+
+				// Activate the account
+				await UserService.ActivateAccount(user.Id);
+
+				// Redirect to the complete page.
+				return new RedirectResult("/my-account/activate/complete");
+			}
+			else
+			{
+				// Log the error and return
+				await Log.Error("Unable to activate user account.");
+				if (result.Errors.Any())
+				{
+					await Log.Error(result.Errors.FirstOrDefault());
+				}
+				ModelState.AddModelError("", "There was a system error activating your account.");
+				return View(model);
+			}
+
+		}
+
+		[Route("activate/complete")]
+		[AllowAnonymous]
+		public ActionResult ActivateAccountComplete()
 		{
 			return View();
 		}

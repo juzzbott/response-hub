@@ -344,6 +344,26 @@ namespace Enivate.ResponseHub.ApplicationServices
 			return await _repository.GetUsersByIds(userIds);
 		}
 
+		/// <summary>
+		/// Gets the user by the specified activation token. 
+		/// </summary>
+		/// <param name="activationToken">The activation token to get the user by.</param>
+		/// <returns>The identity user that has the specified activation token.</returns>
+		public async Task<IdentityUser> GetUserByActivationToken(string activationToken)
+		{
+			return await _repository.GetUserByActivationToken(activationToken);
+		}
+
+		/// <summary>
+		/// Activates the user based on the activation token.
+		/// </summary>
+		/// <param name="activationToken"></param>
+		/// <returns></returns>
+		public async Task ActivateAccount(Guid id)
+		{
+			await _repository.ActivateAccount(id);
+		}
+
 		#endregion
 
 	}

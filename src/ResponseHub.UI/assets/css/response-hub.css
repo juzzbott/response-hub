@@ -35,6 +35,9 @@ body {
 .bottom-20 {
   margin-bottom: 20px;
 }
+.padding-bottom-20 {
+  padding-bottom: 20px !important;
+}
 .mobile-block {
   display: block;
 }
@@ -114,7 +117,7 @@ body {
 }
 .user-menu .dropdown-menu a {
   font-size: 13px;
-  padding: 3px 15px;
+  padding: 5px 15px;
 }
 .user-menu .dropdown-menu span {
   display: inline-block;

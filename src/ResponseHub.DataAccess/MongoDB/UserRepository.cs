@@ -366,6 +366,27 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 			return userDtos.Select(i => MapToModel(i)).ToList();
 		}
 
+		/// <summary>
+		/// Gets the user by the specified activation token. 
+		/// </summary>
+		/// <param name="activationToken">The activation token to get the user by.</param>
+		/// <returns>The identity user that has the specified activation token.</returns>
+		public async Task<IdentityUser> GetUserByActivationToken(string activationToken)
+		{
+
+			// Get the user by the activation token.
+			IdentityUserDto user = await FindOne(i => i.ActivationCode.ToLower() == activationToken.ToLower());
+
+			// If the user is null, return null
+			return (user != null ? MapToModel(user) : null);
+		}
+
+		public async Task ActivateAccount(Guid id)
+		{
+			// Update the activation token to null to indicate activated user.
+			await Collection.UpdateOneAsync(Builders<IdentityUserDto>.Filter.Eq(i => i.Id, id), Builders<IdentityUserDto>.Update.Set(i => i.ActivationCode, null));
+		}
+
 		#endregion
 
 		#region Mappers
