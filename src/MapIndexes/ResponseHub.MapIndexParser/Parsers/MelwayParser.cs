@@ -1,11 +1,12 @@
-﻿using Enivate.ResponseHub.Model.Spatial;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+
+using Enivate.ResponseHub.Model.Spatial;
 
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -20,16 +21,16 @@ namespace Enivate.ResponseHub.MapIndexParser.Parsers
 		private IList<KeyValuePair<int, int>> _mapPageSets;
 		private string _webUrlFormat = "http://www.street-directory.com.au/sd3_new/ws/search_by_mapref.php?book=Melway&page={0}&grid={1}{2}";
 
-		public IDictionary<int, MapIndex> MapIndexes { get; set; }
+		public IDictionary<string, MapIndex> MapIndexes { get; set; }
 
 		public MelwayParser()
 		{
 			_mapPageSets = new List<KeyValuePair<int, int>>();
-			_mapPageSets.Add(new KeyValuePair<int, int>(3, 3));
+			_mapPageSets.Add(new KeyValuePair<int, int>(3, 395));
 			_mapPageSets.Add(new KeyValuePair<int, int>(615, 697));
 
 			// Instantiate the map indexes.
-			MapIndexes = new Dictionary<int, MapIndex>();
+			MapIndexes = new Dictionary<string, MapIndex>();
 		}
 
 		public void GetMapIndexes()
@@ -57,7 +58,7 @@ namespace Enivate.ResponseHub.MapIndexParser.Parsers
 			for (int i = minPage; i < (maxPage + 1); i++)
 			{
 
-				GetPageIndexes(i);
+				GetPageIndexes(i.ToString());
 
 			}
 		}
@@ -66,7 +67,7 @@ namespace Enivate.ResponseHub.MapIndexParser.Parsers
 		/// Gets the indexes on a specific page.
 		/// </summary>
 		/// <param name="pageNumber"></param>
-		private void GetPageIndexes(int pageNumber)
+		private void GetPageIndexes(string pageNumber)
 		{
 
 			// If the page number doesn't exist in the dictionary of map indexes, create it
@@ -98,7 +99,7 @@ namespace Enivate.ResponseHub.MapIndexParser.Parsers
 		/// <param name="pageNumber">The page number for the index</param>
 		/// <param name="x">The X (A - K) value</param>
 		/// <param name="y">The Y (1 - 12) value.</param>
-		private void GetSingleIndexFromWeb(int pageNumber, char x, int y)
+		private void GetSingleIndexFromWeb(string pageNumber, char x, int y)
 		{
 
 			// Build the URL
