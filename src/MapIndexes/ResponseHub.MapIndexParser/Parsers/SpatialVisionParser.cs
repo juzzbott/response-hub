@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using DotSpatial.Data;
 using DotSpatial.Projections;
 
-using Enivate.ResponseHub.Common;
+using Enivate.ResponseHub.Common.Extensions;
 using Enivate.ResponseHub.Model.Spatial;
 
 namespace Enivate.ResponseHub.MapIndexParser.Parsers
@@ -139,7 +139,7 @@ namespace Enivate.ResponseHub.MapIndexParser.Parsers
 				return;
 			}
 
-			Console.WriteLine(String.Format("Processing shape file '{0}' - MapType: {1}", shapeFilePath, EnumValue.GetEnumDescription(mapType)));
+			Console.WriteLine(String.Format("Processing shape file '{0}' - MapType: {1}", shapeFilePath, mapType.GetEnumDescription()));
 
 			// Load the shape file and project to GDA94
 			Shapefile indexMapFile = Shapefile.OpenFile(shapeFilePath);
