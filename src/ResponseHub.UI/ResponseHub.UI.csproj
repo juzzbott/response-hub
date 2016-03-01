@@ -208,6 +208,8 @@
     <Compile Include="Startup.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="App_Data\Emails\activate_account.html" />
+    <Content Include="App_Data\Emails\base_template.html" />
     <Content Include="assets\css\framework.css" />
     <Content Include="assets\css\lib\bootstrap-grid-xl.css" />
     <Content Include="assets\css\lib\leaflet.css" />
@@ -242,7 +244,6 @@
     <Content Include="Views\Shared\_Layout.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="App_Data\" />
     <Folder Include="Views\Media\" />
   </ItemGroup>
   <ItemGroup>
