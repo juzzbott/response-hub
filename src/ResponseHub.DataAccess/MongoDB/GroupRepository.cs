@@ -153,8 +153,6 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 
 			// Update the document. 
 			UpdateResult result = await Collection.UpdateOneAsync(filter, update);
-
-			int a = 0;
 			
 		}
 

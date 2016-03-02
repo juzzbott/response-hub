@@ -244,12 +244,13 @@ namespace Enivate.ResponseHub.MapIndexParser
 			try
 			{
 
-				_mapIndexRepository.BatchInsert(mapIndexes);
+				Task.Run(() => _mapIndexRepository.BatchInsert(mapIndexes)).Wait();
 				Thread.Sleep(100);
 			}
 			catch (Exception ex)
 			{
-				int i = 0;
+				Console.WriteLine("Unable to batch insert map indexes.");
+				Console.WriteLine(ex.ToString());
 			}
 		}
 
