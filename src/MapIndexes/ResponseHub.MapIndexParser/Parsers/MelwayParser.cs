@@ -27,9 +27,8 @@ namespace Enivate.ResponseHub.MapIndexParser.Parsers
 		public MelwayParser()
 		{
 			_mapPageSets = new List<KeyValuePair<int, int>>();
-			//_mapPageSets.Add(new KeyValuePair<int, int>(3, 395));
-			//_mapPageSets.Add(new KeyValuePair<int, int>(615, 697));
-			_mapPageSets.Add(new KeyValuePair<int, int>(3, 154));
+			_mapPageSets.Add(new KeyValuePair<int, int>(3, 395));
+			_mapPageSets.Add(new KeyValuePair<int, int>(615, 697));
 
 			// Instantiate the map indexes.
 			MapIndexes = new Dictionary<string, MapIndex>();
