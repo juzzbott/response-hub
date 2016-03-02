@@ -141,6 +141,23 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 			await Save(MapModelToDto(group));
 		}
 
+		public async Task ChangeUserRoleInGroup(Guid groupId, Guid userId, string newRole)
+		{
+
+			// Create tehe filter and update objects
+			FilterDefinition<GroupDto> filter = Builders<GroupDto>.Filter.Eq(i => i.Id, groupId) & 
+												Builders<GroupDto>.Filter.ElemMatch(i => i.Users, u => u.UserId == userId);
+
+			// Create the update definition.
+			UpdateDefinition<GroupDto> update = Builders<GroupDto>.Update.Set(i => i.Users[-1].Role, newRole);
+
+			// Update the document. 
+			UpdateResult result = await Collection.UpdateOneAsync(filter, update);
+
+			int a = 0;
+			
+		}
+
 		#region Object mapping functions
 
 		/// <summary>

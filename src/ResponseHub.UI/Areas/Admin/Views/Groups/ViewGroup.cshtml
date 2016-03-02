@@ -24,6 +24,17 @@
 		</div>
 	</div>
 }
+@if (!String.IsNullOrEmpty(Request.QueryString["role_changed"]) && Request.QueryString["role_changed"] == "1")
+{
+	<div class="row">
+		<div class="col-sm-12">
+			<p class="alert alert-success alert-dismissable" role="alert">
+				<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				The user role has been successfully updated.
+			</p>
+		</div>
+	</div>
+}
 
 <div class="row">
 	<div class="col-md-6">
@@ -92,7 +103,7 @@
 			<th>Name</th>
 			<th>Email</th>
 			<th>Security</th>
-			<th>&nbsp;</th>
+			<th>Actions</th>
 		</tr>
 	</thead>
 	<tbody>
@@ -112,8 +123,8 @@
 					<td>@user.EmailAddress</td>
 					<td>@user.GroupRole</td>
 					<td>
-						<a href="/admin/users/@user.Id/edit"><i class="fa fa-pencil"></i></a>
-						<a data-href="/admin/users/@user.Id/delete" data-toggle="modal" data-target="#confirm-delete" class="cursor-pointer"><i class="fa fa-user-times"></i></a>
+						<a href="/admin/groups/@Model.Id/change-role/@user.Id" class="btn-icon btn-action-icon" title="Change user role"><i class="fa fa-shield"></i></a>
+						<a data-href="/admin/users/@user.Id/delete" data-toggle="modal" data-target="#confirm-delete" class="cursor-pointer btn-icon btn-action-icon" title="Remove user from group"><i class="fa fa-user-times"></i></a>
 					</td>
 				</tr>
 			}

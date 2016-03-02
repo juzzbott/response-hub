@@ -231,5 +231,30 @@ namespace Enivate.ResponseHub.ApplicationServices
 			CacheManager.RemoveEntity(group);
 
 		}
+
+		public async Task ChangeUserRoleInGroup(Guid groupId, Guid userId, string newRole)
+		{
+			// If the group is null or the group id is empty guid, throw exception as the group should be saved first.
+			if (groupId == Guid.Empty)
+			{
+				throw new Exception("The group id cannot be null or empty.");
+			}
+			if (userId == Guid.Empty)
+			{
+				throw new Exception("The user id cannot be null or empty.");
+			}
+			if (String.IsNullOrEmpty(newRole))
+			{
+				throw new Exception("The role cannot be null or empty.");
+			}
+
+			// Save the group to the database.
+			await _repository.ChangeUserRoleInGroup(groupId, userId, newRole);
+
+			// Remove the group from cache so that a fresh reload occurs
+			CacheManager.RemoveItem(RecentlyAddedGroupsCacheKey);
+			CacheManager.RemoveItem(CacheUtility.GetEntityCacheKey(typeof(Group), groupId.ToString()));
+
+		}
 	}
 }

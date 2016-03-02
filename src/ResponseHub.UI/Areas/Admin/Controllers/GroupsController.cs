@@ -588,17 +588,6 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 			return new RedirectResult(String.Format("/admin/groups/{0}?member_added=1", groupId));
 		}
 
-		private IList<SelectListItem> GetAvailableRoles()
-		{
-			IList<SelectListItem> availableRoles = new List<SelectListItem>();
-			availableRoles.Add(new SelectListItem() { Text = "Select role", Value = "" });
-			availableRoles.Add(new SelectListItem() { Text = RoleTypes.GeneralUser, Value = RoleTypes.GeneralUser });
-			availableRoles.Add(new SelectListItem() { Text = RoleTypes.GroupAdministrator, Value = RoleTypes.GroupAdministrator });
-
-			// return the available roles
-			return availableRoles;
-		}
-
 		#endregion
 
 		#region Edit group
@@ -636,6 +625,7 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 		}
 
 		[Route("{id:guid}/edit")]
+		[ValidateAntiForgeryToken]
 		[HttpPost]
 		public async Task<ActionResult> Edit(Guid id, CreateGroupModel model)
 		{
@@ -699,6 +689,101 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 			}
 
 
+		}
+
+		#endregion
+
+		#region Change User Role
+
+		[Route("{groupId:guid}/change-role/{userId:guid}")]
+		[HttpGet]
+		public ActionResult ChangeUserRole(Guid groupId, Guid userId)
+		{
+
+			// Create the model
+			ChangeUserRoleViewModel model = new ChangeUserRoleViewModel();
+			model.AvailableRoles = GetAvailableRoles();
+			model.GroupId = groupId;
+
+			// return the view
+			return View(model);
+
+
+		}
+
+		[Route("{groupId:guid}/change-role/{userId:guid}")]
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public async Task<ActionResult> ChangeUserRole(Guid groupId, Guid userId, ChangeUserRoleViewModel model)
+		{
+
+			// Create the model
+			model.AvailableRoles = GetAvailableRoles();
+			model.GroupId = groupId;
+
+			// If the model has errors, return
+			if (!ModelState.IsValid)
+			{
+				return View(model);
+			}
+
+			try
+			{
+
+				// Get the group so that we can validate the group not getting < 1 group administrator
+				Group group = await GroupService.GetById(groupId);
+
+				if (group == null)
+				{
+					await Log.Error("Unable to change user role for group. Group cannot be found.  ");
+					ModelState.AddModelError("", "Unable to change role for user. The group cannot be found.");
+					return View(model);
+				}
+
+				// If there is only 1 group administrator, and it's the current user, and the new role is general user, hen show error message stating you must hace one administrator account
+				if (group.Users.Count(i => i.Role.ToUpper() == RoleTypes.GroupAdministrator.ToUpper()) == 1 && 
+					group.Users.First(i => i.Role.ToUpper() == RoleTypes.GroupAdministrator.ToUpper()).UserId == userId &&
+					model.Role.ToUpper() == RoleTypes.GeneralUser.ToUpper())
+				{
+					ModelState.AddModelError("", "You cannot change the role for this user to General User. Your group must always have at least one Group Administrator.");
+					return View(model);
+				}
+
+
+				// Update the role for the user
+				await GroupService.ChangeUserRoleInGroup(groupId, userId, model.Role);
+
+				// return the view
+				return new RedirectResult(String.Format("/admin/groups/{0}?role_changed=1", groupId));
+
+			}
+			catch (Exception ex)
+			{
+				await Log.Error(String.Format("Unable to change role for user in group. Message: {0}", ex.Message), ex);
+				ModelState.AddModelError("", "Sorry, there was an error changing the role for the user.");
+				return View(model);
+			}
+
+
+		}
+
+		#endregion
+
+		#region Helpers
+
+		/// <summary>
+		/// Gets the list of available roles for the users to be set as.
+		/// </summary>
+		/// <returns></returns>
+		private IList<SelectListItem> GetAvailableRoles()
+		{
+			IList<SelectListItem> availableRoles = new List<SelectListItem>();
+			availableRoles.Add(new SelectListItem() { Text = "Select role", Value = "" });
+			availableRoles.Add(new SelectListItem() { Text = RoleTypes.GeneralUser, Value = RoleTypes.GeneralUser });
+			availableRoles.Add(new SelectListItem() { Text = RoleTypes.GroupAdministrator, Value = RoleTypes.GroupAdministrator });
+
+			// return the available roles
+			return availableRoles;
 		}
 
 		#endregion

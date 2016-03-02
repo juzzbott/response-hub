@@ -230,7 +230,7 @@ namespace Enivate.ResponseHub.MapIndexParser
 
 		private static void BatchInsertMapIndexes(IList<MapIndex> mapIndexes)
 		{
-			_mapIndexRepository.BatchInsert(mapIndexes);
+			Task.Run(() => _mapIndexRepository.BatchInsert(mapIndexes)).Wait();
 			Thread.Sleep(100);
 		}
 

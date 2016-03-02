@@ -28,6 +28,8 @@ namespace Enivate.ResponseHub.Model.Groups.Interface
 
 		Task UpdateGroup(Group group);
 
+		Task ChangeUserRoleInGroup(Guid groupId, Guid userId, string newRole);
+
 	}
 
 }
