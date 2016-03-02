@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using System.Threading.Tasks.Dataflow;
 
 using Enivate.ResponseHub.Model.Spatial;
 
@@ -26,8 +27,9 @@ namespace Enivate.ResponseHub.MapIndexParser.Parsers
 		public MelwayParser()
 		{
 			_mapPageSets = new List<KeyValuePair<int, int>>();
-			_mapPageSets.Add(new KeyValuePair<int, int>(3, 395));
-			_mapPageSets.Add(new KeyValuePair<int, int>(615, 697));
+			//_mapPageSets.Add(new KeyValuePair<int, int>(3, 395));
+			//_mapPageSets.Add(new KeyValuePair<int, int>(615, 697));
+			_mapPageSets.Add(new KeyValuePair<int, int>(3, 154));
 
 			// Instantiate the map indexes.
 			MapIndexes = new Dictionary<string, MapIndex>();
@@ -45,6 +47,21 @@ namespace Enivate.ResponseHub.MapIndexParser.Parsers
 
 			}
 
+			// Validate the map indexes are valid and not all containing nulls. 
+			ValidateMapIndexes();
+
+
+		}
+
+		private void ValidateMapIndexes()
+		{
+
+			IList<int> indexesToRemove = new List<int>();
+
+			for (int i = 0; i < MapIndexes.Count; i++)
+			{
+				// If there are no map index
+			}
 		}
 
 		/// <summary>
@@ -82,14 +99,66 @@ namespace Enivate.ResponseHub.MapIndexParser.Parsers
 				};
 			}
 
+			// Create the task block.
+			//var taskBlock = new ActionBlock<Tuple<string, char, int>>(_ => GetSingleIndexFromWeb(_), new ExecutionDataflowBlockOptions() { MaxDegreeOfParallelism = 10 });
+
 			// Loop through the X list
 			foreach (char x in _pageXList)
 			{
 				// Loop through the Y list
 				foreach(int y in _pageYList)
 				{
-					GetSingleIndexFromWeb(pageNumber, x, y);
+					Tuple<string, char, int> gridData = new Tuple<string, char, int>(pageNumber, x, y);
+					Task.Run(() => GetSingleIndexFromWeb(gridData)).Wait();
+					//taskBlock.Post(gridData);
 				}
+			}
+
+			//taskBlock.Complete(); //Signal completion
+			//await taskBlock.Completion; // Async await for completion.
+
+		}
+
+		internal void DummyMapIndexes()
+		{
+			// Iterate through each set of pages
+			foreach (KeyValuePair<int, int> set in _mapPageSets)
+			{
+
+				// Loop through each page in the set
+				for (int i = set.Key; i < (set.Value + 1); i++)
+				{
+
+					if (!MapIndexes.ContainsKey(i.ToString()))
+					{
+						MapIndexes[i.ToString()] = new MapIndex()
+						{
+							MapType = MapType.Melway,
+							PageNumber = i.ToString(),
+							Scale = 20000,
+							UtmNumber = -1
+						};
+					}
+
+					foreach (char x in _pageXList)
+					{
+						// Loop through the Y list
+						foreach (int y in _pageYList)
+						{
+							Tuple<string, char, int> gridData = new Tuple<string, char, int>(i.ToString(), x, y);
+
+							// Create the grid reference.
+							MapIndexes[gridData.Item1].GridReferences.Add(new GridReference()
+							{
+								GridSquare = String.Format("{0}{1}", x, y),
+								Latitude = 0,
+								Longitude = 0
+							});
+						}
+					}
+
+				}
+
 			}
 		}
 
@@ -99,11 +168,11 @@ namespace Enivate.ResponseHub.MapIndexParser.Parsers
 		/// <param name="pageNumber">The page number for the index</param>
 		/// <param name="x">The X (A - K) value</param>
 		/// <param name="y">The Y (1 - 12) value.</param>
-		private void GetSingleIndexFromWeb(string pageNumber, char x, int y)
+		private async Task GetSingleIndexFromWeb(Tuple<string, char, int> gridData)
 		{
 
 			// Build the URL
-			string url = String.Format(_webUrlFormat, pageNumber, x, y);
+			string url = String.Format(_webUrlFormat, gridData.Item1, gridData.Item2, gridData.Item3);
 
 			// Build the web request
 			HttpWebRequest request = WebRequest.CreateHttp(url);
@@ -117,7 +186,7 @@ namespace Enivate.ResponseHub.MapIndexParser.Parsers
 			try {
 
 				// Get the response
-				HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+				HttpWebResponse response = ((HttpWebResponse)await request.GetResponseAsync());
 
 				// If the response is not 200 OK, then show error and return
 				if (response.StatusCode != HttpStatusCode.OK)
@@ -133,10 +202,10 @@ namespace Enivate.ResponseHub.MapIndexParser.Parsers
 					GridReference gridRef = ParseJsonResponse(reader.ReadToEnd());
 
 					// Add the grid reference to the list of grid references in the map index.
-					MapIndexes[pageNumber].GridReferences.Add(gridRef);
+					MapIndexes[gridData.Item1].GridReferences.Add(gridRef);
 
 					// Show indication the parsing it complete.
-					Console.WriteLine(String.Format("Parsed map page: {0} Grid reference: {1}{2}", pageNumber, x, y));
+					Console.WriteLine(String.Format("Parsed map page: {0} Grid reference: {1}{2}", gridData.Item1, gridData.Item2, gridData.Item3));
 				}
 
 			}
