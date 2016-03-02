@@ -140,6 +140,37 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 			// Map the grid references
 			foreach (GridReference gridRef in modelObject.GridReferences)
 			{
+
+				if (gridRef == null)
+				{
+					int i = 0;
+				}
+
+				if (gridRef.GridSquare == null)
+				{
+					int i = 0;
+				}
+
+				if (gridRef.Longitude == null)
+				{
+					int i = 0;
+				}
+
+				if (gridRef.Latitude == null)
+				{
+					int i = 0;
+				}
+
+				if (mapIndex == null)
+				{
+					int i = 0;
+				}
+
+				if (mapIndex.GridReferences == null)
+				{
+					int i = 0;
+				}
+
 				// Create the GridReference
 				GridReferenceDto gridRefDto = new GridReferenceDto()
 				{

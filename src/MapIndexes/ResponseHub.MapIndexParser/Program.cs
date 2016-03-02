@@ -85,12 +85,23 @@ namespace Enivate.ResponseHub.MapIndexParser
 				// Initialise the import
 				InitialiseImport(args);
 
+				DateTime startDate = DateTime.Now;
+
 				// Parse the melways indexes
 				MelwayParser parser = new MelwayParser();
 				parser.GetMapIndexes();
+				//parser.DummyMapIndexes();
 				
 				// Insert the map indexes
 				InsertMapIndexes(parser.MapIndexes.Select(i => i.Value).ToList());
+
+				TimeSpan timeTaken = (DateTime.Now - startDate);
+				Console.WriteLine();
+				Console.WriteLine();
+				Console.WriteLine("Melway import complete.");
+				Console.WriteLine(String.Format("Duration: {0}", timeTaken));
+				Console.WriteLine(String.Format("Total map pages: {0}", parser.MapIndexes.Count));
+				Console.WriteLine(String.Format("Total grid references: {0}", parser.MapIndexes.Select(i => i.Value).Sum(i => i.GridReferences.Count)));
 
 			}
 			else
@@ -230,8 +241,16 @@ namespace Enivate.ResponseHub.MapIndexParser
 
 		private static void BatchInsertMapIndexes(IList<MapIndex> mapIndexes)
 		{
-			_mapIndexRepository.BatchInsert(mapIndexes);
-			Thread.Sleep(100);
+			try
+			{
+
+				_mapIndexRepository.BatchInsert(mapIndexes);
+				Thread.Sleep(100);
+			}
+			catch (Exception ex)
+			{
+				int i = 0;
+			}
 		}
 
 		#endregion

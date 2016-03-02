@@ -27,8 +27,9 @@ namespace Enivate.ResponseHub.MapIndexParser.Parsers
 		public MelwayParser()
 		{
 			_mapPageSets = new List<KeyValuePair<int, int>>();
-			_mapPageSets.Add(new KeyValuePair<int, int>(3, 395));
-			_mapPageSets.Add(new KeyValuePair<int, int>(615, 697));
+			//_mapPageSets.Add(new KeyValuePair<int, int>(3, 395));
+			//_mapPageSets.Add(new KeyValuePair<int, int>(615, 697));
+			_mapPageSets.Add(new KeyValuePair<int, int>(3, 154));
 
 			// Instantiate the map indexes.
 			MapIndexes = new Dictionary<string, MapIndex>();
@@ -46,6 +47,21 @@ namespace Enivate.ResponseHub.MapIndexParser.Parsers
 
 			}
 
+			// Validate the map indexes are valid and not all containing nulls. 
+			ValidateMapIndexes();
+
+
+		}
+
+		private void ValidateMapIndexes()
+		{
+
+			IList<int> indexesToRemove = new List<int>();
+
+			for (int i = 0; i < MapIndexes.Count; i++)
+			{
+				// If there are no map index
+			}
 		}
 
 		/// <summary>
@@ -59,7 +75,7 @@ namespace Enivate.ResponseHub.MapIndexParser.Parsers
 			for (int i = minPage; i < (maxPage + 1); i++)
 			{
 
-				GetPageIndexes(i.ToString()).Wait();
+				GetPageIndexes(i.ToString());
 
 			}
 		}
@@ -68,7 +84,7 @@ namespace Enivate.ResponseHub.MapIndexParser.Parsers
 		/// Gets the indexes on a specific page.
 		/// </summary>
 		/// <param name="pageNumber"></param>
-		private async Task GetPageIndexes(string pageNumber)
+		private void GetPageIndexes(string pageNumber)
 		{
 
 			// If the page number doesn't exist in the dictionary of map indexes, create it
@@ -84,7 +100,7 @@ namespace Enivate.ResponseHub.MapIndexParser.Parsers
 			}
 
 			// Create the task block.
-			var taskBlock = new ActionBlock<Tuple<string, char, int>>(_ => GetSingleIndexFromWeb(_), new ExecutionDataflowBlockOptions() { MaxDegreeOfParallelism = 10 });
+			//var taskBlock = new ActionBlock<Tuple<string, char, int>>(_ => GetSingleIndexFromWeb(_), new ExecutionDataflowBlockOptions() { MaxDegreeOfParallelism = 10 });
 
 			// Loop through the X list
 			foreach (char x in _pageXList)
@@ -93,13 +109,57 @@ namespace Enivate.ResponseHub.MapIndexParser.Parsers
 				foreach(int y in _pageYList)
 				{
 					Tuple<string, char, int> gridData = new Tuple<string, char, int>(pageNumber, x, y);
-					taskBlock.Post(gridData);
+					Task.Run(() => GetSingleIndexFromWeb(gridData)).Wait();
+					//taskBlock.Post(gridData);
 				}
 			}
 
-			taskBlock.Complete(); //Signal completion
-			await taskBlock.Completion; // Async await for completion.
+			//taskBlock.Complete(); //Signal completion
+			//await taskBlock.Completion; // Async await for completion.
 
+		}
+
+		internal void DummyMapIndexes()
+		{
+			// Iterate through each set of pages
+			foreach (KeyValuePair<int, int> set in _mapPageSets)
+			{
+
+				// Loop through each page in the set
+				for (int i = set.Key; i < (set.Value + 1); i++)
+				{
+
+					if (!MapIndexes.ContainsKey(i.ToString()))
+					{
+						MapIndexes[i.ToString()] = new MapIndex()
+						{
+							MapType = MapType.Melway,
+							PageNumber = i.ToString(),
+							Scale = 20000,
+							UtmNumber = -1
+						};
+					}
+
+					foreach (char x in _pageXList)
+					{
+						// Loop through the Y list
+						foreach (int y in _pageYList)
+						{
+							Tuple<string, char, int> gridData = new Tuple<string, char, int>(i.ToString(), x, y);
+
+							// Create the grid reference.
+							MapIndexes[gridData.Item1].GridReferences.Add(new GridReference()
+							{
+								GridSquare = String.Format("{0}{1}", x, y),
+								Latitude = 0,
+								Longitude = 0
+							});
+						}
+					}
+
+				}
+
+			}
 		}
 
 		/// <summary>
@@ -108,7 +168,7 @@ namespace Enivate.ResponseHub.MapIndexParser.Parsers
 		/// <param name="pageNumber">The page number for the index</param>
 		/// <param name="x">The X (A - K) value</param>
 		/// <param name="y">The Y (1 - 12) value.</param>
-		private void GetSingleIndexFromWeb(Tuple<string, char, int> gridData)
+		private async Task GetSingleIndexFromWeb(Tuple<string, char, int> gridData)
 		{
 
 			// Build the URL
@@ -126,7 +186,7 @@ namespace Enivate.ResponseHub.MapIndexParser.Parsers
 			try {
 
 				// Get the response
-				HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+				HttpWebResponse response = ((HttpWebResponse)await request.GetResponseAsync());
 
 				// If the response is not 200 OK, then show error and return
 				if (response.StatusCode != HttpStatusCode.OK)
