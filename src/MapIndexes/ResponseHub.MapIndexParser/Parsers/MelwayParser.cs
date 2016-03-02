@@ -49,19 +49,29 @@ namespace Enivate.ResponseHub.MapIndexParser.Parsers
 
 			// Validate the map indexes are valid and not all containing nulls. 
 			ValidateMapIndexes();
-
-
+			
 		}
 
 		private void ValidateMapIndexes()
 		{
 
-			IList<int> indexesToRemove = new List<int>();
+			IDictionary<string, MapIndex> validMapIndexes = new Dictionary<string, MapIndex>();
 
-			for (int i = 0; i < MapIndexes.Count; i++)
+			foreach(KeyValuePair<string, MapIndex> mapIndex in MapIndexes)
 			{
-				// If there are no map index
+				if (mapIndex.Value.GridReferences.Count == 0)
+				{
+					// All null, so don't add it
+					continue;
+				}
+				
+				// Add the map index to the valid list.
+				validMapIndexes.Add(mapIndex.Key, mapIndex.Value);
+				
 			}
+
+			// Set the MapIndexes to the ValidMapIndexes
+			MapIndexes = validMapIndexes;
 		}
 
 		/// <summary>
@@ -119,49 +129,6 @@ namespace Enivate.ResponseHub.MapIndexParser.Parsers
 
 		}
 
-		internal void DummyMapIndexes()
-		{
-			// Iterate through each set of pages
-			foreach (KeyValuePair<int, int> set in _mapPageSets)
-			{
-
-				// Loop through each page in the set
-				for (int i = set.Key; i < (set.Value + 1); i++)
-				{
-
-					if (!MapIndexes.ContainsKey(i.ToString()))
-					{
-						MapIndexes[i.ToString()] = new MapIndex()
-						{
-							MapType = MapType.Melway,
-							PageNumber = i.ToString(),
-							Scale = 20000,
-							UtmNumber = -1
-						};
-					}
-
-					foreach (char x in _pageXList)
-					{
-						// Loop through the Y list
-						foreach (int y in _pageYList)
-						{
-							Tuple<string, char, int> gridData = new Tuple<string, char, int>(i.ToString(), x, y);
-
-							// Create the grid reference.
-							MapIndexes[gridData.Item1].GridReferences.Add(new GridReference()
-							{
-								GridSquare = String.Format("{0}{1}", x, y),
-								Latitude = 0,
-								Longitude = 0
-							});
-						}
-					}
-
-				}
-
-			}
-		}
-
 		/// <summary>
 		/// Gets the index information from the web service.
 		/// </summary>
@@ -200,6 +167,12 @@ namespace Enivate.ResponseHub.MapIndexParser.Parsers
 
 					// Create the GridReference from the JsonData
 					GridReference gridRef = ParseJsonResponse(reader.ReadToEnd());
+
+					if (gridRef == null)
+					{
+						Console.WriteLine(String.Format("Skipping non-existant grid reference. Map page: {0} Grid reference: {1}{2}", gridData.Item1, gridData.Item2, gridData.Item3));
+						return;
+					}
 
 					// Add the grid reference to the list of grid references in the map index.
 					MapIndexes[gridData.Item1].GridReferences.Add(gridRef);
