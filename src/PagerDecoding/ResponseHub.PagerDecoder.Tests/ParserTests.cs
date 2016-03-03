@@ -10,9 +10,10 @@ using Moq;
 
 using Enivate.ResponseHub.Model.Messages;
 using Enivate.ResponseHub.Model.Spatial;
-using Enivate.ResponseHub.WindowsService.Parsers;
-using Enivate.ResponseHub.WindowsService.Tests.Fixtures;
+using Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers;
+using Enivate.ResponseHub.PagerDecoder.Tests.Fixtures;
 using Enivate.ResponseHub.DataAccess.Interface;
+using Enivate.ResponseHub.Logging;
 
 namespace Enivate.ResponseHub.WindowsService.Tests
 {
@@ -34,7 +35,7 @@ namespace Enivate.ResponseHub.WindowsService.Tests
 			PagerMessage pagerMessage = CreateTestPagerMessage(messageContent);
 
 			// Parse the pager message
-			JobMessageParser parser = new JobMessageParser(new Mock<IMapIndexRepository>().Object);
+			JobMessageParser parser = new JobMessageParser(new Mock<IMapIndexRepository>().Object, new Mock<ILogger>().Object);
 			JobMessage parsedMessage = parser.ParseMessage(pagerMessage);
 
 			// Ensure the job numbers match.
@@ -54,7 +55,7 @@ namespace Enivate.ResponseHub.WindowsService.Tests
 			PagerMessage pagerMessage = CreateTestPagerMessage(messageContent);
 
 			// Parse the pager message
-			JobMessageParser parser = new JobMessageParser(new Mock<IMapIndexRepository>().Object);
+			JobMessageParser parser = new JobMessageParser(new Mock<IMapIndexRepository>().Object, new Mock<ILogger>().Object);
 			JobMessage parsedMessage = parser.ParseMessage(pagerMessage);
 
 			// Ensure the message priority matches
@@ -72,7 +73,7 @@ namespace Enivate.ResponseHub.WindowsService.Tests
 			PagerMessage pagerMessage = CreateTestPagerMessage(messageContent);
 
 			// Parse the pager message
-			JobMessageParser parser = new JobMessageParser(new Mock<IMapIndexRepository>().Object);
+			JobMessageParser parser = new JobMessageParser(new Mock<IMapIndexRepository>().Object, new Mock<ILogger>().Object);
 			JobMessage parsedMessage = parser.ParseMessage(pagerMessage);
 
 			// Ensure the message parses a valid location object
@@ -94,7 +95,7 @@ namespace Enivate.ResponseHub.WindowsService.Tests
 			PagerMessage pagerMessage = CreateTestPagerMessage(messageContent);
 
 			// Parse the pager message
-			JobMessageParser parser = new JobMessageParser(new Mock<IMapIndexRepository>().Object);
+			JobMessageParser parser = new JobMessageParser(new Mock<IMapIndexRepository>().Object, new Mock<ILogger>().Object);
 			JobMessage parsedMessage = parser.ParseMessage(pagerMessage);
 
 			// Ensure the Location object is null as we don't have any location information
@@ -115,7 +116,7 @@ namespace Enivate.ResponseHub.WindowsService.Tests
 		{
 
 			// Create the pager message parser
-			PagerMessageParser parser = new PagerMessageParser();
+			PagerMessageParser parser = new PagerMessageParser(new Mock<ILogger>().Object);
 			PagerMessage message = parser.ParsePagerMessage(rawMessage);
 			
 			// Ensure we have valid message data

@@ -10,26 +10,16 @@ using Microsoft.Practices.Unity.Configuration;
 
 using Enivate.ResponseHub.Common;
 
-namespace Enivate.ResponseHub.WindowsService
+namespace Enivate.ResponseHub.PagerDecoder
 {
 	static class Program
 	{
-
-		/// <summary>
-		/// Determines if the service should be run in console mode.
-		/// </summary>
-		static bool _runInConsole = false;
-
+		
 		/// <summary>
 		/// The main entry point for the application.
 		/// </summary>
 		static void Main(string[] args)
 		{
-
-			if (args.Contains("-console"))
-			{
-				_runInConsole = true;
-			}
 
 			// Unity configuration loader
 			UnityConfiguration.Container = new UnityContainer().LoadConfiguration();
@@ -41,23 +31,9 @@ namespace Enivate.ResponseHub.WindowsService
 				new MessageService()
 			};
 			
-			if (_runInConsole)
-			{
-
-				// Start in command line mode for each of the services
-				foreach(MessageService service in ServicesToRun)
-				{
-					service.StartService(args);
-				}
-				
-			}
-			else
-			{
-				// Run windows service in normal service mode
-				ServiceBase.Run(ServicesToRun);
-			}
-
-			
+			// Run windows service in normal service mode
+			ServiceBase.Run(ServicesToRun);
+						
 		}
 	}
 }

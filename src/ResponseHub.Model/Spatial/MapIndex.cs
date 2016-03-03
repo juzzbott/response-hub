@@ -23,7 +23,7 @@ namespace Enivate.ResponseHub.Model.Spatial
 
 		public MapIndex()
 		{
-			this.Id = Guid.NewGuid();
+			Id = Guid.NewGuid();
 			GridReferences = new List<GridReference>();
 		}
 

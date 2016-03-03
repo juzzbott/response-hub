@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 using Xunit;
 
-namespace Enivate.ResponseHub.WindowsService.Tests
+namespace Enivate.ResponseHub.PagerDecoder.Tests
 {
 
 

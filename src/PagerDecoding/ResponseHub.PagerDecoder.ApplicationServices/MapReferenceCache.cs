@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 using Enivate.ResponseHub.Model.Spatial;
 
-namespace Enivate.ResponseHub.WindowsService
+namespace Enivate.ResponseHub.PagerDecoder.ApplicationServices
 {
 	public class MapReferenceCache
 	{

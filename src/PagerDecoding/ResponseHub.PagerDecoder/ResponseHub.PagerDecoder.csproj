@@ -8,8 +8,8 @@
     <ProjectGuid>{AC7CC788-CCD2-4EEE-931F-C6DBEB9740BF}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Enivate.ResponseHub.WindowsService</RootNamespace>
-    <AssemblyName>ResponseHub.WindowsService</AssemblyName>
+    <RootNamespace>Enivate.ResponseHub.PagerDecoder</RootNamespace>
+    <AssemblyName>ResponseHub.PagerDecoder</AssemblyName>
     <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -134,15 +134,12 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="MapReferenceCache.cs" />
     <Compile Include="MessageService.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="MessageService.Designer.cs">
       <DependentUpon>MessageService.cs</DependentUpon>
     </Compile>
-    <Compile Include="Parsers\JobMessageParser.cs" />
-    <Compile Include="Parsers\PagerMessageParser.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -171,6 +168,10 @@
     <ProjectReference Include="..\..\ResponseHub.Model\ResponseHub.Model.csproj">
       <Project>{63ebc394-caed-4b0b-974c-ba56f619f853}</Project>
       <Name>ResponseHub.Model</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ResponseHub.PagerDecoder.ApplicationServices\ResponseHub.PagerDecoder.ApplicationServices.csproj">
+      <Project>{677c45d9-103d-473f-99e3-4c6403de5d78}</Project>
+      <Name>ResponseHub.PagerDecoder.ApplicationServices</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

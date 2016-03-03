@@ -91,6 +91,12 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 		public MapIndex MapDataObjectToModel(MapIndexDto dataObject)
 		{
 
+			// If the data object is null, return null
+			if (dataObject == null)
+			{
+				return null;
+			}
+
 			// Create the map index
 			MapIndex mapIndex = new MapIndex()
 			{
@@ -104,6 +110,12 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 			// Map the grid references
 			foreach(GridReferenceDto gridRefDto in dataObject.GridReferences)
 			{
+
+				if (gridRefDto == null)
+				{
+					continue;
+				}
+
 				// Create the GridReference
 				GridReference gridRef = new GridReference()
 				{

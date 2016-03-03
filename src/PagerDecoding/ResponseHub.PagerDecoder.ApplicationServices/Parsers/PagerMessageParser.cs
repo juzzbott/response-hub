@@ -1,5 +1,4 @@
 ﻿using Enivate.ResponseHub.Common;
-using Enivate.ResponseHub.Model.Messages;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -8,12 +7,25 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace Enivate.ResponseHub.WindowsService.Parsers
+using Enivate.ResponseHub.Logging;
+using Enivate.ResponseHub.Model.Messages;
+
+namespace Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers
 {
 	public class PagerMessageParser
 	{
 
 		private const string PocsagPagerMessageRegex = @"^(\d{7,})\s+(\d{2}:\d{2}:\d{2})\s+(\d{2}-\d{2}-\d{2})\s+(POCSAG-\d)\s+([A-Z]*)\s+(\d{3,4})\s+([^\s].*)$";
+
+		/// <summary>
+		/// The log writer.
+		/// </summary>
+		private ILogger _log;
+
+		public PagerMessageParser(ILogger log)
+		{
+			_log = log;
+		}
 
 		/// <summary>
 		/// Parse the pager message from the raw pager message.
@@ -40,7 +52,8 @@ namespace Enivate.ResponseHub.WindowsService.Parsers
 			}
 			else
 			{
-				throw new FormatException("The raw message is not in the correct format. Format needs to be: '[PagerCapcode] [Time] [Date] [Mode] [Type] [Bitrate] [Message]'");
+				_log.Warn(String.Format("The raw message is not in the correct format. Format needs to be: '[PagerCapcode] [Time] [Date] [Mode] [Type] [Bitrate] [Message]'\r\n\t\tRaw message: {0}", rawMessage.Trim()));
+				return null;
 			}
 
 		}

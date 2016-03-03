@@ -9,7 +9,7 @@ using Enivate.ResponseHub.Common;
 using Microsoft.Practices.Unity;
 using Microsoft.Practices.Unity.Configuration;
 
-namespace Enivate.ResponseHub.WindowsService.Tests.Fixtures
+namespace Enivate.ResponseHub.PagerDecoder.Tests.Fixtures
 {
 	public class UnityCollectionFixture : IDisposable
 	{

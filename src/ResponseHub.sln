@@ -15,11 +15,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ResponseHub.Model", "Respon
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ResponseHub.Logging", "ResponseHub.Logging\ResponseHub.Logging.csproj", "{38015057-6FF4-4EE7-B101-550A99578671}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WindowsService", "WindowsService", "{A9CE0402-08E1-467F-835D-8C26A81534E7}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PagerDecoding", "PagerDecoding", "{A9CE0402-08E1-467F-835D-8C26A81534E7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ResponseHub.WindowsService", "WindowsService\ResponseHub.WindowsService\ResponseHub.WindowsService.csproj", "{AC7CC788-CCD2-4EEE-931F-C6DBEB9740BF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ResponseHub.PagerDecoder", "PagerDecoding\ResponseHub.PagerDecoder\ResponseHub.PagerDecoder.csproj", "{AC7CC788-CCD2-4EEE-931F-C6DBEB9740BF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ResponseHub.WindowsService.Tests", "WindowsService\ResponseHub.WindowsService.Tests\ResponseHub.WindowsService.Tests.csproj", "{7801E1F6-7509-4B25-9BE1-37B43F2DE5F0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ResponseHub.PagerDecoder.Tests", "PagerDecoding\ResponseHub.PagerDecoder.Tests\ResponseHub.PagerDecoder.Tests.csproj", "{7801E1F6-7509-4B25-9BE1-37B43F2DE5F0}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MapIndexes", "MapIndexes", "{9C330DC4-9A2E-411C-BE7B-143B59B6530B}"
 EndProject
@@ -32,6 +32,10 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ResponseHub.Tests.Unit", "Tests\ResponseHub.Tests.Unit\ResponseHub.Tests.Unit.csproj", "{C1273DE7-873C-4FC6-B5B2-79D27B2B71EA}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ResponseHub.Mail", "ResponseHub.Mail\ResponseHub.Mail.csproj", "{BAC4BA31-D159-4C2D-A508-BFE3522BFE1D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ResponseHub.PagerDecoder.ApplicationServices", "PagerDecoding\ResponseHub.PagerDecoder.ApplicationServices\ResponseHub.PagerDecoder.ApplicationServices.csproj", "{677C45D9-103D-473F-99E3-4C6403DE5D78}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ResponseHub.PagerDecoder.ConsoleRunner", "PagerDecoding\ResponseHub.PagerDecoder.ConsoleRunner\ResponseHub.PagerDecoder.ConsoleRunner.csproj", "{87774AFF-1B83-4666-B0A2-BD0F91C2C397}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -112,6 +116,18 @@ Global
 		{BAC4BA31-D159-4C2D-A508-BFE3522BFE1D}.Release|Any CPU.Build.0 = Release|Any CPU
 		{BAC4BA31-D159-4C2D-A508-BFE3522BFE1D}.Test|Any CPU.ActiveCfg = Test|Any CPU
 		{BAC4BA31-D159-4C2D-A508-BFE3522BFE1D}.Test|Any CPU.Build.0 = Test|Any CPU
+		{677C45D9-103D-473F-99E3-4C6403DE5D78}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{677C45D9-103D-473F-99E3-4C6403DE5D78}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{677C45D9-103D-473F-99E3-4C6403DE5D78}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{677C45D9-103D-473F-99E3-4C6403DE5D78}.Release|Any CPU.Build.0 = Release|Any CPU
+		{677C45D9-103D-473F-99E3-4C6403DE5D78}.Test|Any CPU.ActiveCfg = Release|Any CPU
+		{677C45D9-103D-473F-99E3-4C6403DE5D78}.Test|Any CPU.Build.0 = Release|Any CPU
+		{87774AFF-1B83-4666-B0A2-BD0F91C2C397}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{87774AFF-1B83-4666-B0A2-BD0F91C2C397}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{87774AFF-1B83-4666-B0A2-BD0F91C2C397}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{87774AFF-1B83-4666-B0A2-BD0F91C2C397}.Release|Any CPU.Build.0 = Release|Any CPU
+		{87774AFF-1B83-4666-B0A2-BD0F91C2C397}.Test|Any CPU.ActiveCfg = Release|Any CPU
+		{87774AFF-1B83-4666-B0A2-BD0F91C2C397}.Test|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -121,5 +137,7 @@ Global
 		{7801E1F6-7509-4B25-9BE1-37B43F2DE5F0} = {A9CE0402-08E1-467F-835D-8C26A81534E7}
 		{6BF6D3A0-1797-4D46-A27C-E073D6A531B4} = {9C330DC4-9A2E-411C-BE7B-143B59B6530B}
 		{C1273DE7-873C-4FC6-B5B2-79D27B2B71EA} = {F118DA4A-AF5A-4C8A-9651-AF604DB40467}
+		{677C45D9-103D-473F-99E3-4C6403DE5D78} = {A9CE0402-08E1-467F-835D-8C26A81534E7}
+		{87774AFF-1B83-4666-B0A2-BD0F91C2C397} = {A9CE0402-08E1-467F-835D-8C26A81534E7}
 	EndGlobalSection
 EndGlobal

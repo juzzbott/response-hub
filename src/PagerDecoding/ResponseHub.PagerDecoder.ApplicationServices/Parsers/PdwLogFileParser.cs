@@ -1,59 +1,47 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.ServiceProcess;
 using System.Text;
-using System.Timers;
-
-using Microsoft.Practices.Unity;
-
-using Enivate.ResponseHub.Common;
-using Enivate.ResponseHub.Logging;
-using Enivate.ResponseHub.Logging.Configuration;
-using Enivate.ResponseHub.WindowsService.Parsers;
-using Enivate.ResponseHub.Model.Messages;
+using System.Threading.Tasks;
 
 using Newtonsoft.Json;
-using System.Threading.Tasks;
+
+using Enivate.ResponseHub.Logging;
+using Enivate.ResponseHub.Model.Messages;
 using Enivate.ResponseHub.DataAccess.Interface;
 
-namespace Enivate.ResponseHub.WindowsService
+namespace Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers
 {
-	public partial class MessageService : ServiceBase
+	public class PdwLogFileParser
 	{
 
 		/// <summary>
-		/// The timer for checking for messages
+		/// The configuration key for the last message file.
 		/// </summary>
-		private Timer _msgServiceTimer;
-
-		/// <summary>
-		/// The timer interval key.
-		/// </summary>
-		private string _intervalKey = "ServiceTimerInterval";
-
 		private string _lastMessageFileKey = "LastMessageFile";
 
+		/// <summary>
+		/// The configuration key for the web service url.
+		/// </summary>
 		private string _webServiceUrlKey = "ResponseHubService.Url";
 
 		/// <summary>
-		/// The last inserted message hash.z
+		/// The last inserted message hash.
 		/// </summary>
 		private string _lastInsertedMessageSha = "";
 
 		/// <summary>
 		/// Contains the list of pager messages to submit.
 		/// </summary>
-		private List<PagerMessage> _pagerMessagesToSubmit;
+		public List<PagerMessage> PagerMessagesToSubmit { get; set; }
 
 		/// <summary>
 		/// Contains the list of parsed job messages to submit.
 		/// </summary>
-		private Dictionary<string, JobMessage> _jobMessagesToSubmit;
+		public Dictionary<string, JobMessage> JobMessagesToSubmit { get; set; }
 
 		/// <summary>
 		/// The PagerMessage parser.
@@ -65,190 +53,159 @@ namespace Enivate.ResponseHub.WindowsService
 		/// </summary>
 		private JobMessageParser _jobMessageParser;
 
+		/// <summary>
+		/// The log writer.
+		/// </summary>
 		private ILogger _log;
-		protected ILogger Log
-		{
-			get
-			{
-				return _log ?? (_log = UnityConfiguration.Container.Resolve<ILogger>());
-			}
-		}
 
+		/// <summary>
+		/// The repository for managing map indexes.
+		/// </summary>
 		private IMapIndexRepository _mapIndexRepository;
-		protected IMapIndexRepository MapIndexRepository
-		{
-			get
-			{
-				return _mapIndexRepository ?? (_mapIndexRepository = UnityConfiguration.Container.Resolve<IMapIndexRepository>());
-			}
-		}
 
-		public MessageService()
+		/// <summary>
+		/// The number of log file read attempts.
+		/// </summary>
+		private int _logFileAttempts = 0;
+
+		/// <summary>
+		/// The maximum log file attemts to check for using the previous day.
+		/// </summary>
+		private int _maxLogFileAttempts = 5;
+
+		public PdwLogFileParser(ILogger log, IMapIndexRepository mapIndexRepository)
 		{
-			InitializeComponent();
+
+			// Instantiate the interfaces.
+			_log = log;
+			_mapIndexRepository = mapIndexRepository;
 
 			// Initialise the list of pager messages to submit.
-			_pagerMessagesToSubmit = new List<PagerMessage>();
-			_jobMessagesToSubmit = new Dictionary<string, JobMessage>();
+			PagerMessagesToSubmit = new List<PagerMessage>();
+			JobMessagesToSubmit = new Dictionary<string, JobMessage>();
 
 			// Instantiate the message parsers
-			_pagerMessageParser = new PagerMessageParser();
-			_jobMessageParser = new JobMessageParser(MapIndexRepository);
+			_pagerMessageParser = new PagerMessageParser(_log);
+			_jobMessageParser = new JobMessageParser(_mapIndexRepository, _log);
 
-			// If there is no interval setting, then throw exception
-			if (String.IsNullOrEmpty(ConfigurationManager.AppSettings[_intervalKey]))
-			{
-				throw new ApplicationException("The configuration setting 'Timer.Interval' is not present in the configuration.");
-			}
+		}
 
-			// Get the timer interval
-			double timerInterval;
-			double.TryParse(ConfigurationManager.AppSettings[_intervalKey], out timerInterval);
+		public void ProcessLogFiles()
+		{
+			// Clear the last message list, just in case
+			PagerMessagesToSubmit.Clear();
+			JobMessagesToSubmit.Clear();
+
+			// Get the last message sha
+			_lastInsertedMessageSha = GetLastMessageSha();
+
+			// Process the messages in the log file
+			ProcessPagerMessagesInLogFile(DateTime.Now);
 			
-			// Initialise the timer
-			_msgServiceTimer = new Timer(timerInterval);
-			_msgServiceTimer.AutoReset = true;
-			_msgServiceTimer.Elapsed += _msgServiceTimer_Elapsed;
+			// Parse the pager messages into job messages
+			ParsePagerMessagesToJobMessages();
 
-		}
-		
-		protected override void OnStart(string[] args)
-		{
-			StartService(args);
-		}
+			// Submit the messages
+			//SubmitMessages();
 
-		protected override void OnStop()
-		{
-			StopService();
 		}
 
 		/// <summary>
-		/// Logic to Start Service
-		/// Public accessibility for running as a console application in Visual Studio debugging experience
+		/// Process the pager messages in the log file for the specific date. If the entire file is read without finding the last message sha, it will recurse to the previous days log file (if exists).
 		/// </summary>
-		public virtual void StartService(params string[] args)
-		{
-			// Log the start event.
-			string startLog = buildStartupLog();
-			Log.Info(startLog);
-
-			_msgServiceTimer.Start();
-		}
-
-		/// <summary>
-		/// Logic to Stop Service
-		/// Public accessibility for running as a console application in Visual Studio debugging experience
-		/// </summary>
-		public virtual void StopService()
-		{
-			_msgServiceTimer.Stop();
-			Log.Info("ResponseHub service stopped.\r\n\r\n");
-		}
-
-		/// <summary>
-		/// Builds the start up log for the windows service.
-		/// </summary>
-		/// <returns></returns>
-		private string buildStartupLog()
-		{
-			// Build the start up log
-			StringBuilder sbStartLog = new StringBuilder();
-			sbStartLog.AppendLine();
-			sbStartLog.AppendLine("==================================================");
-			sbStartLog.AppendLine("  ResponseHub service started.");
-			sbStartLog.AppendLine("==================================================");
-			sbStartLog.AppendLine(String.Format("  Timer Interval: {0}", ConfigurationManager.AppSettings[_intervalKey]));
-			sbStartLog.AppendLine(String.Format("  Log Level: {0}", LoggingConfiguration.Current.LogLevel));
-			sbStartLog.AppendLine(String.Format("  Log Directory: {0}", LoggingConfiguration.Current.LogDirectory));
-			return sbStartLog.ToString();
-		}
-
-		private void _msgServiceTimer_Elapsed(object sender, ElapsedEventArgs e)
-		{
-
-			Log.Debug("Timer elapsed.");
-
-			try {
-
-				// Clear the last message list, just in case
-				_pagerMessagesToSubmit.Clear();
-				_jobMessagesToSubmit.Clear();
-
-				// Get the last message sha
-				_lastInsertedMessageSha = GetLastMessageSha();
-
-				// Process the messages in the log file
-				ProcessPagerMessagesInLogFile(DateTime.Now);
-
-				// Submit the messages
-				SubmitMessages();
-
-			}
-			catch (Exception ex)
-			{
-				Log.Error(String.Format("Error processing log file on timer elapse. Message: {0}", ex.Message), ex);
-			}
-
-		}
-
+		/// <param name="logDate"></param>
 		private void ProcessPagerMessagesInLogFile(DateTime logDate)
 		{
-
-
+			
 			// Get the current log file filename
 			string logFilePath = GetLogFilePath(logDate);
 
 			// If the log file is empty, or the file doesn't exist, then log the issue and return
 			if (String.IsNullOrEmpty(logFilePath) || !File.Exists(logFilePath))
 			{
-				Log.Error(String.Format("The log file '{0}' does not exist.", logFilePath));
-				return;
-			}
 
-			// Get the messages from the log file.
-			IList<string> rawMessages = GetMessagesFromLogFile(logFilePath);
-
-			// Determines if the last message was reached or not. If false, after the loop, it will recurse into the previous days log files.
-			bool lastMessageReached = false;
-
-			// Loop through the messages
-			foreach (string message in rawMessages)
-			{
-				// If the message is null or empty, continue
-				if (String.IsNullOrEmpty(message))
+				// If we are within our max log file attempts, then recurse to previous day
+				if (_logFileAttempts < _maxLogFileAttempts)
 				{
-					continue;
+					_logFileAttempts++;
+					ProcessPagerMessagesInLogFile(logDate.AddDays(-1));
 				}
-
-				try
+				else if (!String.IsNullOrEmpty(logFilePath) && String.IsNullOrEmpty(_lastInsertedMessageSha) && _logFileAttempts >= _maxLogFileAttempts)
 				{
+					// We have a log file name, but have recursed to a time when no date file exists, and we have no last message sha so it's the first run. 
+					// Just log an info note
+					_log.Info(String.Format("The log file '{0}' does not exist and no last message sha found in 5 day history. Assuming start of log file history. Exiting.", logFilePath));
+					return;
+				}
+				else
+				{
+					// No valid log file found, when there should be one
+					_log.Error(String.Format("The log file '{0}' does not exist.", logFilePath));
+					return;
+				}
+			}
+			else
+			{
 
-					// Get the pager message
-					PagerMessage pagerMessage = _pagerMessageParser.ParsePagerMessage(message);
+				// Get the messages from the log file.
+				IList<string> rawMessages = GetMessagesFromLogFile(logFilePath);
 
-					// If the pager message is numeric, skip it
-					if (pagerMessage.Type.ToUpper() != "ALPHA")
+				// Determines if the last message was reached or not. If false, after the loop, it will recurse into the previous days log files.
+				bool lastMessageReached = false;
+
+				// Loop through the messages
+				foreach (string message in rawMessages)
+				{
+					// If the message is null or empty, continue
+					if (String.IsNullOrEmpty(message))
 					{
-						Log.Debug("Skipping non-alpha message.");
 						continue;
 					}
 
-					// If the pager sha matches the last inserted sha, then exit the loop, as no need to process any further messages.
-					if (pagerMessage.ShaHash.Equals(_lastInsertedMessageSha, StringComparison.CurrentCultureIgnoreCase))
+					// Skip non-required messages.
+					if (message.ToUpper().Contains(")E51TIMEUPDATE"))
 					{
-						lastMessageReached = true;
-						break;
+						_log.Debug("Skipping E51TIMEUPDATE time update message.");
+						continue;
 					}
 
-					// Add the pager message to submit
-					_pagerMessagesToSubmit.Add(pagerMessage);
+					try
+					{
+
+						// Get the pager message
+						PagerMessage pagerMessage = _pagerMessageParser.ParsePagerMessage(message);
+						
+						// If the pager message is null, parsing failed, so continue to next
+						if (pagerMessage == null)
+						{
+							continue;
+						}
+
+						// If the pager message is numeric, skip it
+						if (pagerMessage.Type.ToUpper() != "ALPHA")
+						{
+							_log.Debug("Skipping non-alpha message.");
+							continue;
+						}
+
+						// If the pager sha matches the last inserted sha, then exit the loop, as no need to process any further messages.
+						if (pagerMessage.ShaHash.Equals(_lastInsertedMessageSha, StringComparison.CurrentCultureIgnoreCase))
+						{
+							lastMessageReached = true;
+							break;
+						}
+
+						// Add the pager message to submit
+						PagerMessagesToSubmit.Add(pagerMessage);
+
+					}
+					catch (Exception ex)
+					{
+						_log.Error(String.Format("Unable to parse pager message. Raw message data: {0}", message), ex);
+					}
 
 				}
-				catch (Exception ex)
-				{
-					Log.Error(String.Format("Unable to parse pager message. Raw message data: {0}", message), ex);
-				}
-
+				
 				// If the last message wasn't reached, then recurse into the previous days log files
 				if (!lastMessageReached)
 				{
@@ -266,9 +223,6 @@ namespace Enivate.ResponseHub.WindowsService
 		private void SubmitMessages()
 		{
 
-			// Parse the pager messages into job messages
-			ParsePagerMessagesToJobMessages();
-
 			// Post the parsed job messages to the web api service
 			string lastMessageSha = PostJobMessagesToWebService();
 
@@ -276,11 +230,11 @@ namespace Enivate.ResponseHub.WindowsService
 			WriteLastMessageSha(lastMessageSha);
 
 			// Clear the lists
-			_pagerMessagesToSubmit.Clear();
-			_jobMessagesToSubmit.Clear();
+			PagerMessagesToSubmit.Clear();
+			JobMessagesToSubmit.Clear();
 
 			// Write some stats to the log files.
-			Log.Debug(String.Format("Processed and submitted '{0}' job message{1}", _jobMessagesToSubmit.Count, (_jobMessagesToSubmit.Count != 1 ? "s" : "")));
+			_log.Debug(String.Format("Processed and submitted '{0}' job message{1}", JobMessagesToSubmit.Count, (JobMessagesToSubmit.Count != 1 ? "s" : "")));
 
 		}
 
@@ -291,7 +245,7 @@ namespace Enivate.ResponseHub.WindowsService
 		private string PostJobMessagesToWebService()
 		{
 			// Get the json string for the list of pager messages
-			string jsonData = JsonConvert.SerializeObject(_jobMessagesToSubmit);
+			string jsonData = JsonConvert.SerializeObject(JobMessagesToSubmit);
 			byte[] jsonBytes = Encoding.ASCII.GetBytes(jsonData);
 			// Get the service url
 			string serviceUrl = ConfigurationManager.AppSettings[_webServiceUrlKey];
@@ -319,11 +273,11 @@ namespace Enivate.ResponseHub.WindowsService
 			Task.Run(async () =>
 			{
 				HttpWebResponse response = ((HttpWebResponse)await request.GetResponseAsync());
-				
+
 				// If all went well, set the last message sha to the last in the list of jbo messages
 				if (response.StatusCode == HttpStatusCode.OK)
 				{
-					messageSha = _jobMessagesToSubmit.Last().Key;
+					messageSha = JobMessagesToSubmit.Last().Key;
 				}
 
 			});
@@ -339,7 +293,7 @@ namespace Enivate.ResponseHub.WindowsService
 		private void ParsePagerMessagesToJobMessages()
 		{
 			// Loop through the pager messages
-			foreach (PagerMessage pagerMessage in _pagerMessagesToSubmit)
+			foreach (PagerMessage pagerMessage in PagerMessagesToSubmit)
 			{
 
 				try
@@ -349,14 +303,14 @@ namespace Enivate.ResponseHub.WindowsService
 					JobMessage jobMessage = _jobMessageParser.ParseMessage(pagerMessage);
 
 					// Add the job to the list job messages to submit
-					_jobMessagesToSubmit.Add(pagerMessage.ShaHash, jobMessage);
+					JobMessagesToSubmit.Add(pagerMessage.ShaHash, jobMessage);
 
 				}
 				catch (Exception ex)
 				{
 					// Log the error the log file
-					Log.Error(String.Format("Unable to parse pager message. Message: {0}", ex.Message), ex);
-					Log.Error(String.Format("Pager message that failed: {0}", pagerMessage.ToString()));
+					_log.Error(String.Format("Unable to parse pager message. Message: {0}", ex.Message), ex);
+					_log.Error(String.Format("Pager message that failed: {0}", pagerMessage.ToString()));
 				}
 
 			}
@@ -379,7 +333,11 @@ namespace Enivate.ResponseHub.WindowsService
 			FileStream fs = new FileStream(logFilePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
 			using (StreamReader reader = new StreamReader(fs))
 			{
-				messages.Add(reader.ReadLine());
+				while (reader.Peek() != -1)
+				{
+					// Read the line from the log file
+					messages.Add(reader.ReadLine());
+				}
 			}
 
 			// Reverse so that newest are at the top
@@ -398,17 +356,18 @@ namespace Enivate.ResponseHub.WindowsService
 		{
 			string basePath = ConfigurationManager.AppSettings["PDWLogDirectory"];
 
-			return String.Format("{0}\\yyMMdd.log");
+			return String.Format("{0}\\{1}.log", basePath, date.ToString("yyMMdd"));
 
 		}
 
-		#region Last Message Inserted
+
+		#region Last Message Inserted Helpers
 
 		/// <summary>
 		/// Gets the path to the file of the last message inserted. 
 		/// </summary>
 		/// <returns>The last message inserted file path.</returns>
-		private string GetLastMessageFile()
+		private string GetLastMessageFilePath()
 		{
 			// Get the path from the confirguration
 			string path = ConfigurationManager.AppSettings[_lastMessageFileKey];
@@ -438,10 +397,17 @@ namespace Enivate.ResponseHub.WindowsService
 			// Create the storage var
 			string lastMessageSha = "";
 
-			using (StreamReader reader = new StreamReader(GetLastMessageFile()))
+			// Get the file path
+			string lastMessagePath = GetLastMessageFilePath();
+
+			if (File.Exists(lastMessagePath))
 			{
-				lastMessageSha = reader.ReadToEnd();
-			}
+				// Read the contents of the last message file.
+				using (StreamReader reader = new StreamReader(lastMessagePath))
+				{
+					lastMessageSha = reader.ReadToEnd();
+				}
+			} 
 
 			// return the last message sha
 			return lastMessageSha;
@@ -456,12 +422,12 @@ namespace Enivate.ResponseHub.WindowsService
 			// If the last message sha is null, empty or whitespace, log and return without writing anyting
 			if (String.IsNullOrWhiteSpace(lastMessageSha))
 			{
-				Log.Warn("The last message sha could not be written as the sha value was empty.");
+				_log.Warn("The last message sha could not be written as the sha value was empty.");
 				return;
 			}
 
 			// Write the sha to the file
-			using (StreamWriter writer = new StreamWriter(GetLastMessageFile(), false))
+			using (StreamWriter writer = new StreamWriter(GetLastMessageFilePath(), false))
 			{
 				writer.Write(lastMessageSha);
 			}

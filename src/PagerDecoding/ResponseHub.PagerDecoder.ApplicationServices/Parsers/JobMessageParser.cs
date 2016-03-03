@@ -8,8 +8,9 @@ using System.Threading.Tasks;
 using Enivate.ResponseHub.Model.Messages;
 using Enivate.ResponseHub.Model.Spatial;
 using Enivate.ResponseHub.DataAccess.Interface;
+using Enivate.ResponseHub.Logging;
 
-namespace Enivate.ResponseHub.WindowsService.Parsers
+namespace Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers
 {
 	public class JobMessageParser
 	{
@@ -39,15 +40,24 @@ namespace Enivate.ResponseHub.WindowsService.Parsers
 		/// </summary>
 		public const string AdministrationPrefix = "QD";
 
+		/// <summary>
+		/// The map index repository
+		/// </summary>
 		private IMapIndexRepository _repository;
+
+		/// <summary>
+		/// The log writer.
+		/// </summary>
+		private ILogger _log;
 
 		/// <summary>
 		/// Creates a new instance of the JobMessageParser class.
 		/// </summary>
 		/// <param name="repository"></param>
-		public JobMessageParser(IMapIndexRepository repository)
+		public JobMessageParser(IMapIndexRepository repository, ILogger log)
 		{
 			_repository = repository;
+			_log = log;
 		}
 
 		/// <summary>
@@ -210,7 +220,7 @@ namespace Enivate.ResponseHub.WindowsService.Parsers
 
 				Task.Run(async () =>
 				{
-					await _repository.GetMapIndexByPageNumber(mapType, mapPage);
+					mapIndex = await _repository.GetMapIndexByPageNumber(mapType, mapPage);
 				});
 
 				// if the mapIndex exists, add to the cache for next time

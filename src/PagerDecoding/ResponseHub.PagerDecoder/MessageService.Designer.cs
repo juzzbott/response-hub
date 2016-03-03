@@ -1,4 +1,4 @@
-﻿namespace Enivate.ResponseHub.WindowsService
+﻿namespace Enivate.ResponseHub.PagerDecoder
 {
 	partial class MessageService
 	{
