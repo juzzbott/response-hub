@@ -188,7 +188,7 @@
     <Compile Include="Areas\Admin\Models\Users\ConfirmUserViewModel.cs" />
     <Compile Include="Areas\Admin\Models\Users\NewUserViewModel.cs" />
     <Compile Include="Areas\Admin\Models\Groups\SingleGroupViewModel.cs" />
-    <Compile Include="Controllers\Api\PagerMessageController.cs" />
+    <Compile Include="Controllers\Api\JobMessageController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\MediaController.cs" />
     <Compile Include="Controllers\MyAccountController.cs" />

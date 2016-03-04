@@ -67,18 +67,22 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Interface\IGroupRepository.cs" />
+    <Compile Include="Interface\IJobMessageRepository.cs" />
     <Compile Include="Interface\IMapIndexRepository.cs" />
     <Compile Include="Interface\IPagerMessageRepository.cs" />
     <Compile Include="Interface\IRegionRepository.cs" />
     <Compile Include="Interface\IRepository.cs" />
     <Compile Include="Interface\IUserRepository.cs" />
     <Compile Include="MongoDB\DataObjects\Groups\GroupDto.cs" />
+    <Compile Include="MongoDB\DataObjects\Messages\JobMessageDto.cs" />
     <Compile Include="MongoDB\DataObjects\Spatial\GridReferenceDto.cs" />
+    <Compile Include="MongoDB\DataObjects\Spatial\LocationInfoDto.cs" />
     <Compile Include="MongoDB\DataObjects\Spatial\MapIndexDto.cs" />
     <Compile Include="MongoDB\DataObjects\Users\ClaimDto.cs" />
     <Compile Include="MongoDB\DataObjects\Users\IdentityUserDto.cs" />
     <Compile Include="MongoDB\GroupRepository.cs" />
     <Compile Include="MongoCollectionNameAttribute.cs" />
+    <Compile Include="MongoDB\JobMessageRepository.cs" />
     <Compile Include="MongoDB\MapIndexRepository.cs" />
     <Compile Include="MongoDB\PagerMessageRepository.cs" />
     <Compile Include="MongoDB\RegionRepository.cs" />

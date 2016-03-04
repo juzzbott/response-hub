@@ -123,11 +123,11 @@ namespace Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers
 		/// </summary>
 		/// <param name="messageContent">The content of the message to parse for a map coordinate.</param>
 		/// <returns></returns>
-		private Location GetLocation(string messageContent)
+		private LocationInfo GetLocation(string messageContent)
 		{
 			
 			// Create the location variable
-			Location location = null;
+			LocationInfo location = null;
 
 			// First check for spatial vision match
 			Match mapRefMatch = Regex.Match(messageContent, SpatialVisionRegex);
@@ -169,11 +169,11 @@ namespace Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers
 		/// <param name="mapPage">The page number of the map reference.</param>
 		/// <param name="gridReference">THe grid reference on the page of the map reference (e.g. A1, B5 etc).</param>
 		/// <returns>The location from the pager message details.</returns>
-		private Location PopulateLocationFromMapReference(string fullMapRef, MapType mapType, string mapPage, string gridReference)
+		private LocationInfo PopulateLocationFromMapReference(string fullMapRef, MapType mapType, string mapPage, string gridReference)
 		{
 
 			// Create the location object
-			Location location = new Location()
+			LocationInfo location = new LocationInfo()
 			{
 				MapReference = fullMapRef,
 				MapType = mapType,

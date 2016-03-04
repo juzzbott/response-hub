@@ -29,6 +29,11 @@ namespace Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers
 		private string _webServiceUrlKey = "ResponseHubService.Url";
 
 		/// <summary>
+		/// The configuration key for the web service api key.
+		/// </summary>
+		private string _webServiceUrlApiKeyKey = "ResponseHubService.ApiKey";
+
+		/// <summary>
 		/// The last inserted message hash.
 		/// </summary>
 		private string _lastInsertedMessageSha = "";
@@ -106,7 +111,23 @@ namespace Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers
 			ParsePagerMessagesToJobMessages();
 
 			// Submit the messages
-			//SubmitMessages();
+			bool result = PostJobMessagesToWebService();
+
+			if (result && PagerMessagesToSubmit.Count > 0)
+			{
+				// Get the last message sha
+				string lastMessageSha = PagerMessagesToSubmit.Last().ShaHash;
+
+				// Write the last message sha to the web service
+				WriteLastMessageSha(lastMessageSha);
+			}
+
+			// Clear the lists
+			PagerMessagesToSubmit.Clear();
+			JobMessagesToSubmit.Clear();
+
+			// Write some stats to the log files.
+			_log.Info(String.Format("Processed and submitted '{0}' job message{1}", JobMessagesToSubmit.Count, (JobMessagesToSubmit.Count != 1 ? "s" : "")));
 
 		}
 
@@ -216,39 +237,20 @@ namespace Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers
 		}
 
 		#region Submit messages
-
-		/// <summary>
-		/// Saves the pager messages to the local database for historical reasons. Submits the parsed JobMessages to the webservice for consumption by the web application.
-		/// </summary>
-		private void SubmitMessages()
-		{
-
-			// Post the parsed job messages to the web api service
-			string lastMessageSha = PostJobMessagesToWebService();
-
-			// Write the last message sha to the web service
-			WriteLastMessageSha(lastMessageSha);
-
-			// Clear the lists
-			PagerMessagesToSubmit.Clear();
-			JobMessagesToSubmit.Clear();
-
-			// Write some stats to the log files.
-			_log.Debug(String.Format("Processed and submitted '{0}' job message{1}", JobMessagesToSubmit.Count, (JobMessagesToSubmit.Count != 1 ? "s" : "")));
-
-		}
-
+		
 		/// <summary>
 		/// Posts the messages to the webservice
 		/// </summary>
 		/// <returns></returns>
-		private string PostJobMessagesToWebService()
+		private bool PostJobMessagesToWebService()
 		{
 			// Get the json string for the list of pager messages
-			string jsonData = JsonConvert.SerializeObject(JobMessagesToSubmit);
+			string jsonData = JsonConvert.SerializeObject(JobMessagesToSubmit.Select(i => i.Value).ToArray());
 			byte[] jsonBytes = Encoding.ASCII.GetBytes(jsonData);
-			// Get the service url
+
+			// Get the service url and api key
 			string serviceUrl = ConfigurationManager.AppSettings[_webServiceUrlKey];
+			string serviceApiKey = ConfigurationManager.AppSettings[_webServiceUrlApiKeyKey];
 
 			// If the service url is null or empty, throw exception
 			if (String.IsNullOrEmpty(serviceUrl))
@@ -261,13 +263,14 @@ namespace Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers
 			request.Method = "POST";
 			request.ContentType = "application/json";
 			request.ContentLength = jsonBytes.Length;
+			request.Headers.Add(HttpRequestHeader.Authorization, String.Format("APIKEY {0}", serviceApiKey));
 			using (Stream stream = request.GetRequestStream())
 			{
 				stream.Write(jsonBytes, 0, jsonBytes.Length);
 			}
 
 			// Create the message sha variable
-			string messageSha = "";
+			string responseText = "";
 
 			// Get the response
 			Task.Run(async () =>
@@ -277,13 +280,13 @@ namespace Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers
 				// If all went well, set the last message sha to the last in the list of jbo messages
 				if (response.StatusCode == HttpStatusCode.OK)
 				{
-					messageSha = JobMessagesToSubmit.Last().Key;
+					responseText = JobMessagesToSubmit.Last().Key;
 				}
 
-			});
+			}).Wait();
 
 			// return the message sha
-			return messageSha;
+			return (responseText.ToLower() == "true");
 
 		}
 

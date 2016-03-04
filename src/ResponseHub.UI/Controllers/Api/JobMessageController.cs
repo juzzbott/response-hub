@@ -13,12 +13,13 @@ using Enivate.ResponseHub.Common;
 using Enivate.ResponseHub.Logging;
 using Enivate.ResponseHub.Model.Messages.Interface;
 using Enivate.ResponseHub.Model.Messages;
+using System.Threading.Tasks;
 
 namespace Enivate.ResponseHub.UI.Controllers.Api
 {
 
-	[RoutePrefix("api/pager-messages")]
-    public class PagerMessageController : ApiController
+	[RoutePrefix("api/job-messages")]
+    public class JobMessageController : ApiController
     {
 
 		private ILogger _log;
@@ -30,18 +31,18 @@ namespace Enivate.ResponseHub.UI.Controllers.Api
 			}
 		}
 
-		private IPagerMessageService _pagerMessageService;
-		protected IPagerMessageService PagerMessageService
+		private IJobMessageService _jobMessageService;
+		protected IJobMessageService JobMessageService
 		{
 			get
 			{
-				return _pagerMessageService ?? (_pagerMessageService = UnityConfiguration.Container.Resolve<IPagerMessageService>());
+				return _jobMessageService ?? (_jobMessageService = UnityConfiguration.Container.Resolve<IJobMessageService>());
 			}
 		}
 
 		[Route]
 		[HttpPost]
-		public bool Post(PagerMessage pagerMessage)
+		public async Task<bool> Post(IList<JobMessage> jobMessages)
 		{
 
 			// Get the authHeader
@@ -52,7 +53,7 @@ namespace Enivate.ResponseHub.UI.Controllers.Api
 			// If the api key is null or empty, log error message and return not authorized
 			if (String.IsNullOrWhiteSpace(apiKey))
 			{
-				Log.Error("The ResponseHub service API key is invalid.");
+				await Log.Error("The ResponseHub service API key is invalid.");
 				throw new HttpResponseException(HttpStatusCode.Unauthorized);
 			}
 
@@ -62,10 +63,21 @@ namespace Enivate.ResponseHub.UI.Controllers.Api
 				throw new HttpResponseException(HttpStatusCode.Unauthorized);
 			}
 
-			// Save the pager message
-			_pagerMessageService.Save(pagerMessage);
+			try
+			{
 
-			return true;
+				// Save the pager message
+				await JobMessageService.AddMessages(jobMessages);
+
+				// return the last message sha
+				return true;
+
+			}
+			catch (Exception ex)
+			{
+				await Log.Error(String.Format("Error adding the job messages to the database from the api. Message: {0}", ex.Message), ex);
+				throw new HttpResponseException(HttpStatusCode.InternalServerError);
+			}
 		}
 
     }

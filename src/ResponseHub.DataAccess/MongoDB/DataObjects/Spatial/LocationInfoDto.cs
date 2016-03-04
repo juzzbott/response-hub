@@ -4,11 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using MongoDB.Driver.GeoJsonObjectModel;
 using Enivate.ResponseHub.Model.Spatial;
 
-namespace Enivate.ResponseHub.Model.Messages
+namespace Enivate.ResponseHub.DataAccess.MongoDB.DataObjects.Spatial
 {
-	public class Location
+	public class LocationInfoDto
 	{
 
 		public string MapReference { get; set; }
@@ -21,12 +22,8 @@ namespace Enivate.ResponseHub.Model.Messages
 
 		public string AddressInfo { get; set; }
 
-		public Coordinates Coordinates { get; set; }
+		public GeoJson2DGeographicCoordinates Coordinates { get; set; }
 
-		public Location()
-		{
-			Coordinates = new Coordinates();
-		}
 
 	}
 }

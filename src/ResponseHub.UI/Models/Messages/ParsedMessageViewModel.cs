@@ -29,12 +29,12 @@ namespace Enivate.ResponseHub.UI.Models.Messages
 
 		public MessagePriority Priority { get; set; }
 
-		public Location Location { get; set; }
+		public LocationInfo Location { get; set; }
 
 
 		public ParsedMessageViewModel()
 		{
-			Location = new Location();
+			Location = new LocationInfo();
 		}
 
 	}
