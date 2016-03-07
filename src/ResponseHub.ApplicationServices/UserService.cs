@@ -205,7 +205,7 @@ namespace Enivate.ResponseHub.ApplicationServices
 			{ 
 
 				// Get the user
-				IdentityUser user = await this.FindByIdAsync(userId);
+				IdentityUser user = await FindByIdAsync(userId);
 
 				// Ensure the password is valid
 				bool passwordValid = await CheckPasswordAsync(user, password);
@@ -215,7 +215,7 @@ namespace Enivate.ResponseHub.ApplicationServices
 				}
 
 				// If the email address already exists, then show the message to the user
-				bool emailUnique = await this.CheckEmailUniqueAsync(newUserName);
+				bool emailUnique = await CheckEmailUniqueAsync(newUserName);
 				if (!emailUnique)
 				{
 					IdentityResult.Failed("The email account you have entered is in use by another user. Please choose a different email address.");

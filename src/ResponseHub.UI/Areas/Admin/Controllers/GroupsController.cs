@@ -56,6 +56,15 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 			}
 		}
 
+		private ICapcodeService _capcodeService;
+		protected ICapcodeService CapcodeService
+		{
+			get
+			{
+				return _capcodeService ?? (_capcodeService = UnityConfiguration.Container.Resolve<ICapcodeService>());
+			}
+		}
+
 		private ILogger _log;
 		protected ILogger Log
 		{
@@ -90,13 +99,15 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 		[Route("create")]
 		public async Task<ActionResult> Create()
 		{
-			CreateGroupModel model = new CreateGroupModel();
-			model.AvailableRegions = await GetAvailableRegions();
 
 			// Set the form action and the addGroupAdministrator flag.
 			ViewBag.AddGroupAdministrator = true;
 			ViewBag.FormAction = "/admin/groups/create";
 			ViewBag.Title = "Create new group";
+
+			CreateGroupModel model = new CreateGroupModel();
+			model.AvailableRegions = await GetAvailableRegions();
+			model.AvailableCapcodes = await CapcodeService.GetAll();
 
 			return View("CreateEdit", model);
 		}
@@ -114,6 +125,7 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 
 			// Get the regions select list.
 			model.AvailableRegions = await GetAvailableRegions();
+			model.AvailableCapcodes = await CapcodeService.GetAll();
 
 			// If the model is not valid, return view.
 			if (!ModelState.IsValid)

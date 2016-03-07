@@ -168,6 +168,7 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 			return new GroupDto()
 			{
 				Capcode = modelObj.Capcode,
+				AdditionalCapcodes = modelObj.AdditionalCapcodes,
 				Created = modelObj.Created,
 				Updated = modelObj.Updated,
 				Description = modelObj.Description,
@@ -200,6 +201,7 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 			return new Group()
 			{
 				Capcode = dbObj.Capcode,
+				AdditionalCapcodes = dbObj.AdditionalCapcodes,
 				Created = dbObj.Created,
 				Updated = dbObj.Updated,
 				Description = dbObj.Description,

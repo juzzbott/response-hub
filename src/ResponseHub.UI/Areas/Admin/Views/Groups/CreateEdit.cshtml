@@ -55,6 +55,26 @@
 		@Html.ValidationMessageFor(model => model.Capcode)
 	</div>
 
+	<div class="form-group">
+		<label>Additional capcodes</label>
+		<div class="row">
+			<div class="col-sm-8 col-md-6 col-lg-4">
+				<input type="text" class="form-control capcode-selection" />
+
+				<script language="javascript">
+					var capcodes = [
+						@for(int i = 0; i < Model.AvailableCapcodes.Count; i++)
+						{
+							var capcode = Model.AvailableCapcodes[i];
+							Html.Raw(String.Format("{{ id: '{0}', name: '{1}', shortName: '{2}', capcode: '{3}'}}{4}\r\n", capcode.Id, capcode.Name, capcode.ShortName, capcode.CapcodeAddress, (i > 0 ? "," : "")));
+						}
+					]
+				</script>
+
+			</div>
+		</div>
+	</div>
+
 	<div class="form-group row">
 		<div class="col-sm-10 col-md-8 col-lg-6">
 			<label for="Description">Description</label>

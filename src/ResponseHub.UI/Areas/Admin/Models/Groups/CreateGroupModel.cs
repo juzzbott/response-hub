@@ -6,6 +6,7 @@ using System.Web;
 using System.Web.Mvc;
 
 using Enivate.ResponseHub.UI.Areas.Admin.Models.Users;
+using Enivate.ResponseHub.Model.Groups;
 
 namespace Enivate.ResponseHub.UI.Areas.Admin.Models.Groups
 {
@@ -20,6 +21,8 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Models.Groups
 		
 		[Required(ErrorMessage = "You must enter a capcode / pager address for this group.")]
 		public string Capcode { get; set; }
+
+		public IList<Capcode> AvailableCapcodes { get; set; }
 
 		public IList<SelectListItem> AvailableServices { get; set; }
 
@@ -62,6 +65,8 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Models.Groups
 			GroupAdministrator = new ConfirmUserViewModel();
 
 			AvailableRegions = new List<SelectListItem>();
+
+			AvailableCapcodes = new List<Capcode>();
 
 		}
 

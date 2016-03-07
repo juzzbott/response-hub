@@ -66,6 +66,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Interface\ICapcodeRepository.cs" />
     <Compile Include="Interface\IGroupRepository.cs" />
     <Compile Include="Interface\IJobMessageRepository.cs" />
     <Compile Include="Interface\IMapIndexRepository.cs" />
@@ -73,6 +74,7 @@
     <Compile Include="Interface\IRegionRepository.cs" />
     <Compile Include="Interface\IRepository.cs" />
     <Compile Include="Interface\IUserRepository.cs" />
+    <Compile Include="MongoDB\CapcodeRepository.cs" />
     <Compile Include="MongoDB\DataObjects\Groups\GroupDto.cs" />
     <Compile Include="MongoDB\DataObjects\Messages\JobMessageDto.cs" />
     <Compile Include="MongoDB\DataObjects\Spatial\GridReferenceDto.cs" />

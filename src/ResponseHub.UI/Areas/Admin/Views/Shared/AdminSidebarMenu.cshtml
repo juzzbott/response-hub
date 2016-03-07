@@ -7,6 +7,9 @@
 	<li class="@(ViewContext.RouteData.Values["Controller"].ToString() == "Users" ? "active" : "")">
 		<a href="/admin/users"><i class="fa fa-fw fa-user"></i>Users</a>
 	</li>
+	<li class="@(ViewContext.RouteData.Values["Controller"].ToString() == "Capcodes" ? "active" : "")">
+		<a href="/admin/capcodes"><i class="fa fa-fw fa-tty"></i>Capcodes</a>
+	</li>
 	<li class="@(ViewContext.RouteData.Values["Controller"].ToString() == "Messages" ? "active" : "")">
 		<a href="/admin/messages"><i class="fa fa-fw fa-newspaper-o"></i>Messages</a>
 	</li>

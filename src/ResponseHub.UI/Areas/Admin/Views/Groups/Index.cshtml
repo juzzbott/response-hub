@@ -52,15 +52,18 @@
 				<td colspan="5">No groups found.</td>
 			</tr>
 		}
-		@foreach(var group in Model)
+		else
 		{
-			<tr>
-				<td><a href="/admin/groups/@group.Id"><strong>@group.Name</strong></a></td>
-				<td>@group.Capcode</td>
-				<td>@Html.EnumDescription(group.Service)</td>
-				<td>@group.Created.ToString("yyyy-MM-dd")</td>
-				<td><a href="/admin/groups/@group.Id/edit" title="Edit group" class="btn-icon btn-action-icon"><i class="fa fa-pencil-square-o"></i></a></td>
-			</tr>
+			foreach(var group in Model)
+			{
+				<tr>
+					<td><a href="/admin/groups/@group.Id"><strong>@group.Name</strong></a></td>
+					<td>@group.Capcode</td>
+					<td>@Html.EnumDescription(group.Service)</td>
+					<td>@group.Created.ToString("yyyy-MM-dd")</td>
+					<td><a href="/admin/groups/@group.Id/edit" title="Edit group" class="btn-icon btn-action-icon"><i class="fa fa-pencil-square-o"></i></a></td>
+				</tr>
+			}
 		}
 	</tbody>
 </table>

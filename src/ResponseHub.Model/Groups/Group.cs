@@ -14,6 +14,8 @@ namespace Enivate.ResponseHub.Model.Groups
 
 		public string Capcode { get; set; }
 
+		public IList<Guid> AdditionalCapcodes { get; set; }
+
 		public string Name { get; set; }
 
 		public DateTime Created { get; set; }
@@ -34,6 +36,7 @@ namespace Enivate.ResponseHub.Model.Groups
 		{
 			Id = Guid.NewGuid();
 			Users = new List<UserMapping>();
+			AdditionalCapcodes = new List<Guid>();
 		}
 
 	}

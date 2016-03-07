@@ -2,6 +2,9 @@
 db.map_indexes.createIndex({ "PageNumber": 1 }, { background: true });
 db.map_indexes.createIndex({ "GridReferences.Coordinates": "2dsphere" }, { background: true, name: "Coords_2dsphere" });
 
+// Capcodes
+db.capcodes.createIndex({ Name: "text", ShortName: "text" }, { background: true, name: "capcodes_text" });
+
 // Groups
 db.groups.createIndex({ Name: "text" }, { background: true });
 db.groups.createIndex({ HeadquartersCoordinates: "2dsphere" }, { background: true, name: "HQ_Coords_2dsphere" });

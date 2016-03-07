@@ -16,6 +16,8 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB.DataObjects.Groups
 
 		public string Capcode { get; set; }
 
+		public IList<Guid> AdditionalCapcodes { get; set; }
+
 		public string Name { get; set; }
 
 		public DateTime Created { get; set; }
@@ -36,6 +38,7 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB.DataObjects.Groups
 		{
 			Id = Guid.NewGuid();
 			Users = new List<UserMapping>();
+			AdditionalCapcodes = new List<Guid>();
 		}
 
 	}

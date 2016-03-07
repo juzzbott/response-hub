@@ -1,0 +1,76 @@
+﻿@model Enivate.ResponseHub.UI.Areas.Admin.Models.Capcodes.CreateCapcodeViewModel
+
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<h1>@ViewBag.Title</h1>
+
+@if (Model.Id == Guid.Empty)
+{
+	<p>Create a new capcode that can be selected by groups so that members can also recieve messages from the capcode.</p>
+}
+else
+{
+	<p>Edit the details of the capcode.</p>
+}
+
+<form action="@Request.Url.LocalPath" method="post">
+
+	@Html.AntiForgeryToken()
+
+	@Html.ValidationSummary(true)
+
+	<div class="form-group">
+		<label for="Name">Name *</label>
+		<div class="row">
+			<div class="col-sm-8 col-md-6 col-lg-4">
+				@Html.TextBoxFor(model => model.Name, new { @class = "form-control", placeholder = "e.g. State Info" })
+			</div>
+		</div>
+		@Html.ValidationMessageFor(model => model.Name)
+	</div>
+
+	<div class="form-group">
+		<label for="Name">Short name *</label>
+		<div class="row">
+			<div class="col-sm-8 col-md-6 col-lg-4">
+				@Html.TextBoxFor(model => model.ShortName, new { @class = "form-control", placeholder = "e.g. STATE_INFO" })
+			</div>
+		</div>
+		@Html.ValidationMessageFor(model => model.ShortName)
+	</div>
+
+	<div class="form-group">
+		<label for="Name">Capcode *</label>
+		<div class="row">
+			<div class="col-sm-8 col-md-6 col-lg-4">
+				@Html.TextBoxFor(model => model.CapcodeAddress, new { @class = "form-control", placeholder = "00000xxx", maxlength = "9" })
+			</div>
+		</div>
+		@Html.ValidationMessageFor(model => model.CapcodeAddress)
+	</div>
+
+	<div class="form-group">
+		<label for="Service">Service *</label>
+		<div class="row">
+			<div class="col-sm-8 col-md-6 col-lg-4">
+				@Html.DropDownListFor(model => model.Service, Model.AvailableServices, new { @class = "form-control" })
+			</div>
+		</div>
+		@Html.ValidationMessageFor(model => model.Service)
+	</div>
+
+	<div class="top-20">
+		@if (Model.Id == Guid.Empty)
+		{
+			<button type="submit" class="btn btn-default">Create capcode</button>
+		}
+		else
+		{
+			<button type="submit" class="btn btn-default">Save capcode</button>
+		}
+		<a href="/admin/capcodes" class="btn btn-link">Cancel</a>
+	</div>
+
+</form>

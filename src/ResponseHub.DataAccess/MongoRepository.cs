@@ -190,7 +190,7 @@ namespace Enivate.ResponseHub.DataAccess
 			string collectionName = String.Format("{0}{1}", type.Name.Substring(0, 1).ToLower(), type.Name.Substring(1));
 
 			// Get the list of attributes for the type.
-			object[] attributes = this.GetType().GetCustomAttributes(typeof(MongoCollectionNameAttribute), true);
+			object[] attributes = GetType().GetCustomAttributes(typeof(MongoCollectionNameAttribute), true);
 
 			// Ensure there is attributes
 			if (attributes != null && attributes.Length > 0)
