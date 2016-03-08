@@ -51,7 +51,19 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
         {
 
 			// Get the capcodes
-			IList<Capcode> capcodes = await CapcodeService.GetAll();
+			List<Capcode> capcodes = new List<Capcode>();
+
+			// If there is no search term, return all results, otherwise return only those that match the search results.
+			if (String.IsNullOrEmpty(Request.QueryString["q"]))
+			{
+				// Get the most recent groups
+				capcodes.AddRange(await CapcodeService.GetAll());
+				capcodes = capcodes.OrderByDescending(i => i.Created).Take(30).ToList();
+			}
+			else
+			{
+				capcodes.AddRange(await CapcodeService.FindByName(Request.QueryString["q"]));
+			}
 
             return View(capcodes);
         }

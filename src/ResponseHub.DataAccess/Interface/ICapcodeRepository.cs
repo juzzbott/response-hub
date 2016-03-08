@@ -11,5 +11,7 @@ namespace Enivate.ResponseHub.DataAccess.Interface
 	public interface ICapcodeRepository : IRepository<Capcode>
 	{
 
+		Task<IList<Capcode>> FindByName(string name);
+
 	}
 }

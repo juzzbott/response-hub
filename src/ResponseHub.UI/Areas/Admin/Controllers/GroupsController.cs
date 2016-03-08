@@ -81,10 +81,11 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 
 			List<Group> groups = new List<Group>();
 
+			// If there is no search term, return all results, otherwise return only those that match the search results.
 			if (String.IsNullOrEmpty(Request.QueryString["q"]))
 			{
 				// Get the most recent groups
-				groups.AddRange(await GroupService.GetRecentlyAdded(10));
+				groups.AddRange(await GroupService.GetRecentlyAdded(30));
 			}
 			else
 			{

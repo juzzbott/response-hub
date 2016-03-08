@@ -33,6 +33,8 @@
 
 <a href="/admin/capcodes/create" class="btn btn-primary btn-icon btn-lg top-10"><i class="fa fa-plus"></i> Create capcode</a>
 
+@Html.Partial("~/Areas/Admin/Views/Shared/SearchControl.cshtml", new Enivate.ResponseHub.UI.Areas.Admin.Models.SearchViewModel(Model.Count))
+
 <table class="table table-hover table-striped">
 	<thead>
 		<tr>
@@ -54,7 +56,7 @@
 			foreach (var capcode in Model)
 			{
 				<tr>
-					<td><a href="/admin/capcodes/@capcode.Id"><strong>@capcode.Name</strong></a></td>
+					<td><a href="/admin/capcodes/@capcode.Id">@capcode.Name</a></td>
 					<td>@capcode.CapcodeAddress</td>
 					<td>@capcode.ShortName</td>
 					<td>@Html.EnumDescription(capcode.Service)</td>

@@ -165,5 +165,15 @@ namespace Enivate.ResponseHub.ApplicationServices
 
 		}
 
+		/// <summary>
+		/// Finds capcodes by name or short name. This is a text based search and will match any of the words in the capcode name.
+		/// </summary>
+		/// <param name="name">The name of the capcode to search for.</param>
+		/// <returns>The list of capcodes that match against the name.</returns>
+		public async Task<IList<Capcode>> FindByName(string name)
+		{
+			return await _repository.FindByName(name);
+		}
+
 	}
 }

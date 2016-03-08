@@ -19,5 +19,7 @@ namespace Enivate.ResponseHub.Model.Groups.Interface
 
 		Task Save(Capcode capcode);
 
+		Task<IList<Capcode>> FindByName(string name);
+
 	}
 }
