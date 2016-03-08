@@ -357,6 +357,9 @@ h4.legend {
 fieldset[disabled] .btn {
   cursor: default;
 }
+.bootstrap-select .btn.dropdown-toggle {
+  border-radius: 2px;
+}
 /*
 	Login styles
 */
@@ -644,6 +647,28 @@ fieldset[disabled] .btn {
   left: 148px;
   top: 60px;
   color: #FF862F;
+}
+/**
+ * Capcodes
+*/
+.capcode-list-tags {
+  margin-top: 20px;
+  border: 1px solid #c8c5ba;
+  background-color: #fafafa;
+  padding: 10px 10px 0;
+}
+.capcode-list-tags .label {
+  padding: 5px 8px;
+  font-size: 90%;
+  font-weight: normal;
+  margin-right: 10px;
+  display: inline-block;
+  margin-bottom: 10px;
+}
+.capcode-list-tags .label a {
+  color: #fff;
+  cursor: pointer;
+  padding-left: 6px;
 }
 /**
  * Mixins

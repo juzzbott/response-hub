@@ -37,12 +37,6 @@
 		</div>
 		@Html.ValidationMessageFor(model => model.Region)
 
-		<div class="row">
-			<div class="col-lg-10 col-xl-6">
-				<p class="section-help">Selecting the correct region will ensure the group gets all the region messages as well as unit messages.</p>
-			</div>
-		</div>
-
 	</div>
 
 	<div class="form-group">
@@ -59,20 +53,47 @@
 		<label>Additional capcodes</label>
 		<div class="row">
 			<div class="col-sm-8 col-md-6 col-lg-4">
-				<input type="text" class="form-control capcode-selection" />
-
-				<script language="javascript">
-					var capcodes = [
-						@for(int i = 0; i < Model.AvailableCapcodes.Count; i++)
-						{
-							var capcode = Model.AvailableCapcodes[i];
-							Html.Raw(String.Format("{{ id: '{0}', name: '{1}', shortName: '{2}', capcode: '{3}'}}{4}\r\n", capcode.Id, capcode.Name, capcode.ShortName, capcode.CapcodeAddress, (i > 0 ? "," : "")));
-						}
-					]
-				</script>
+				<select id="AvailableCapcodes" class="form-control capcode-selection selectpicker" data-live-search="true" />
+					<option value="">Select capcode...</option>
+				@foreach(var capcode in Model.AvailableCapcodes)
+				{
+					<option value="@capcode.Id" data-tokens="@capcode.Name @capcode.ShortName" data-name="@capcode.Name" data-capcode-address="@capcode.CapcodeAddress">@capcode.Name (@capcode.CapcodeAddress)</option>
+				}
+				</select>
+				@Html.HiddenFor(i => i.AdditionalCapcodes)
 
 			</div>
 		</div>
+		<div class="row">
+			<div class="col-lg-10">
+				@if (String.IsNullOrEmpty(Model.AdditionalCapcodes))
+				{
+					<div class="capcode-list-tags hidden">
+					</div>
+				}
+				else
+				{
+					<div class="capcode-list-tags">
+						@foreach (string capcodeId in Model.AdditionalCapcodes.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+						{
+							var capcode = Model.AvailableCapcodes.FirstOrDefault(i => i.Id.ToString().ToLower() == capcodeId.ToLower());
+							if (capcode != null)
+							{
+								<span class="label label-primary" data-capcode-id="@capcode.Id">@capcode.Name (@capcode.CapcodeAddress)<a><i class="fa fa-times-circle-o"></i></a></span>
+							}
+						}
+					</div>
+				}
+			</div>
+		</div>
+
+
+		<div class="row">
+			<div class="col-lg-10 col-xl-6">
+				<p class="section-help">Selecting relevant capcodes for the group will ensure group members will be displayed all relevant message on ResponseHub. This has no effect on the capcodes assigned to the user/groups within the EAS paging system.</p>
+			</div>
+		</div>
+
 	</div>
 
 	<div class="form-group row">

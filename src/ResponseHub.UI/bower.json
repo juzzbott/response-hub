@@ -12,6 +12,7 @@
 	"dependencies": {
 		"jquery": "2.1.4",
 		"bootstrap": "3.3.6",
+		"bootstrap-select": "1.10.0",
 		"moment": "~2.11.1",
 		"fontawesome": "~4.5.0",
 		"jquery-validation": "~1.14.0",

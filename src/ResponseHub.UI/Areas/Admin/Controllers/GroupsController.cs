@@ -272,8 +272,11 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 			// Create the headquarters coords
 			Coordinates coords = new Coordinates(createGroupModel.Latitude.Value, createGroupModel.Longitude.Value);
 
+			// Get the list of additional capcodes
+			IList<Guid> additionalCapcodes = GetCapcodeIdsFromHiddenValue(createGroupModel.AdditionalCapcodes);
+
 			// Create the group
-			await GroupService.CreateGroup(createGroupModel.Name, service, createGroupModel.Capcode, groupAdmin.Id, createGroupModel.Description, region, coords);
+			await GroupService.CreateGroup(createGroupModel.Name, service, createGroupModel.Capcode, additionalCapcodes, groupAdmin.Id, createGroupModel.Description, region, coords);
 
 			// Send the new group email to the group admin
 			await SendGroupCreatedEmail(groupAdmin, createGroupModel.Name, service, createGroupModel.Capcode);
@@ -398,6 +401,10 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 				});
 			}
 
+			// Get the list of additional capcodes
+			IList<Capcode> allCapcodes = await CapcodeService.GetAll();
+			IList<Capcode> additionalCapcodes = allCapcodes.Where(i => group.AdditionalCapcodes.Contains(i.Id)).ToList();
+
 			// Create the model for the single view
 			SingleGroupViewModel model = new SingleGroupViewModel()
 			{
@@ -406,6 +413,7 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 				Description = group.Description,
 				Service = EnumExtensions.GetEnumDescription(group.Service),
 				Capcode = group.Capcode,
+				AdditionalCapcodes = additionalCapcodes,
 				Users = groupUserModels,
 				Region = group.Region.Name,
 				HeadquartersCoordinates = group.HeadquartersCoordinates
@@ -622,6 +630,8 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 			CreateGroupModel model = new CreateGroupModel();
 			model.AvailableRegions = await GetAvailableRegions();
 			model.Capcode = group.Capcode;
+			model.AvailableCapcodes = await CapcodeService.GetAllByService(group.Service);
+			model.AdditionalCapcodes = String.Format("{0},", String.Join(",", group.AdditionalCapcodes));
 			model.Description = group.Description;
 			model.Latitude = group.HeadquartersCoordinates.Latitude;
 			model.Longitude = group.HeadquartersCoordinates.Longitude;
@@ -655,6 +665,10 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 				throw new HttpException((int)HttpStatusCode.NotFound, "The requested page cannot be found.");
 			}
 
+			// Set the available options
+			model.AvailableRegions = await GetAvailableRegions();
+			model.AvailableCapcodes = await CapcodeService.GetAllByService(group.Service);
+
 			// Get the service type from the model
 			int groupServiceId;
 			Int32.TryParse(model.Service, out groupServiceId);
@@ -675,12 +689,15 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 			// Create the headquarters coords
 			Coordinates coords = new Coordinates(model.Latitude.Value, model.Longitude.Value);
 
+			IList<Guid> additionalCapcodeIds = GetCapcodeIdsFromHiddenValue(model.AdditionalCapcodes);
+
 			try
 			{
 
 				// Update the values of the group
 				group.Name = model.Name;
 				group.Capcode = model.Capcode;
+				group.AdditionalCapcodes = GetCapcodeIdsFromHiddenValue(model.AdditionalCapcodes);
 				group.Description = model.Description;
 				group.Updated = DateTime.UtcNow;
 				group.HeadquartersCoordinates = coords;
@@ -702,6 +719,7 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 
 
 		}
+
 
 		#endregion
 
@@ -796,6 +814,46 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 
 			// return the available roles
 			return availableRoles;
+		}
+
+		/// <summary>
+		/// Gets the list of guids from the hidden value for the additional capcodes.
+		/// </summary>
+		/// <param name="additionalCapcodes">The field containing the Id values.</param>
+		/// <returns></returns>
+		private IList<Guid> GetCapcodeIdsFromHiddenValue(string additionalCapcodes)
+		{
+			// If the additional capcodes is null or empty, return empty list
+			if (String.IsNullOrEmpty(additionalCapcodes))
+			{
+				return new List<Guid>();
+			}
+
+			IList<Guid> capcodeIds = new List<Guid>();
+
+			// Split the string by commas, and add each guid to the list
+			foreach(string rawId in additionalCapcodes.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+			{
+				// If the raw id is null or empty, continue
+				if (String.IsNullOrWhiteSpace(rawId))
+				{
+					continue;
+				}
+
+				// Create the Guid from the raw id
+				Guid capcodeId = Guid.Empty;
+				bool result = Guid.TryParse(rawId.Trim(), out capcodeId);
+
+				// If valid, add to the list
+				if (result)
+				{
+					capcodeIds.Add(capcodeId);
+				}
+			}
+
+			// return the list of capcodes
+			return capcodeIds;
+
 		}
 
 		#endregion

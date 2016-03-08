@@ -23,6 +23,7 @@ module.exports = function(grunt) {
 					'bower_components/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js',
 					'bower_components/bootstrap/dist/js/bootstrap.js',
 					'bower_components/moment/min/moment.min.js',
+					'bower_components/bootstrap-select/dist/js/bootstrap-select.min.js',
 					'assets/js/lib/leaflet.js'
 				],
 				dest: 'assets/js/framework.js'
@@ -36,7 +37,8 @@ module.exports = function(grunt) {
 					'assets/js/modules/joblog.js',
 					'assets/js/modules/wallboard.js',
 					'assets/js/modules/groups.js',
-					'assets/js/modules/password-strength.js'
+					'assets/js/modules/password-strength.js',
+					'assets/js/modules/capcodes.js'
 				],
 				dest: 'assets/js/script.js'
 			},
@@ -45,6 +47,7 @@ module.exports = function(grunt) {
 					'bower_components/bootstrap/dist/css/bootstrap.css',
 					'assets/css/lib/bootstrap-grid-xl.css',
 					'bower_components/fontawesome/css/font-awesome.min.css',
+					'bower_components/bootstrap-select/dist/css/bootstrap-select.min.css',
 					'assets/css/lib/leaflet.css'
 				],
 				dest: 'assets/css/framework.css',

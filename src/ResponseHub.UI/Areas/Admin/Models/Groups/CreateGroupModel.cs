@@ -22,6 +22,8 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Models.Groups
 		[Required(ErrorMessage = "You must enter a capcode / pager address for this group.")]
 		public string Capcode { get; set; }
 
+		public string AdditionalCapcodes { get; set; }
+
 		public IList<Capcode> AvailableCapcodes { get; set; }
 
 		public IList<SelectListItem> AvailableServices { get; set; }

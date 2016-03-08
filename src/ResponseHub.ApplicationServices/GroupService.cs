@@ -40,7 +40,7 @@ namespace Enivate.ResponseHub.ApplicationServices
 		/// <param name="name">The name of the group.</param>
 		/// <param name="service">The service the group belongs to.</param>
 		/// <returns>The created group object.</returns>
-		public async Task<Group> CreateGroup(string name, ServiceType service, string capcode, Guid groupAdministratorId, string description, Region region, Coordinates headquartersCoords)
+		public async Task<Group> CreateGroup(string name, ServiceType service, string capcode, IList<Guid> additionalCapcodes, Guid groupAdministratorId, string description, Region region, Coordinates headquartersCoords)
 		{
 			Group group = new Group()
 			{
@@ -49,6 +49,7 @@ namespace Enivate.ResponseHub.ApplicationServices
 				Updated = DateTime.UtcNow,
 				Service = service,
 				Capcode = capcode,
+				AdditionalCapcodes = additionalCapcodes,
 				Description = description,
 				Region = region,
 				HeadquartersCoordinates = headquartersCoords

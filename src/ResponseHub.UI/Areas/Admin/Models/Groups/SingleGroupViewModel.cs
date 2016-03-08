@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 using Enivate.ResponseHub.UI.Models.Users;
 using Enivate.ResponseHub.Model.Spatial;
+using Enivate.ResponseHub.Model.Groups;
 
 namespace Enivate.ResponseHub.UI.Areas.Admin.Models.Groups
 {
@@ -25,9 +26,12 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Models.Groups
 
 		public Coordinates HeadquartersCoordinates { get; set; }
 
+		public IList<Capcode> AdditionalCapcodes { get; set; }
+
 		public SingleGroupViewModel()
 		{
 			Users = new List<GroupUserViewModel>();
+			AdditionalCapcodes = new List<Capcode>();
 		}
 
 	}

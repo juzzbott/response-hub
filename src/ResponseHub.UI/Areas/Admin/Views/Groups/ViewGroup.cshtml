@@ -43,6 +43,18 @@
 		<p class="service"><strong>Region: </strong><span class="mobile-block">@Model.Region</span></p>
 		<p class="capcode"><strong>Capcode: </strong><span class="mobile-block">@Model.Capcode</span></p>
 
+		<p class="additional-capcodes"><strong>Additional capcodes:</strong></p>
+		<ul class="">
+			@if (!Model.AdditionalCapcodes.Any())
+			{
+				<li class="text-info">No additional capcodes</li>
+			}
+			@foreach(var capcode in Model.AdditionalCapcodes)
+			{
+				<li class="text-info">@capcode.Name (@capcode.CapcodeAddress) [@capcode.ShortName]</li>
+			}
+		</ul>
+
 		<div class="row">
 			<div class="col-sm-12">
 				<strong>Description:</strong><br />

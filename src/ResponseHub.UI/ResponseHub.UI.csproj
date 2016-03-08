@@ -225,6 +225,7 @@
     <Content Include="assets\images\leaflet\marker-shadow.png" />
     <Content Include="assets\js\framework.js" />
     <Content Include="assets\js\lib\leaflet.js" />
+    <Content Include="assets\js\modules\capcodes.js" />
     <Content Include="assets\js\modules\groups.js" />
     <Content Include="assets\js\modules\joblog.js" />
     <Content Include="assets\js\modules\maps.js" />
