@@ -5,7 +5,6 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 
-using Enivate.ResponseHub.UI.Areas.Admin.Models.Users;
 using Enivate.ResponseHub.Model.Groups;
 
 namespace Enivate.ResponseHub.UI.Areas.Admin.Models.Groups

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -10,7 +9,6 @@ using System.Web.Mvc;
 using Microsoft.Practices.Unity;
 
 using Enivate.ResponseHub.Common;
-using Enivate.ResponseHub.Common.Constants;
 using Enivate.ResponseHub.Common.Extensions;	
 using Enivate.ResponseHub.Logging;
 using Enivate.ResponseHub.Model;
@@ -19,9 +17,7 @@ using Enivate.ResponseHub.Model.Groups.Interface;
 using Enivate.ResponseHub.Model.Identity;
 using Enivate.ResponseHub.Model.Identity.Interface;
 using Enivate.ResponseHub.Model.Spatial;
-using Enivate.ResponseHub.Mail;
 using Enivate.ResponseHub.UI.Areas.Admin.Models.Groups;
-using Enivate.ResponseHub.UI.Areas.Admin.Models.Users;
 using Enivate.ResponseHub.UI.Filters;
 using Enivate.ResponseHub.UI.Models.Users;
 
@@ -53,6 +49,15 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 			get
 			{
 				return _userService ?? (_userService = UnityConfiguration.Container.Resolve<IUserService>());
+			}
+		}
+
+		private IMailService _mailService;
+		protected IMailService MailService
+		{
+			get
+			{
+				return _mailService ?? (_mailService = UnityConfiguration.Container.Resolve<IMailService>());
 			}
 		}
 
@@ -190,7 +195,7 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 				model.GroupAdministrator.UserExists = true;
 			}
 
-			return View("~/Areas/Admin/Views/Users/ConfirmUser.cshtml", model.GroupAdministrator);
+			return View("ConfirmUser", model.GroupAdministrator);
 		}
 
 		[Route("create/group-administrator")]
@@ -206,14 +211,14 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 			// If the model is not valid, return view.
 			if (!ModelState.IsValid)
 			{
-				return View("~/Areas/Admin/Views/Users/ConfirmUser.cshtml", model);
+				return View("ConfirmUser", model);
 			}
 
 			// If there is "System Administrator" in the role list, show error message
 			if (model.Role.Equals(RoleTypes.SystemAdministrator, StringComparison.CurrentCultureIgnoreCase))
 			{
 				ModelState.AddModelError("", "There was an error setting the role for the user.");
-				return View("~/Areas/Admin/Views/Users/ConfirmUser.cshtml", model);
+				return View("ConfirmUser", model);
 			}
 
 			// Get the CreateGroupViewModel from session
@@ -236,7 +241,7 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 				groupAdmin = await UserService.CreateAsync(model.EmailAddress, model.FirstName, model.Surname, new List<string>() { RoleTypes.GroupAdministrator, RoleTypes.GeneralUser });
 
 				// Send the email to the user
-				await SendAccountActivationEmail(groupAdmin);
+				await MailService.SendAccountActivationEmail(groupAdmin);
 
 			}
 			else
@@ -249,7 +254,7 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 				{
 					ModelState.AddModelError("", "There was a system error creating the group.");
 					await Log.Error(String.Format("Unable to create group. Existing user with email ''  could not be found.", createGroupModel.GroupAdministratorEmail));
-					return View("~/Areas/Admin/Views/Users/ConfirmUser.cshtml", model);
+					return View("ConfirmUser", model);
 				}
 			}
 
@@ -267,7 +272,7 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 			{
 				await _log.Error(String.Format("Unable to create group. Region '{0}' does not exist.", createGroupModel.Region));
 				ModelState.AddModelError("", "There was a system error creating the group.");
-				return View("~/Areas/Admin/Views/Users/ConfirmUser.cshtml", model);
+				return View("ConfirmUser", model);
 			}
 
 			// Create the headquarters coords
@@ -280,55 +285,13 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 			await GroupService.CreateGroup(createGroupModel.Name, service, createGroupModel.Capcode, additionalCapcodes, groupAdmin.Id, createGroupModel.Description, region, coords);
 
 			// Send the new group email to the group admin
-			await SendGroupCreatedEmail(groupAdmin, createGroupModel.Name, service, createGroupModel.Capcode);
+			await MailService.SendGroupCreatedEmail(groupAdmin, createGroupModel.Name, service, createGroupModel.Capcode);
 
 			// Clear the session url
 			Session.Remove(CreateGroupViewModelSesionKey);
 
 			// redirect back to group index page
 			return new RedirectResult("/admin/groups?group_created=1");
-		}
-
-		/// <summary>
-		/// Sends the account activation email to the new user.
-		/// </summary>
-		/// <param name="newUser">The new user to send the account for.</param>
-		/// <returns>Async task.</returns>
-		private async Task SendAccountActivationEmail(IdentityUser newUser)
-		{
-
-			// Create the tuple for the to override
-			Tuple<string, string> to = new Tuple<string, string>(newUser.EmailAddress, newUser.FullName);
-
-			string baseSiteUrl = ConfigurationManager.AppSettings[ConfigurationKeys.BaseWebsiteUrl] ?? "";
-
-			// Create the replacements
-			IDictionary<string, string> replacements = new Dictionary<string, string>();
-			replacements.Add("#FirstName#", newUser.FirstName);
-			replacements.Add("#ActivationLink#", String.Format("{0}/my-account/activate/{1}", baseSiteUrl, newUser.ActivationCode.ToLower()));
-
-			// Create the mail provider and send the message
-			MailProvider mailProvider = new MailProvider();
-			await mailProvider.SendMailMessage(MailTemplates.ActivateAccount, replacements, to, null);
-
-		}
-
-		private async Task SendGroupCreatedEmail(IdentityUser groupAdmin, string groupName, ServiceType service, string capcode)
-		{
-			// Create the tuple for the to override
-			Tuple<string, string> to = new Tuple<string, string>(groupAdmin.EmailAddress, groupAdmin.FullName);
-			
-			// Create the replacements
-			IDictionary<string, string> replacements = new Dictionary<string, string>();
-			replacements.Add("#FirstName#", groupAdmin.FirstName);
-			replacements.Add("#GroupName#", groupName);
-			replacements.Add("#ServiceType#", service.GetEnumDescription());
-			replacements.Add("#Capcode#", capcode);
-
-			// Create the mail provider and send the message
-			MailProvider mailProvider = new MailProvider();
-			await mailProvider.SendMailMessage(MailTemplates.GroupCreated, replacements, to, null);
-
 		}
 				
 		/// <summary>
@@ -444,7 +407,7 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 
 			NewUserViewModel model = new NewUserViewModel();
 			model.AvailableRoles = GetAvailableRoles();
-			return View("~/Areas/Admin/Views/Users/NewUser.cshtml", model);
+			return View("NewUser", model);
 		}
 
 
@@ -472,14 +435,14 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 			// If the model is not valid, return view.
 			if (!ModelState.IsValid)
 			{
-				return View("~/Areas/Admin/Views/Users/NewUser.cshtml", model);
+				return View("NewUser", model);
 			}
 
 			// If there is "System Administrator" in the role list, show error message
 			if (model.Role.Equals(RoleTypes.SystemAdministrator, StringComparison.CurrentCultureIgnoreCase))
 			{
 				ModelState.AddModelError("", "There was an error setting the role for the user.");
-				return View("~/Areas/Admin/Views/Users/NewUser.cshtml", model);
+				return View("NewUser", model);
 			}
 
 			// Get the identity user related to the specified group admin
@@ -489,7 +452,7 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 			if (newUser != null && group.Users.Any(i => i.UserId == newUser.Id))
 			{
 				ModelState.AddModelError("", "The email address you have entered is already a member of this group.");
-				return View("~/Areas/Admin/Views/Users/NewUser.cshtml", model);
+				return View("NewUser", model);
 			}
 
 			// Add the model to the session for the next screen
@@ -542,7 +505,7 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 				model.Surname = newUser.Surname;
 			}
 
-			return View("~/Areas/Admin/Views/Users/ConfirmUser.cshtml", model);
+			return View("ConfirmUser", model);
 
 		}
 
@@ -567,14 +530,14 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 			// If the model is not valid, return view.
 			if (!ModelState.IsValid)
 			{
-				return View("~/Areas/Admin/Views/Users/ConfirmUser.cshtml", model);
+				return View("ConfirmUser", model);
 			}
 
 			// If there is "System Administrator" in the role list, show error message
 			if (model.Role.Equals(RoleTypes.SystemAdministrator, StringComparison.CurrentCultureIgnoreCase))
 			{
 				ModelState.AddModelError("", "There was an error setting the role for the user.");
-				return View("~/Areas/Admin/Views/Users/ConfirmUser.cshtml", model);
+				return View("ConfirmUser", model);
 			}
 
 			// Get the identity user related to the specified group admin
@@ -584,7 +547,7 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 			if (newUser != null && group.Users.Any(i => i.UserId == newUser.Id))
 			{
 				ModelState.AddModelError("", "The email address you have entered is already a member of this group.");
-				return View("~/Areas/Admin/Views/Users/ConfirmUser.cshtml", model);
+				return View("ConfirmUser", model);
 			}
 			else if (newUser != null)
 			{

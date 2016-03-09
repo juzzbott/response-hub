@@ -64,6 +64,7 @@
     <Compile Include="Identity\PasswordResetToken.cs" />
     <Compile Include="IEntity.cs" />
     <Compile Include="Identity\RoleTypes.cs" />
+    <Compile Include="IMailService.cs" />
     <Compile Include="Messages\Interface\IJobMessageService.cs" />
     <Compile Include="Messages\Interface\IPagerMessageService.cs" />
     <Compile Include="Spatial\LocationInfo.cs" />

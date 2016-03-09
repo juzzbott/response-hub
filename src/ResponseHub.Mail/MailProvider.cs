@@ -200,7 +200,7 @@ namespace Enivate.ResponseHub.Mail
 			string baseDir = MailTemplateConfiguration.Current.TemplatesDirectory;
 
 			// If the http context exists, and it's a virtual path, map it
-			if (HttpContext.Current != null && templateFile[0] == '~')
+			if (HttpContext.Current != null && baseDir[0] == '~')
 			{
 				baseDir = HttpContext.Current.Server.MapPath(baseDir);
 			}

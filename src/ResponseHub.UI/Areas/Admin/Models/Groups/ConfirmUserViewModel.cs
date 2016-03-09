@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
 
-namespace Enivate.ResponseHub.UI.Areas.Admin.Models.Users
+namespace Enivate.ResponseHub.UI.Areas.Admin.Models.Groups
 {
 	public class ConfirmUserViewModel
 	{

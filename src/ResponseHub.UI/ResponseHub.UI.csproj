@@ -184,13 +184,15 @@
     <Compile Include="Areas\Admin\Controllers\CapcodesController.cs" />
     <Compile Include="Areas\Admin\Controllers\GroupsController.cs" />
     <Compile Include="Areas\Admin\Controllers\HomeController.cs" />
+    <Compile Include="Areas\Admin\Controllers\UsersController.cs" />
     <Compile Include="Areas\Admin\Models\Capcodes\CreateCapcodeViewModel.cs" />
     <Compile Include="Areas\Admin\Models\Groups\ChangeUserRoleViewModel.cs" />
     <Compile Include="Areas\Admin\Models\Groups\CreateGroupModel.cs" />
     <Compile Include="Areas\Admin\Models\SearchViewModel.cs" />
-    <Compile Include="Areas\Admin\Models\Users\ConfirmUserViewModel.cs" />
-    <Compile Include="Areas\Admin\Models\Users\NewUserViewModel.cs" />
+    <Compile Include="Areas\Admin\Models\Groups\ConfirmUserViewModel.cs" />
+    <Compile Include="Areas\Admin\Models\Groups\NewUserViewModel.cs" />
     <Compile Include="Areas\Admin\Models\Groups\SingleGroupViewModel.cs" />
+    <Compile Include="Areas\Admin\Models\Users\NewAdminUserViewModel.cs" />
     <Compile Include="Controllers\Api\JobMessageController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\JobsController.cs" />
@@ -330,10 +332,10 @@
     <Content Include="Views\Shared\LoginLayout.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Areas\Admin\Views\Users\ConfirmUser.cshtml" />
+    <Content Include="Areas\Admin\Views\Groups\ConfirmUser.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Areas\Admin\Views\Users\NewUser.cshtml" />
+    <Content Include="Areas\Admin\Views\Groups\NewUser.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Home\Index.cshtml" />
@@ -385,6 +387,12 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Jobs\Index.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Areas\Admin\Views\Users\Index.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Areas\Admin\Views\Users\Create.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

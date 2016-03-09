@@ -30,13 +30,13 @@ namespace Enivate.ResponseHub.Mail.Configuration
 		{
 			get
 			{
-				return (MailTemplateElement)BaseGet(name.ToUpper());
+				return (MailTemplateElement)BaseGet(name);
 			}
 			set
 			{
-				if (BaseGet(name.ToUpper()) != null)
+				if (BaseGet(name) != null)
 				{
-					BaseRemoveAt(BaseIndexOf(BaseGet(name.ToUpper())));
+					BaseRemoveAt(BaseIndexOf(BaseGet(name)));
 				}
 				BaseAdd(value);
 			}
