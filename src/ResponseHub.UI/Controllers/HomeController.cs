@@ -13,7 +13,7 @@ namespace Enivate.ResponseHub.UI.Controllers
 		[Route]
 		public ActionResult Index()
         {
-            return View();
+			return new RedirectResult("/jobs");
         }
     }
 }

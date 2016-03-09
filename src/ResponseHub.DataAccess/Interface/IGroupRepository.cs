@@ -19,6 +19,8 @@ namespace Enivate.ResponseHub.DataAccess.Interface
 
 		Task AddUserToGroup(UserMapping userMapping, Guid groupId);
 
+		Task<IList<Group>> GetGroupsForUser(Guid userId);
+
 		Task<IList<Group>> GetAll();
 
 		Task<Group> GetById(Guid id);

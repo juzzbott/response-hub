@@ -25,6 +25,11 @@ namespace Enivate.ResponseHub.ApplicationServices
 		/// </summary>
 		private ICapcodeRepository _repository;
 
+		/// <summary>
+		/// THe service for handling groups.
+		/// </summary>
+		private IGroupService _groupService;
+
 		private const string AllCapcodesCacheKey = "AllCapcodes";
 
 		/// <summary>
@@ -32,8 +37,9 @@ namespace Enivate.ResponseHub.ApplicationServices
 		/// </summary>
 		/// <param name="repository"></param>
 		/// <param name="log"></param>
-		public CapcodeService(ICapcodeRepository repository, ILogger log)
+		public CapcodeService(IGroupService groupService, ICapcodeRepository repository, ILogger log)
 		{
+			_groupService = groupService;
 			_repository = repository;
 			_log = log;
 		}
@@ -173,6 +179,44 @@ namespace Enivate.ResponseHub.ApplicationServices
 		public async Task<IList<Capcode>> FindByName(string name)
 		{
 			return await _repository.FindByName(name);
+		}
+
+		/// <summary>
+		/// Gets the capcodes for the current user.
+		/// </summary>
+		/// <param name="userId">The id of the user to get the capcodes for.</param>
+		/// <returns>The list of capcodes for the user.</returns>
+		public async Task<IList<Capcode>> GetCapcodesForUser(Guid userId)
+		{
+
+			// Get the groups for the user
+			IList<Group> userGroups = await _groupService.GetGroupsForUser(userId);
+
+			// If there are no groups for the user, then return
+			if (userGroups == null || !userGroups.Any())
+			{
+				return new List<Capcode>();
+			}
+
+			// Select the capcode ids
+			IList<Guid> capcodeIds = userGroups.SelectMany(i => i.AdditionalCapcodes).Distinct().ToList();
+
+			// Get the list of capcodes based on the id
+			IList<Capcode> capcodes = await _repository.GetCapcodesById(capcodeIds);
+
+			// Add the group capcodes to the list
+			foreach(Group group in userGroups)
+			{
+				capcodes.Add(new Capcode() {
+					CapcodeAddress = group.Capcode,
+					Name = group.Name,
+					Service = group.Service
+				});
+			}
+
+			// return the list of capcodes for the user
+			return capcodes;
+
 		}
 
 	}

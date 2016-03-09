@@ -21,5 +21,7 @@ namespace Enivate.ResponseHub.Model.Groups.Interface
 
 		Task<IList<Capcode>> FindByName(string name);
 
+		Task<IList<Capcode>> GetCapcodesForUser(Guid userId);
+
 	}
 }

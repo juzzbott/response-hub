@@ -28,17 +28,30 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 		/// </summary>
 		private ILogger _logger;
 		
+		/// <summary>
+		/// Creates a new instance of the GroupRepository
+		/// </summary>
+		/// <param name="logger"></param>
 		public GroupRepository(ILogger logger)
 		{
 			_logger = logger;
 		}
 
+		/// <summary>
+		/// Gets all of the groups in the system.
+		/// </summary>
+		/// <returns></returns>
 		public new async Task<IList<Group>> GetAll()
 		{
 			IList<GroupDto> allResults = await base.GetAll();
 			return (IList<Group>)allResults.Select(async i => await MapDtoToModel(i)).ToList();
 		}
 
+		/// <summary>
+		/// Gets a group by the specific id.
+		/// </summary>
+		/// <param name="id"></param>
+		/// <returns></returns>
 		public new async Task<Group> GetById(Guid id)
 		{
 			GroupDto group = await base.GetById(id);
@@ -74,18 +87,17 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 			// Find most recent groups and limit by count
 			IList<GroupDto> groups = await Collection.Find(new BsonDocument()).Sort(Builders<GroupDto>.Sort.Descending(i => i.Created)).Limit(count).ToListAsync();
 
-			// return the groups found in the database.
-			IList<Group> mappedGroups = new List<Group>();
-			foreach(GroupDto group in groups)
-			{
-				mappedGroups.Add(await MapDtoToModel(group));
-			}
-
-			// return the mapped groups
-			return mappedGroups;
+			// return the mapped result set
+			return await MapDbObjectListToModelObjectList(groups);
 
 		}
 
+		/// <summary>
+		/// Determines if a group already exists with the name in the service.
+		/// </summary>
+		/// <param name="name"></param>
+		/// <param name="service"></param>
+		/// <returns></returns>
 		public async Task<bool> CheckIfGroupExists(string name, ServiceType service)
 		{
 			GroupDto group = await FindOne(i => i.Name.ToUpper() == name.ToUpper() && i.Service == service);
@@ -105,6 +117,25 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 			await Collection.UpdateOneAsync(
 				Builders<GroupDto>.Filter.Eq(i => i.Id, groupId),
 				Builders<GroupDto>.Update.Push(i => i.Users, userMapping));
+		}
+
+		/// <summary>
+		/// Gets the groups a user is a member of.
+		/// </summary>
+		/// <param name="userId">The id of the user to get the groups for.</param>
+		/// <returns>The collection of groups the user is a member of.</returns>
+		public async Task<IList<Group>> GetGroupsForUser(Guid userId)
+		{
+
+			// Create the filter to search the Users sub collection for the users id
+			FilterDefinition<GroupDto> filter = Builders<GroupDto>.Filter.ElemMatch(i => i.Users, u => u.UserId == userId);
+
+			// Get the users in the group
+			IList<GroupDto> usersGroups = await Collection.Find(filter).ToListAsync();
+
+			// return the mapped result set
+			return await MapDbObjectListToModelObjectList(usersGroups);
+
 		}
 
 		/// <summary>
@@ -212,6 +243,23 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 				Users = dbObj.Users,
 				HeadquartersCoordinates = new Coordinates(dbObj.HeadquartersCoordinates.Latitude, dbObj.HeadquartersCoordinates.Longitude)
 			};
+		}
+
+		/// <summary>
+		/// Maps a collection of GroupDto objects to the Group model objects.
+		/// </summary>
+		/// <param name="groups"></param>
+		/// <returns></returns>
+		private async Task<IList<Group>> MapDbObjectListToModelObjectList(IList<GroupDto> groups)
+		{
+			// return the groups found in the database.
+			IList<Group> mappedGroups = new List<Group>();
+			foreach (GroupDto group in groups)
+			{
+				mappedGroups.Add(await MapDtoToModel(group));
+			}
+
+			return mappedGroups;
 		}
 
 		#endregion

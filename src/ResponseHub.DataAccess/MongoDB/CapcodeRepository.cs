@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using Enivate.ResponseHub.DataAccess.Interface;
 using Enivate.ResponseHub.Model.Groups;
 
+using MongoDB.Driver;
+
 namespace Enivate.ResponseHub.DataAccess.MongoDB
 {
 
@@ -27,6 +29,16 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 			
 			// return the mapped groups.
 			return results.Items;
+		}
+		
+		/// <summary>
+		/// Gets the list of capcodes that have ids in the collection of capcodeIds
+		/// </summary>
+		/// <param name="capcodeIds">The collection of capcode ids to search for.</param>
+		/// <returns>The list of capcodes that have ids in the collection of ids.</returns>
+		public async Task<IList<Capcode>> GetCapcodesById(IList<Guid> capcodeIds)
+		{
+			return await Collection.Find(Builders<Capcode>.Filter.In(i => i.Id, capcodeIds)).ToListAsync();
 		}
 
 	}

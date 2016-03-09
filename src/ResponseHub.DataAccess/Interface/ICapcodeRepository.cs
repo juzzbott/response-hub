@@ -13,5 +13,7 @@ namespace Enivate.ResponseHub.DataAccess.Interface
 
 		Task<IList<Capcode>> FindByName(string name);
 
+		Task<IList<Capcode>> GetCapcodesById(IList<Guid> capcodeIds);
+
 	}
 }

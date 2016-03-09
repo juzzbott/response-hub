@@ -193,6 +193,7 @@
     <Compile Include="Areas\Admin\Models\Groups\SingleGroupViewModel.cs" />
     <Compile Include="Controllers\Api\JobMessageController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\JobsController.cs" />
     <Compile Include="Controllers\MediaController.cs" />
     <Compile Include="Controllers\MyAccountController.cs" />
     <Compile Include="Controllers\WallboardController.cs" />
@@ -381,6 +382,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Areas\Admin\Views\Shared\SearchControl.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Jobs\Index.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

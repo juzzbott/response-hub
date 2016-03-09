@@ -175,6 +175,16 @@ namespace Enivate.ResponseHub.ApplicationServices
 		}
 
 		/// <summary>
+		/// Gets the groups a user is a member of.
+		/// </summary>
+		/// <param name="userId">The id of the user to get the groups for.</param>
+		/// <returns>The collection of groups the user is a member of.</returns>
+		public async Task<IList<Group>> GetGroupsForUser(Guid userId)
+		{
+			return await _repository.GetGroupsForUser(userId);
+		}
+
+		/// <summary>
 		/// Gets all the regions that a group can be a member of.
 		/// </summary>
 		/// <returns></returns>
@@ -233,6 +243,13 @@ namespace Enivate.ResponseHub.ApplicationServices
 
 		}
 
+		/// <summary>
+		/// Change the users role in the specified group.
+		/// </summary>
+		/// <param name="groupId">The id of the group to change the users role for.</param>
+		/// <param name="userId">The id of the user to change the role for.</param>
+		/// <param name="newRole">The new role to change the user to.</param>
+		/// <returns></returns>
 		public async Task ChangeUserRoleInGroup(Guid groupId, Guid userId, string newRole)
 		{
 			// If the group is null or the group id is empty guid, throw exception as the group should be saved first.
