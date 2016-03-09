@@ -1,12 +1,12 @@
 ﻿@model Enivate.ResponseHub.UI.Areas.Admin.Models.SearchViewModel
 
 <div class="search-group-form">
-	<h4>Search groups</h4>
+	<h4>Search @Model.SearchLabel</h4>
 	<form class="form-inline" method="get" action="@Request.Url.LocalPath">
 		<div class="row">
 			<div class="col-sm-6 col-lg-4">
 				<div class="input-group">
-					<input type="text" class="form-control" placeholder="Search keywords..." name="q" id="GroupSearch" value="@Request.QueryString["q"]">
+					<input type="text" class="form-control" placeholder="Search keywords..." name="q" id="Search" value="@Request.QueryString["q"]">
 					<span class="input-group-btn">
 						<button class="btn btn-default btn-icon" type="submit"><i class="fa fa-search"></i>Search</button>
 					</span>
