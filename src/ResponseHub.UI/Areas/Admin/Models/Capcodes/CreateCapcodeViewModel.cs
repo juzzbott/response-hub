@@ -1,9 +1,12 @@
-﻿using System;
+﻿using Enivate.ResponseHub.Model;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+
+using Enivate.ResponseHub.Common.Extensions;
 
 namespace Enivate.ResponseHub.UI.Areas.Admin.Models.Capcodes
 {
@@ -32,8 +35,11 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Models.Capcodes
 
 			AvailableServices = new List<SelectListItem>();
 			AvailableServices.Add(new SelectListItem() { Value = "", Text = "Please select" });
-			AvailableServices.Add(new SelectListItem() { Value = "1", Text = "State Emergency Service" });
-			AvailableServices.Add(new SelectListItem() { Value = "2", Text = "Country Fire Authority" });
+
+			foreach(ServiceType service in Enum.GetValues(typeof(ServiceType)).Cast<ServiceType>())
+			{
+				AvailableServices.Add(new SelectListItem() { Value = ((int)service).ToString(), Text = service.GetEnumDescription() });
+			}
 		}
 
 	}

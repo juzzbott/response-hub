@@ -10,11 +10,14 @@ namespace Enivate.ResponseHub.Model
 	public enum ServiceType
 	{
 
+		[Description("All Services")]
+		AllServices = 1,
+
 		[Description("State Emergency Service")]
-		StateEmergencyService = 1,
+		StateEmergencyService = 5,
 
 		[Description("Country Fire Authority")]
-		CountryFireAuthority = 2
+		CountryFireAuthority = 6
 
 	}
 }

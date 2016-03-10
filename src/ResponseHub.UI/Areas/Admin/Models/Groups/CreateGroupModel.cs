@@ -5,7 +5,9 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 
+using Enivate.ResponseHub.Common.Extensions;
 using Enivate.ResponseHub.Model.Groups;
+using Enivate.ResponseHub.Model;
 
 namespace Enivate.ResponseHub.UI.Areas.Admin.Models.Groups
 {
@@ -60,8 +62,15 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Models.Groups
 		{
 			AvailableServices = new List<SelectListItem>();
 			AvailableServices.Add(new SelectListItem() { Value = "", Text = "Please select" });
-			AvailableServices.Add(new SelectListItem() { Value = "1", Text = "State Emergency Service" });
-			AvailableServices.Add(new SelectListItem() { Value = "2", Text = "Country Fire Authority" });
+
+			foreach (ServiceType service in Enum.GetValues(typeof(ServiceType)).Cast<ServiceType>())
+			{
+				if (service == ServiceType.AllServices)
+				{
+					continue;
+				}
+				AvailableServices.Add(new SelectListItem() { Value = ((int)service).ToString(), Text = service.GetEnumDescription() });
+			}
 
 			GroupAdministrator = new ConfirmUserViewModel();
 

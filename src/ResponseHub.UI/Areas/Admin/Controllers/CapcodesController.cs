@@ -65,7 +65,7 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 				capcodes.AddRange(await CapcodeService.FindByName(Request.QueryString["q"]));
 			}
 
-            return View(capcodes);
+            return View(capcodes.OrderBy(i => i.Name).ToList());
         }
 
 		#region Create capcode
