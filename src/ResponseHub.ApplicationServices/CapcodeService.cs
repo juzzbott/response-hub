@@ -104,7 +104,7 @@ namespace Enivate.ResponseHub.ApplicationServices
 		}
 
 		/// <summary>
-		/// Get all the capcodes for the specified service.
+		/// Get all the capcodes for the specified service. This will also return any capcodes that are "All Service".
 		/// </summary>
 		/// <param name="service">The service to get the capcodes for.</param>
 		/// <returns></returns>
@@ -114,7 +114,7 @@ namespace Enivate.ResponseHub.ApplicationServices
 			IList<Capcode> allCapcodes = await GetAll();
 
 			// Return all capcodes for the specified service.
-			return allCapcodes.Where(i => i.Service == service).ToList();
+			return allCapcodes.Where(i => i.Service == service || i.Service == ServiceType.AllServices).ToList();
 
 		}
 
