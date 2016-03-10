@@ -14,6 +14,7 @@ using Enivate.ResponseHub.DataAccess.MongoDB.DataObjects.Users;
 
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
+using MongoDB.Bson;
 
 namespace Enivate.ResponseHub.DataAccess.MongoDB
 {
@@ -403,6 +404,9 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 			// Specify the keywords as lower case
 			PagedResultSet<IdentityUserDto> results = await TextSearch(keywords, Int32.MaxValue, 0, false);
 
+			// Order by first name
+			results.Items = results.Items.OrderBy(i => i.FirstName).ToList();
+
 			// Create the list of groups
 			List<IdentityUser> mappedUsers = new List<IdentityUser>();
 
@@ -414,6 +418,44 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 
 			// return the mapped groups.
 			return mappedUsers;
+		}
+
+		/// <summary>
+		/// Determines if the email address exists for a user in the system.
+		/// </summary>
+		/// <param name="emailAddress">The email address to search for.</param>
+		/// <returns>True if a user account with that email address exists, otherwise false.</returns>
+		public async Task<bool> EmailAddressExists(string emailAddress)
+		{
+			// Get the number of users with the email address
+			long results = await Collection.CountAsync(i => i.EmailAddress.ToLower() == emailAddress.ToLower());
+
+			// If no results, then no users.
+			return (results > 0);
+
+		}
+
+		/// <summary>
+		/// Gets all the users in the system. The default sort order is by first name.
+		/// </summary>
+		/// <returns>The list of all users in the system.</returns>
+		public new async Task<IList<IdentityUser>> GetAll()
+		{
+			IList<IdentityUserDto> allDtoUsers = await Collection.Find<IdentityUserDto>(new BsonDocument()).ToListAsync();
+
+			// Map to identity users
+			IList<IdentityUser> users = new List<IdentityUser>();
+			foreach(IdentityUserDto dtoUser in allDtoUsers)
+			{
+				users.Add(MapToModel(dtoUser));
+			}
+
+			// Sort the users by first name
+			users = users.OrderBy(i => i.FirstName).ToList();
+
+			// return the users
+			return users;
+
 		}
 
 		#endregion

@@ -374,6 +374,25 @@ namespace Enivate.ResponseHub.ApplicationServices
 			return await _repository.SearchUsers(keywords);
 		}
 
+		/// <summary>
+		/// Determines if the email address exists for a user in the system.
+		/// </summary>
+		/// <param name="emailAddress">The email address to search for.</param>
+		/// <returns>True if a user account with that email address exists, otherwise false.</returns>
+		public async Task<bool> EmailAddressExists(string emailAddress)
+		{
+			return await _repository.EmailAddressExists(emailAddress);
+		}
+
+		/// <summary>
+		/// Gets all the users currently in the system.
+		/// </summary>
+		/// <returns></returns>
+		public async Task<IList<IdentityUser>> GetAll()
+		{
+			return await _repository.GetAll();
+		}
+
 		#endregion
 
 	}

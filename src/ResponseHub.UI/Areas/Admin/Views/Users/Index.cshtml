@@ -1,4 +1,5 @@
-﻿
+﻿@model IList<Enivate.ResponseHub.UI.Areas.Admin.Models.Users.UserViewModel>
+
 @{
     ViewBag.Title = "User management";
     Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
@@ -25,3 +26,40 @@
 		<p class="section-help">You can only create new system administrators from the link above. To create new users for groups, you must add a new member from the group detail page.</p>
 	</div>
 </div>
+
+@Html.Partial("~/Areas/Admin/Views/Shared/SearchControl.cshtml", new Enivate.ResponseHub.UI.Areas.Admin.Models.SearchViewModel(Model.Count, "users"))
+
+<table class="table table-responsive table-striped table-hover">
+	<thead>
+		<tr>
+			<th>Name</th>
+			<th>Email</th>
+			<th>User type</th>
+			<th>Actions</th>
+		</tr>
+	</thead>
+	<tbody>
+
+		@if (Model == null || Model.Count == 0)
+		{
+			<tr>
+				<td colspan="4">There are currently no users to view.</td>
+			</tr>
+		}
+		else
+		{
+			foreach (var user in Model)
+			{
+				<tr>
+					<td><a href="/profile/@user.Id">@user.FullName</a></td>
+					<td>@user.EmailAddress</td>
+					<td>@(user.IsSystemAdmin ? "System Administrator" : (user.IsGroupAdmin ? "Group Administrator" : "General User"))</td>
+					<td>
+						<a data-href="/admin/users/@user.Id/delete" data-toggle="modal" data-target="#confirm-delete" class="cursor-pointer btn-icon btn-action-icon" title="Delete user from ResponseHub"><i class="fa fa-user-times"></i></a>
+					</td>
+				</tr>
+			}
+		}
+
+	</tbody>
+</table>

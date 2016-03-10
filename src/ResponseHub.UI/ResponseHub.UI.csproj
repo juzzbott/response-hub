@@ -193,6 +193,7 @@
     <Compile Include="Areas\Admin\Models\Groups\NewUserViewModel.cs" />
     <Compile Include="Areas\Admin\Models\Groups\SingleGroupViewModel.cs" />
     <Compile Include="Areas\Admin\Models\Users\NewAdminUserViewModel.cs" />
+    <Compile Include="Areas\Admin\Models\Users\UserViewModel.cs" />
     <Compile Include="Controllers\Api\JobMessageController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\JobsController.cs" />

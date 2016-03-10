@@ -117,6 +117,10 @@ namespace Enivate.ResponseHub.Model.Identity.Interface
 
 		Task<IList<IdentityUser>> SearchUsers(string keywords);
 
+		Task<bool> EmailAddressExists(string emailAddress);
+
+		Task<IList<IdentityUser>> GetAll();
+
 		#endregion
 
 	}
