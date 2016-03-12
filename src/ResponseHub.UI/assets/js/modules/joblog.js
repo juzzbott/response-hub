@@ -15,10 +15,7 @@
 		$('#job-title-banner h2').text(jobType + ' job');
 
 		$('#job-details-form').removeClass('hidden');
-
-		// Create the initial job
-		createJob(jobType);
-
+		
 	}
 
 	/**
@@ -34,11 +31,11 @@
 			isWordback: isWordback
 		};
 
-		var jobId = $('#hdnJobId').val();
+		var jobId = $('#Id').val();
 
 		// Create the ajax request
 		$.ajax({
-			url: jobCard.apiPrefix + '/jobs/' + jobId + '/notes',
+			url: responseHub.apiPrefix + '/job-messages/' + jobId + '/notes',
 			type: 'POST',
 			dataType: 'json',
 			data: postData,
@@ -54,6 +51,7 @@
 
 				$('#job-notes ul').prepend(noteMarkup);
 				$('#job-notes').removeClass('hidden');
+				$('#txtJobNote').val('');
 
 			}
 		});
@@ -79,31 +77,7 @@
 		return noteListItem;
 
 	}
-
-	/**
-	 * Calls the API to create the job with the specified type.
-	 * Once the job has been created, the jobId field is updated.
-	 */
-	function createJob(jobType) {
-
-		// Submit the POST api call.
-		$.ajax({
-			url: jobCard.apiPrefix + '/jobs',
-			type: 'POST',
-			dataType: 'json',
-			data: { '': jobType },
-			success: function (data) {
-
-				if (data != null) {
-					$('#hdnJobType').val(data.Type);
-					$('#hdnJobId').val(data.Id);
-				}
-
-			}
-		});
-
-	}
-
+	
 	function updateJobDetails() {
 
 		var updateDetails = {

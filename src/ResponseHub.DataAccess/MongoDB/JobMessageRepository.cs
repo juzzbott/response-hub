@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using MongoDB.Bson;
+using MongoDB.Driver;
 using MongoDB.Driver.GeoJsonObjectModel;
 
 using Enivate.ResponseHub.DataAccess.Interface;
@@ -31,6 +33,77 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 			await Collection.InsertManyAsync(messages.Select(i => MapModelToDbObject(i)));
 		}
 
+		/// <summary>
+		///  Gets the most recent job messages for the list of capcodes specified. Results are limited to count number of items.
+		/// </summary>
+		/// <param name="capcodes"></param>
+		/// <param name="count"></param>
+		/// <returns></returns>
+		public async Task<IList<JobMessage>> GetMostRecent(IEnumerable<string> capcodes, int count)
+		{
+
+			// Create the filter and sort
+			FilterDefinition<JobMessageDto> filter = Builders<JobMessageDto>.Filter.In(i => i.Capcode, capcodes);
+
+			SortDefinition<JobMessageDto> sort = Builders<JobMessageDto>.Sort.Descending(i => i.Timestamp);
+
+			// Find the job messages by capcode
+			IList<JobMessageDto> results = await Collection.Find(filter).Sort(sort).Limit(count).ToListAsync();
+
+			// Map the dto objects to model objects and return
+			List<JobMessage> messages = new List<JobMessage>();
+			messages.AddRange(results.Select(i => MapDbObjectToModel(i)));
+
+			// return the messages
+			return messages;
+
+
+		}
+
+		/// <summary>
+		/// Gets a JobMessage based on the id.
+		/// </summary>
+		/// <param name="id">The Id of the job message to get.</param>
+		/// <returns>The job message if found, otherwise null.</returns>
+		public new async Task<JobMessage> GetById(Guid id)
+		{
+			// Get the data object from the db
+			JobMessageDto message = await Collection.Find(Builders<JobMessageDto>.Filter.Eq(i => i.Id, id)).SingleOrDefaultAsync();
+
+			// return the mapped job message
+			return MapDbObjectToModel(message);
+		}
+
+		/// <summary>
+		/// Adds a new note to an existing job message. 
+		/// </summary>
+		/// <param name="jobMessageId">The id of the job message to add the note to.</param>
+		/// <param name="note">The note to add to the job.</param>
+		public async Task AddNoteToJobMessage(Guid jobMessageId, JobNote note)
+		{
+
+			// Validate the parameters
+			if (jobMessageId == Guid.Empty)
+			{
+				throw new ArgumentException("The jobMessageId parameter must be a valid, non-empty guid.");
+			}
+
+			if (note == null)
+			{
+				throw new ArgumentNullException("note");
+			}
+
+			// Create the filter
+			FilterDefinition<JobMessageDto> filter = Builders<JobMessageDto>.Filter.Eq(i => i.Id, jobMessageId);
+
+			// Create the update
+			UpdateDefinition<JobMessageDto> update = Builders<JobMessageDto>.Update.Push(i => i.Notes, note);
+
+			// Send to mongo
+			await Collection.UpdateOneAsync(filter, update);
+
+		}
+
 		#region Mappers
 
 		/// <summary>
@@ -40,6 +113,13 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 		/// <returns></returns>
 		public JobMessage MapDbObjectToModel(JobMessageDto dbObject)
 		{
+
+			// If the db object is null, return null
+			if (dbObject == null)
+			{
+				return null;
+			}
+
 			JobMessage model = new JobMessage()
 			{
 				Capcode = dbObject.Capcode,
@@ -47,7 +127,8 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 				JobNumber = dbObject.JobNumber,
 				MessageContent = dbObject.MessageContent,
 				Priority = dbObject.Priority,
-				Timestamp = dbObject.Timestamp
+				Timestamp = dbObject.Timestamp,
+				Notes = dbObject.Notes
 			};
 
 			// Map the location property.
@@ -71,6 +152,13 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 		/// <returns></returns>
 		public JobMessageDto MapModelToDbObject(JobMessage modelObject)
 		{
+
+			// Ensure we have a valid model object
+			if (modelObject == null)
+			{
+				throw new ArgumentNullException("modelObject");
+			}
+
 			JobMessageDto dbObject = new JobMessageDto()
 			{
 				Capcode = modelObject.Capcode,
@@ -78,7 +166,8 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 				JobNumber = modelObject.JobNumber,
 				MessageContent = modelObject.MessageContent,
 				Priority = modelObject.Priority,
-				Timestamp = modelObject.Timestamp
+				Timestamp = modelObject.Timestamp,
+				Notes = modelObject.Notes
 			};
 
 			// Map the location property
@@ -102,6 +191,12 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 		/// <returns></returns>
 		private LocationInfo MapLocationInfoDbObjectToModel(LocationInfoDto dbObject)
 		{
+
+			if (dbObject == null)
+			{
+				return null;
+			}
+
 			LocationInfo model = new LocationInfo()
 			{
 				AddressInfo = dbObject.AddressInfo,
@@ -126,6 +221,13 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 		/// <returns></returns>
 		private LocationInfoDto MapLocationInfoModelToDbObject(LocationInfo modelObject)
 		{
+
+			// Ensure we have a valid model object
+			if (modelObject == null)
+			{
+				throw new ArgumentNullException("modelObject");
+			}
+
 			LocationInfoDto dbObject = new LocationInfoDto()
 			{
 				AddressInfo = modelObject.AddressInfo,

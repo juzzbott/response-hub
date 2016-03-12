@@ -27,14 +27,41 @@
 		return context[func].apply(this, args);
 	}
 
+	function toggleSidebar() {
+
+		// If expanded, collapse it, otherwise expand it
+		if ($('body').hasClass("sidebar-expanded")) {
+			$('body').removeClass("sidebar-expanded");
+			$('.sidebar').removeClass("sidebar-expanded");
+			$('.main-content').removeClass("sidebar-expanded");
+		} else {
+			$('body').addClass("sidebar-expanded");
+			$('.sidebar').addClass("sidebar-expanded");
+			$('.main-content').addClass("sidebar-expanded");
+		}
+
+	}
+
 	function bindModals() {
 		$('#confirm-delete').on('show.bs.modal', function (e) {
 			$(this).find('.btn-ok').attr('href', $(e.relatedTarget).data('href'));
 		});
 	}
 
+	function bindUI() {
+
+		// Toggle the sidebar menu
+		$(".btn-sidebar-toggle").click(function () {
+			toggleSidebar();
+		});
+
+	}
+
 	// Bind the modal
 	bindModals();
+
+	// Bind the UI
+	bindUI();
 
 	// return the response hub object
 	return {

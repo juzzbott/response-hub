@@ -27,6 +27,11 @@ namespace Enivate.ResponseHub.ApplicationServices
 			_repository = repository;
 		}
 
+		/// <summary>
+		/// Adds the job messages to the collection.
+		/// </summary>
+		/// <param name="messages"></param>
+		/// <returns></returns>
 		public async Task AddMessages(IList<JobMessage> messages)
 		{
 			// If the messages is null, then return null.
@@ -44,6 +49,55 @@ namespace Enivate.ResponseHub.ApplicationServices
 			// Save the messages to the repository
 			await _repository.AddMessages(messages);
 			
+		}
+
+		/// <summary>
+		/// Gets the most recent count capcodes. 
+		/// </summary>
+		/// <param name="capcodes"></param>
+		/// <param name="count"></param>
+		/// <returns></returns>
+		public async Task<IList<JobMessage>> GetMostRecent(IEnumerable<string> capcodes, int count)
+		{
+			return await _repository.GetMostRecent(capcodes, count);
+		}
+
+		/// <summary>
+		/// Gets the specific job message by the Id.
+		/// </summary>
+		/// <param name="id">The Id of the job to return.</param>
+		/// <returns>The job message if found, otherwise null.</returns>
+		public async Task<JobMessage> GetById(Guid id)
+		{
+			JobMessage message = await _repository.GetById(id);
+
+			// Ensure the notes always come newest first.
+			message.Notes = message.Notes.OrderByDescending(i => i.Created).ToList();
+
+			// return the message
+			return message;
+		}
+
+		/// <summary>
+		/// Adds a new note to an existing job message. 
+		/// </summary>
+		/// <param name="jobMessageId">The id of the job message to add the note to.</param>
+		/// <param name="note">The note to add to the job.</param>
+		public async Task<JobNote> AddNoteToJobMessage(Guid jobMessageId, string noteBody, bool isWordBack, Guid userId)
+		{
+
+			// CReate the job note
+			JobNote note = new JobNote()
+			{
+				Body = noteBody,
+				Created = DateTime.UtcNow,
+				IsWordBack = isWordBack,
+				UserId = userId
+			};
+
+			await _repository.AddNoteToJobMessage(jobMessageId, note);
+
+			return note;
 		}
 
 	}

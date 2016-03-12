@@ -26,6 +26,8 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB.DataObjects.Messages
 
 		public MessagePriority Priority { get; set; }
 
+		public IList<JobNote> Notes { get; set; }
+
 		public JobMessageDto()
 		{
 
@@ -36,6 +38,8 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB.DataObjects.Messages
 
 			// Default to administration.
 			Priority = MessagePriority.Administration;
+
+			Notes = new List<JobNote>();
 		}
 
 	}

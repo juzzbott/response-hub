@@ -1,7 +1,33 @@
-﻿
+﻿@model List<Enivate.ResponseHub.Model.Messages.JobMessage>
+
 @{
     ViewBag.Title = "Jobs";
 }
 
 <h1>@ViewBag.Title</h1>
 
+@foreach(var message in Model)
+{
+	<div class="row">
+		<div class="col-sm-12 job-list">
+
+			<h3>
+				@if (message.Priority == Enivate.ResponseHub.Model.Messages.MessagePriority.Emergency)
+				{
+					<i class="fa fa-exclamation-triangle p-message-emergency"></i>
+				}
+				else if (message.Priority == Enivate.ResponseHub.Model.Messages.MessagePriority.NonEmergency)
+				{
+					<i class="fa fa-exclamation-circle p-message-non-emergency"></i>
+				}
+				else
+				{
+					<i class="fa fa-info-circle p-message-admin"></i>
+				}
+				<a href="/jobs/@message.Id">@(!String.IsNullOrEmpty(message.JobNumber) ? message.JobNumber : message.Timestamp.ToString("dd/MM/yyyy HH:mm:ss"))</a>
+			</h3>
+			<p>@message.MessageContent</p>
+
+		</div>
+	</div>
+}

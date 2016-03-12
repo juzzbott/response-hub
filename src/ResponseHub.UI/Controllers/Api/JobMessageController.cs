@@ -14,6 +14,7 @@ using Enivate.ResponseHub.Logging;
 using Enivate.ResponseHub.Model.Messages.Interface;
 using Enivate.ResponseHub.Model.Messages;
 using System.Threading.Tasks;
+using Enivate.ResponseHub.UI.Models.Api.Messages;
 
 namespace Enivate.ResponseHub.UI.Controllers.Api
 {
@@ -80,5 +81,26 @@ namespace Enivate.ResponseHub.UI.Controllers.Api
 			}
 		}
 
-    }
+		[Route("{id:guid}/notes")]
+		[HttpPost]
+		public async Task<JobNote> PostNote(Guid id, PostJobNoteModel jobNote)
+		{
+
+			try
+			{
+				// Create the job note and return it
+				JobNote note = await JobMessageService.AddNoteToJobMessage(id, jobNote.Body, jobNote.IsWordBack, Guid.Empty);
+
+				return note;
+
+			}
+			catch (Exception ex)
+			{
+				// TODO: Logging
+				throw new HttpResponseException(new HttpResponseMessage(HttpStatusCode.InternalServerError));
+			}
+
+		}
+
+	}
 }

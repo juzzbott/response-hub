@@ -1,0 +1,84 @@
+﻿@model Enivate.ResponseHub.Model.Messages.JobMessage
+
+@{
+	ViewBag.Title = (!String.IsNullOrEmpty(Model.JobNumber) ? Model.JobNumber : Model.Timestamp.ToString("dd/MM/yyyy HH:mm:ss"));
+}
+
+@Html.HiddenFor(i => i.Id)
+
+<div class="row">
+	<div class="col-sm-7">
+
+		<h1>
+			@if (Model.Priority == Enivate.ResponseHub.Model.Messages.MessagePriority.Emergency)
+			{
+				<i class="fa fa-exclamation-triangle p-message-emergency"></i>
+			}
+			else if (Model.Priority == Enivate.ResponseHub.Model.Messages.MessagePriority.NonEmergency)
+			{
+				<i class="fa fa-exclamation-circle p-message-non-emergency"></i>
+			}
+			else
+			{
+				<i class="fa fa-info-circle p-message-admin"></i>
+			}
+			@ViewBag.Title
+		</h1>
+
+	</div>
+	<div class="col-sm-5">
+		<h3 class="text-right text-info">1 hour ago</h3>
+	</div>
+</div>
+
+<p class="lead">@Model.MessageContent</p>
+
+
+	<h3>Notes</h3>
+	<div class="row">
+		<div class="col-md-8">
+			<div class="form-group">
+				<label>Job note</label>
+				<textarea class="form-control" id="txtJobNote" name="JobNote" placeholder="Add a note for this job..."></textarea>
+			</div>
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="col-xs-12">
+			<button class="btn btn-primary" id="btnAddNote" type="button">Add note</button>
+			<div class="checkbox">
+				<label>
+					<input type="checkbox" name="WordBack" id="chkWordBack"> Wordback
+				</label>
+			</div>
+		</div>
+	</div>
+
+	<div class="row @(Model.Notes != null && Model.Notes.Any() ? "" : "hidden")" id="job-notes">
+		<div class="col-sm-12">
+
+			<h3>Job notes</h3>
+
+			<ul class="list-unstyled">
+				@if (Model.Notes != null && Model.Notes.Any())
+				{
+					foreach (var note in Model.Notes)
+					{
+						<li data-job-note-id="@note.Id">
+							<small class="text-muted">
+								<i class="fa fa-clock-o"></i> @note.Created.ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss") 
+								@if (note.IsWordBack)
+								{
+									@Html.Raw("<i class=\"fa fa-commenting-o wordback-icon\"></i> wordback")
+								}
+							</small>
+							<p class="text-info">@note.Body</p>
+						</li>
+					}
+				}
+			</ul>
+
+		</div>
+	</div>
+

@@ -27,14 +27,41 @@ var responseHub = (function () {
 		return context[func].apply(this, args);
 	}
 
+	function toggleSidebar() {
+
+		// If expanded, collapse it, otherwise expand it
+		if ($('body').hasClass("sidebar-expanded")) {
+			$('body').removeClass("sidebar-expanded");
+			$('.sidebar').removeClass("sidebar-expanded");
+			$('.main-content').removeClass("sidebar-expanded");
+		} else {
+			$('body').addClass("sidebar-expanded");
+			$('.sidebar').addClass("sidebar-expanded");
+			$('.main-content').addClass("sidebar-expanded");
+		}
+
+	}
+
 	function bindModals() {
 		$('#confirm-delete').on('show.bs.modal', function (e) {
 			$(this).find('.btn-ok').attr('href', $(e.relatedTarget).data('href'));
 		});
 	}
 
+	function bindUI() {
+
+		// Toggle the sidebar menu
+		$(".btn-sidebar-toggle").click(function () {
+			toggleSidebar();
+		});
+
+	}
+
 	// Bind the modal
 	bindModals();
+
+	// Bind the UI
+	bindUI();
 
 	// return the response hub object
 	return {
@@ -379,10 +406,7 @@ responseHub.jobLog = (function () {
 		$('#job-title-banner h2').text(jobType + ' job');
 
 		$('#job-details-form').removeClass('hidden');
-
-		// Create the initial job
-		createJob(jobType);
-
+		
 	}
 
 	/**
@@ -398,11 +422,11 @@ responseHub.jobLog = (function () {
 			isWordback: isWordback
 		};
 
-		var jobId = $('#hdnJobId').val();
+		var jobId = $('#Id').val();
 
 		// Create the ajax request
 		$.ajax({
-			url: jobCard.apiPrefix + '/jobs/' + jobId + '/notes',
+			url: responseHub.apiPrefix + '/job-messages/' + jobId + '/notes',
 			type: 'POST',
 			dataType: 'json',
 			data: postData,
@@ -418,6 +442,7 @@ responseHub.jobLog = (function () {
 
 				$('#job-notes ul').prepend(noteMarkup);
 				$('#job-notes').removeClass('hidden');
+				$('#txtJobNote').val('');
 
 			}
 		});
@@ -443,31 +468,7 @@ responseHub.jobLog = (function () {
 		return noteListItem;
 
 	}
-
-	/**
-	 * Calls the API to create the job with the specified type.
-	 * Once the job has been created, the jobId field is updated.
-	 */
-	function createJob(jobType) {
-
-		// Submit the POST api call.
-		$.ajax({
-			url: jobCard.apiPrefix + '/jobs',
-			type: 'POST',
-			dataType: 'json',
-			data: { '': jobType },
-			success: function (data) {
-
-				if (data != null) {
-					$('#hdnJobType').val(data.Type);
-					$('#hdnJobId').val(data.Id);
-				}
-
-			}
-		});
-
-	}
-
+	
 	function updateJobDetails() {
 
 		var updateDetails = {

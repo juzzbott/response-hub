@@ -25,6 +25,8 @@ namespace Enivate.ResponseHub.Model.Messages
 
 		public MessagePriority Priority { get; set; }
 
+		public IList<JobNote> Notes { get; set; }
+
 		public JobMessage()
 		{
 
@@ -36,6 +38,8 @@ namespace Enivate.ResponseHub.Model.Messages
 
 			// Default to administration.
 			Priority = MessagePriority.Administration;
+
+			Notes = new List<JobNote>();
 		}
 
 	}

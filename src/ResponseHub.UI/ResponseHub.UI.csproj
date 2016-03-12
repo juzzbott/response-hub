@@ -206,6 +206,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Helpers\HtmlHelpers.cs" />
+    <Compile Include="Models\Api\Messages\PostJobNoteModel.cs" />
     <Compile Include="Models\Messages\ParsedMessageViewModel.cs" />
     <Compile Include="Models\MyAccount\ChangePasswordViewModel.cs" />
     <Compile Include="Models\MyAccount\CreatePasswordViewModel.cs" />
@@ -394,6 +395,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Areas\Admin\Views\Users\Create.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Jobs\ViewJob.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

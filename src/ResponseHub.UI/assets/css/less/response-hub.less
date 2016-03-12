@@ -145,12 +145,13 @@ body {
     right: 50px;
     padding: 0;
     margin-top: 0;
-    margin-right: 15px;
+    margin-right: 0px;
     margin-bottom: 8px;
 	color: @body-color;
 
 		.dropdown-toggle {
-			font-size: 2em;
+			font-size: 20px;
+			margin-top: 5px;
 
 			i {
 				padding-right: 0;
@@ -164,7 +165,7 @@ body {
 
 		.dropdown-menu {
 			min-width: 260px;
-			margin-top: -4px;
+			margin-top: 3px;
 			border-radius: 0;
 
 			a {
@@ -195,6 +196,7 @@ body {
 
 		.dropdown-toggle {
 			font-size: 1em;
+			margin-top: 0;
 
 			i {
 				padding-right: 6px;
@@ -278,6 +280,80 @@ body {
 		display: block;
 
 	}
+}
+
+/* Expanded sidebar */
+
+.btn-sidebar-toggle {
+	display: none;
+}
+
+.btn-header-toggle {
+	margin-top: 8px;
+	margin-left: 15px;
+	color: @sidebar-highlight;
+	background-color: @header-navbar-background;
+	border: 1px solid @header-navbar-background;
+	float: left;
+    padding: 3px 0;
+	font-size: 20px;
+
+	&.header-dropdown {
+		float: right;
+		margin-right: 15px;
+		color: #fff;
+		font-size: 20px;
+		margin-top: 8px;
+		margin-left: 0;
+
+		&:hover {
+			color: @header-navbar-highlight;
+		}
+
+	}
+
+	&:hover {
+		color: darken(@sidebar-highlight, 10%);
+	}
+}
+
+@media (min-width: 768px) {
+
+	.btn-header-toggle.header-dropdown {
+		display: none;
+	}
+
+}
+
+@media (max-width: 769px) {
+
+	.navbar-brand {
+		padding-left: 10px;
+	}
+
+	.btn-sidebar-toggle {
+		display: inline-block;
+	}
+
+	body.sidebar-expanded {
+		overflow-x: hidden;
+	}
+
+	.sidebar.sidebar-expanded {
+		width: 270px;
+		display: block;
+
+		footer {
+			width: 270px;
+		}
+
+	}
+
+	.main-content.sidebar-expanded {
+		width: 530px;
+		margin-left: 270px;
+	}
+
 }
 
 .nav-sidebar {
@@ -638,6 +714,24 @@ h4.legend {
 	}
 }
 
+.job-list {
+	h3 i {
+		margin-right: 10px;
+	}
+}
+
+i.p-message-emergency {
+	color: #b60500;
+}
+
+i.p-message-non-emergency {
+	color: #e28405;
+}
+
+i.p-message-admin {
+	color: #143599;
+}
+
 /**
 	Wallboard styles
 */
@@ -705,18 +799,6 @@ h4.legend {
 			}
 		}
 
-	}
-
-	i.p-message-emergency {
-		color: #b60500;
-	}
-
-	i.p-message-non-emergency {
-		color: #e28405;
-	}
-
-	i.p-message-admin {
-		color: #143599;
 	}
 
 	.wallboard-main > h2 > i {

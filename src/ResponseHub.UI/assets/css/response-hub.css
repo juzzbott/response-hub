@@ -100,12 +100,13 @@ body {
   right: 50px;
   padding: 0;
   margin-top: 0;
-  margin-right: 15px;
+  margin-right: 0px;
   margin-bottom: 8px;
   color: #333;
 }
 .user-menu .dropdown-toggle {
-  font-size: 2em;
+  font-size: 20px;
+  margin-top: 5px;
 }
 .user-menu .dropdown-toggle i {
   padding-right: 0;
@@ -115,7 +116,7 @@ body {
 }
 .user-menu .dropdown-menu {
   min-width: 260px;
-  margin-top: -4px;
+  margin-top: 3px;
   border-radius: 0;
 }
 .user-menu .dropdown-menu a {
@@ -140,6 +141,7 @@ body {
   }
   .user-menu .dropdown-toggle {
     font-size: 1em;
+    margin-top: 0;
   }
   .user-menu .dropdown-toggle i {
     padding-right: 6px;
@@ -203,6 +205,61 @@ body {
 @media (min-width: 768px) {
   .sidebar {
     display: block;
+  }
+}
+/* Expanded sidebar */
+.btn-sidebar-toggle {
+  display: none;
+}
+.btn-header-toggle {
+  margin-top: 8px;
+  margin-left: 15px;
+  color: #e2c498;
+  background-color: #37474f;
+  border: 1px solid #37474f;
+  float: left;
+  padding: 3px 0;
+  font-size: 20px;
+}
+.btn-header-toggle.header-dropdown {
+  float: right;
+  margin-right: 15px;
+  color: #fff;
+  font-size: 20px;
+  margin-top: 8px;
+  margin-left: 0;
+}
+.btn-header-toggle.header-dropdown:hover {
+  color: #9cddd7;
+}
+.btn-header-toggle:hover {
+  color: #d7ad70;
+}
+@media (min-width: 768px) {
+  .btn-header-toggle.header-dropdown {
+    display: none;
+  }
+}
+@media (max-width: 769px) {
+  .navbar-brand {
+    padding-left: 10px;
+  }
+  .btn-sidebar-toggle {
+    display: inline-block;
+  }
+  body.sidebar-expanded {
+    overflow-x: hidden;
+  }
+  .sidebar.sidebar-expanded {
+    width: 270px;
+    display: block;
+  }
+  .sidebar.sidebar-expanded footer {
+    width: 270px;
+  }
+  .main-content.sidebar-expanded {
+    width: 530px;
+    margin-left: 270px;
   }
 }
 .nav-sidebar a i {
@@ -492,6 +549,18 @@ fieldset[disabled] .btn {
 #job-notes ul li .wordback-icon {
   padding-left: 10px;
 }
+.job-list h3 i {
+  margin-right: 10px;
+}
+i.p-message-emergency {
+  color: #b60500;
+}
+i.p-message-non-emergency {
+  color: #e28405;
+}
+i.p-message-admin {
+  color: #143599;
+}
 /**
 	Wallboard styles
 */
@@ -542,15 +611,6 @@ fieldset[disabled] .btn {
 .wallboard-layout .message-list .p-message-meta .message-date {
   float: right;
   padding-top: 10px;
-}
-.wallboard-layout i.p-message-emergency {
-  color: #b60500;
-}
-.wallboard-layout i.p-message-non-emergency {
-  color: #e28405;
-}
-.wallboard-layout i.p-message-admin {
-  color: #143599;
 }
 .wallboard-layout .wallboard-main > h2 > i {
   padding-right: 10px;

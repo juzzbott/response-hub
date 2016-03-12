@@ -13,5 +13,11 @@ namespace Enivate.ResponseHub.DataAccess.Interface
 
 		Task AddMessages(IList<JobMessage> messages);
 
+		Task<IList<JobMessage>> GetMostRecent(IEnumerable<string> capcodes, int count);
+
+		Task<JobMessage> GetById(Guid id);
+
+		Task AddNoteToJobMessage(Guid jobMessageId, JobNote note);
+
 	}
 }

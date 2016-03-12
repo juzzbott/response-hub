@@ -11,5 +11,10 @@ namespace Enivate.ResponseHub.Model.Messages.Interface
 
 		Task AddMessages(IList<JobMessage> messages);
 
+		Task<IList<JobMessage>> GetMostRecent(IEnumerable<string> capcodes, int count);
+
+		Task<JobMessage> GetById(Guid id);
+
+		Task<JobNote> AddNoteToJobMessage(Guid jobMessageId, string noteBody, bool isWordBack, Guid userId);
 	}
 }
