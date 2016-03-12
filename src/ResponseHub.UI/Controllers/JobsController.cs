@@ -59,7 +59,7 @@ namespace Enivate.ResponseHub.UI.Controllers
 			Guid userId = new Guid(User.Identity.GetUserId());
 
 			// Get the capcodes for the current user
-			IList<Capcode> capcodes = await CapcodeService.GetCapcodesForUser(new Guid("02245CEE-22D3-8D40-9B36-68F22E6FB71D"));
+			IList<Capcode> capcodes = await CapcodeService.GetCapcodesForUser(new Guid("5B216F4C-E92A-2448-9BD7-7B7B4D19E56E"));
 
 			// Get the messages for the capcodes
 			IList<JobMessage> messages = await JobMessageService.GetMostRecent(capcodes.Select(i => i.CapcodeAddress), 50);
