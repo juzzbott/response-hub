@@ -12,4 +12,4 @@ db.regions.insert({ _id: UUID('dde442814d2a419a8028900d064d526a'), Name: "Loddon
 db.regions.insert({ _id: UUID('326d7776bcab4fdd8aa58524168046df'), Name: "Barwon South West (South West)", Capcode: "", ServiceType: 1 });
 
 // Capcodes
-db.regions.remove({});
+db.capcodes.remove({});
