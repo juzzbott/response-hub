@@ -184,10 +184,12 @@
     <Compile Include="Areas\Admin\Controllers\CapcodesController.cs" />
     <Compile Include="Areas\Admin\Controllers\GroupsController.cs" />
     <Compile Include="Areas\Admin\Controllers\HomeController.cs" />
+    <Compile Include="Areas\Admin\Controllers\ReportsController.cs" />
     <Compile Include="Areas\Admin\Controllers\UsersController.cs" />
     <Compile Include="Areas\Admin\Models\Capcodes\CreateCapcodeViewModel.cs" />
     <Compile Include="Areas\Admin\Models\Groups\ChangeUserRoleViewModel.cs" />
     <Compile Include="Areas\Admin\Models\Groups\CreateGroupModel.cs" />
+    <Compile Include="Areas\Admin\Models\Reports\GroupsCapcodesReportViewModel.cs" />
     <Compile Include="Areas\Admin\Models\SearchViewModel.cs" />
     <Compile Include="Areas\Admin\Models\Groups\ConfirmUserViewModel.cs" />
     <Compile Include="Areas\Admin\Models\Groups\NewUserViewModel.cs" />
@@ -398,6 +400,12 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Jobs\ViewJob.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Areas\Admin\Views\Reports\Index.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Areas\Admin\Views\Reports\GroupsCapcodes.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

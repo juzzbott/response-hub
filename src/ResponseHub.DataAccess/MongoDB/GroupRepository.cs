@@ -44,7 +44,15 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 		public new async Task<IList<Group>> GetAll()
 		{
 			IList<GroupDto> allResults = await base.GetAll();
-			return (IList<Group>)allResults.Select(async i => await MapDtoToModel(i)).ToList();
+
+			// Create the list of groups
+			IList<Group> groups = new List<Group>();
+			foreach(GroupDto groupDto in allResults)
+			{
+				groups.Add(await MapDtoToModel(groupDto));
+			}
+
+			return groups;
 		}
 
 		/// <summary>

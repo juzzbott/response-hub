@@ -1,0 +1,46 @@
+﻿@model List<Enivate.ResponseHub.UI.Areas.Admin.Models.Reports.GroupsCapcodesReportViewModel>
+
+@{
+    ViewBag.Title = "Groups capcodes";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<h1>@ViewBag.Title</h1>
+
+<p class="lead">Report shows all the capcodes currently assigned to groups.</p>
+
+@foreach(var reportItem in Model)
+{
+	<h3 class="text-primary">@reportItem.GroupName</h3>
+
+	<table class="table table-condensed">
+		<thead>
+			<tr>
+				<th>Capcode</th>
+				<th colspan="3">Group service</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>;
+				<td>@reportItem.GroupCapcode</td>
+				<td colspan="3">@reportItem.Service</td>
+			</tr>
+			<tr class="info">
+				<th>Name</th>
+				<th>Short name</th>
+				<th>Capcode</th>
+				<th>Capcode service</th>
+			</tr>
+			@foreach (var capcode in reportItem.Capcodes)
+			{
+				<tr>
+					<td>@capcode.Name</td>
+					<td>@capcode.ShortName</td>
+					<td>@capcode.CapcodeAddress</td>
+					<td>@Html.EnumDescription(capcode.Service)</td>
+				</tr>
+			}
+		</tbody>
+	</table>
+}
+
