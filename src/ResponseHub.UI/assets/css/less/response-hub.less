@@ -275,12 +275,6 @@ body {
 
 }
 
-@media (min-width: 768px) {
-	.sidebar {
-		display: block;
-
-	}
-}
 
 /* Expanded sidebar */
 
@@ -317,15 +311,19 @@ body {
 	}
 }
 
-@media (min-width: 768px) {
+@media (min-width: 992px) {
 
 	.btn-header-toggle.header-dropdown {
 		display: none;
 	}
 
+	.sidebar {
+		display: block;
+	}
+
 }
 
-@media (max-width: 769px) {
+@media (max-width: 993px) {
 
 	.navbar-brand {
 		padding-left: 10px;
@@ -350,10 +348,16 @@ body {
 	}
 
 	.main-content.sidebar-expanded {
-		width: 530px;
+		width: 730px;
 		margin-left: 270px;
 	}
 
+}
+
+@media (max-width: 769px) {
+	.main-content.sidebar-expanded {
+		width: 530px;
+	}
 }
 
 .nav-sidebar {

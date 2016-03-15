@@ -202,11 +202,6 @@ body {
 .sidebar .nav > li > a:focus {
   background-color: #1a2327;
 }
-@media (min-width: 768px) {
-  .sidebar {
-    display: block;
-  }
-}
 /* Expanded sidebar */
 .btn-sidebar-toggle {
   display: none;
@@ -235,12 +230,15 @@ body {
 .btn-header-toggle:hover {
   color: #d7ad70;
 }
-@media (min-width: 768px) {
+@media (min-width: 992px) {
   .btn-header-toggle.header-dropdown {
     display: none;
   }
+  .sidebar {
+    display: block;
+  }
 }
-@media (max-width: 769px) {
+@media (max-width: 993px) {
   .navbar-brand {
     padding-left: 10px;
   }
@@ -258,8 +256,13 @@ body {
     width: 270px;
   }
   .main-content.sidebar-expanded {
-    width: 530px;
+    width: 730px;
     margin-left: 270px;
+  }
+}
+@media (max-width: 769px) {
+  .main-content.sidebar-expanded {
+    width: 530px;
   }
 }
 .nav-sidebar a i {
