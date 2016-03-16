@@ -94,7 +94,7 @@ namespace Enivate.ResponseHub.UI.Controllers
 					MessageBody = job.MessageContent,
 					Notes = job.Notes,
 					Priority = job.Priority,
-					Timestamp = job.Timestamp
+					Timestamp = job.Timestamp.ToLocalTime()
 				};
 
 				// Set the progress updates.

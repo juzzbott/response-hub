@@ -1,6 +1,11 @@
 ﻿@model List<Enivate.ResponseHub.Model.Messages.JobNote>
 
 <h3>Notes</h3>
+
+<div class="row">
+	<div class="col-lg-8 job-note-messages"></div>
+</div>
+
 <div class="row">
 	<div class="col-md-8">
 		<div class="form-group">
@@ -12,7 +17,7 @@
 
 <div class="row">
 	<div class="col-xs-12">
-		<button class="btn btn-primary" id="btnAddNote" type="button">Add note</button>
+		<button class="btn btn-primary btn-icon" id="btnAddNote" type="button" disabled="disabled"><i class="fa fa-fw fa-comment-o"></i>Add note</button>
 		<div class="checkbox">
 			<label>
 				<input type="checkbox" name="WordBack" id="chkWordBack"> Wordback

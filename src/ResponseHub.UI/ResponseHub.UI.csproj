@@ -413,7 +413,7 @@
     <Content Include="Areas\Admin\Views\Reports\GroupsCapcodes.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Views\Jobs\JobComments.cshtml" />
+    <Content Include="Views\Jobs\JobNotes.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Jobs\JobProgress.cshtml" />

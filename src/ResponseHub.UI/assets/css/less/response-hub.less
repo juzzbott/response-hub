@@ -73,6 +73,12 @@ body {
 	display: block;
 }
 
+@media (max-width: 768px) {
+	.text-xs-left {
+		text-align: left;
+	}
+}
+
 @media (min-width: 768px) {
 	.mobile-block {
 		display: inline;	
@@ -593,58 +599,8 @@ h4.legend {
 }
 
 /*
-	Job Log Classes
+	Job Messages Classes
 */
-.btn-new-job {
-	padding: 15px;
-	font-weight: bold;
-	color: #fff;
-
-	&:hover,
-	&:active,
-	&:focus {
-		color: #fff;
-	}
-
-	&.start-new-job {
-		background-color: @ses-orange;
-		border: 1px solid darken(@ses-orange, 20%);
-		&:hover {
-			background-color: darken(@ses-orange, 10%);
-		}
-	}
-
-	&.new-rescue-job {
-		background-color: @rescue-job-bg;
-		border: 1px solid darken(@rescue-job-bg, 20%);
-		&:hover {
-			background-color: darken(@rescue-job-bg, 10%);
-		}
-	}
-
-	&.new-storm-job {
-		background-color: @storm-job-bg;
-		border: 1px solid darken(@storm-job-bg, 20%);
-		&:hover {
-			background-color: darken(@storm-job-bg, 10%);
-		}
-	}
-
-	&.new-assist-job {
-		background-color: @assist-agency-job-bg;
-		border: 1px solid darken(@assist-agency-job-bg, 20%);
-		&:hover {
-			background-color: darken(@assist-agency-job-bg, 10%);
-		}
-	}
-
-	i {
-		font-size: 1.5em;
-		margin-bottom: 5px;
-		display: block;
-	}
-}
-
 #job-title-banner {
 	color: #fff;
 
@@ -681,14 +637,8 @@ h4.legend {
 
 }
 
-@media screen and (max-width: 350px) {
-
-	#job-intervals .btn-group-lg .btn {
-		padding: 6px 12px;
-		font-size: 14px;
-		border-radius: 4px;
-	}
-
+.progress-time {
+	margin-bottom: 20px;
 }
 
 #job-notes {

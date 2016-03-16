@@ -422,6 +422,10 @@ responseHub.jobLog = (function () {
 			isWordback: isWordback
 		};
 
+		// Set the spinner
+		$("#btnAddNote").find('i').removeClass('fa-comment-o').addClass('fa-refresh fa-spin');
+		$("#btnAddNote").attr('disabled', 'disabled');
+
 		var jobId = $('#Id').val();
 
 		// Create the ajax request
@@ -431,18 +435,37 @@ responseHub.jobLog = (function () {
 			dataType: 'json',
 			data: postData,
 			success: function (data) {
-
+		
 				if (data == null) {
 					// TODO: show front-end error.
 				}
-
+		
 				var noteDate = moment(data.Date);
 
-				var noteMarkup = buildJobNoteMarkup(data.Id, data.Body, noteDate.format('YYYY-MM-DD HH:mm:ss'), data.isWordback);
-
+				var noteMarkup = buildJobNoteMarkup(data.Id, data.Body, noteDate.format('YYYY-MM-DD HH:mm:ss'), data.IsWordBack);
+		
 				$('#job-notes ul').prepend(noteMarkup);
 				$('#job-notes').removeClass('hidden');
 				$('#txtJobNote').val('');
+
+				// Reset the button
+				$("#btnAddNote").find('i').addClass('fa-comment-o').removeClass('fa-refresh fa-spin');
+
+				// Clear any existing alerts
+				$(".job-note-messages .alert").remove();
+		
+			},
+			error: function (jqXHR, textStatus, errorThrown) {
+
+				// Reset the button
+				$("#btnAddNote").find('i').addClass('fa-comment-o').removeClass('fa-refresh fa-spin');
+				$("#btnAddNote").removeAttr('disabled');
+
+				// Clear any existing alerts
+				$(".job-note-messages .alert").remove();
+
+				// Show the error message
+				$(".job-note-messages").append('<div class="alert alert-danger alert-dismissable" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>Sorry, there was an error adding your note. Please try again shortly.</p>');
 
 			}
 		});
@@ -565,7 +588,7 @@ responseHub.jobLog = (function () {
 	function addProgressMarkup(elem, progressType, date, userFullName) {
 
 		$(elem).append("<h4>" + progressType + "</h4>");
-		$(elem).append('<span class="text-success btn-icon"><i class="fa fa-fw fa-clock-o"></i>' + date.format('YYYY-MM-DD HH:mm:ss') + '</span><br />');
+		$(elem).append('<span class="btn-icon"><i class="fa fa-fw fa-clock-o"></i>' + date.format('YYYY-MM-DD HH:mm') + '</span><br />');
 		$(elem).append('<span class="text-muted btn-icon"><i class="fa fa-fw fa-user"></i>' + userFullName + '</span>');
 
 	}
@@ -586,6 +609,16 @@ responseHub.jobLog = (function () {
 
 		$('#btnAddNote').click(function () {
 			addJobNote();
+		});
+
+		$('#txtJobNote').on('keyup', function () {
+
+			if ($(this).val() == '') {
+				$('#btnAddNote').attr('disabled', 'disabled');
+			} else {
+				$('#btnAddNote').removeAttr('disabled');
+			}
+
 		});
 
 	}

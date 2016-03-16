@@ -27,7 +27,7 @@
 
 	</div>
 	<div class="col-sm-5">
-		<h3 class="text-right text-info">1 hour ago</h3>
+		<h3 class="text-right text-xs-left text-info">@Model.Timestamp.ToString("yyyy-MM-dd HH:mm")</h3>
 	</div>
 </div>
 
@@ -35,5 +35,5 @@
 
 @Html.Partial("JobProgress", Model)
 
-@Html.Partial("JobComments", Model.Notes);
+@Html.Partial("JobNotes", Model.Notes)
 

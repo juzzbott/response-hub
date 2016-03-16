@@ -78,7 +78,7 @@ namespace Enivate.ResponseHub.UI.Controllers.Api
 		[HttpPost]
 		public async Task<JobNote> PostNote(Guid id, PostJobNoteModel jobNote)
 		{
-
+			
 			try
 			{
 
