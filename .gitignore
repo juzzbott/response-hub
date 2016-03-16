@@ -246,5 +246,6 @@ node_modules
 .node_repl_history
 
 # ResponseHub specific
+tools/Configurations/ResponseHubConfigs
 src/ResponseHub.UI/App_Data/Cache/
 src/ResponseHub.UI/App_Data/Logs/
