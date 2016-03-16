@@ -16,5 +16,7 @@ namespace Enivate.ResponseHub.Model.Messages.Interface
 		Task<JobMessage> GetById(Guid id);
 
 		Task<JobNote> AddNoteToJobMessage(Guid jobMessageId, string noteBody, bool isWordBack, Guid userId);
+
+		Task<MessageProgress> AddProgress(Guid jobMessageId, Guid userId, MessageProgressType progressType);
 	}
 }

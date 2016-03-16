@@ -1,0 +1,52 @@
+﻿@model Enivate.ResponseHub.UI.Models.Messages.JobMessageViewModel
+
+<h3>Job progress</h3>
+
+<div class="row">
+	<div class="col-lg-8 progess-messages"></div>
+</div>
+
+<div class="row">
+	<div class="col-xs-12 col-sm-4 col-md-3 col-lg-2">
+		@if (Model.OnRoute == null)
+		{
+			<button class="btn btn-primary btn-icon btn-block btn-on-route"><i class="fa fa-fw fa-check-square-o"></i> On route</button>
+		}
+		<p class="progress-time progress-on-route">
+			@if (Model.OnRoute != null)
+			{
+				<h4>On route</h4>
+				<span class="text-success btn-icon"><i class="fa fa-fw fa-clock-o"></i>@Model.OnRoute.Timestamp.ToString("yyyy-MM-dd HH:mm:ss")</span><br />
+				<span class="text-muted btn-icon"><i class="fa fa-fw fa-user"></i>@Model.OnRoute.UserFullName</span>
+			}
+		</p>
+	</div>
+	<div class="col-xs-12 col-sm-4 col-md-3 col-md-offset-1 col-lg-2">
+		@if (Model.OnScene == null)
+		{
+			<button class="btn btn-primary btn-icon btn-block btn-on-scene"><i class="fa fa-fw fa-check-square-o"></i> On scene</button>
+		}
+		<p class="progress-time progress-on-scene">
+			@if (Model.OnScene != null)
+			{
+				<h4>On scene</h4>
+				<span class="text-success btn-icon"><i class="fa fa-fw fa-clock-o"></i>@Model.OnScene.Timestamp.ToString("yyyy-MM-dd HH:mm:ss")</span><br />
+				<span class="text-muted btn-icon"><i class="fa fa-fw fa-user"></i>@Model.OnScene.UserFullName</span>
+			}
+		</p>
+	</div>
+	<div class="col-xs-12 col-sm-4 col-md-3 col-md-offset-1 col-lg-2">
+		@if (Model.JobClear == null)
+		{
+			<button class="btn btn-primary btn-icon btn-block btn-job-clear"><i class="fa fa-fw fa-check-square-o"></i> Job clear</button>
+		}
+		<p class="progress-time progress-job-clear">
+			@if (Model.JobClear != null)
+			{
+				<h4>Job clear</h4>
+				<span class="text-success btn-icon"><i class="fa fa-fw fa-clock-o"></i>@Model.JobClear.Timestamp.ToString("yyyy-MM-dd HH:mm:ss")</span><br />
+				<span class="text-muted btn-icon"><i class="fa fa-fw fa-user"></i>@Model.JobClear.UserFullName</span>
+			}
+		</p>
+	</div>
+</div>

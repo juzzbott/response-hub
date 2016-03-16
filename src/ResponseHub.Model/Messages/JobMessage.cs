@@ -27,6 +27,8 @@ namespace Enivate.ResponseHub.Model.Messages
 
 		public IList<JobNote> Notes { get; set; }
 
+		public IList<MessageProgress> ProgressUpdates { get; set; }
+
 		public JobMessage()
 		{
 
@@ -40,6 +42,7 @@ namespace Enivate.ResponseHub.Model.Messages
 			Priority = MessagePriority.Administration;
 
 			Notes = new List<JobNote>();
+			ProgressUpdates = new List<MessageProgress>();
 		}
 
 	}

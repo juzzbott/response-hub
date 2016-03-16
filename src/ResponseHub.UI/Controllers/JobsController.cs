@@ -15,6 +15,9 @@ using Enivate.ResponseHub.Model.Messages.Interface;
 using Enivate.ResponseHub.Model.Messages;
 using Enivate.ResponseHub.Logging;
 using System.Net;
+using Enivate.ResponseHub.UI.Models.Messages;
+using Enivate.ResponseHub.Model.Identity;
+using Enivate.ResponseHub.Model.Identity.Interface;
 
 namespace Enivate.ResponseHub.UI.Controllers
 {
@@ -59,7 +62,7 @@ namespace Enivate.ResponseHub.UI.Controllers
 			Guid userId = new Guid(User.Identity.GetUserId());
 
 			// Get the capcodes for the current user
-			IList<Capcode> capcodes = await CapcodeService.GetCapcodesForUser(new Guid("5B216F4C-E92A-2448-9BD7-7B7B4D19E56E"));
+			IList<Capcode> capcodes = await CapcodeService.GetCapcodesForUser(userId);
 
 			// Get the messages for the capcodes
 			IList<JobMessage> messages = await JobMessageService.GetMostRecent(capcodes.Select(i => i.CapcodeAddress), 50);
@@ -82,8 +85,25 @@ namespace Enivate.ResponseHub.UI.Controllers
 					throw new HttpException((int)HttpStatusCode.NotFound, "The requested page cannot be found.");
 				}
 
+				JobMessageViewModel model = new JobMessageViewModel()
+				{
+					Capcode = job.Capcode,
+					Id = job.Id,
+					JobNumber = job.JobNumber,
+					Location = job.Location,
+					MessageBody = job.MessageContent,
+					Notes = job.Notes,
+					Priority = job.Priority,
+					Timestamp = job.Timestamp
+				};
+
+				// Set the progress updates.
+				model.OnRoute = await GetProgressModel(job, MessageProgressType.OnRoute);
+				model.OnScene = await GetProgressModel(job, MessageProgressType.OnScene);
+				model.JobClear = await GetProgressModel(job, MessageProgressType.JobClear);
+
 				// return the job view
-				return View(job);
+				return View(model);
 
 			}
 			catch (Exception ex)
@@ -96,5 +116,36 @@ namespace Enivate.ResponseHub.UI.Controllers
 
 		}
 
+		/// <summary>
+		/// Gets the progress model for the specific progress type, if it exists. 
+		/// </summary>
+		/// <param name="job">The job to get the progress from. </param>
+		/// <param name="progressType">The progress type to get.</param>
+		/// <returns></returns>
+		private async Task<MessageProgressViewModel> GetProgressModel(JobMessage job, MessageProgressType progressType)
+		{
+			MessageProgress progress = job.ProgressUpdates.FirstOrDefault(i => i.ProgressType == progressType);
+			if (progress != null)
+			{
+				MessageProgressViewModel progressModel = new MessageProgressViewModel()
+				{
+					Timestamp = progress.Timestamp.ToLocalTime(),
+					UserId = progress.UserId
+				};
+
+				// Get the user who updated the progress.
+				IdentityUser progressUser = await ServiceLocator.Get<IUserService>().FindByIdAsync(progress.UserId);
+				if (progressUser != null)
+				{
+					progressModel.UserFullName = progressUser.FullName;
+				}
+
+				return progressModel;
+			}
+			else
+			{
+				return null;
+			}
+		}
 	}
 }

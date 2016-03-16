@@ -1,0 +1,49 @@
+﻿@model List<Enivate.ResponseHub.Model.Messages.JobNote>
+
+<h3>Notes</h3>
+<div class="row">
+	<div class="col-md-8">
+		<div class="form-group">
+			<label>Job note</label>
+			<textarea class="form-control" id="txtJobNote" name="JobNote" placeholder="Add a note for this job..."></textarea>
+		</div>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-xs-12">
+		<button class="btn btn-primary" id="btnAddNote" type="button">Add note</button>
+		<div class="checkbox">
+			<label>
+				<input type="checkbox" name="WordBack" id="chkWordBack"> Wordback
+			</label>
+		</div>
+	</div>
+</div>
+
+<div class="row @(Model != null && Model.Any() ? "" : "hidden")" id="job-notes">
+	<div class="col-sm-12">
+
+		<h3>Job notes</h3>
+
+		<ul class="list-unstyled">
+			@if (Model != null && Model.Any())
+			{
+				foreach (var note in Model)
+				{
+					<li data-job-note-id="@note.Id">
+						<small class="text-muted">
+							<i class="fa fa-clock-o"></i> @note.Created.ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss")
+							@if (note.IsWordBack)
+							{
+								@Html.Raw("<i class=\"fa fa-commenting-o wordback-icon\"></i> wordback")
+							}
+						</small>
+						<p class="text-info">@note.Body</p>
+					</li>
+				}
+			}
+		</ul>
+
+	</div>
+</div>

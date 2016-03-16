@@ -68,6 +68,8 @@
     <Compile Include="Messages\Interface\IJobMessageService.cs" />
     <Compile Include="Messages\Interface\IPagerMessageService.cs" />
     <Compile Include="Messages\JobNote.cs" />
+    <Compile Include="Messages\MessageProgress.cs" />
+    <Compile Include="Messages\MessageProgressType.cs" />
     <Compile Include="Spatial\LocationInfo.cs" />
     <Compile Include="Messages\JobMessage.cs" />
     <Compile Include="Messages\MessagePriority.cs" />

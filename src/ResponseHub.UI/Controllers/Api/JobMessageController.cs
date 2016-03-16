@@ -7,30 +7,23 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Web.Http;
 
+using Microsoft.AspNet.Identity;
 using Microsoft.Practices.Unity;
 
 using Enivate.ResponseHub.Common;
-using Enivate.ResponseHub.Logging;
 using Enivate.ResponseHub.Model.Messages.Interface;
 using Enivate.ResponseHub.Model.Messages;
 using System.Threading.Tasks;
 using Enivate.ResponseHub.UI.Models.Api.Messages;
+using Enivate.ResponseHub.Model.Identity.Interface;
+using Enivate.ResponseHub.Model.Identity;
 
 namespace Enivate.ResponseHub.UI.Controllers.Api
 {
 
 	[RoutePrefix("api/job-messages")]
-    public class JobMessageController : ApiController
+    public class JobMessageController : BaseApiController
     {
-
-		private ILogger _log;
-		protected ILogger Log
-		{
-			get
-			{
-				return _log ?? (_log = UnityConfiguration.Container.Resolve<ILogger>());
-			}
-		}
 
 		private IJobMessageService _jobMessageService;
 		protected IJobMessageService JobMessageService
@@ -40,7 +33,7 @@ namespace Enivate.ResponseHub.UI.Controllers.Api
 				return _jobMessageService ?? (_jobMessageService = UnityConfiguration.Container.Resolve<IJobMessageService>());
 			}
 		}
-
+		
 		[Route]
 		[HttpPost]
 		public async Task<bool> Post(IList<JobMessage> jobMessages)
@@ -88,17 +81,69 @@ namespace Enivate.ResponseHub.UI.Controllers.Api
 
 			try
 			{
+
 				// Create the job note and return it
-				JobNote note = await JobMessageService.AddNoteToJobMessage(id, jobNote.Body, jobNote.IsWordBack, Guid.Empty);
+				JobNote note = await JobMessageService.AddNoteToJobMessage(id, jobNote.Body, jobNote.IsWordBack, UserId);
 
 				return note;
 
 			}
 			catch (Exception ex)
 			{
-				// TODO: Logging
+				await Log.Error(String.Format("Error adding job note to job message. Message: {0}", ex.Message), ex);
 				throw new HttpResponseException(new HttpResponseMessage(HttpStatusCode.InternalServerError));
 			}
+
+		}
+
+		[Route("{id:guid}/progress")]
+		[HttpPost]
+		public async Task<MessageProgressResponseModel> PostProgress(Guid id, [FromBody] MessageProgressType progressType)
+		{
+
+			try
+			{
+				
+				// Get the identity user for the current user
+				IdentityUser user = await GetCurrentUser();
+
+				// If the user cannot be found, return null
+				if (user == null)
+				{
+					return null;
+				}
+
+				// Create the progress object and return it
+				MessageProgress progress = await JobMessageService.AddProgress(id, UserId, progressType);
+				return new MessageProgressResponseModel()
+				{
+					Timestamp = progress.Timestamp,
+					UserId = UserId,
+					UserFullName = user.FullName,
+					Success = true
+				};
+
+			} 
+			catch(Exception ex)
+			{
+				// If the exception messge relates to not being able to set the progress update because a progress type already exists, treat as warning
+				if (ex.Message.StartsWith("", StringComparison.CurrentCultureIgnoreCase))
+				{
+					await Log.Warn(String.Format("Error adding progress to job message. Message: {0}", ex.Message));
+					return new MessageProgressResponseModel()
+					{
+						Success = false,
+						ErrorMessage = ex.Message
+					};
+				}
+				else
+				{
+					await Log.Error(String.Format("Error adding progress to job message. Message: {0}", ex.Message), ex);
+					throw new HttpResponseException(new HttpResponseMessage(HttpStatusCode.InternalServerError));
+				}
+			}
+
+
 
 		}
 

@@ -86,7 +86,7 @@ namespace Enivate.ResponseHub.ApplicationServices
 		public async Task<JobNote> AddNoteToJobMessage(Guid jobMessageId, string noteBody, bool isWordBack, Guid userId)
 		{
 
-			// CReate the job note
+			// Create the job note
 			JobNote note = new JobNote()
 			{
 				Body = noteBody,
@@ -98,6 +98,32 @@ namespace Enivate.ResponseHub.ApplicationServices
 			await _repository.AddNoteToJobMessage(jobMessageId, note);
 
 			return note;
+		}
+
+		/// <summary>
+		/// Adds the job progress to the job with the specified id.
+		/// </summary>
+		/// <param name="jobMessageId">The id of the job message to add the progress to.</param>
+		/// <param name="userId">The id of the user who created the progress update.</param>
+		/// <param name="progressType">The type of job progress to add,</param>
+		/// <returns></returns>
+		public async Task<MessageProgress> AddProgress(Guid jobMessageId, Guid userId, MessageProgressType progressType)
+		{
+
+			// Create the progress object
+			MessageProgress progress = new MessageProgress()
+			{
+				ProgressType = progressType,
+				Timestamp = DateTime.UtcNow,
+				UserId = userId
+			};
+
+			// Update the progress in the repository
+			await _repository.AddProgress(jobMessageId, progress);
+
+			// return the progress.
+			return progress;
+
 		}
 
 	}

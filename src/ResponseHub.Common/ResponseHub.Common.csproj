@@ -76,6 +76,7 @@
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="HashGenerator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ServiceLocator.cs" />
     <Compile Include="UnityConfiguration.cs" />
   </ItemGroup>
   <ItemGroup>

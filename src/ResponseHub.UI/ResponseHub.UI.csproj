@@ -196,6 +196,7 @@
     <Compile Include="Areas\Admin\Models\Groups\SingleGroupViewModel.cs" />
     <Compile Include="Areas\Admin\Models\Users\NewAdminUserViewModel.cs" />
     <Compile Include="Areas\Admin\Models\Users\UserViewModel.cs" />
+    <Compile Include="Controllers\Api\BaseApiController.cs" />
     <Compile Include="Controllers\Api\JobMessageController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\JobsController.cs" />
@@ -208,7 +209,11 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Helpers\HtmlHelpers.cs" />
+    <Compile Include="Models\Api\Messages\MessageProgressResponseModel.cs" />
+    <Compile Include="Models\Messages\MessageProgressViewModel.cs" />
     <Compile Include="Models\Api\Messages\PostJobNoteModel.cs" />
+    <Compile Include="Models\Api\Messages\PostProgressViewModel.cs" />
+    <Compile Include="Models\Messages\JobMessageViewModel.cs" />
     <Compile Include="Models\Messages\ParsedMessageViewModel.cs" />
     <Compile Include="Models\MyAccount\ChangePasswordViewModel.cs" />
     <Compile Include="Models\MyAccount\CreatePasswordViewModel.cs" />
@@ -406,6 +411,12 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Areas\Admin\Views\Reports\GroupsCapcodes.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Jobs\JobComments.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Jobs\JobProgress.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

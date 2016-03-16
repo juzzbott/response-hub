@@ -28,6 +28,8 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB.DataObjects.Messages
 
 		public IList<JobNote> Notes { get; set; }
 
+		public IList<MessageProgress> ProgressUpdates { get; set; }
+
 		public JobMessageDto()
 		{
 
@@ -40,6 +42,7 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB.DataObjects.Messages
 			Priority = MessagePriority.Administration;
 
 			Notes = new List<JobNote>();
+			ProgressUpdates = new List<MessageProgress>();
 		}
 
 	}

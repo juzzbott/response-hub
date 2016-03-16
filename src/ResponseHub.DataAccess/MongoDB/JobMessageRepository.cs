@@ -8,10 +8,11 @@ using MongoDB.Bson;
 using MongoDB.Driver;
 using MongoDB.Driver.GeoJsonObjectModel;
 
+using Enivate.ResponseHub.Common.Extensions;
 using Enivate.ResponseHub.DataAccess.Interface;
-using Enivate.ResponseHub.Model.Messages;
 using Enivate.ResponseHub.DataAccess.MongoDB.DataObjects.Messages;
 using Enivate.ResponseHub.DataAccess.MongoDB.DataObjects.Spatial;
+using Enivate.ResponseHub.Model.Messages;
 using Enivate.ResponseHub.Model.Spatial;
 
 namespace Enivate.ResponseHub.DataAccess.MongoDB
@@ -104,6 +105,36 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 
 		}
 
+		/// <summary>
+		/// Adds the progress to the job message.
+		/// </summary>
+		/// <param name="jobMessageId">The id of the job message to add the progress to.</param>
+		/// <param name="progress">The progress to add to the job message.</param>
+		/// <returns></returns>
+		public async Task AddProgress(Guid jobMessageId, MessageProgress progress)
+		{
+
+			// If the progress already exists, then throw exception as we can't re-add progress.
+			FilterDefinition<JobMessageDto> countFilter = Builders<JobMessageDto>.Filter.Eq(i => i.Id, jobMessageId) &
+														  Builders<JobMessageDto>.Filter.ElemMatch(i => i.ProgressUpdates, p => p.ProgressType == progress.ProgressType);
+			long count = await Collection.CountAsync(countFilter);
+
+			// If there is already progress update for the type, then throw exception
+			if (count > 0)
+			{
+				throw new ApplicationException(String.Format("The job message already contains a progress update with type '{0}'.", progress.ProgressType.GetEnumDescription()));
+			}
+
+			// Create the filter
+			FilterDefinition<JobMessageDto> filter = Builders<JobMessageDto>.Filter.Eq(i => i.Id, jobMessageId);
+
+			// Create the update
+			UpdateDefinition<JobMessageDto> update = Builders<JobMessageDto>.Update.Push(i => i.ProgressUpdates, progress);
+
+			// Do the update
+			await Collection.UpdateOneAsync(filter, update);
+		}
+
 		#region Mappers
 
 		/// <summary>
@@ -128,7 +159,8 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 				MessageContent = dbObject.MessageContent,
 				Priority = dbObject.Priority,
 				Timestamp = dbObject.Timestamp,
-				Notes = dbObject.Notes
+				Notes = dbObject.Notes,
+				ProgressUpdates = dbObject.ProgressUpdates
 			};
 
 			// Map the location property.
@@ -167,7 +199,8 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 				MessageContent = modelObject.MessageContent,
 				Priority = modelObject.Priority,
 				Timestamp = modelObject.Timestamp,
-				Notes = modelObject.Notes
+				Notes = modelObject.Notes,
+				ProgressUpdates = modelObject.ProgressUpdates
 			};
 
 			// Map the location property

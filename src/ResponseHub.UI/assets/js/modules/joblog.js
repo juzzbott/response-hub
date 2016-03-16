@@ -77,37 +77,120 @@
 		return noteListItem;
 
 	}
-	
-	function updateJobDetails() {
 
-		var updateDetails = {
-			Name: $('#txtJobName').val(),
-			OnRoute: '',
-			OnScene: '',
-			JobClear: ''
+	/**
+	 * Sets the job status when the button is clicked.
+	 */
+	function setJobStatusTime(statusType, sender) {
+
+		var intStatusType;
+
+		switch (statusType) {
+
+			case "on-route":
+				intStatusType = 1;
+				break;
+
+			case "on-scene":
+				intStatusType = 2;
+				break;
+
+			case "job-clear":
+				intStatusType = 3;
+				break;
+
 		}
+
+		// Set the spinner
+		$(sender).find('i').removeClass('fa-check-square-o').addClass('fa-refresh fa-spin');
+		$(sender).attr('disabled', 'disabled');
+
+		var jobId = $('#Id').val();
+
+		// Create the ajax request
+		$.ajax({
+			url: responseHub.apiPrefix + '/job-messages/' + jobId + '/progress',
+			type: 'POST',
+			dataType: 'json',
+			data: { '': intStatusType },
+			success: function (data) {
+		
+				// If there is a failed result, display that
+				if (data.Success == true) {
+		
+					var progressDate = moment(data.Timestamp).local();
+		
+					switch (statusType) {
+		
+						case "on-route":
+							addProgressMarkup($('.progress-on-route'), "On route", progressDate, data.UserFullName);
+							break;
+		
+						case "on-scene":
+							addProgressMarkup($('.progress-on-scene'), "On scene", progressDate, data.UserFullName);
+							break;
+		
+						case "job-clear":
+							addProgressMarkup($('.progress-job-clear'), "Job clear", progressDate, data.UserFullName);
+							break;
+		
+					}
+
+					$(sender).remove();
+		
+				} else {
+
+					// Reset the button
+					$(sender).find('i').addClass('fa-check-square-o').removeClass('fa-refresh fa-spin');
+					$(sender).removeAttr('disabled');
+
+					// Clear any existing alerts
+					$(".progess-messages .alert").remove();
+		
+					// Display the error message
+					$(".progess-messages").append('<div class="alert alert-warning alert-dismissable" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>' + data.ErrorMessage + '</p>');
+		
+				}
+		
+			},
+			error: function (jqXHR, textStatus, errorThrown) {
+				// Reset the button
+				$(sender).find('i').addClass('fa-check-square-o').removeClass('fa-refresh fa-spin');
+				$(sender).removeAttr('disabled');
+
+				// Clear any existing alerts
+				$(".progess-messages .alert").remove();
+
+				// SHow the error message
+				$(".progess-messages").append('<div class="alert alert-danger alert-dismissable" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>Sorry, there was an error saving the job message progress.</p>');
+			}
+		});
+
+	}
+
+	/**
+	 * Adds the progress markup to the dom.
+	 */
+	function addProgressMarkup(elem, progressType, date, userFullName) {
+
+		$(elem).append("<h4>" + progressType + "</h4>");
+		$(elem).append('<span class="text-success btn-icon"><i class="fa fa-fw fa-clock-o"></i>' + date.format('YYYY-MM-DD HH:mm:ss') + '</span><br />');
+		$(elem).append('<span class="text-muted btn-icon"><i class="fa fa-fw fa-user"></i>' + userFullName + '</span>');
 
 	}
 
 	function bindUI() {
 
-		$('.btn.start-new-job').click(function () {
-			$('.new-job').addClass('hidden');
-			$('.job-types').removeClass('hidden');
-			$('.cancel-new-job').removeClass('hidden');
+		$(".btn-on-route").click(function () {
+			setJobStatusTime('on-route', this);
 		});
 
-		$('.cancel-new-job .btn').click(function () {
-			$('.new-job').removeClass('hidden');
-			$('.job-types').addClass('hidden');
-			$('.cancel-new-job').addClass('hidden');
+		$(".btn-on-scene").click(function () {
+			setJobStatusTime('on-scene', this);
 		});
 
-		$('.job-types button').click(function () {
-			
-			var jobType = $(this).data('job-type');
-			setJobType(jobType);
-
+		$(".btn-job-clear").click(function () {
+			setJobStatusTime('job-clear', this);
 		});
 
 		$('#btnAddNote').click(function () {
