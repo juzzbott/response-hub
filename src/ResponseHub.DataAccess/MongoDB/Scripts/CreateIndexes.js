@@ -16,3 +16,7 @@ db.job_messages.createIndex({ MessageContent: "text" }, { background: true });
 
 // Users
 db.users.createIndex({ FirstName: "text", Surname: "text", EmailAddress: "text" }, { background: true, name: "users_text" });
+
+// Events
+db.events.createIndex({ "GroupId": 1 }, { background: true });
+db.events.createIndex({ Name: "text" }, { background: true, name: "events_text" });

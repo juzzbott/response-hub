@@ -81,7 +81,7 @@
 
 <p><a href="/admin/groups/@Model.Id/add-member" class="btn btn-primary btn-lg icon-link"><i class="fa fa-user-plus"></i>Add member</a></p>
 
-@Html.Partial("~/Areas/Admin/Views/Shared/SearchControl.cshtml", new Enivate.ResponseHub.UI.Areas.Admin.Models.SearchViewModel(Model.Users.Count, "members"))
+@Html.Partial("~/Views/Shared/SearchControl.cshtml", new Enivate.ResponseHub.UI.Models.SearchViewModel(Model.Users.Count, "members"))
 
 <table class="table table-responsive table-striped table-hover">
 	<thead>

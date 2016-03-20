@@ -24,6 +24,7 @@ module.exports = function(grunt) {
 					'bower_components/bootstrap/dist/js/bootstrap.js',
 					'bower_components/moment/min/moment.min.js',
 					'bower_components/bootstrap-select/dist/js/bootstrap-select.min.js',
+					'assets/js/lib/bootstrap-datepicker.min.js',
 					'assets/js/lib/leaflet.js'
 				],
 				dest: 'assets/js/framework.js'
@@ -48,6 +49,7 @@ module.exports = function(grunt) {
 					'assets/css/lib/bootstrap-grid-xl.css',
 					'bower_components/fontawesome/css/font-awesome.min.css',
 					'bower_components/bootstrap-select/dist/css/bootstrap-select.min.css',
+					'assets/css/lib/bootstrap-datepicker3.min.css',
 					'assets/css/lib/leaflet.css'
 				],
 				dest: 'assets/css/framework.css',

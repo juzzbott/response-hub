@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace Enivate.ResponseHub.UI.Areas.Admin.Models
+namespace Enivate.ResponseHub.UI.Models
 {
 	public class SearchViewModel
 	{

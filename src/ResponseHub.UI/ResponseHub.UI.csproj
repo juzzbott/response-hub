@@ -187,10 +187,14 @@
     <Compile Include="Areas\Admin\Controllers\ReportsController.cs" />
     <Compile Include="Areas\Admin\Controllers\UsersController.cs" />
     <Compile Include="Areas\Admin\Models\Capcodes\CreateCapcodeViewModel.cs" />
+    <Compile Include="Models\Events\EventListItemViewModel.cs" />
+    <Compile Include="Models\Events\EventViewModel.cs" />
     <Compile Include="Areas\Admin\Models\Groups\ChangeUserRoleViewModel.cs" />
     <Compile Include="Areas\Admin\Models\Groups\CreateGroupModel.cs" />
     <Compile Include="Areas\Admin\Models\Reports\GroupsCapcodesReportViewModel.cs" />
-    <Compile Include="Areas\Admin\Models\SearchViewModel.cs" />
+    <Compile Include="Controllers\BaseController.cs" />
+    <Compile Include="Models\Events\CreateEventViewModel.cs" />
+    <Compile Include="Models\SearchViewModel.cs" />
     <Compile Include="Areas\Admin\Models\Groups\ConfirmUserViewModel.cs" />
     <Compile Include="Areas\Admin\Models\Groups\NewUserViewModel.cs" />
     <Compile Include="Areas\Admin\Models\Groups\SingleGroupViewModel.cs" />
@@ -198,6 +202,7 @@
     <Compile Include="Areas\Admin\Models\Users\UserViewModel.cs" />
     <Compile Include="Controllers\Api\BaseApiController.cs" />
     <Compile Include="Controllers\Api\JobMessageController.cs" />
+    <Compile Include="Controllers\EventsController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\JobsController.cs" />
     <Compile Include="Controllers\MediaController.cs" />
@@ -227,6 +232,7 @@
     <Content Include="App_Data\Emails\activate_account.html" />
     <Content Include="App_Data\Emails\base_template.html" />
     <Content Include="assets\css\framework.css" />
+    <Content Include="assets\css\lib\bootstrap-datepicker3.min.css" />
     <Content Include="assets\css\lib\bootstrap-grid-xl.css" />
     <Content Include="assets\css\lib\leaflet.css" />
     <Content Include="assets\css\response-hub.css" />
@@ -237,6 +243,7 @@
     <Content Include="assets\images\leaflet\marker-icon.png" />
     <Content Include="assets\images\leaflet\marker-shadow.png" />
     <Content Include="assets\js\framework.js" />
+    <Content Include="assets\js\lib\bootstrap-datepicker.min.js" />
     <Content Include="assets\js\lib\leaflet.js" />
     <Content Include="assets\js\modules\capcodes.js" />
     <Content Include="assets\js\modules\groups.js" />
@@ -261,6 +268,7 @@
     <Content Include="Views\Shared\_Layout.cshtml" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Views\Base\" />
     <Folder Include="Views\Media\" />
   </ItemGroup>
   <ItemGroup>
@@ -392,7 +400,7 @@
     <Content Include="Areas\Admin\Views\Capcodes\CreateEdit.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Areas\Admin\Views\Shared\SearchControl.cshtml" />
+    <Content Include="Views\Shared\SearchControl.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Jobs\Index.cshtml" />
@@ -419,6 +427,9 @@
     <Content Include="Views\Jobs\JobProgress.cshtml" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Views\Events\Index.cshtml" />
+    <Content Include="Views\Events\Create.cshtml" />
+    <Content Include="Views\Events\ViewEvent.cshtml" />
     <None Include="Web.Staging.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

@@ -419,7 +419,11 @@ h4.legend {
 }
 .btn.disabled,
 .btn[disabled],
-fieldset[disabled] .btn {
+fieldset[disabled] .btn,
+input.disabled,
+input[disabled],
+.form-control[disabled],
+fieldset[disabled] .form-control {
   cursor: default;
 }
 .bootstrap-select .btn.dropdown-toggle {

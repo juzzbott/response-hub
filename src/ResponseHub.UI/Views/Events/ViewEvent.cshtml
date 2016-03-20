@@ -1,0 +1,13 @@
+﻿@model Enivate.ResponseHub.UI.Models.Events.EventViewModel
+
+@{
+    ViewBag.Title = Model.Name;
+}
+
+<div class="val-edit">
+	<h1 class="val">@ViewBag.Title</h1>
+	<div class="val-edit-controls">
+		<input type="text" class="form-control input-lg" name="Name" value="@ViewBag.Title" /> 
+	</div>
+</div>
+

@@ -62,6 +62,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Events\Event.cs" />
+    <Compile Include="Events\Interface\IEventService.cs" />
     <Compile Include="Groups\Capcode.cs" />
     <Compile Include="Groups\Interface\ICapcodeService.cs" />
     <Compile Include="Groups\Interface\IGroupService.cs" />
