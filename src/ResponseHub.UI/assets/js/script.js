@@ -55,6 +55,11 @@ var responseHub = (function () {
 			toggleSidebar();
 		});
 
+		// Tab collapse
+		if ($('.tab-collapse').length > 0) {
+			$('.tab-collapse').tabCollapse();
+		}
+
 	}
 
 	// Bind the modal

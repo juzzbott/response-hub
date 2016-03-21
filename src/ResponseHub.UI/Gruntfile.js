@@ -25,6 +25,7 @@ module.exports = function(grunt) {
 					'bower_components/moment/min/moment.min.js',
 					'bower_components/bootstrap-select/dist/js/bootstrap-select.min.js',
 					'assets/js/lib/bootstrap-datepicker.min.js',
+					'assets/js/lib/bootstrap-tabcollapse.js',
 					'assets/js/lib/leaflet.js'
 				],
 				dest: 'assets/js/framework.js'

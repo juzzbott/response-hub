@@ -429,6 +429,15 @@ fieldset[disabled] .form-control {
 .bootstrap-select .btn.dropdown-toggle {
   border-radius: 2px;
 }
+/* Value edit controls */
+.val-edit .val-edit-input {
+  position: relative;
+}
+.val-edit .val-edit-input .val-edit-controls {
+  position: absolute;
+  right: 0;
+  top: 0;
+}
 /*
 	Login styles
 */

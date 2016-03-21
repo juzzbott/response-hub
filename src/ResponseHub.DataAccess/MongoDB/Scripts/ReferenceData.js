@@ -13,3 +13,11 @@ db.regions.insert({ _id: UUID('326d7776bcab4fdd8aa58524168046df'), Name: "Barwon
 
 // Capcodes
 db.capcodes.remove({});
+
+// Agencies
+db.agencies.remove({});
+db.agencies.insert({ _id: UUID("34cd9f655e4643b190c60e3bd1d78e70"), Name: "Victoria State Emergency Service" });
+db.agencies.insert({ _id: UUID("70a5caf80daa44889ee4e752bb287c13"), Name: "Country Fire Authority" });
+db.agencies.insert({ _id: UUID("0038c291b483471c9096c2236794ef40"), Name: "Parks Victoria" });
+db.agencies.insert({ _id: UUID("d9273f4fe1224ba6bb14f0d88bc9a86d"), Name: "Victoria Police" });
+db.agencies.insert({ _id: UUID("cdaad166ee3a439aa2d3bf52b4fa3f02"), Name: "DELWP" });

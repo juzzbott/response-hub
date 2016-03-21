@@ -81,6 +81,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AgencyService.cs" />
     <Compile Include="CapcodeService.cs" />
     <Compile Include="EventService.cs" />
     <Compile Include="GroupService.cs" />

@@ -22,15 +22,18 @@ namespace Enivate.ResponseHub.ApplicationServices
 
 		private IGroupRepository _repository;
 
+		private IUserRepository _userRepository;
+
 		private IRegionRepository _regionRepository;
 
 		/// <summary>
 		/// Creates a new instance of the Group application service.
 		/// </summary>
 		/// <param name="repository">The repository used to persist group data.</param>
-		public GroupService(IGroupRepository repository, IRegionRepository regionRepository)
+		public GroupService(IGroupRepository repository, IUserRepository userRepository, IRegionRepository regionRepository)
 		{
 			_repository = repository;
+			_userRepository = userRepository;
 			_regionRepository = regionRepository;
 		}
 
@@ -182,6 +185,29 @@ namespace Enivate.ResponseHub.ApplicationServices
 		public async Task<IList<Group>> GetGroupsForUser(Guid userId)
 		{
 			return await _repository.GetGroupsForUser(userId);
+		}
+
+		/// <summary>
+		/// Gets the collection of users for the specified group.
+		/// </summary>
+		/// <param name="groupId">The id of the group to get the users for.</param>
+		/// <returns>The list of identity users for the specified group.</returns>
+		public async Task<IList<IdentityUser>> GetUsersForGroup(Guid groupId)
+		{
+			// Get the group
+			Group group = await _repository.GetById(groupId);
+
+			// If the group is null, just return an empty list
+			if (group == null)
+			{
+				return new List<IdentityUser>();
+			}
+
+			// Now that we have the group, get all users for that group
+			IList<IdentityUser> users = await _userRepository.GetUsersByIds(group.Users.Select(i => i.UserId));
+
+			// return the users
+			return users;
 		}
 
 		/// <summary>

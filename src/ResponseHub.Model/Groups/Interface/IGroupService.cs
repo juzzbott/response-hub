@@ -1,4 +1,5 @@
-﻿using Enivate.ResponseHub.Model.Spatial;
+﻿using Enivate.ResponseHub.Model.Identity;
+using Enivate.ResponseHub.Model.Spatial;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,6 +24,8 @@ namespace Enivate.ResponseHub.Model.Groups.Interface
 		Task AddUserToGroup(Guid userId, string role, Guid groupId);
 
 		Task<IList<Group>> GetGroupsForUser(Guid userId);
+
+		Task<IList<IdentityUser>> GetUsersForGroup(Guid groupId);
 
 		Task<IList<Region>> GetRegions();
 

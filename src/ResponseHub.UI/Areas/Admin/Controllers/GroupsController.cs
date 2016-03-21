@@ -339,7 +339,7 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 			if (String.IsNullOrEmpty(Request.QueryString["q"]))
 			{
 				// Get all the users for the group
-				groupUsers.AddRange(await UserService.GetUsersByIds(group.Users.Select(i => i.UserId)));
+				groupUsers.AddRange(await GroupService.GetUsersForGroup(id));
 			}
 			else
 			{

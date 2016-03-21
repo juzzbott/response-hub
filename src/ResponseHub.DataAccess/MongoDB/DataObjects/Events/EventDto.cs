@@ -1,4 +1,5 @@
 ﻿using Enivate.ResponseHub.Model;
+using Enivate.ResponseHub.Model.Events;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,6 +22,13 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB.DataObjects.Events
 		public DateTime EventStarted { get; set; }
 
 		public DateTime EventFinished { get; set; }
+
+		public IList<EventResource> Resources { get; set; }
+
+		public EventDto()
+		{
+			Resources = new List<EventResource>();
+		}
 
 	}
 }

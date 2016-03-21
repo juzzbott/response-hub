@@ -14,6 +14,9 @@ using Enivate.ResponseHub.UI.Models.Events;
 using Enivate.ResponseHub.Model.Events;
 using System.Globalization;
 using System.Net;
+using Enivate.ResponseHub.Model.Identity;
+using Enivate.ResponseHub.Model.Agencies.Interface;
+using Enivate.ResponseHub.Model.Agencies;
 
 namespace Enivate.ResponseHub.UI.Controllers
 {
@@ -35,6 +38,14 @@ namespace Enivate.ResponseHub.UI.Controllers
 			get
 			{
 				return ServiceLocator.Get<IEventService>();
+			}
+		}
+
+		IAgencyService AgencyService
+		{
+			get
+			{
+				return ServiceLocator.Get<IAgencyService>();
 			}
 		}
 
@@ -140,16 +151,16 @@ namespace Enivate.ResponseHub.UI.Controllers
 		public async Task<ActionResult> ViewEvent(Guid id)
 		{
 			// Get the event based on the id
-			Event theEvent = await EventService.GetById(id);
+			Event eventObj = await EventService.GetById(id);
 
 			// If the job is null, return 404
-			if (theEvent == null)
+			if (eventObj == null)
 			{
 				throw new HttpException((int)HttpStatusCode.NotFound, "The requested page cannot be found.");
 			}
 
 			// Get the group If it's null, throw system error
-			Group group = await GroupService.GetById(theEvent.GroupId);
+			Group group = await GroupService.GetById(eventObj.GroupId);
 			if (group == null)
 			{
 				throw new HttpException((int)HttpStatusCode.InternalServerError, "The group details count not be found.");
@@ -158,12 +169,18 @@ namespace Enivate.ResponseHub.UI.Controllers
 			// Create the model
 			EventViewModel model = new EventViewModel()
 			{
-				EventFinished = theEvent.EventFinished,
-				EventStarted = theEvent.EventStarted,
-				GroupId = theEvent.GroupId,
+				EventFinished = eventObj.EventFinished,
+				EventStarted = eventObj.EventStarted,
+				GroupId = eventObj.GroupId,
 				GroupName = group.Name,
-				Name = theEvent.Name
+				Name = eventObj.Name
 			};
+
+			// Set the group resources
+			model.GroupResources = await GetGroupResources(group.Id, eventObj);
+
+			// Set the available resources
+			model.AdditionalResourceModel.AvailableAgencies = await GetAvailableAgencies();
 
 			// return the view
 			return View(model);
@@ -201,6 +218,68 @@ namespace Enivate.ResponseHub.UI.Controllers
 
 			// return the available groups
 			return availableGroups;
+		}
+
+		/// <summary>
+		/// Gets the group resources for the event. 
+		/// </summary>
+		/// <param name="groupId"></param>
+		/// <returns></returns>
+		private async Task<IList<EventResource>> GetGroupResources(Guid groupId, Event eventObj)
+		{
+			// Create the list of event resources
+			IList<EventResource> resources = new List<EventResource>();
+
+			// Get the group
+			Group group = await GroupService.GetById(groupId);
+
+			// If the group is null, return empty list
+			if (group == null)
+			{
+				return resources;
+			}
+
+			// Get the users for the specified group
+			IList<IdentityUser> users = await GroupService.GetUsersForGroup(groupId);
+
+			// For each user in the group, add the event resource
+			foreach(IdentityUser user in users)
+			{
+				resources.Add(new EventResource() {
+					Active = eventObj.Resources.Any(i => i.UserId.HasValue && i.UserId == user.Id),
+					Name = user.FullName,
+					Type = ResourceType.GroupMember,
+					UserId = user.Id
+				});
+			}
+
+			// return the list of resources 
+			return resources;
+			
+		}
+
+		private async Task<IList<SelectListItem>> GetAvailableAgencies()
+		{
+			// Create the list of select list items
+			IList<SelectListItem> items = new List<SelectListItem>();
+
+			// Add please select
+			items.Add(new SelectListItem() { Value = "", Text = "Please select..." });
+
+			// Get all the agencies
+			IList<Agency> agencies = await AgencyService.GetAll();
+
+			// if the agencies list is not null, loop through and add item
+			if (agencies != null)
+			{
+				foreach(Agency agency in agencies)
+				{
+					items.Add(new SelectListItem() { Value = agency.Id.ToString(), Text = agency.Name });
+				}
+			}
+
+			// return the select list items
+			return items;
 		}
 
 		#endregion
