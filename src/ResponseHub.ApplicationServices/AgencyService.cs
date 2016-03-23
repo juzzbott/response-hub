@@ -52,5 +52,19 @@ namespace Enivate.ResponseHub.ApplicationServices
 
 		}
 
+		/// <summary>
+		/// Gets the agency based on the id. 
+		/// </summary>
+		/// <param name="id">The id of the agency to find. </param>
+		/// <returns>The agency if found, otherwise null.</returns>
+		public async Task<Agency> GetByID(Guid id)
+		{
+			// Just get all the agencies, as they should be cached
+			IList<Agency> allAgencies = await GetAll();
+
+			// return the agency that matches the id
+			return allAgencies.FirstOrDefault(i => i.Id == id);
+		}
+
 	}
 }

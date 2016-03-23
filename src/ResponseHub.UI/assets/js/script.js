@@ -433,6 +433,9 @@ responseHub.jobLog = (function () {
 
 		var jobId = $('#Id').val();
 
+		// Clear any existing alerts
+		$(".job-note-messages .alert").remove();
+
 		// Create the ajax request
 		$.ajax({
 			url: responseHub.apiPrefix + '/job-messages/' + jobId + '/notes',
@@ -442,7 +445,8 @@ responseHub.jobLog = (function () {
 			success: function (data) {
 		
 				if (data == null) {
-					// TODO: show front-end error.
+					$(".job-note-messages").append('<div class="alert alert-danger alert-dismissable" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>Sorry, there was an error adding your note. Please try again shortly.</p>');
+					return;
 				}
 		
 				var noteDate = moment(data.Date);
@@ -451,26 +455,19 @@ responseHub.jobLog = (function () {
 		
 				$('#job-notes ul').prepend(noteMarkup);
 				$('#job-notes').removeClass('hidden');
-				$('#txtJobNote').val('');
-
-				// Reset the button
-				$("#btnAddNote").find('i').addClass('fa-comment-o').removeClass('fa-refresh fa-spin');
-
-				// Clear any existing alerts
-				$(".job-note-messages .alert").remove();
 		
 			},
 			error: function (jqXHR, textStatus, errorThrown) {
+				
+				// Show the error message
+				$(".job-note-messages").append('<div class="alert alert-danger alert-dismissable" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>Sorry, there was an error adding your note. Please try again shortly.</p>');
+
+			},
+			complete: function (jqXHR, textStatus) {
 
 				// Reset the button
 				$("#btnAddNote").find('i').addClass('fa-comment-o').removeClass('fa-refresh fa-spin');
-				$("#btnAddNote").removeAttr('disabled');
-
-				// Clear any existing alerts
-				$(".job-note-messages .alert").remove();
-
-				// Show the error message
-				$(".job-note-messages").append('<div class="alert alert-danger alert-dismissable" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>Sorry, there was an error adding your note. Please try again shortly.</p>');
+				$('#txtJobNote').val('');
 
 			}
 		});
@@ -965,6 +962,74 @@ responseHub.capcodes = (function () {
 	// Create the return object
 	return {
 		setCapcodeTag: setCapcodeTag
+	}
+
+})();
+
+responseHub.resources = (function () {
+
+	/** 
+	 * Adds a resource to the system for the specified group. 
+	 */
+	function addResource() {
+
+		var buttonCtl = $("#add-resource");
+
+		// Set the spinner
+		buttonCtl.find('i').removeClass('fa-plus').addClass('fa-refresh fa-spin');
+		buttonCtl.attr('disabled', 'disabled');
+
+		// Get the group id
+		var eventId = $("#EventId").val();
+
+		// Create the post data object
+		var postData = {
+			'Name': $("#Name").val(),
+			'AgencyId': $("#AgencyId").val(),
+			'UserId': null,
+			'Type': 2 // Additional resource
+		};
+
+		// Clear any existing alerts
+		$(".add-resource-messages .alert").remove();
+
+		// Create the ajax request
+		$.ajax({
+			url: responseHub.apiPrefix + '/events/' + eventId + '/resources',
+			type: 'POST',
+			dataType: 'json',
+			data: postData,
+			success: function (data) {
+
+				if (data == null) {
+					// Show the error message
+					$(".add-resource-messages").append('<div class="alert alert-danger alert-dismissable" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>Sorry, there was an error adding the resource. Please try again shortly.</p>');
+					return;
+				}
+
+			},
+			error: function (jqXHR, textStatus, errorThrown) {
+				
+				// Show the error message
+				$(".add-resource-messages").append('<div class="alert alert-danger alert-dismissable" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>Sorry, there was an error adding the resource. Please try again shortly.</p>');
+
+			},
+			complete: function () {
+
+				// Reset the button
+				buttonCtl.find('i').addClass('fa-plus').removeClass('fa-refresh fa-spin');
+				buttonCtl.removeAttr('disabled');
+
+				// Reset fields
+				$("#AdditionalResourceModel_Name").val('');
+				$("#AdditionalResourceModel_AgencyId").val('');
+
+			}
+		});
+	}
+
+	return {
+		addResource: addResource
 	}
 
 })();

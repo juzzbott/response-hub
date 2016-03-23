@@ -187,6 +187,9 @@
     <Compile Include="Areas\Admin\Controllers\ReportsController.cs" />
     <Compile Include="Areas\Admin\Controllers\UsersController.cs" />
     <Compile Include="Areas\Admin\Models\Capcodes\CreateCapcodeViewModel.cs" />
+    <Compile Include="Controllers\Api\EventsController.cs" />
+    <Compile Include="Models\Api\Events\AddResourcePostModel.cs" />
+    <Compile Include="Models\Api\Events\AddResourceResponseModel.cs" />
     <Compile Include="Models\Events\AdditionalResourceViewModel.cs" />
     <Compile Include="Models\Events\EventListItemViewModel.cs" />
     <Compile Include="Models\Events\EventViewModel.cs" />
@@ -252,6 +255,7 @@
     <Content Include="assets\js\modules\joblog.js" />
     <Content Include="assets\js\modules\maps.js" />
     <Content Include="assets\js\modules\password-strength.js" />
+    <Content Include="assets\js\modules\resources.js" />
     <Content Include="assets\js\modules\wallboard.js" />
     <Content Include="assets\js\modules\_core.js" />
     <Content Include="assets\js\script.js" />
@@ -432,6 +436,7 @@
     <Content Include="Views\Events\Index.cshtml" />
     <Content Include="Views\Events\Create.cshtml" />
     <Content Include="Views\Events\ViewEvent.cshtml" />
+    <Content Include="Views\Events\AddResourceForm.cshtml" />
     <None Include="Web.Staging.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

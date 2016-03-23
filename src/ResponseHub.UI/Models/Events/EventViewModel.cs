@@ -9,6 +9,8 @@ namespace Enivate.ResponseHub.UI.Models.Events
 	public class EventViewModel
 	{
 
+		public Guid Id { get; set; }
+
 		public string Name { get; set; }
 
 		public DateTime  EventStarted { get; set; }

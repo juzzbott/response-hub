@@ -11,5 +11,7 @@ namespace Enivate.ResponseHub.Model.Agencies.Interface
 
 		Task<IList<Agency>> GetAll();
 
+		Task<Agency> GetByID(Guid id);
+
 	}
 }

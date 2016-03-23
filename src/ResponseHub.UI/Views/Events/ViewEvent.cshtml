@@ -4,6 +4,8 @@
     ViewBag.Title = Model.Name;
 }
 
+<input type="hidden" id="EventId" value="@Model.Id" />
+
 <div class="val-edit">
 	<h1 class="val">@ViewBag.Title</h1>
 	<div class="val-edit-input hidden">
@@ -48,37 +50,7 @@
 				}
 			</div>
 
-			<h4>Add resource</h4>
-			<div class="row">
-				<div class="col-xs-12">
-					<form>
-
-						<div class="form-group">
-							<label for="Name">Name *</label>
-							<div class="row">
-								<div class="col-sm-8 col-md-6 col-lg-4">
-									@Html.TextBoxFor(model => model.AdditionalResourceModel.Name, new { @class = "form-control", placeholder = "e.g. John Smith" })
-								</div>
-							</div>
-							@Html.ValidationMessageFor(model => model.AdditionalResourceModel.Name)
-						</div>
-
-						<div class="form-group">
-							<label for="Service">Agency *</label>
-							<div class="row">
-								<div class="col-sm-8 col-md-6 col-lg-4">
-									@Html.DropDownListFor(model => model.AdditionalResourceModel.AgencyId, Model.AdditionalResourceModel.AvailableAgencies, new { @class = "form-control" })
-								</div>
-							</div>
-							@Html.ValidationMessageFor(model => model.AdditionalResourceModel.AgencyId)
-						</div>
-
-						<button class="btn btn-default">Add resource</button>
-						<button class="btn btn-link">Clear form</button>
-
-					</form>
-				</div>
-			</div>
+			@Html.Partial("AddResourceForm", Model.AdditionalResourceModel)
 
 		</div>
 	</div>

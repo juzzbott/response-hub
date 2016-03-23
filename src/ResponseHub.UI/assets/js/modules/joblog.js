@@ -37,6 +37,9 @@
 
 		var jobId = $('#Id').val();
 
+		// Clear any existing alerts
+		$(".job-note-messages .alert").remove();
+
 		// Create the ajax request
 		$.ajax({
 			url: responseHub.apiPrefix + '/job-messages/' + jobId + '/notes',
@@ -46,7 +49,8 @@
 			success: function (data) {
 		
 				if (data == null) {
-					// TODO: show front-end error.
+					$(".job-note-messages").append('<div class="alert alert-danger alert-dismissable" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>Sorry, there was an error adding your note. Please try again shortly.</p>');
+					return;
 				}
 		
 				var noteDate = moment(data.Date);
@@ -55,26 +59,19 @@
 		
 				$('#job-notes ul').prepend(noteMarkup);
 				$('#job-notes').removeClass('hidden');
-				$('#txtJobNote').val('');
-
-				// Reset the button
-				$("#btnAddNote").find('i').addClass('fa-comment-o').removeClass('fa-refresh fa-spin');
-
-				// Clear any existing alerts
-				$(".job-note-messages .alert").remove();
 		
 			},
 			error: function (jqXHR, textStatus, errorThrown) {
+				
+				// Show the error message
+				$(".job-note-messages").append('<div class="alert alert-danger alert-dismissable" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>Sorry, there was an error adding your note. Please try again shortly.</p>');
+
+			},
+			complete: function (jqXHR, textStatus) {
 
 				// Reset the button
 				$("#btnAddNote").find('i').addClass('fa-comment-o').removeClass('fa-refresh fa-spin');
-				$("#btnAddNote").removeAttr('disabled');
-
-				// Clear any existing alerts
-				$(".job-note-messages .alert").remove();
-
-				// Show the error message
-				$(".job-note-messages").append('<div class="alert alert-danger alert-dismissable" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>Sorry, there was an error adding your note. Please try again shortly.</p>');
+				$('#txtJobNote').val('');
 
 			}
 		});

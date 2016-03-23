@@ -96,6 +96,28 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 			return mappedEvents;
 		}
 
+		/// <summary>
+		/// Adds the resource to the event.
+		/// </summary>
+		/// <param name="eventId"></param>
+		/// <param name="resource"></param>
+		/// <returns></returns>
+		public async Task<bool> AddResourceToEvent(Guid eventId, EventResource resource)
+		{
+
+			// Create the filter 
+			FilterDefinition<EventDto> filter = Builders<EventDto>.Filter.Eq(i => i.Id, eventId);
+
+			// Create the push
+			UpdateDefinition<EventDto> update = Builders<EventDto>.Update.Push(i => i.Resources, resource);
+
+			// Do the update
+			UpdateResult result = await Collection.UpdateOneAsync(filter, update);
+
+			return result.ModifiedCount > 0;
+
+		}
+
 		#region Mappers
 
 		/// <summary>
@@ -119,7 +141,8 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 				EventStarted = dbObject.EventStarted,
 				GroupId = dbObject.GroupId,
 				Id = dbObject.Id,
-				Name = dbObject.Name
+				Name = dbObject.Name,
+				Resources = dbObject.Resources
 			};
 
 			// return the model event
@@ -147,7 +170,8 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 				EventStarted = modelObject.EventStarted,
 				GroupId = modelObject.GroupId,
 				Id = modelObject.Id,
-				Name = modelObject.Name
+				Name = modelObject.Name,
+				Resources = modelObject.Resources
 			};
 
 			// return the model event

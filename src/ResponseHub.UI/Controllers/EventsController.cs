@@ -169,6 +169,7 @@ namespace Enivate.ResponseHub.UI.Controllers
 			// Create the model
 			EventViewModel model = new EventViewModel()
 			{
+				Id = id,
 				EventFinished = eventObj.EventFinished,
 				EventStarted = eventObj.EventStarted,
 				GroupId = eventObj.GroupId,

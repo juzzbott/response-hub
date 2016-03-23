@@ -21,5 +21,12 @@ namespace Enivate.ResponseHub.Model.Events
 
 		public Guid AgencyId { get; set; }
 
+		public DateTime Created { get; set; }
+
+		public EventResource()
+		{
+			Id = Guid.NewGuid();
+		}
+
 	}
 }

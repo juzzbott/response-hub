@@ -70,9 +70,52 @@ namespace Enivate.ResponseHub.ApplicationServices
 			return await _repository.GetEventsByGroup(groupIds);
 		}
 
+		/// <summary>
+		/// Find the event by the keywords. 
+		/// </summary>
+		/// <param name="keywords">Keywords to find the event for.</param>
+		/// <param name="groupIds">The collection of group ids to limit the results to.</param>
+		/// <returns>The list of events that match the search terms and group ids.</returns>
 		public async Task<IList<Event>> FindByKeywords(string keywords, IEnumerable<Guid> groupIds)
 		{
 			return await _repository.FindByKeywords(keywords, groupIds);
 		}
+
+		/// <summary>
+		/// Adds the specified resource to the event. 
+		/// </summary>
+		/// <param name="eventId"></param>
+		/// <param name="name"></param>
+		/// <param name="agency"></param>
+		/// <param name="userId"></param>
+		/// <param name="resourceType"></param>
+		/// <returns></returns>
+		public async Task<EventResource> AddResourceToEvent(Guid eventId, string name, Guid agency, Guid? userId, ResourceType resourceType)
+		{
+
+			// Create the event resource
+			EventResource resource = new EventResource()
+			{
+				Active = true,
+				AgencyId = agency,
+				Name = name,
+				Type = resourceType,
+				UserId = userId,
+				Created = DateTime.UtcNow
+			};
+
+			// Add the resource to the event
+			bool result = await _repository.AddResourceToEvent(eventId, resource);
+
+			// If the result is null, throw exception
+			if (!result)
+			{
+				throw new ApplicationException("Count not add resource to event.");
+			}
+
+			return resource;
+		}
+
+
 	}
 }

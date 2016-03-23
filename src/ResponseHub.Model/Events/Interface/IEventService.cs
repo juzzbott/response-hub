@@ -17,5 +17,7 @@ namespace Enivate.ResponseHub.Model.Events.Interface
 
 		Task<IList<Event>> FindByKeywords(string keywords, IEnumerable<Guid> groupIds);
 
+		Task<EventResource> AddResourceToEvent(Guid eventId, string name, Guid agency, Guid? userId, ResourceType resourceType);
+
 	}
 }
