@@ -17,12 +17,13 @@ using Enivate.ResponseHub.Logging;
 using Enivate.ResponseHub.Model.Identity;
 using Enivate.ResponseHub.UI.Models.MyAccount;
 using System.Security.Claims;
+using System.Net;
 
 namespace Enivate.ResponseHub.UI.Controllers
 {
 
 	[RoutePrefix("my-account")]
-	public class MyAccountController : Controller
+	public class MyAccountController : BaseController
 	{
 
 		private ILogger _log;
@@ -60,13 +61,7 @@ namespace Enivate.ResponseHub.UI.Controllers
 				return _authenticationManager ?? (_authenticationManager = HttpContext.GetOwinContext().Authentication);
 			}
 		}
-
-		// GET: MyAccount
-		public ActionResult Index()
-		{
-			return View();
-		}
-
+		
 		#region Login
 
 		// GET: /my-account/login
@@ -162,6 +157,34 @@ namespace Enivate.ResponseHub.UI.Controllers
 		{
 			AuthenticationManager.SignOut();
 			return new RedirectResult("/my-account/login");
+		}
+
+		#endregion
+
+		#region My Account
+
+		[Route]
+		public async Task<ActionResult> Index()
+		{
+			// Get the current user
+			IdentityUser currentUser = await GetCurrentUser();
+
+			// If the current user is null, throw bad request exception
+			if (currentUser == null)
+			{
+				throw new HttpException((int)HttpStatusCode.BadRequest, "Unable to process request.");
+			}
+
+			// Create the account details view model
+			AccountDetailsViewModel model = new AccountDetailsViewModel()
+			{
+				Created = currentUser.Created.ToLocalTime(),
+				EmailAddress = currentUser.EmailAddress,
+				FirstName = currentUser.FirstName,
+				Surname = currentUser.Surname
+			};
+
+			return View(model);
 		}
 
 		#endregion

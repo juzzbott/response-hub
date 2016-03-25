@@ -198,6 +198,7 @@
     <Compile Include="Areas\Admin\Models\Reports\GroupsCapcodesReportViewModel.cs" />
     <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Models\Events\CreateEventViewModel.cs" />
+    <Compile Include="Models\MyAccount\AccountDetailsViewModel.cs" />
     <Compile Include="Models\SearchViewModel.cs" />
     <Compile Include="Areas\Admin\Models\Groups\ConfirmUserViewModel.cs" />
     <Compile Include="Areas\Admin\Models\Groups\NewUserViewModel.cs" />
@@ -437,6 +438,7 @@
     <Content Include="Views\Events\Create.cshtml" />
     <Content Include="Views\Events\ViewEvent.cshtml" />
     <Content Include="Views\Events\AddResourceForm.cshtml" />
+    <Content Include="Views\MyAccount\Index.cshtml" />
     <None Include="Web.Staging.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
