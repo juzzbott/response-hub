@@ -25,16 +25,7 @@ namespace Enivate.ResponseHub.UI.Controllers
 	[RoutePrefix("my-account")]
 	public class MyAccountController : BaseController
 	{
-
-		private ILogger _log;
-		protected ILogger Log
-		{
-			get
-			{
-				return _log ?? (_log = UnityConfiguration.Container.Resolve<ILogger>());
-			}
-		}
-
+		
 		private SignInManager<IdentityUser, Guid> _signInManager;
 		protected SignInManager<IdentityUser, Guid> SignInManager
 		{
@@ -43,16 +34,7 @@ namespace Enivate.ResponseHub.UI.Controllers
 				return _signInManager ?? (_signInManager = HttpContext.GetOwinContext().Get<SignInManager<IdentityUser, Guid>>());
 			}
 		}
-
-		private UserService _userService;
-		protected UserService UserService
-		{
-			get
-			{
-				return _userService ?? (_userService = HttpContext.GetOwinContext().Get<UserService>());
-			}
-		}
-
+		
 		private IAuthenticationManager _authenticationManager;
 		protected IAuthenticationManager AuthenticationManager
 		{
@@ -141,7 +123,7 @@ namespace Enivate.ResponseHub.UI.Controllers
 			}
 			catch (Exception ex)
 			{
-				await _log.Error(String.Format("There was an error logging in user: '{0}'.", model.Email), ex);
+				await Log.Error(String.Format("There was an error logging in user: '{0}'.", model.Email), ex);
 				ModelState.AddModelError("", "There was a system error trying to log you in.");
 				return View(model);
 			}
@@ -185,6 +167,117 @@ namespace Enivate.ResponseHub.UI.Controllers
 			};
 
 			return View(model);
+		}
+
+		#endregion
+
+		#region Update Account
+
+		[Route("update-account")]
+		public async Task<ActionResult> UpdateAccountDetails()
+		{
+
+			// Get the current identity user
+			IdentityUser currentUser = await GetCurrentUser();
+
+			// Create the view models
+			UpdateAccountViewModel model = new UpdateAccountViewModel()
+			{
+				FirstName = currentUser.FirstName,
+				Surname = currentUser.Surname
+			};
+
+			// return the view
+			return View(model);
+
+		}
+
+		[Route("update-account")]
+		[ValidateAntiForgeryToken]
+		[HttpPost]
+		public async Task<ActionResult> UpdateAccountDetails(UpdateAccountViewModel model)
+		{
+
+			// Ensure the form is valid
+			if (!ModelState.IsValid)
+			{
+				return View(model);
+			}
+
+			try
+			{
+				// Update the user details
+				await UserService.UpdateAccountDetails(UserId, model.FirstName, model.Surname);
+
+				// Redirect to the my account screen
+				return new RedirectResult("/my-account?account_updated=1");
+			}
+			catch (Exception ex)
+			{
+				// Log the error
+				await Log.Error(String.Format("Unable to update user account details. Message: {0}", ex.Message), ex);
+				ModelState.AddModelError("", "Sorry, there was a system error updating your account details.");
+				return View(model);
+			}
+
+		}
+
+		[Route("update-email")]
+		public async Task<ActionResult> UpdateEmailAddress()
+		{
+
+			// Get the current identity user
+			IdentityUser currentUser = await GetCurrentUser();
+
+			// Create the model
+			UpdateEmailViewModel model = new UpdateEmailViewModel()
+			{
+				EmailAddress = currentUser.EmailAddress
+			};
+
+			return View(model);
+
+		}
+
+		[Route("update-email")]
+		[ValidateAntiForgeryToken]
+		[HttpPost]
+		public async Task<ActionResult> UpdateEmailAddress(UpdateEmailViewModel model)
+		{
+
+			// Ensure the form is valid
+			if (!ModelState.IsValid)
+			{
+				return View(model);
+			}
+
+			try
+			{
+				// Update the user details
+				IdentityResult result = await UserService.UpdateUserNameAsync(UserId, model.EmailAddress, model.Password);
+
+				if (result.Succeeded)
+				{
+
+					// Redirect to the my account screen
+					return new RedirectResult("/my-account?email_updated=1");
+
+				}
+				else
+				{
+					// Add the model error
+					ModelState.AddModelError("", result.Errors.FirstOrDefault());
+					return View(model);
+				} 
+			}
+			catch (Exception ex)
+			{
+				// Log the error
+				await Log.Error(String.Format("Unable to update your email address details. Message: {0}", ex.Message), ex);
+				ModelState.AddModelError("", "Sorry, there was a system error updating your account details.");
+				return View(model);
+			}
+
 		}
 
 		#endregion
@@ -252,7 +345,7 @@ namespace Enivate.ResponseHub.UI.Controllers
 					}
 					catch (Exception ex)
 					{
-						await _log.Error("Unable to send password changed mail message.", ex);
+						await Log.Error("Unable to send password changed mail message.", ex);
 					}
 
 					//_eventLog.LogEvent(EventTypes.CHANGE_PASSWORD, "User '{0}' changed password. IP Address of user: {1}", userId, Request.UserHostAddress);
@@ -267,7 +360,7 @@ namespace Enivate.ResponseHub.UI.Controllers
 			}
 			catch (Exception ex)
 			{
-				await _log.Error(String.Format("There was an error updating the account password for user: '{0}'.", userId), ex);
+				await Log.Error(String.Format("There was an error updating the account password for user: '{0}'.", userId), ex);
 				ModelState.AddModelError("", "Sorry, there was an error updating your account password.");
 				return View(model);
 			}
@@ -316,7 +409,7 @@ namespace Enivate.ResponseHub.UI.Controllers
 					}
 					catch (Exception ex)
 					{
-						await _log.Error("Unable to send password created mail message.", ex);
+						await Log.Error("Unable to send password created mail message.", ex);
 					}
 
 					//_eventLog.LogEvent(EventTypes.CREATE_PASSWORD, "User '{0}' created a password. IP Address of user: {1}", userId, Request.UserHostAddress);
@@ -331,7 +424,7 @@ namespace Enivate.ResponseHub.UI.Controllers
 			}
 			catch (Exception ex)
 			{
-				await _log.Error(String.Format("There was an error creating the account password for user: '{0}'.", userId), ex);
+				await Log.Error(String.Format("There was an error creating the account password for user: '{0}'.", userId), ex);
 				ModelState.AddModelError("", "Sorry, there was an error creating your account password.");
 				return View(model);
 			}

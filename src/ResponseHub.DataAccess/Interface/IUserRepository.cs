@@ -119,6 +119,10 @@ namespace Enivate.ResponseHub.DataAccess.Interface
 
 		new Task<IList<IdentityUser>> GetAll();
 
+		Task UpdateAccountDetails(Guid userId, string firstName, string surname);
+
+		Task UpdateAccountUsername(Guid userId, string newUsername);
+
 		#endregion
 
 	}

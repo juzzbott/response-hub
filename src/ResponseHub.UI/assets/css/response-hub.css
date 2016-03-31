@@ -57,6 +57,9 @@ body {
 .btn-action-icon {
   font-size: 16px;
 }
+.btn-spacer {
+  margin-right: 30px;
+}
 .cursor-pointer {
   cursor: pointer;
 }

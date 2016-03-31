@@ -107,6 +107,8 @@ namespace Enivate.ResponseHub.Model.Identity.Interface
 
 		#region IUserService members
 
+		Task<IdentityResult> UpdateUserNameAsync(Guid userId, string newUsername, string password);
+
 		Task<IdentityUser> CreateAsync(string emailAddress, string firstName, string surname, IList<string> roles);
 
 		Task<IList<IdentityUser>> GetUsersByIds(IEnumerable<Guid> userIds);
@@ -120,6 +122,10 @@ namespace Enivate.ResponseHub.Model.Identity.Interface
 		Task<bool> EmailAddressExists(string emailAddress);
 
 		Task<IList<IdentityUser>> GetAll();
+
+		Task<IdentityResult> CreatePasswordAsync(IdentityUser user, string passwordHash);
+
+		Task UpdateAccountDetails(Guid userId, string firstName, string surname);
 
 		#endregion
 

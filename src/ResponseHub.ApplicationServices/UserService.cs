@@ -190,10 +190,10 @@ namespace Enivate.ResponseHub.ApplicationServices
 		/// Updated the account user name and email address to the new email address. Validated the account password prior to updated.
 		/// </summary>
 		/// <param name="userId"></param>
-		/// <param name="newUserName"></param>
+		/// <param name="newUsername"></param>
 		/// <param name="password"></param>
 		/// <returns></returns>
-		public async Task<IdentityResult> UpdateUserNameAsync(Guid userId, string newUserName, string password)
+		public async Task<IdentityResult> UpdateUserNameAsync(Guid userId, string newUsername, string password)
 		{
 
 			if (userId == Guid.Empty)
@@ -207,6 +207,12 @@ namespace Enivate.ResponseHub.ApplicationServices
 				// Get the user
 				IdentityUser user = await FindByIdAsync(userId);
 
+				// Ensure the user exists
+				if (user == null)
+				{
+					return IdentityResult.Failed("The user could not be foumd.");
+				}
+
 				// Ensure the password is valid
 				bool passwordValid = await CheckPasswordAsync(user, password);
 				if (!passwordValid)
@@ -215,19 +221,16 @@ namespace Enivate.ResponseHub.ApplicationServices
 				}
 
 				// If the email address already exists, then show the message to the user
-				bool emailUnique = await CheckEmailUniqueAsync(newUserName);
+				bool emailUnique = await CheckEmailUniqueAsync(newUsername);
 				if (!emailUnique)
 				{
-					IdentityResult.Failed("The email account you have entered is in use by another user. Please choose a different email address.");
+					return IdentityResult.Failed("The email account you have entered is in use by another user. Please choose a different email address.");
 				}
 
 				// Get the user and update the email
-				user.EmailAddress = newUserName;
-				user.UserName = newUserName;
+				await _repository.UpdateAccountUsername(userId, newUsername);
 
-				IdentityResult result = await UpdateAsync(user);
-
-				return result;
+				return IdentityResult.Success;
 
 			}
 			catch (Exception ex)
@@ -393,6 +396,17 @@ namespace Enivate.ResponseHub.ApplicationServices
 			return await _repository.GetAll();
 		}
 
+		/// <summary>
+		/// Updates the first name and surname for the specified account. 
+		/// </summary>
+		/// <param name="userId">The id of the user to update the first name and surname for. </param>
+		/// <param name="firstName">The new first name. </param>
+		/// <param name="surname">The new surname.</param>
+		public async Task UpdateAccountDetails(Guid userId, string firstName, string surname)
+		{
+			await _repository.UpdateAccountDetails(userId, firstName, surname);
+		}
+		
 		#endregion
 
 	}

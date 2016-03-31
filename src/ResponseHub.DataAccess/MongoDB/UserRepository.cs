@@ -458,6 +458,45 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 
 		}
 
+		/// <summary>
+		/// Updates the first name and surname for the specified account. 
+		/// </summary>
+		/// <param name="userId">The id of the user to update the first name and surname for. </param>
+		/// <param name="firstName">The new first name. </param>
+		/// <param name="surname">The new surname.</param>
+		public async Task UpdateAccountDetails(Guid userId, string firstName, string surname)
+		{
+			// Create the filter
+			FilterDefinition<IdentityUserDto> filter = Builders<IdentityUserDto>.Filter.Eq(i => i.Id, userId);
+
+			// Create the update
+			UpdateDefinition<IdentityUserDto> update = Builders<IdentityUserDto>.Update
+				.Set(i => i.FirstName, firstName)
+				.Set(i => i.Surname, surname);
+
+			// Update the database
+			await Collection.UpdateOneAsync(filter, update);
+		}
+
+		/// <summary>
+		/// Updates the username and email address properties for the specified user. 
+		/// </summary>
+		/// <param name="userId">The ID of the user to update the email address and username for.</param>
+		/// <param name="newUsername">The new user email address.</param>
+		public async Task UpdateAccountUsername(Guid userId, string newUsername)
+		{
+			// Create the filter
+			FilterDefinition<IdentityUserDto> filter = Builders<IdentityUserDto>.Filter.Eq(i => i.Id, userId);
+
+			// Create the update
+			UpdateDefinition<IdentityUserDto> update = Builders<IdentityUserDto>.Update
+				.Set(i => i.EmailAddress, newUsername)
+				.Set(i => i.UserName, newUsername);
+
+			// Update the database
+			await Collection.UpdateOneAsync(filter, update);
+		}
+
 		#endregion
 
 		#region Mappers

@@ -9,15 +9,16 @@
 <div class="row">
 	<div class="col-xs-12">
 		<p>
-			<strong>Email address:</strong><br />
-			@Model.EmailAddress
-		</p>
-		<p>
-			<strong>Name</strong><br />
+			<strong>Name:</strong><br />
 			@Model.FirstName @Model.Surname
 		</p>
 		<p>
-			<a href="/my-account/update" class="btn btn-primary btn-icon"><i class="fa fa-fw fa-pencil-square-o"></i>Update account</a>
+			<strong>Email address:</strong><br />
+			@Model.EmailAddress
 		</p>
+		<div class="bottom-20">
+			<a href="/my-account/update-account" class="btn btn-default btn-icon btn-spacer"><i class="fa fa-fw fa-pencil-square-o"></i>Update account</a>
+			<a href="/my-account/update-email" class="btn btn-default btn-icon"><i class="fa fa-fw fa-envelope-o"></i>Update email address</a>
+		</div>
 	</div>
 </div>
