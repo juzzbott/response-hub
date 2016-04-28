@@ -15,9 +15,6 @@
 	<div class="navbar navbar-default navbar-fixed-top page-navbar">
 		<div class="container-fluid">
 			<div class="navbar-header">
-				<button class="btn-header-toggle header-dropdown navbar-toggle" type="button" data-toggle="collapse" data-target=".navbar-collapse">
-					<i class="fa fa-fw fa-th-list"></i>
-				</button>
 
 				<div class="user-menu">
 					<div class="dropdown">
@@ -39,14 +36,6 @@
 				<button class="btn-sidebar-toggle btn-header-toggle"><i class="fa fa-fw fa-bars"></i></button>
 
 				<a href="/" class="navbar-brand">ResponseHub</a>
-			</div>
-			<div class="navbar-collapse collapse">
-				<ul class="nav navbar-nav navbar-right">
-					@if(Html.IsAdminUser())
-					{
-						<li><a href="/admin"><i class="fa fa-fw fa-cogs"></i>Admin</a></li>
-					}
-				</ul>
 			</div>
 		</div>
 	</div>
