@@ -108,7 +108,7 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 				ServiceType serviceType = (ServiceType)intServiceType;
 
 				// Create the capcode
-				await CapcodeService.Create(model.Name, model.CapcodeAddress, model.ShortName, serviceType);
+				await CapcodeService.Create(model.Name, model.CapcodeAddress, model.ShortName, serviceType, model.IsGroupCapcode);
 
 				// return the to the list screen
 				return new RedirectResult("/admin/capcodes?created=1");
@@ -149,7 +149,8 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 				Id = capcode.Id,
 				Name = capcode.Name,
 				Service = ((int)capcode.Service).ToString(),
-				ShortName = capcode.ShortName
+				ShortName = capcode.ShortName,
+				IsGroupCapcode = capcode.IsGroupCapcode
 			};
 
 			// return the view
@@ -195,6 +196,7 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 				capcode.Name = model.Name;
 				capcode.ShortName = model.ShortName;
 				capcode.Service = serviceType;
+				capcode.IsGroupCapcode = model.IsGroupCapcode;
 
 				// Save the capcode
 				await CapcodeService.Save(capcode);

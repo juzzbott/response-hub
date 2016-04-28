@@ -55,7 +55,7 @@
 			<div class="col-sm-8 col-md-6 col-lg-4">
 				<select id="AvailableCapcodes" class="form-control capcode-selection selectpicker" data-live-search="true" />
 					<option value="">Select capcode...</option>
-				@foreach(var capcode in Model.AvailableCapcodes)
+				@foreach(var capcode in Model.AvailableAdditionalCapcodes)
 				{
 					<option value="@capcode.Id" data-tokens="@capcode.Name @capcode.ShortName" data-name="@capcode.Name" data-capcode-address="@capcode.CapcodeAddress">@capcode.Name (@capcode.CapcodeAddress)</option>
 				}
@@ -76,7 +76,7 @@
 					<div class="capcode-list-tags">
 						@foreach (string capcodeId in Model.AdditionalCapcodes.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
 						{
-							var capcode = Model.AvailableCapcodes.FirstOrDefault(i => i.Id.ToString().ToLower() == capcodeId.ToLower());
+							var capcode = Model.AvailableAdditionalCapcodes.FirstOrDefault(i => i.Id.ToString().ToLower() == capcodeId.ToLower());
 							if (capcode != null)
 							{
 								<span class="label label-primary" data-capcode-id="@capcode.Id">@capcode.Name (@capcode.CapcodeAddress)<a><i class="fa fa-times-circle-o"></i></a></span>

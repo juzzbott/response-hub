@@ -113,7 +113,7 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 
 			CreateGroupModel model = new CreateGroupModel();
 			model.AvailableRegions = await GetAvailableRegions();
-			model.AvailableCapcodes = await CapcodeService.GetAll();
+			model.AvailableAdditionalCapcodes = await CapcodeService.GetAll();
 
 			return View("CreateEdit", model);
 		}
@@ -131,7 +131,7 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 
 			// Get the regions select list.
 			model.AvailableRegions = await GetAvailableRegions();
-			model.AvailableCapcodes = await CapcodeService.GetAll();
+			model.AvailableAdditionalCapcodes = await CapcodeService.GetAll();
 
 			// If the model is not valid, return view.
 			if (!ModelState.IsValid)
@@ -594,7 +594,7 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 			CreateGroupModel model = new CreateGroupModel();
 			model.AvailableRegions = await GetAvailableRegions();
 			model.Capcode = group.Capcode;
-			model.AvailableCapcodes = await CapcodeService.GetAllByService(group.Service);
+			model.AvailableAdditionalCapcodes = await CapcodeService.GetAllByService(group.Service, false);
 			model.AdditionalCapcodes = String.Format("{0},", String.Join(",", group.AdditionalCapcodes));
 			model.Description = group.Description;
 			model.Latitude = group.HeadquartersCoordinates.Latitude;
@@ -631,7 +631,7 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 
 			// Set the available options
 			model.AvailableRegions = await GetAvailableRegions();
-			model.AvailableCapcodes = await CapcodeService.GetAllByService(group.Service);
+			model.AvailableAdditionalCapcodes = await CapcodeService.GetAllByService(group.Service, false);
 
 			// Get the service type from the model
 			int groupServiceId;

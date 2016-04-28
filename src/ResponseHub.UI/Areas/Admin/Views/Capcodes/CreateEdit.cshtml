@@ -61,6 +61,24 @@ else
 		@Html.ValidationMessageFor(model => model.Service)
 	</div>
 
+	<div class="form-group">
+		<label for="Service">Group use only *</label>
+		<div class="row">
+			<div class="col-sm-8 col-md-6 col-lg-4">
+				<div class="checkbox">
+					<label>
+						@Html.CheckBoxFor(i => i.IsGroupCapcode) Is group capcode
+					</label>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-lg-10 col-xl-6">
+				<p class="section-help">Capcodes that are specified as "group use only" can only be selected for a group as the primary capcode. They are not available for use in the additional capcodes field.</p>
+			</div>
+		</div>
+	</div>
+
 	<div class="top-20">
 		@if (Model.Id == Guid.Empty)
 		{

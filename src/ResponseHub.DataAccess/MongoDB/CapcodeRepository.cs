@@ -41,5 +41,23 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 			return await Collection.Find(Builders<Capcode>.Filter.In(i => i.Id, capcodeIds)).ToListAsync();
 		}
 
+		/// <summary>
+		/// Gets the capcodes that are not specified as Group capcodes.
+		/// </summary>
+		/// <returns>The list of capcodes where IsGroupCapcode is false.</returns>
+		public async Task<IList<Capcode>> GetSharedCapcodes()
+		{
+			return await Collection.Find(Builders<Capcode>.Filter.Eq(i => i.IsGroupCapcode, false)).ToListAsync();
+		}
+
+		/// <summary>
+		/// Gets the capcodes that are only specified for use as Group capcodes.
+		/// </summary>
+		/// <returns>The list of capcodes where IsGroupCapcode is false.</returns>
+		public async Task<IList<Capcode>> GetGroupOnlyCapcodes()
+		{
+			return await Collection.Find(Builders<Capcode>.Filter.Eq(i => i.IsGroupCapcode, true)).ToListAsync();
+		}
+
 	}
 }

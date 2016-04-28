@@ -11,9 +11,11 @@ namespace Enivate.ResponseHub.Model.Groups.Interface
 
 		Task<IList<Capcode>> GetAll();
 
-		Task<Capcode> Create(string name, string capcodeAddress, string shortName, ServiceType service);
+		Task<Capcode> Create(string name, string capcodeAddress, string shortName, ServiceType service, bool isGroupOnly);
 
 		Task<IList<Capcode>> GetAllByService(ServiceType service);
+
+		Task<IList<Capcode>> GetAllByService(ServiceType service, bool isGroupCapcode);
 
 		Task<Capcode> GetById(Guid id);
 
@@ -22,6 +24,10 @@ namespace Enivate.ResponseHub.Model.Groups.Interface
 		Task<IList<Capcode>> FindByName(string name);
 
 		Task<IList<Capcode>> GetCapcodesForUser(Guid userId);
+		
+		Task<IList<Capcode>> GetSharedCapcodes();
+
+		Task<IList<Capcode>> GetGroupOnlyCapcodes();
 
 	}
 }

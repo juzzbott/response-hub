@@ -79,7 +79,7 @@ namespace Enivate.ResponseHub.ApplicationServices
 		/// <param name="shortName">The short name for the address.</param>
 		/// <param name="service">The servic type the capcode belongs to.</param>
 		/// <returns>The newly created capcode object.</returns>
-		public async Task<Capcode> Create(string name, string capcodeAddress, string shortName, ServiceType service)
+		public async Task<Capcode> Create(string name, string capcodeAddress, string shortName, ServiceType service, bool isGroupOnly)
 		{
 
 			// Create the capcode
@@ -89,7 +89,8 @@ namespace Enivate.ResponseHub.ApplicationServices
 				CapcodeAddress = capcodeAddress,
 				ShortName = shortName,
 				Service = service,
-				Created = DateTime.UtcNow
+				Created = DateTime.UtcNow,
+				IsGroupCapcode = isGroupOnly
 			};
 
 			// Create the capcode
@@ -115,6 +116,21 @@ namespace Enivate.ResponseHub.ApplicationServices
 
 			// Return all capcodes for the specified service.
 			return allCapcodes.Where(i => i.Service == service || i.Service == ServiceType.AllServices).ToList();
+
+		}
+
+		/// <summary>
+		/// Get all the capcodes for the specified service. This will also return any capcodes that are "All Service".
+		/// </summary>
+		/// <param name="service">The service to get the capcodes for.</param>
+		/// <returns></returns>
+		public async Task<IList<Capcode>> GetAllByService(ServiceType service, bool isGroupCapcode)
+		{
+			// Get all the capcodes
+			IList<Capcode> allCapcodes = await GetAll();
+
+			// Return all capcodes for the specified service.
+			return allCapcodes.Where(i => (i.Service == service || i.Service == ServiceType.AllServices) && i.IsGroupCapcode == isGroupCapcode).ToList();
 
 		}
 
@@ -217,6 +233,24 @@ namespace Enivate.ResponseHub.ApplicationServices
 			// return the list of capcodes for the user
 			return capcodes;
 
+		}
+		
+		/// <summary>
+		/// Gets the capcodes that are not specified as Group capcodes.
+		/// </summary>
+		/// <returns>The list of capcodes where IsGroupCapcode is false.</returns>
+		public async Task<IList<Capcode>> GetSharedCapcodes()
+		{
+			return await _repository.GetSharedCapcodes();
+		}
+
+		/// <summary>
+		/// Gets the capcodes that are only specified for use as Group capcodes.
+		/// </summary>
+		/// <returns>The list of capcodes where IsGroupCapcode is false.</returns>
+		public async Task<IList<Capcode>> GetGroupOnlyCapcodes()
+		{
+			return await _repository.GetGroupOnlyCapcodes();
 		}
 
 	}

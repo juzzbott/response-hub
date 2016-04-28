@@ -42,6 +42,7 @@
 			<th>Capcode Address</th>
 			<th>Short Name</th>
 			<th>Service</th>
+			<th>Group only</th>
 		</tr>
 	</thead>
 	<tbody>
@@ -60,6 +61,13 @@
 					<td>@capcode.CapcodeAddress</td>
 					<td>@capcode.ShortName</td>
 					<td>@Html.EnumDescription(capcode.Service)</td>
+					@if (capcode.IsGroupCapcode)
+					{
+						<td><i class="fa fa-fw fa-check"></i></td>
+					} else
+					{
+						<td>&nbsp;</td>
+					}
 				</tr>
 			}
 		}

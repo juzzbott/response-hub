@@ -23,6 +23,8 @@ namespace Enivate.ResponseHub.Model.Groups
 
 		public DateTime Updated { get; set; }
 
+		public bool IsGroupCapcode { get; set; }
+
 		public Capcode()
 		{
 			Id = Guid.NewGuid();
