@@ -916,6 +916,18 @@ responseHub.capcodes = (function () {
 
 	}
 
+	function bindCapcodeAutocomplete() {
+
+		// Set the autocomplete functionality for capcodes.
+		$("input[data-capcode-autocomplete='true']").typeahead({
+			source: groupCapcodes,
+			onSelect: function (item) {
+				$("input[data-capcode-autocomplete='true']").val(item.value);
+				console.log();
+			}
+		});
+	}
+
 	/**
 	 * Binds the events to the UI controls.
 	 */
@@ -953,6 +965,10 @@ responseHub.capcodes = (function () {
 			removeCapcodeTag(capcodeId);
 
 		});
+
+		if ($("input[data-capcode-autocomplete='true']").length > 0) {
+			bindCapcodeAutocomplete();
+		}
 
 	}
 

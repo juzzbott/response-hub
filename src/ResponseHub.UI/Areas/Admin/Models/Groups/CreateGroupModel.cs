@@ -27,6 +27,8 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Models.Groups
 
 		public IList<Capcode> AvailableAdditionalCapcodes { get; set; }
 
+		public IList<Capcode> AvailableGroupCapcodes { get; set; }
+
 		public IList<SelectListItem> AvailableServices { get; set; }
 
 		public string Description { get; set; }
@@ -77,6 +79,8 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Models.Groups
 			AvailableRegions = new List<SelectListItem>();
 
 			AvailableAdditionalCapcodes = new List<Capcode>();
+
+			AvailableGroupCapcodes = new List<Capcode>();
 
 		}
 

@@ -252,6 +252,7 @@
     <Content Include="assets\js\framework.js" />
     <Content Include="assets\js\lib\bootstrap-datepicker.min.js" />
     <Content Include="assets\js\lib\bootstrap-tabcollapse.js" />
+    <Content Include="assets\js\lib\bootstrap-typeahead.min.js" />
     <Content Include="assets\js\lib\leaflet.js" />
     <Content Include="assets\js\modules\capcodes.js" />
     <Content Include="assets\js\modules\groups.js" />

@@ -281,6 +281,9 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 			// Get the list of additional capcodes
 			IList<Guid> additionalCapcodes = GetCapcodeIdsFromHiddenValue(createGroupModel.AdditionalCapcodes);
 
+			// Create the capcode if it doesn't exist.
+			await CheckAndCreateCapcode(createGroupModel.Capcode, createGroupModel.Name, service);
+
 			// Create the group
 			await GroupService.CreateGroup(createGroupModel.Name, service, createGroupModel.Capcode, additionalCapcodes, groupAdmin.Id, createGroupModel.Description, region, coords);
 
@@ -594,6 +597,7 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 			CreateGroupModel model = new CreateGroupModel();
 			model.AvailableRegions = await GetAvailableRegions();
 			model.Capcode = group.Capcode;
+			model.AvailableGroupCapcodes = await CapcodeService.GetAllByService(group.Service, true);
 			model.AvailableAdditionalCapcodes = await CapcodeService.GetAllByService(group.Service, false);
 			model.AdditionalCapcodes = String.Format("{0},", String.Join(",", group.AdditionalCapcodes));
 			model.Description = group.Description;
@@ -632,6 +636,7 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 			// Set the available options
 			model.AvailableRegions = await GetAvailableRegions();
 			model.AvailableAdditionalCapcodes = await CapcodeService.GetAllByService(group.Service, false);
+			model.AvailableGroupCapcodes = await CapcodeService.GetAllByService(group.Service, true);
 
 			// Get the service type from the model
 			int groupServiceId;
@@ -667,7 +672,10 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 				group.HeadquartersCoordinates = coords;
 				group.Region = region;
 				group.Service = service;
-
+				
+				// Create the capcode if it doesn't exist.
+				await CheckAndCreateCapcode(model.Capcode, model.Name, service);
+				
 				// Save the group to the database
 				await GroupService.UpdateGroup(group);
 				
@@ -817,6 +825,30 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 
 			// return the list of capcodes
 			return capcodeIds;
+
+		}
+
+		/// <summary>
+		/// Checks to see if the capcode exists. If it doesn't exist, then it's created. 
+		/// </summary>
+		/// <param name="capcode">The capcode to check or create.</param>
+		/// <param name="groupName">The name of the group to create the capcode for.</param>
+		/// <param name="service">The service the capcode is associated with.</param>
+		/// <returns></returns>
+		private async Task CheckAndCreateCapcode(string capcode, string groupName, ServiceType service)
+		{
+
+			// Check if the capcode exists 
+			IList<Capcode> allCapcodes = await _capcodeService.GetAll();
+			
+			// Check if the capcode exists in the collection
+			if (!allCapcodes.Any(i => i.CapcodeAddress == capcode))
+			{
+
+				// Create the capcode
+				await _capcodeService.Create(groupName, capcode, "", service, true);
+
+			}			
 
 		}
 

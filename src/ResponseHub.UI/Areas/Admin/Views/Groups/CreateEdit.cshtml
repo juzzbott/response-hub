@@ -43,11 +43,25 @@
 		<label for="Name">Capcode *</label>
 		<div class="row">
 			<div class="col-sm-8 col-md-6 col-lg-4">
-				@Html.TextBoxFor(model => model.Capcode, new { @class = "form-control", placeholder = "00000xxx", maxlength = "9" })
+				@Html.TextBoxFor(model => model.Capcode, new { @class = "form-control", placeholder = "00000xxx", maxlength = "9", data_capcode_autocomplete="true", autocomplete="off" })
 			</div>
 		</div>
 		@Html.ValidationMessageFor(model => model.Capcode)
 	</div>
+
+	<script language="javascript">
+		var groupCapcodes = [
+
+			@for(int i = 0; i < Model.AvailableGroupCapcodes.Count; i++)
+			{
+				@Html.Raw(String.Format("{0}{{ \"id\": \"{1}\", \"name\": \"{2}\" }}",
+					 i != 0 ? ", " : "",
+					 Model.AvailableGroupCapcodes[i].CapcodeAddress,
+					 String.Format("{0} - {1} [{2}]", Model.AvailableGroupCapcodes[i].CapcodeAddress, Model.AvailableGroupCapcodes[i].Name, Model.AvailableGroupCapcodes[i].ShortName)));
+			}
+
+		];
+	</script>
 
 	<div class="form-group">
 		<label>Additional capcodes</label>

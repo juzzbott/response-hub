@@ -432,6 +432,18 @@ fieldset[disabled] .form-control {
 }
 .bootstrap-select .btn.dropdown-toggle {
   border-radius: 2px;
+  border-color: #ddd;
+  background-color: #fff;
+  line-height: 1.42857143;
+  color: #555;
+}
+.bootstrap-select .btn.dropdown-toggle:focus,
+.bootstrap-select .btn.dropdown-toggle:hover {
+  box-shadow: none;
+  border-color: #bbb;
+  background-color: #fff;
+  line-height: 1.42857143;
+  color: #555;
 }
 /* Value edit controls */
 .val-edit .val-edit-input {
