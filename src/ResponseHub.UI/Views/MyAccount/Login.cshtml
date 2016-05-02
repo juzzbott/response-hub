@@ -14,13 +14,6 @@
 
 		@Html.AntiForgeryToken()
 
-		@if (ViewBag.InvalidLogin == true)
-		{
-			<div class="form-error">
-				Sorry, the email address and password you have entered is invalid.
-			</div>
-		}
-
 		@Html.ValidationSummary(true)
 
 		<div class="form-group">
@@ -43,6 +36,8 @@
 
 	</form>
 
+	@if (1 == 2)
+	{ 
 	<div id="fb-login">
 		<h4>Login with Facebook</h4>
 
@@ -52,5 +47,6 @@
 			<button type="submit" class="btn btn-default btn-icon btn-block" id="Facebook" name="provider" value="Facebook" title="Log in using your Facebook account"><i class="fa fa-facebook"></i>Login with facebook</button>
 		</form>
 	</div>
+	}
 
 </div>

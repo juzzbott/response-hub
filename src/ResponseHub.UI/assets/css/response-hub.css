@@ -100,6 +100,15 @@ body {
 .page-navbar.navbar-default .navbar-nav > li > a:hover {
   color: #9cddd7;
 }
+@media screen and (max-width: 992px) {
+  .page-navbar > .container-fluid > .navbar-header {
+    margin-right: -15px;
+    margin-left: -15px;
+  }
+  .page-navbar > .container-fluid > .navbar-header a.navbar-brand {
+    margin-left: 0;
+  }
+}
 /* 
 	User Menu Styles
 */
@@ -214,6 +223,8 @@ body {
 .sidebar .nav > li > ul {
   list-style-type: none;
   padding-left: 45px;
+  background-color: #263339;
+  padding-top: 5px;
 }
 .sidebar .nav > li > ul li {
   padding: 0 0 7px;
@@ -261,7 +272,7 @@ body {
     display: block;
   }
 }
-@media (max-width: 993px) {
+@media (max-width: 992px) {
   .navbar-brand {
     padding-left: 10px;
   }
@@ -480,9 +491,6 @@ fieldset[disabled] .form-control {
   padding-right: 15px;
   padding-left: 15px;
   margin: 0 auto;
-}
-.login-container a {
-  color: #9cddd7;
 }
 .login-container h2 {
   text-align: center;

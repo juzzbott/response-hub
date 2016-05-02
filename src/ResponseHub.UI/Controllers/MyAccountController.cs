@@ -116,7 +116,7 @@ namespace Enivate.ResponseHub.UI.Controllers
 					case SignInStatus.Failure:
 					default:
 						// TODO: Event Log - _eventLog.LogEvent(EventTypes.LOGIN, "Failed login attempt. Email: {0} | User IP: {1} | User Agent: {2}", model.Email, Request.UserHostAddress, Request.UserAgent);
-						ViewBag.InvalidLogin = true;
+						ModelState.AddModelError("", "The account details you have entered are invalid.");
 						return View(model);
 				}
 
