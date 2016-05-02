@@ -284,6 +284,25 @@ body {
 		background-color: darken(@sidebar-backgroud, 3%)
 	}
 
+	.nav > li > ul {
+		list-style-type: none;
+		padding-left: 45px;
+
+		li {
+			padding: 0 0 7px;
+
+			 a {
+				color: lighten(@sidebar-foreground, 10%);
+
+				&:hover {
+					color: @sidebar-foreground;
+					text-decoration: none;
+				}
+			}
+		}
+
+	}
+
 }
 
 
@@ -594,12 +613,12 @@ h4.legend {
 */
 
 .login-layout {
-	background-color: @sidebar-backgroud;
-	color: #ccc;
+	background-color: @body-bg;
+	color: @body-color;
 }
 
 .login-container {
-	max-width: 400px;
+	max-width: 600px;
 	padding-right: 15px;
     padding-left: 15px;
 	margin: 0 auto;
@@ -611,7 +630,7 @@ h4.legend {
 	h2 {
 		text-align: center;
 		font-size: 26px;
-		color: @sidebar-highlight;
+		color: @sidebar-backgroud;
 	}
 
 	p,
@@ -621,8 +640,8 @@ h4.legend {
 
 	.form-container {
 		margin-top: 30px;
-		border: 1px solid lighten(#485257, 10%);
-		background-color: #485257;
+		border: 1px solid darken(@body-bg, 10%);
+		background-color: #fff;
 		padding: 15px 20px 20px;
 		border-radius: 2px;
 	}
@@ -631,6 +650,12 @@ h4.legend {
 		margin-top: 30px;
 	}
 
+}
+
+@media screen and (max-width: 768px) {
+	.login-container {
+		width: auto;
+	}
 }
 
 /*

@@ -211,6 +211,20 @@ body {
 .sidebar .nav > li > a:focus {
   background-color: #1a2327;
 }
+.sidebar .nav > li > ul {
+  list-style-type: none;
+  padding-left: 45px;
+}
+.sidebar .nav > li > ul li {
+  padding: 0 0 7px;
+}
+.sidebar .nav > li > ul li a {
+  color: #dfddd6;
+}
+.sidebar .nav > li > ul li a:hover {
+  color: #c8c5ba;
+  text-decoration: none;
+}
 /* Expanded sidebar */
 .btn-sidebar-toggle {
   display: none;
@@ -458,11 +472,11 @@ fieldset[disabled] .form-control {
 	Login styles
 */
 .login-layout {
-  background-color: #202b30;
-  color: #ccc;
+  background-color: #fafafa;
+  color: #333;
 }
 .login-container {
-  max-width: 400px;
+  max-width: 600px;
   padding-right: 15px;
   padding-left: 15px;
   margin: 0 auto;
@@ -473,7 +487,7 @@ fieldset[disabled] .form-control {
 .login-container h2 {
   text-align: center;
   font-size: 26px;
-  color: #e2c498;
+  color: #202b30;
 }
 .login-container p,
 .login-container h4 {
@@ -481,13 +495,18 @@ fieldset[disabled] .form-control {
 }
 .login-container .form-container {
   margin-top: 30px;
-  border: 1px solid #5f6c73;
-  background-color: #485257;
+  border: 1px solid #e1e1e1;
+  background-color: #fff;
   padding: 15px 20px 20px;
   border-radius: 2px;
 }
 .login-container #fb-login {
   margin-top: 30px;
+}
+@media screen and (max-width: 768px) {
+  .login-container {
+    width: auto;
+  }
 }
 /*
 	Job Messages Classes

@@ -45,7 +45,8 @@ namespace Enivate.ResponseHub.UI.Filters
 					IdentityUser user = Task.Run(async () => await userServce.FindByIdAsync(userId)).Result;
 					if (user != null)
 					{
-						filterContext.Controller.ViewBag.UserFullName = String.Format("{0} {1}", user.FirstName, user.Surname);
+						filterContext.Controller.ViewBag.UserFirstName = user.FirstName;
+						filterContext.Controller.ViewBag.UserFullName = user.FullName;
 					}
 				}
 			}

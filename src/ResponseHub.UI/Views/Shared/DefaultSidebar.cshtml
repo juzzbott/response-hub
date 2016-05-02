@@ -12,5 +12,19 @@
 	</li>
 	<li class="@(ViewContext.RouteData.Values["Controller"].ToString() == "MyAccount" ? "active" : "")">
 		<a href="/my-account"><i class="fa fa-fw fa-user"></i>My account</a>
+		@if (ViewContext.RouteData.Values["Controller"].ToString() == "MyAccount")
+		{
+		<ul>
+			<li>
+				<a href="/my-account/update-account">Update account</a>
+			</li>
+			<li>
+				<a href="/my-account/update-email">Update email address</a>
+			</li>
+			<li>
+				<a href="/my-account/change-password">Change password</a>
+			</li>
+		</ul>
+		}
 	</li>
 </ul>
