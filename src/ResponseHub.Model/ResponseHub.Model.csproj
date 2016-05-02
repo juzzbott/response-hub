@@ -86,6 +86,7 @@
     <Compile Include="Messages\JobNote.cs" />
     <Compile Include="Messages\MessageProgress.cs" />
     <Compile Include="Messages\MessageProgressType.cs" />
+    <Compile Include="Messages\MessageType.cs" />
     <Compile Include="Spatial\LocationInfo.cs" />
     <Compile Include="Messages\JobMessage.cs" />
     <Compile Include="Messages\MessagePriority.cs" />

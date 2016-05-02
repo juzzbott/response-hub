@@ -40,11 +40,21 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 		/// <param name="capcodes"></param>
 		/// <param name="count"></param>
 		/// <returns></returns>
-		public async Task<IList<JobMessage>> GetMostRecent(IEnumerable<string> capcodes, int count)
+		public async Task<IList<JobMessage>> GetMostRecent(IEnumerable<string> capcodes, int count, MessageType messageTypes)
 		{
 
 			// Create the filter and sort
-			FilterDefinition<JobMessageDto> filter = Builders<JobMessageDto>.Filter.In(i => i.Capcode, capcodes);
+			FilterDefinitionBuilder<JobMessageDto> builder = Builders<JobMessageDto>.Filter;
+			FilterDefinition<JobMessageDto> filter = builder.In(i => i.Capcode, capcodes);
+
+			if (messageTypes.HasFlag(MessageType.Job))
+			{
+				filter = filter & builder.Ne(i => i.Priority, MessagePriority.Administration);
+			}
+			else if (messageTypes.HasFlag(MessageType.Message))
+			{
+				filter = filter & builder.Eq(i => i.Priority, MessagePriority.Administration);
+			}
 
 			SortDefinition<JobMessageDto> sort = Builders<JobMessageDto>.Sort.Descending(i => i.Timestamp);
 

@@ -46,14 +46,6 @@ namespace Enivate.ResponseHub.UI.Controllers.Api
 			}
 		}
 
-		ILogger Log
-		{
-			get
-			{
-				return ServiceLocator.Get<ILogger>();
-			}
-		}
-
 		#region Resources
 
 		[Route("{id:guid}/resources")]

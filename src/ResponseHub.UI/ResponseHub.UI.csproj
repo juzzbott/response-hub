@@ -188,6 +188,7 @@
     <Compile Include="Areas\Admin\Controllers\UsersController.cs" />
     <Compile Include="Areas\Admin\Models\Capcodes\CreateCapcodeViewModel.cs" />
     <Compile Include="Controllers\Api\EventsController.cs" />
+    <Compile Include="Controllers\MessagesController.cs" />
     <Compile Include="Models\Api\Events\AddResourcePostModel.cs" />
     <Compile Include="Models\Api\Events\AddResourceResponseModel.cs" />
     <Compile Include="Models\Events\AdditionalResourceViewModel.cs" />
