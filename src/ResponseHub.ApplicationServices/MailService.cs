@@ -72,6 +72,7 @@ namespace Enivate.ResponseHub.ApplicationServices
 			IDictionary<string, string> replacements = new Dictionary<string, string>();
 			replacements.Add("#FirstName#", user.FirstName);
 			replacements.Add("#ResetPasswordLink#", String.Format("{0}/my-account/reset-password/{1}", _baseUrl, token));
+			replacements.Add("#ChangePasswordLink#", String.Format("{0}/my-account/change-password", _baseUrl));
 
 			// Create the mail provider and send the message
 			MailProvider mailProvider = new MailProvider();

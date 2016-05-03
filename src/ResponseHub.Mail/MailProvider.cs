@@ -70,11 +70,11 @@ namespace Enivate.ResponseHub.Mail
 			msg.Subject = mailConfig.Subject;
 			msg.IsBodyHtml = true;
 
-			// get the mail body
-			string msgBody = GetMailBodyContent(mailConfig, replacements);
+			// Get the templates directory
+			string baseTemplateDir = MailTemplateConfiguration.Current.TemplatesDirectory;
 
 			// set the message body to the mail message
-			msg.Body = GetMailBodyContent(mailConfig, replacements);
+			msg.Body = GetMailBodyContent(mailConfig, replacements, baseTemplateDir);
 
 			// Create the mail client and send the message
 			SmtpClient client = new SmtpClient();
@@ -149,14 +149,14 @@ namespace Enivate.ResponseHub.Mail
 		/// <param name="mailConfig"></param>
 		/// <param name="replacements"></param>
 		/// <returns></returns>
-		private string GetMailBodyContent(MailTemplateElement mailConfig, IDictionary<string, string> replacements)
+		public string GetMailBodyContent(MailTemplateElement mailConfig, IDictionary<string, string> replacements, string baseTemplateDir)
 		{
 
 			string msgBody = "";
 
 			// Get the base template content.
-			string baseTemplateContent = File.ReadAllText(GetTemplateFilePath(mailConfig.BaseTemplateFile));
-			string templateContent = File.ReadAllText(GetTemplateFilePath(mailConfig.TemplateFile));
+			string baseTemplateContent = File.ReadAllText(GetTemplateFilePath(mailConfig.BaseTemplateFile, baseTemplateDir));
+			string templateContent = File.ReadAllText(GetTemplateFilePath(mailConfig.TemplateFile, baseTemplateDir));
 
 			// If the base template file is not null or empty, then use that and include the individual email template ontop, otherwise just revert to the mail template.
 			if (!String.IsNullOrEmpty(baseTemplateContent))
@@ -193,11 +193,8 @@ namespace Enivate.ResponseHub.Mail
 		/// </summary>
 		/// <param name="templateFile"></param>
 		/// <returns></returns>
-		private string GetTemplateFilePath(string templateFile)
+		private string GetTemplateFilePath(string templateFile, string baseDir)
 		{
-
-			// Get the templates directory
-			string baseDir = MailTemplateConfiguration.Current.TemplatesDirectory;
 
 			// If the http context exists, and it's a virtual path, map it
 			if (HttpContext.Current != null && baseDir[0] == '~')
@@ -212,7 +209,7 @@ namespace Enivate.ResponseHub.Mail
 			}
 
 			// Now we need to append the template file to the templaes directory
-			return String.Format("{0}{1}{2}", baseDir, (!baseDir.EndsWith("\\") ? "\\" : ""), templateFile);
+			return String.Format("{0}{1}\\{2}", baseDir, (!baseDir.EndsWith("\\") ? "\\" : ""), templateFile);
 		}
 
 		#endregion
