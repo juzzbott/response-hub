@@ -42,6 +42,26 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 		}
 
 		/// <summary>
+		/// Gets the list of full capcode objects based on the list of capcode address values.
+		/// </summary>
+		/// <param name="capcodes">List of capcode address values.</param>
+		/// <returns>The list of capcode objects.</returns>
+		public async Task<IList<Capcode>> GetCapcodes(IList<string> capcodes)
+		{
+			return await Collection.Find(Builders<Capcode>.Filter.In(i => i.CapcodeAddress, capcodes)).ToListAsync();
+		}
+
+		/// <summary>
+		/// Gets the capcode from the capcode address in the database.
+		/// </summary>
+		/// <param name="capcodeAddress"></param>
+		/// <returns></returns>
+		public async Task<Capcode> GetByCapcodeAddress(string capcodeAddress)
+		{
+			return await Collection.Find(Builders<Capcode>.Filter.Eq(i => i.CapcodeAddress, capcodeAddress)).FirstOrDefaultAsync();
+		}
+
+		/// <summary>
 		/// Gets the capcodes that are not specified as Group capcodes.
 		/// </summary>
 		/// <returns>The list of capcodes where IsGroupCapcode is false.</returns>

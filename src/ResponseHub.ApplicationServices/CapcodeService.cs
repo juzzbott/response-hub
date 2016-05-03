@@ -105,6 +105,16 @@ namespace Enivate.ResponseHub.ApplicationServices
 		}
 
 		/// <summary>
+		/// Gets the capcode from the capcode address in the database.
+		/// </summary>
+		/// <param name="capcodeAddress"></param>
+		/// <returns></returns>
+		public async Task<Capcode> GetByCapcodeAddress(string capcodeAddress)
+		{
+			return await _repository.GetByCapcodeAddress(capcodeAddress);
+		}
+
+		/// <summary>
 		/// Get all the capcodes for the specified service. This will also return any capcodes that are "All Service".
 		/// </summary>
 		/// <param name="service">The service to get the capcodes for.</param>
@@ -220,14 +230,13 @@ namespace Enivate.ResponseHub.ApplicationServices
 			// Get the list of capcodes based on the id
 			IList<Capcode> capcodes = await _repository.GetCapcodesById(capcodeIds);
 
-			// Add the group capcodes to the list
-			foreach(Group group in userGroups)
+			// Get the list of group capcode objects
+			IList<Capcode> groupCapcodes = await _repository.GetCapcodes(userGroups.Select(i => i.Capcode).ToList());
+
+			// Add the group capcodes to the list of capcodes to return.
+			foreach(Capcode groupCapcode in groupCapcodes)
 			{
-				capcodes.Add(new Capcode() {
-					CapcodeAddress = group.Capcode,
-					Name = group.Name,
-					Service = group.Service
-				});
+				capcodes.Add(groupCapcode);
 			}
 
 			// return the list of capcodes for the user

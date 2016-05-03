@@ -575,6 +575,12 @@ fieldset[disabled] .form-control {
 .job-list h3 i {
   margin-right: 10px;
 }
+.job-list .capcode-meta {
+  text-transform: uppercase;
+  font-style: italic;
+  margin-bottom: 0;
+  font-size: 17px;
+}
 i.p-message-emergency {
   color: #b60500;
 }

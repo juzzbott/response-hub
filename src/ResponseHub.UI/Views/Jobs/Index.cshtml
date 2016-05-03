@@ -1,4 +1,4 @@
-﻿@model List<Enivate.ResponseHub.Model.Messages.JobMessage>
+﻿@model Enivate.ResponseHub.UI.Models.Messages.JobMessageListViewModel
 
 @{
     ViewBag.Title = "Jobs";
@@ -6,7 +6,7 @@
 
 <h1>@ViewBag.Title</h1>
 
-@foreach(var message in Model)
+@foreach(var message in Model.Messages)
 {
 	<div class="row">
 		<div class="col-sm-12 job-list">
@@ -26,7 +26,8 @@
 				}
 				<a href="/jobs/@message.Id">@(!String.IsNullOrEmpty(message.JobNumber) ? message.JobNumber : message.Timestamp.ToString("dd/MM/yyyy HH:mm:ss"))</a>
 			</h3>
-			<p>@message.MessageContent</p>
+			<p class="capcode-meta text-muted">@message.CapcodeGroupName</p>
+			<p>@message.MessageBody</p>
 
 		</div>
 	</div>

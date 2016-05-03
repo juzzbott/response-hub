@@ -25,6 +25,11 @@ namespace Enivate.ResponseHub.Model.Groups
 
 		public bool IsGroupCapcode { get; set; }
 
+		public string FormattedName()
+		{
+			return String.Format("{0} [{1}]", Name, ShortName);
+		}
+
 		public Capcode()
 		{
 			Id = Guid.NewGuid();

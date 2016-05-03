@@ -65,16 +65,37 @@ namespace Enivate.ResponseHub.UI.Controllers
 			IList<Capcode> capcodes = await CapcodeService.GetCapcodesForUser(userId);
 
 			// Get the messages for the capcodes
-			IList<JobMessage> messages = await JobMessageService.GetMostRecent(capcodes.Select(i => i.CapcodeAddress), 50, MessageType.Job);
+			IList<JobMessage> jobMessages = await JobMessageService.GetMostRecent(capcodes.Select(i => i.CapcodeAddress), 50, MessageType.Job);
 
-			return View(messages);
+			// Create the list of job message view models
+			IList<JobMessageViewModel> jobMessageViewModels = new List<JobMessageViewModel>();
+			foreach(JobMessage jobMessage in jobMessages)
+			{
+
+				// Get the capcode for the job message
+				Capcode capcode = capcodes.FirstOrDefault(i => i.CapcodeAddress == jobMessage.Capcode);
+
+				// Map the view model and add to the list
+				jobMessageViewModels.Add(MapJobMessageToViewModel(jobMessage, capcode.FormattedName()));
+
+			}
+
+			// Create the model object
+			JobMessageListViewModel model = new JobMessageListViewModel()
+			{
+				Messages = jobMessageViewModels,
+				UserCapcodes = capcodes
+			};
+
+			return View(model);
         }
 
 		[Route("{id:guid}")]
 		public async Task<ActionResult> ViewJob(Guid id)
 		{
 
-			try {
+			try
+			{
 
 				// Get the job message from the database
 				JobMessage job = await JobMessageService.GetById(id);
@@ -85,17 +106,11 @@ namespace Enivate.ResponseHub.UI.Controllers
 					throw new HttpException((int)HttpStatusCode.NotFound, "The requested page cannot be found.");
 				}
 
-				JobMessageViewModel model = new JobMessageViewModel()
-				{
-					Capcode = job.Capcode,
-					Id = job.Id,
-					JobNumber = job.JobNumber,
-					Location = job.Location,
-					MessageBody = job.MessageContent,
-					Notes = job.Notes,
-					Priority = job.Priority,
-					Timestamp = job.Timestamp.ToLocalTime()
-				};
+				// Get the capcode for the message
+				Capcode capcode = await CapcodeService.GetByCapcodeAddress(job.Capcode);
+
+				// Create the model object.
+				JobMessageViewModel model = MapJobMessageToViewModel(job, capcode.FormattedName());
 
 				// Set the progress updates.
 				model.OnRoute = await GetProgressModel(job, MessageProgressType.OnRoute);
@@ -114,6 +129,24 @@ namespace Enivate.ResponseHub.UI.Controllers
 
 			}
 
+		}
+
+		#region Helpers
+
+		private static JobMessageViewModel MapJobMessageToViewModel(JobMessage job, string capcodeGroupName)
+		{
+			return new JobMessageViewModel()
+			{
+				Capcode = job.Capcode,
+				CapcodeGroupName = capcodeGroupName,
+				Id = job.Id,
+				JobNumber = job.JobNumber,
+				Location = job.Location,
+				MessageBody = job.MessageContent,
+				Notes = job.Notes,
+				Priority = job.Priority,
+				Timestamp = job.Timestamp.ToLocalTime()
+			};
 		}
 
 		/// <summary>
@@ -147,5 +180,7 @@ namespace Enivate.ResponseHub.UI.Controllers
 				return null;
 			}
 		}
+
+		#endregion
 	}
 }

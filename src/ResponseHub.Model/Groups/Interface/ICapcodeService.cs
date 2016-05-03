@@ -29,5 +29,7 @@ namespace Enivate.ResponseHub.Model.Groups.Interface
 
 		Task<IList<Capcode>> GetGroupOnlyCapcodes();
 
+		Task<Capcode> GetByCapcodeAddress(string capcodeAddress);
+
 	}
 }
