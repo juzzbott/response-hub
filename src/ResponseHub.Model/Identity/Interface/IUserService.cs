@@ -127,6 +127,8 @@ namespace Enivate.ResponseHub.Model.Identity.Interface
 
 		Task UpdateAccountDetails(Guid userId, string firstName, string surname);
 
+		Task<IdentityUser> GetUserByForgottenPasswordToken(string token);
+
 		#endregion
 
 	}

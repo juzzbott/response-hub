@@ -358,6 +358,27 @@ namespace Enivate.ResponseHub.ApplicationServices
 		}
 
 		/// <summary>
+		/// Finds the user account based on the forgotten password token. If the token is expired, no user is returned.
+		/// </summary>
+		/// <param name="token">The reset password token to find the user by.</param>
+		/// <returns></returns>
+		public async Task<IdentityUser> GetUserByForgottenPasswordToken(string token)
+		{
+			// Get the user from the db repository
+			IdentityUser user = await _repository.GetUserByForgottenPasswordToken(token);
+
+			// If the token couldn't be found or it's expired, just return null
+			if (user == null || user.PasswordResetToken.Expires < DateTime.UtcNow)
+			{
+				return null;
+			}
+			else
+			{
+				return user;
+			}
+		}
+
+		/// <summary>
 		/// Activates the user based on the activation token.
 		/// </summary>
 		/// <param name="activationToken"></param>

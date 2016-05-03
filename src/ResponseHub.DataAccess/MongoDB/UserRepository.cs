@@ -497,6 +497,28 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 			await Collection.UpdateOneAsync(filter, update);
 		}
 
+		/// <summary>
+		/// Gets the 
+		/// </summary>
+		/// <param name="token"></param>
+		/// <returns></returns>
+		public async Task<IdentityUser> GetUserByForgottenPasswordToken(string token)
+		{
+
+			// If the token is null or empty, then throw exception
+			if (String.IsNullOrEmpty(token))
+			{
+				throw new ArgumentException("The 'token' parameter cannot be null or empty.");
+			}
+
+			// Build the query
+			IdentityUserDto user = await FindOne(i => i.PasswordResetToken.Token.ToLower() == token.ToLower());
+
+			// return the user from the database.
+			return MapToModel(user);
+
+		}
+
 		#endregion
 
 		#region Mappers

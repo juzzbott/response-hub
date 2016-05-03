@@ -200,6 +200,8 @@
     <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Models\Events\CreateEventViewModel.cs" />
     <Compile Include="Models\MyAccount\AccountDetailsViewModel.cs" />
+    <Compile Include="Models\MyAccount\ForgottenPasswordViewModel.cs" />
+    <Compile Include="Models\MyAccount\ResetPasswordViewModel.cs" />
     <Compile Include="Models\MyAccount\UpdateAccountViewModel.cs" />
     <Compile Include="Models\MyAccount\UpdateEmailViewModel.cs" />
     <Compile Include="Models\SearchViewModel.cs" />
@@ -445,6 +447,11 @@
     <Content Include="Views\MyAccount\Index.cshtml" />
     <Content Include="Views\MyAccount\UpdateAccountDetails.cshtml" />
     <Content Include="Views\MyAccount\UpdateEmailAddress.cshtml" />
+    <Content Include="Views\MyAccount\ForgottenPassword.cshtml" />
+    <Content Include="Views\MyAccount\ForgottenPasswordSent.cshtml" />
+    <Content Include="Views\MyAccount\ResetPassword.cshtml" />
+    <Content Include="Views\MyAccount\ResetPasswordComplete.cshtml" />
+    <Content Include="Views\MyAccount\ResetPasswordInvalidToken.cshtml" />
     <None Include="Web.Staging.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

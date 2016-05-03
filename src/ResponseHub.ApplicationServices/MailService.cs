@@ -16,7 +16,12 @@ namespace Enivate.ResponseHub.ApplicationServices
 	public class MailService : IMailService
 	{
 
+		private readonly string _baseUrl;
 
+		public MailService()
+		{
+			_baseUrl = ConfigurationManager.AppSettings[ConfigurationKeys.BaseWebsiteUrl] ?? "";
+		}
 
 		/// <summary>
 		/// Sends the account activation email to the new user.
@@ -29,12 +34,10 @@ namespace Enivate.ResponseHub.ApplicationServices
 			// Create the tuple for the to override
 			Tuple<string, string> to = new Tuple<string, string>(newUser.EmailAddress, newUser.FullName);
 
-			string baseSiteUrl = ConfigurationManager.AppSettings[ConfigurationKeys.BaseWebsiteUrl] ?? "";
-
 			// Create the replacements
 			IDictionary<string, string> replacements = new Dictionary<string, string>();
 			replacements.Add("#FirstName#", newUser.FirstName);
-			replacements.Add("#ActivationLink#", String.Format("{0}/my-account/activate/{1}", baseSiteUrl, newUser.ActivationCode.ToLower()));
+			replacements.Add("#ActivationLink#", String.Format("{0}/my-account/activate/{1}", _baseUrl, newUser.ActivationCode.ToLower()));
 
 			// Create the mail provider and send the message
 			MailProvider mailProvider = new MailProvider();
@@ -57,6 +60,54 @@ namespace Enivate.ResponseHub.ApplicationServices
 			// Create the mail provider and send the message
 			MailProvider mailProvider = new MailProvider();
 			await mailProvider.SendMailMessage(MailTemplates.GroupCreated, replacements, to, null);
+
+		}
+
+		public async Task SendForgottenPasswordToken(IdentityUser user, string token)
+		{
+			// Create the tuple for the to override
+			Tuple<string, string> to = new Tuple<string, string>(user.EmailAddress, user.FullName);
+
+			// Create the replacements
+			IDictionary<string, string> replacements = new Dictionary<string, string>();
+			replacements.Add("#FirstName#", user.FirstName);
+			replacements.Add("#ResetPasswordLink#", String.Format("{0}/my-account/reset-password/{1}", _baseUrl, token));
+
+			// Create the mail provider and send the message
+			MailProvider mailProvider = new MailProvider();
+			await mailProvider.SendMailMessage(MailTemplates.ForgottenPassword, replacements, to, null);
+
+		}
+		
+		public async Task SendPasswordResetEmail(IdentityUser user)
+		{
+			// Create the tuple for the to override
+			Tuple<string, string> to = new Tuple<string, string>(user.EmailAddress, user.FullName);
+
+			// Create the replacements
+			IDictionary<string, string> replacements = new Dictionary<string, string>();
+			replacements.Add("#FirstName#", user.FirstName);
+			replacements.Add("#DateStamp#", DateTime.Now.ToString("HH:mm d MMMM, yyyy"));
+
+			// Create the mail provider and send the message
+			MailProvider mailProvider = new MailProvider();
+			await mailProvider.SendMailMessage(MailTemplates.PasswordResetComplete, replacements, to, null);
+
+		}
+
+		public async Task SendPasswordChangedEmail(IdentityUser user)
+		{
+			// Create the tuple for the to override
+			Tuple<string, string> to = new Tuple<string, string>(user.EmailAddress, user.FullName);
+
+			// Create the replacements
+			IDictionary<string, string> replacements = new Dictionary<string, string>();
+			replacements.Add("#FirstName#", user.FirstName);
+			replacements.Add("#DateStamp#", DateTime.Now.ToString("HH:mm d MMMM, yyyy"));
+
+			// Create the mail provider and send the message
+			MailProvider mailProvider = new MailProvider();
+			await mailProvider.SendMailMessage(MailTemplates.PasswordChanged, replacements, to, null);
 
 		}
 

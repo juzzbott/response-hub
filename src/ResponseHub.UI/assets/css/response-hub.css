@@ -492,14 +492,20 @@ fieldset[disabled] .form-control {
   padding-left: 15px;
   margin: 0 auto;
 }
-.login-container h2 {
+.login-container h1 {
   text-align: center;
+  color: #FF862F;
+}
+.login-container h1 a {
+  color: #FF862F;
+}
+.login-container h1 a:hover {
+  text-decoration: none;
+  color: #e25e00;
+}
+.login-container h2 {
   font-size: 26px;
   color: #202b30;
-}
-.login-container p,
-.login-container h4 {
-  text-align: center;
 }
 .login-container .form-container {
   margin-top: 30px;

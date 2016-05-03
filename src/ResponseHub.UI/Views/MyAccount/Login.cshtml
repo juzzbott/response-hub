@@ -1,14 +1,13 @@
 ﻿@model Enivate.ResponseHub.UI.Models.MyAccount.LoginViewModel
 
 @{
-	ViewBag.Title = "Log in to ResponseHub";
+	ViewBag.Title = "Login";
 	Layout = "~/Views/Shared/LoginLayout.cshtml";
 }
 
-<h2>@ViewBag.Title</h2>
-
 <div class="form-container">
 
+	<h2>@ViewBag.Title</h2>
 
 	<form method="post" action="@Request.Url.PathAndQuery">
 

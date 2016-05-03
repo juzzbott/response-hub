@@ -18,6 +18,7 @@ using Enivate.ResponseHub.Model.Identity;
 using Enivate.ResponseHub.UI.Models.MyAccount;
 using System.Security.Claims;
 using System.Net;
+using Enivate.ResponseHub.Model;
 
 namespace Enivate.ResponseHub.UI.Controllers
 {
@@ -44,6 +45,15 @@ namespace Enivate.ResponseHub.UI.Controllers
 			}
 		}
 		
+		private IMailService _mailService;
+		protected IMailService MailService
+		{
+			get
+			{
+				return _mailService ?? (_mailService = UnityConfiguration.Container.Resolve<IMailService>());
+			}
+		}
+
 		#region Login
 
 		// GET: /my-account/login
@@ -341,7 +351,7 @@ namespace Enivate.ResponseHub.UI.Controllers
 					try
 					{
 						// Send the outbound message
-						//await sendPasswordChangedMessage(user);
+						await MailService.SendPasswordChangedEmail(user);
 					}
 					catch (Exception ex)
 					{
@@ -514,6 +524,172 @@ namespace Enivate.ResponseHub.UI.Controllers
 		public ActionResult ActivateAccountComplete()
 		{
 			return View();
+		}
+
+		#endregion
+
+		#region Forgotten Password
+
+		[Route("forgotten-password")]
+		[AllowAnonymous]
+		public ActionResult ForgottenPassword()
+		{
+			return View();
+		}
+
+		[Route("forgotten-password")]
+		[ValidateAntiForgeryToken]
+		[AllowAnonymous]
+		[HttpPost]
+		public async Task<ActionResult> ForgottenPassword(ForgottenPasswordViewModel model)
+		{
+			// Ensure the form is valid
+			if (!ModelState.IsValid)
+			{
+				return View(model);
+			}
+
+			try
+			{
+
+				// Get the user by the user name
+				IdentityUser user = await UserService.FindByEmailAsync(model.Email);
+
+				// If the user is not found, show the email not found view
+				if (user != null)
+				{
+
+					string token = await UserService.GeneratePasswordResetTokenAsync(user.Id);
+
+					try
+					{
+						// Send the outbound message
+						await MailService.SendForgottenPasswordToken(user, token);
+					}
+					catch (Exception ex)
+					{
+						await Log.Error("Unable to send forgotten password changed message.", ex);
+					}
+
+					// Log the forgotten password token generation
+					//_eventLog.LogEvent(EventTypes.CHANGE_PASSWORD, "User '{0}' password reset token generated. IP Address of user: {1}", user.Id, Request.UserHostAddress);
+
+				}
+
+				// Redirect the user to the thanks page
+				return new RedirectResult("/my-account/forgotten-password/sent");
+
+			}
+			catch (Exception ex)
+			{
+				await Log.Error(String.Format("There was an error generating password reset token for user: '{0}'.", model.Email), ex);
+				ModelState.AddModelError("", "There was a system error trying to generate your password reset token.");
+				return View(model);
+			}
+
+		}
+
+		[Route("forgotten-password/sent")]
+		[AllowAnonymous]
+		public ActionResult ForgottenPasswordSent()
+		{
+			return View();
+		}
+
+		[Route("reset-password/{token:length(64)}")]
+		[AllowAnonymous]
+		public async Task<ActionResult> ResetPassword(string token)
+		{
+
+			// Set the token in the view bag.
+			ViewBag.Token = token;
+
+			// Get the user from the repository
+			IdentityUser userEntity = await UserService.GetUserByForgottenPasswordToken(token);
+
+			// If the token cannot be found or the token is expired, then show invalid token message
+			if (userEntity == null)
+			{
+				return View("ResetPasswordInvalidToken");
+			}
+
+			return View();
+		}
+
+		[Route("reset-password/{token:length(64)}")]
+		[AllowAnonymous]
+		[ValidateAntiForgeryToken]
+		[HttpPost]
+		public async Task<ActionResult> ResetPassword(string token, ResetPasswordViewModel model)
+		{
+
+			// Set the token in the view bag.
+			ViewBag.Token = token;
+
+			// Get the user from the repository
+			IdentityUser user = await UserService.GetUserByForgottenPasswordToken(token);
+
+			// If the token cannot be found or the token is expired, then show invalid token message
+			if (user == null)
+			{
+				return View("ResetPasswordInvalidToken");
+			}
+
+			try
+			{
+
+				// Reset the account password
+				IdentityResult result = await UserService.ResetPasswordAsync(user.Id, token, model.Password);
+
+				if (result.Succeeded)
+				{
+
+					try
+					{
+						// Send the outbound message
+						await MailService.SendPasswordResetEmail(user);
+					}
+					catch (Exception ex)
+					{
+						await Log.Error("Unable to send password reset mail message.", ex);
+					}
+
+					// Log the forgotten password token generation
+					//_eventLog.LogEvent(EventTypes.RESET_PASSWORD, "The password for account '{0}' has been reset. IP Address of user: {1}", user.Id, Request.UserHostAddress);
+					return new RedirectResult("/my-account/reset-password/complete");
+				}
+				else
+				{
+					ViewBag.PasswordResetError = true;
+					return View(model);
+				}
+
+			}
+			catch (Exception ex)
+			{
+				await Log.Error(String.Format("There was an error resetting password for user: '{0}'.", user.Id), ex);
+				ModelState.AddModelError("", "There was a system error trying to reset your account password.");
+				return View(model);
+			}
+
+		}
+
+		[Route("reset-password/complete")]
+		[AllowAnonymous]
+		public ActionResult ResetPasswordComplete()
+		{
+
+			return View();
+
+		}
+
+		[Route("reset-password/invalid-token")]
+		[AllowAnonymous]
+		public ActionResult ResetPasswordInvalidToken()
+		{
+
+			return View();
+
 		}
 
 		#endregion

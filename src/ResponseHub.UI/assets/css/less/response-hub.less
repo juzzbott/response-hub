@@ -637,15 +637,24 @@ h4.legend {
     padding-left: 15px;
 	margin: 0 auto;
 		
-	h2 {
+	h1 {
 		text-align: center;
-		font-size: 26px;
-		color: @sidebar-backgroud;
+		color: @ses-orange;
+
+		a {
+			color: @ses-orange;
+
+			&:hover {
+				text-decoration: none;
+				color: darken(@ses-orange, 15%);
+			}
+		}
+
 	}
 
-	p,
-	h4 {
-		text-align: center;
+	h2 {
+		font-size: 26px;
+		color: @sidebar-backgroud;
 	}
 
 	.form-container {
