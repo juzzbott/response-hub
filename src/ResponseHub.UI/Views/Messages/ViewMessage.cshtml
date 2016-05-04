@@ -39,9 +39,4 @@
 
 <p class="lead">@Model.MessageBody</p>
 
-@Html.Partial("JobProgress", Model)
-
-@Html.Partial("JobLocation", Model)
-
-@Html.Partial("JobNotes", Model.Notes)
-
+@Html.Partial("~/Views/Jobs/JobNotes.cshtml", Model.Notes)

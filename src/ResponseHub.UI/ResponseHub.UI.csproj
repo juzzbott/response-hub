@@ -188,6 +188,7 @@
     <Compile Include="Areas\Admin\Controllers\UsersController.cs" />
     <Compile Include="Areas\Admin\Models\Capcodes\CreateCapcodeViewModel.cs" />
     <Compile Include="Controllers\Api\EventsController.cs" />
+    <Compile Include="Controllers\BaseJobsMessagesController.cs" />
     <Compile Include="Controllers\MessagesController.cs" />
     <Compile Include="Models\Api\Events\AddResourcePostModel.cs" />
     <Compile Include="Models\Api\Events\AddResourceResponseModel.cs" />
@@ -460,6 +461,8 @@
     <Content Include="Views\MyAccount\ResetPassword.cshtml" />
     <Content Include="Views\MyAccount\ResetPasswordComplete.cshtml" />
     <Content Include="Views\MyAccount\ResetPasswordInvalidToken.cshtml" />
+    <Content Include="Views\Messages\ViewMessage.cshtml" />
+    <Content Include="Views\Jobs\JobLocation.cshtml" />
     <None Include="Web.Staging.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

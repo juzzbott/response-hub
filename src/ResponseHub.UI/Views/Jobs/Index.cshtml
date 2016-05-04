@@ -24,7 +24,7 @@
 				{
 					<i class="fa fa-info-circle p-message-admin"></i>
 				}
-				<a href="/jobs/@message.Id">@(!String.IsNullOrEmpty(message.JobNumber) ? message.JobNumber : message.Timestamp.ToString("dd/MM/yyyy HH:mm:ss"))</a>
+				<a href="/@ViewContext.RouteData.Values["Controller"].ToString().ToLower()/@message.Id">@(!String.IsNullOrEmpty(message.JobNumber) ? message.JobNumber : message.Timestamp.ToString("dd/MM/yyyy HH:mm:ss"))</a>
 			</h3>
 			<p class="capcode-meta text-muted">@message.CapcodeGroupName</p>
 			<p>@message.MessageBody</p>

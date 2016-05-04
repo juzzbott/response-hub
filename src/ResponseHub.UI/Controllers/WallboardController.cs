@@ -18,17 +18,8 @@ using Enivate.ResponseHub.UI.Models.Wallboard;
 
 namespace Enivate.ResponseHub.UI.Controllers
 {
-    public class WallboardController : Controller
+    public class WallboardController : BaseController
 	{
-
-		private ILogger _log;
-		protected ILogger Log
-		{
-			get
-			{
-				return _log ?? (_log = UnityConfiguration.Container.Resolve<ILogger>());
-			}
-		}
 
 		private IWarningService _warningService;
 		protected IWarningService WarningService

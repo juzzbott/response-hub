@@ -210,36 +210,42 @@ responseHub.maps = (function () {
 
 	}
 
+	function addMarkerToMap(lat, lng) {
+
+		L.marker([lat, lng]).addTo(map);
+
+	}
+
 	/*
 	 * Add's a pushpin to the map.
 	 */
-	function addMarkerToMap(id, lat, lng, name, description, url, placeType, addPopupWindow) {
-
-		// Get the marker icon based on the place type name.
-		var placeTypeIcon = null;
-		if (placeType != null && placeType.IconCssClass != null && placeType.Name.length > 0) {
-			for (var i = 0; i < leafIcons.length; i++) {
-				if (leafIcons[i].key == placeType.Name.toLowerCase()) {
-					placeTypeIcon = leafIcons[i];
-					break;
-				}
-			}
-		}
-
-		// Add the marker to the map.
-		var marker = null;
-		if (placeTypeIcon !== null) {
-			marker = L.marker([lat, lng], { icon: placeTypeIcon }).addTo(map);
-			mapMarkers.push(marker);
-		}
-
-		// If we need to add an info window, then do do so on popup for the marker
-		if (addPopupWindow && marker != null) {
-			var popupContent = createMapPopupContent(name, description, url);
-			marker.bindPopup(popupContent);
-		}
-
-	}
+	//function addMarkerToMap(id, lat, lng, name, description, url, placeType, addPopupWindow) {
+	//
+	//	// Get the marker icon based on the place type name.
+	//	var placeTypeIcon = null;
+	//	if (placeType != null && placeType.IconCssClass != null && placeType.Name.length > 0) {
+	//		for (var i = 0; i < leafIcons.length; i++) {
+	//			if (leafIcons[i].key == placeType.Name.toLowerCase()) {
+	//				placeTypeIcon = leafIcons[i];
+	//				break;
+	//			}
+	//		}
+	//	}
+	//
+	//	// Add the marker to the map.
+	//	var marker = null;
+	//	if (placeTypeIcon !== null) {
+	//		marker = L.marker([lat, lng], { icon: placeTypeIcon }).addTo(map);
+	//		mapMarkers.push(marker);
+	//	}
+	//
+	//	// If we need to add an info window, then do do so on popup for the marker
+	//	if (addPopupWindow && marker != null) {
+	//		var popupContent = createMapPopupContent(name, description, url);
+	//		marker.bindPopup(popupContent);
+	//	}
+	//
+	//}
 
 	/**
 	 * Creates the markup for the info window to be displayed.

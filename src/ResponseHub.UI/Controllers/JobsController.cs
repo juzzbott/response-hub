@@ -23,40 +23,15 @@ namespace Enivate.ResponseHub.UI.Controllers
 {
 
 	[RoutePrefix("jobs")]
-    public class JobsController : Controller
+    public class JobsController : BaseJobsMessagesController
 	{
 
-		private ILogger _log;
-		protected ILogger Log
-		{
-			get
-			{
-				return _log ?? (_log = UnityConfiguration.Container.Resolve<ILogger>());
-			}
-		}
-
-		private ICapcodeService _capcodeService;
-		protected ICapcodeService CapcodeService
-		{
-			get
-			{
-				return _capcodeService ?? (_capcodeService = UnityConfiguration.Container.Resolve<ICapcodeService>());
-			}
-		}
-
-		private IJobMessageService _jobMessageService;
-		protected IJobMessageService JobMessageService
-		{
-			get
-			{
-				return _jobMessageService ?? (_jobMessageService = UnityConfiguration.Container.Resolve<IJobMessageService>());
-			}
-		}
+		
 
 		// GET: Jobs
 		[Route]
         public async Task<ActionResult> Index()
-        {
+		{
 
 			// Get the current user id
 			Guid userId = new Guid(User.Identity.GetUserId());
@@ -67,28 +42,11 @@ namespace Enivate.ResponseHub.UI.Controllers
 			// Get the messages for the capcodes
 			IList<JobMessage> jobMessages = await JobMessageService.GetMostRecent(capcodes.Select(i => i.CapcodeAddress), 50, MessageType.Job);
 
-			// Create the list of job message view models
-			IList<JobMessageViewModel> jobMessageViewModels = new List<JobMessageViewModel>();
-			foreach(JobMessage jobMessage in jobMessages)
-			{
-
-				// Get the capcode for the job message
-				Capcode capcode = capcodes.FirstOrDefault(i => i.CapcodeAddress == jobMessage.Capcode);
-
-				// Map the view model and add to the list
-				jobMessageViewModels.Add(MapJobMessageToViewModel(jobMessage, capcode.FormattedName()));
-
-			}
-
-			// Create the model object
-			JobMessageListViewModel model = new JobMessageListViewModel()
-			{
-				Messages = jobMessageViewModels,
-				UserCapcodes = capcodes
-			};
+			// Create the jobs list view model.
+			JobMessageListViewModel model = CreateJobMessageListModel(capcodes, jobMessages);
 
 			return View(model);
-        }
+		}
 
 		[Route("{id:guid}")]
 		public async Task<ActionResult> ViewJob(Guid id)
@@ -117,6 +75,9 @@ namespace Enivate.ResponseHub.UI.Controllers
 				model.OnScene = await GetProgressModel(job, MessageProgressType.OnScene);
 				model.JobClear = await GetProgressModel(job, MessageProgressType.JobClear);
 
+				//model.Location.Coordinates.Latitude = -37.546467;
+				//model.Location.Coordinates.Longitude = 144.674656;
+
 				// return the job view
 				return View(model);
 
@@ -124,63 +85,11 @@ namespace Enivate.ResponseHub.UI.Controllers
 			catch (Exception ex)
 			{
 				// Log the error
-				await _log.Error(String.Format("Unable to load the job message details. Message: {0}", ex.Message, ex));
+				await Log.Error(String.Format("Unable to load the job details. Message: {0}", ex.Message, ex));
 				return View(new object());
 
 			}
 
 		}
-
-		#region Helpers
-
-		private static JobMessageViewModel MapJobMessageToViewModel(JobMessage job, string capcodeGroupName)
-		{
-			return new JobMessageViewModel()
-			{
-				Capcode = job.Capcode,
-				CapcodeGroupName = capcodeGroupName,
-				Id = job.Id,
-				JobNumber = job.JobNumber,
-				Location = job.Location,
-				MessageBody = job.MessageContent,
-				Notes = job.Notes,
-				Priority = job.Priority,
-				Timestamp = job.Timestamp.ToLocalTime()
-			};
-		}
-
-		/// <summary>
-		/// Gets the progress model for the specific progress type, if it exists. 
-		/// </summary>
-		/// <param name="job">The job to get the progress from. </param>
-		/// <param name="progressType">The progress type to get.</param>
-		/// <returns></returns>
-		private async Task<MessageProgressViewModel> GetProgressModel(JobMessage job, MessageProgressType progressType)
-		{
-			MessageProgress progress = job.ProgressUpdates.FirstOrDefault(i => i.ProgressType == progressType);
-			if (progress != null)
-			{
-				MessageProgressViewModel progressModel = new MessageProgressViewModel()
-				{
-					Timestamp = progress.Timestamp.ToLocalTime(),
-					UserId = progress.UserId
-				};
-
-				// Get the user who updated the progress.
-				IdentityUser progressUser = await ServiceLocator.Get<IUserService>().FindByIdAsync(progress.UserId);
-				if (progressUser != null)
-				{
-					progressModel.UserFullName = progressUser.FullName;
-				}
-
-				return progressModel;
-			}
-			else
-			{
-				return null;
-			}
-		}
-
-		#endregion
 	}
 }

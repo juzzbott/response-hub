@@ -15,7 +15,7 @@ namespace Enivate.ResponseHub.UI.Controllers
 {
 
 	[RoutePrefix("media")]
-	public class MediaController : Controller
+	public class MediaController : BaseController
     {
 
 		[Route("mapbox-static/{lat:double},{lng:double},{zoom:int}/{size}")]
