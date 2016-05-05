@@ -13,6 +13,11 @@ db.regions.insert({ _id: UUID('326d7776bcab4fdd8aa58524168046df'), Name: "Barwon
 
 // Capcodes
 db.capcodes.remove({});
+db.capcodes.insert({ _id: UUID('ae372a207823410f858463a534c2ec4c'), CapcodeAddress: "0240001", Name: "State Information", ShortName: "STATE_INFO", Service: NumberInt(5), Created: ISODate("2016-05-05T12:01:07.173+0000"), Updated: ISODate("0001-01-01T00:00:00.000+0000"), IsGroupCapcode: false });
+db.capcodes.insert({ _id: UUID('3d6d478fc65e4a3eacf28fad3b4c1755'), CapcodeAddress: "0240009", Name: "Weather Central Region", ShortName: "BOMCENT", Service: NumberInt(1), Created: ISODate("2016-05-05T12:01:48.201+0000"), Updated: ISODate("0001-01-01T00:00:00.000+0000"), IsGroupCapcode: false });
+db.capcodes.insert({ _id: UUID('d7fada69878746c19c45e61718cd0f68'), CapcodeAddress: "0241209", Name: "Mid-West Region Info", ShortName: "M_W_INFO", Service: NumberInt(5), Created: ISODate("2016-05-05T12:02:31.029+0000"), Updated: ISODate("0001-01-01T00:00:00.000+0000"), IsGroupCapcode: false });
+db.capcodes.insert({ _id: UUID('d8ff70f092ca428ab9be17fd2bd6f814'), CapcodeAddress: "0241249", Name: "Bacchus Marsh SES", ShortName: "BACC", Service: NumberInt(5), Created: ISODate("2016-05-05T12:02:51.174+0000"), Updated: ISODate("0001-01-01T00:00:00.000+0000"), IsGroupCapcode: true });
+
 
 // Agencies
 db.agencies.remove({});
