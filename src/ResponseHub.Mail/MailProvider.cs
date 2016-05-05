@@ -174,13 +174,17 @@ namespace Enivate.ResponseHub.Mail
 				msgBody = templateContent;
 			}
 
-			// If there are replacements, then iterate through each one and replace the tokens with the values
-			if (replacements != null && replacements.Count > 0)
+			// Ensure the replacements list exists, as we inject the email subject into it.
+			if (replacements == null)
 			{
-				foreach (KeyValuePair<string, string> replacement in replacements)
-				{
-					msgBody = msgBody.Replace(replacement.Key, replacement.Value);
-				}
+				replacements = new Dictionary<string, string>();
+			}
+			replacements.Add("#EmailSubject#", mailConfig.Subject);
+			
+			// Iterate through the replacements and for each one and replace the tokens with the values
+			foreach (KeyValuePair<string, string> replacement in replacements)
+			{
+				msgBody = msgBody.Replace(replacement.Key, replacement.Value);
 			}
 
 			// return the msg body

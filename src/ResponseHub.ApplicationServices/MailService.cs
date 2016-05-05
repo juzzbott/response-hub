@@ -36,6 +36,7 @@ namespace Enivate.ResponseHub.ApplicationServices
 
 			// Create the replacements
 			IDictionary<string, string> replacements = new Dictionary<string, string>();
+			replacements.Add("#BaseUrl#", _baseUrl);
 			replacements.Add("#FirstName#", newUser.FirstName);
 			replacements.Add("#ActivationLink#", String.Format("{0}/my-account/activate/{1}", _baseUrl, newUser.ActivationCode.ToLower()));
 
@@ -52,7 +53,8 @@ namespace Enivate.ResponseHub.ApplicationServices
 
 			// Create the replacements
 			IDictionary<string, string> replacements = new Dictionary<string, string>();
-			replacements.Add("#FirstName#", groupAdmin.FirstName);
+			replacements.Add("#BaseUrl#", _baseUrl);
+			replacements.Add("#GroupAdministratorName#", groupAdmin.FullName);
 			replacements.Add("#GroupName#", groupName);
 			replacements.Add("#ServiceType#", service.GetEnumDescription());
 			replacements.Add("#Capcode#", capcode);
@@ -70,6 +72,7 @@ namespace Enivate.ResponseHub.ApplicationServices
 
 			// Create the replacements
 			IDictionary<string, string> replacements = new Dictionary<string, string>();
+			replacements.Add("#BaseUrl#", _baseUrl);
 			replacements.Add("#FirstName#", user.FirstName);
 			replacements.Add("#ResetPasswordLink#", String.Format("{0}/my-account/reset-password/{1}", _baseUrl, token));
 			replacements.Add("#ChangePasswordLink#", String.Format("{0}/my-account/change-password", _baseUrl));
@@ -87,12 +90,13 @@ namespace Enivate.ResponseHub.ApplicationServices
 
 			// Create the replacements
 			IDictionary<string, string> replacements = new Dictionary<string, string>();
+			replacements.Add("#BaseUrl#", _baseUrl);
 			replacements.Add("#FirstName#", user.FirstName);
 			replacements.Add("#DateStamp#", DateTime.Now.ToString("HH:mm d MMMM, yyyy"));
 
 			// Create the mail provider and send the message
 			MailProvider mailProvider = new MailProvider();
-			await mailProvider.SendMailMessage(MailTemplates.PasswordResetComplete, replacements, to, null);
+			await mailProvider.SendMailMessage(MailTemplates.PasswordReset, replacements, to, null);
 
 		}
 
@@ -103,6 +107,7 @@ namespace Enivate.ResponseHub.ApplicationServices
 
 			// Create the replacements
 			IDictionary<string, string> replacements = new Dictionary<string, string>();
+			replacements.Add("#BaseUrl#", _baseUrl);
 			replacements.Add("#FirstName#", user.FirstName);
 			replacements.Add("#DateStamp#", DateTime.Now.ToString("HH:mm d MMMM, yyyy"));
 

@@ -15,7 +15,7 @@ namespace Enivate.ResponseHub.Common.Constants
 
 		public const string ForgottenPassword = "ForgottenPassword";
 
-		public const string PasswordResetComplete = "PasswordResetComplete";
+		public const string PasswordReset = "PasswordReset";
 
 		public const string PasswordChanged = "PasswordChanged";
 	}

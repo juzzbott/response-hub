@@ -47,6 +47,7 @@ namespace Enivate.ResponseHub.Tests.Unit
 
 			// Create the replacements
 			IDictionary<string, string> replacements = new Dictionary<string, string>();
+			replacements.Add("#BaseUrl#", _baseUrl);
 			replacements.Add("#FirstName#", "Test");
 			replacements.Add("#ActivationLink#", String.Format("{0}/my-account/activate/{1}", _baseUrl, "lkjsdf8asdfjhasdf8sdafhasdjfh8"));
 
@@ -74,6 +75,7 @@ namespace Enivate.ResponseHub.Tests.Unit
 
 			// Create the replacements
 			IDictionary<string, string> replacements = new Dictionary<string, string>();
+			replacements.Add("#BaseUrl#", _baseUrl);
 			replacements.Add("#FirstName#", "Test");
 			replacements.Add("#ResetPasswordLink#", String.Format("{0}/my-account/reset-password/{1}", _baseUrl, "ksdjfhsadf7asdf98s7dfas7df8as7df89sdf7"));
 			replacements.Add("#ChangePasswordLink#", String.Format("{0}/my-account/change-password", _baseUrl));
@@ -85,6 +87,95 @@ namespace Enivate.ResponseHub.Tests.Unit
 			WriteTemplateFile(mailConfig.Name, template);
 
 		}
+
+		[Fact(DisplayName = "Can generate mail template - Group created")]
+		[Trait("Category", "Mail Template Tests")]
+		public void CanGenerate_MailTemplate_GroupCreated()
+		{
+
+			// Create the mail config object
+			MailTemplateElement mailConfig = new MailTemplateElement()
+			{
+				Name = "GroupCreated",
+				Subject = "New ResponseHub group created",
+				BaseTemplateFile = "base_template.html",
+				TemplateFile = "group_created.html"
+			};
+
+			// Create the replacements
+			IDictionary<string, string> replacements = new Dictionary<string, string>();
+			replacements.Add("#BaseUrl#", _baseUrl);
+			replacements.Add("#FirstName#", "Justin");
+			replacements.Add("#GroupAdministratorName#", "Justin McKay");
+			replacements.Add("#GroupName#", "Bacchus Marsh SES");
+			replacements.Add("#ServiceType#", "State Emergency Service");
+			replacements.Add("#Capcode#", "0024789");
+
+			// Generate the mail template 
+			string template = _provider.GetMailBodyContent(mailConfig, replacements, _baseTemplateDir);
+
+			// Write the template to the output dir
+			WriteTemplateFile(mailConfig.Name, template);
+
+		}
+
+		[Fact(DisplayName = "Can generate mail template - Password changed")]
+		[Trait("Category", "Mail Template Tests")]
+		public void CanGenerate_MailTemplate_PasswordChanged()
+		{
+
+			// Create the mail config object
+			MailTemplateElement mailConfig = new MailTemplateElement()
+			{
+				Name = "PasswordChanged",
+				Subject = "Your ResponseHub password has changed",
+				BaseTemplateFile = "base_template.html",
+				TemplateFile = "password_changed.html"
+			};
+
+			// Create the replacements
+			IDictionary<string, string> replacements = new Dictionary<string, string>();
+			replacements.Add("#BaseUrl#", _baseUrl);
+			replacements.Add("#FirstName#", "Justin");
+			replacements.Add("#DateStamp#", DateTime.Now.ToString("HH:mm d MMMM, yyyy"));
+
+			// Generate the mail template 
+			string template = _provider.GetMailBodyContent(mailConfig, replacements, _baseTemplateDir);
+
+			// Write the template to the output dir
+			WriteTemplateFile(mailConfig.Name, template);
+
+		}
+
+		[Fact(DisplayName = "Can generate mail template - Password reset")]
+		[Trait("Category", "Mail Template Tests")]
+		public void CanGenerate_MailTemplate_PasswordReset()
+		{
+
+			// Create the mail config object
+			MailTemplateElement mailConfig = new MailTemplateElement()
+			{
+				Name = "PasswordResetComplete",
+				Subject = "Your ResponseHub password has been reset",
+				BaseTemplateFile = "base_template.html",
+				TemplateFile = "password_reset.html"
+			};
+
+			// Create the replacements
+			IDictionary<string, string> replacements = new Dictionary<string, string>();
+			replacements.Add("#BaseUrl#", _baseUrl);
+			replacements.Add("#FirstName#", "Justin");
+			replacements.Add("#DateStamp#", DateTime.Now.ToString("HH:mm d MMMM, yyyy"));
+
+			// Generate the mail template 
+			string template = _provider.GetMailBodyContent(mailConfig, replacements, _baseTemplateDir);
+
+			// Write the template to the output dir
+			WriteTemplateFile(mailConfig.Name, template);
+
+		}
+
+		#region Helpers
 
 		/// <summary>
 		/// Writes the template file to disk as a html file.
@@ -105,5 +196,7 @@ namespace Enivate.ResponseHub.Tests.Unit
 				writer.Write(template);
 			}
 		}
+
+		#endregion
 	}
 }

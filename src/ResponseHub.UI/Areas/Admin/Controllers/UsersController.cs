@@ -119,23 +119,34 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 				return View(model);
 			}
 
-			bool emailExists = await UserService.EmailAddressExists(model.EmailAddress);
+			try
+			{ 
 
-			// If the email address exists, show the error to the user
-			if (emailExists)
+				bool emailExists = await UserService.EmailAddressExists(model.EmailAddress);
+
+				// If the email address exists, show the error to the user
+				if (emailExists)
+				{
+					ModelState.AddModelError("", "Sorry, there is already an account with this email address. System administrators cannot also be group members. Please try a different email address.");
+					return View(model);
+				}
+
+				// Create the administrator user
+				IdentityUser newUser = await UserService.CreateAsync(model.EmailAddress, model.FirstName, model.Surname, new List<string>() { RoleTypes.SystemAdministrator });
+
+				// Send the email
+				await MailService.SendAccountActivationEmail(newUser);
+
+				// redirect back
+				return new RedirectResult("/admin/users?created=1");
+
+			}
+			catch (Exception ex)
 			{
-				ModelState.AddModelError("", "Sorry, there is already an account with this email address. System administrators cannot also be group members. Please try a different email address.");
+				await Log.Error("Error creating new user. Message: " + ex.Message, ex);
+				ModelState.AddModelError("", "There was a system error creating the new user.");
 				return View(model);
 			}
-
-			// Create the administrator user
-			IdentityUser newUser = await UserService.CreateAsync(model.EmailAddress, model.FirstName, model.Surname, new List<string>() { RoleTypes.SystemAdministrator });
-
-			// Send the email
-			await MailService.SendAccountActivationEmail(newUser);
-
-			// redirect back
-			return new RedirectResult("/admin/users?created=1");
 
 		}
 

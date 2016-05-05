@@ -241,15 +241,12 @@
     <Compile Include="Startup.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="App_Data\EmailTemplates\activate_account.html">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="App_Data\EmailTemplates\base_template.html">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="App_Data\EmailTemplates\forgotten_password.html">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    <Content Include="App_Data\EmailTemplates\activate_account.html" />
+    <Content Include="App_Data\EmailTemplates\base_template.html" />
+    <Content Include="App_Data\EmailTemplates\forgotten_password.html" />
+    <Content Include="App_Data\EmailTemplates\group_created.html" />
+    <Content Include="App_Data\EmailTemplates\password_changed.html" />
+    <Content Include="App_Data\EmailTemplates\password_reset.html" />
     <Content Include="assets\css\framework.css" />
     <Content Include="assets\css\lib\bootstrap-datepicker3.min.css" />
     <Content Include="assets\css\lib\bootstrap-grid-xl.css" />

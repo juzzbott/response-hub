@@ -518,61 +518,75 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 		public async Task<ActionResult> ConfirmMember(Guid groupId, ConfirmUserViewModel model)
 		{
 
-			// Get the group
-			Group group = await GroupService.GetById(groupId);
-
-			// If the group is null, return 404 not found error
-			if (group == null)
+			try
 			{
-				throw new HttpException((int)HttpStatusCode.NotFound, "The requested page cannot be found.");
+
+				// Get the group
+				Group group = await GroupService.GetById(groupId);
+
+				// If the group is null, return 404 not found error
+				if (group == null)
+				{
+					throw new HttpException((int)HttpStatusCode.NotFound, "The requested page cannot be found.");
+				}
+
+				// Set the form action
+				ViewBag.FormAction = String.Format("/admin/groups/{0}/confirm-member", groupId);
+
+				// If the model is not valid, return view.
+				if (!ModelState.IsValid)
+				{
+					return View("ConfirmUser", model);
+				}
+
+				// If there is "System Administrator" in the role list, show error message
+				if (model.Role.Equals(RoleTypes.SystemAdministrator, StringComparison.CurrentCultureIgnoreCase))
+				{
+					ModelState.AddModelError("", "There was an error setting the role for the user.");
+					return View("ConfirmUser", model);
+				}
+
+				// Get the identity user related to the specified group admin
+				IdentityUser newUser = await UserService.FindByEmailAsync(model.EmailAddress);
+
+				// If the user exists, and there is already a user mapping in the group for this user, show error message
+				if (newUser != null && group.Users.Any(i => i.UserId == newUser.Id))
+				{
+					ModelState.AddModelError("", "The email address you have entered is already a member of this group.");
+					return View("ConfirmUser", model);
+				}
+				else if (newUser != null)
+				{
+					// Create the user mapping for the existing user
+					await GroupService.AddUserToGroup(newUser.Id, model.Role, groupId);
+				}
+				else
+				{
+
+					// Create the new user, and then create the group mapping for the new user.
+					newUser = await UserService.CreateAsync(model.EmailAddress, model.FirstName, model.Surname, new List<string>() { model.Role });
+
+					// Send the activation email
+					await MailService.SendAccountActivationEmail(newUser);
+
+					// Now that we have the newUser, create the user mapping.
+					await GroupService.AddUserToGroup(newUser.Id, model.Role, groupId);
+
+				}
+
+				// remove the newUserModel from the session
+				Session.Remove(AddMemberViewModelSessionKey);
+
+				// redirect back to group view page
+				return new RedirectResult(String.Format("/admin/groups/{0}?member_added=1", groupId));
+
 			}
-
-			// Set the form action
-			ViewBag.FormAction = String.Format("/admin/groups/{0}/confirm-member", groupId);
-
-			// If the model is not valid, return view.
-			if (!ModelState.IsValid)
+			catch (Exception ex)
 			{
+				await Log.Error("Error adding new user to group. Message: " + ex.Message, ex);
+				ModelState.AddModelError("", "There was a system error adding the user to the group.");
 				return View("ConfirmUser", model);
 			}
-
-			// If there is "System Administrator" in the role list, show error message
-			if (model.Role.Equals(RoleTypes.SystemAdministrator, StringComparison.CurrentCultureIgnoreCase))
-			{
-				ModelState.AddModelError("", "There was an error setting the role for the user.");
-				return View("ConfirmUser", model);
-			}
-
-			// Get the identity user related to the specified group admin
-			IdentityUser newUser = await UserService.FindByEmailAsync(model.EmailAddress);
-
-			// If the user exists, and there is already a user mapping in the group for this user, show error message
-			if (newUser != null && group.Users.Any(i => i.UserId == newUser.Id))
-			{
-				ModelState.AddModelError("", "The email address you have entered is already a member of this group.");
-				return View("ConfirmUser", model);
-			}
-			else if (newUser != null)
-			{
-				// Create the user mapping for the existing user
-				await GroupService.AddUserToGroup(newUser.Id, model.Role, groupId);
-			}
-			else
-			{
-
-				// Create the new user, and then create the group mapping for the new user.
-				newUser = await UserService.CreateAsync(model.EmailAddress, model.FirstName, model.Surname, new List<string>() { model.Role });
-
-				// Now that we have the newUser, create the user mapping.
-				await GroupService.AddUserToGroup(newUser.Id, model.Role, groupId);
-
-			}
-
-			// remove the newUserModel from the session
-			Session.Remove(AddMemberViewModelSessionKey);
-
-			// redirect back to group view page
-			return new RedirectResult(String.Format("/admin/groups/{0}?member_added=1", groupId));
 		}
 
 		#endregion
