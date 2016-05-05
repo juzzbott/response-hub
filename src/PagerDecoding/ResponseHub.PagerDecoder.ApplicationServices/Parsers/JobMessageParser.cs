@@ -18,7 +18,7 @@ namespace Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers
 		/// <summary>
 		/// Spatial map reference vision regular expression pattern
 		/// </summary>
-		public const string SpatialVisionRegex = ".*\\s+((SVVB|SVVB C|SV\\s?C)\\s+(\\d{1,4}[A-Z]?)\\s+([A-Z]\\d{1,2}))\\s+";
+		public const string SpatialVisionRegex = ".*\\s+((SVVB|SVVB C|SV\\s?C)\\s+(\\d{1,4}[A-Z]?)\\s+([A-Z]\\d{1,2})\\s*(\\(\\d{6}\\))?)\\s+";
 
 		/// <summary>
 		/// Melway map reference regular expression pattern.
@@ -138,7 +138,8 @@ namespace Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers
 				location = PopulateLocationFromMapReference(mapRefMatch.Groups[1].Value, 
 					MapType.SpatialVision, 
 					mapRefMatch.Groups[3].Value, 
-					mapRefMatch.Groups[4].Value);
+					mapRefMatch.Groups[4].Value,
+					mapRefMatch.Groups[5] != null ? mapRefMatch.Groups[5].Value : "");
 
 				// return the location
 				return location;
@@ -153,7 +154,8 @@ namespace Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers
 				location = PopulateLocationFromMapReference(mapRefMatch.Groups[1].Value, 
 					MapType.Melway, 
 					mapRefMatch.Groups[3].Value, 
-					mapRefMatch.Groups[4].Value);
+					mapRefMatch.Groups[4].Value,
+					"");
 			}
 
 
@@ -169,8 +171,14 @@ namespace Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers
 		/// <param name="mapPage">The page number of the map reference.</param>
 		/// <param name="gridReference">THe grid reference on the page of the map reference (e.g. A1, B5 etc).</param>
 		/// <returns>The location from the pager message details.</returns>
-		private LocationInfo PopulateLocationFromMapReference(string fullMapRef, MapType mapType, string mapPage, string gridReference)
+		private LocationInfo PopulateLocationFromMapReference(string fullMapRef, MapType mapType, string mapPage, string gridReference, string precisionCoord)
 		{
+
+			// Get just the numbers from the precision coordinate
+			if (!String.IsNullOrEmpty(precisionCoord))
+			{
+				precisionCoord = precisionCoord.Replace("(", "").Replace(")", "");
+			}
 
 			// Create the location object
 			LocationInfo location = new LocationInfo()
@@ -178,7 +186,8 @@ namespace Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers
 				MapReference = fullMapRef,
 				MapType = mapType,
 				MapPage = mapPage,
-				GridReference = gridReference
+				GridReference = gridReference,
+				PrecisionCoordinate = precisionCoord
 			};
 
 			// Get the coordinates from the index maps

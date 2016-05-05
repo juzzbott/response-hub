@@ -2,14 +2,8 @@
 
 <h3>Location</h3>
 
-<p>
-	@if (Model.Location.Coordinates.Latitude != 0 && Model.Location.Coordinates.Longitude != 0)
-	{
-		@Html.Raw(String.Format("Lat/Lng: {0}, {1} -", Model.Location.Coordinates.Latitude, Model.Location.Coordinates.Longitude));
-	}
-	Map ref: @Html.EnumDescription(Model.Location.MapType) @Model.Location.MapReference <br />
-	@Model.Location.AddressInfo
-</p>
+<p class="lead">Map ref: @Html.EnumDescription(Model.Location.MapType) @Model.Location.MapReference</p>
+
 
 @if (Model.Location.Coordinates.Latitude != 0 && Model.Location.Coordinates.Longitude != 0)
 {

@@ -23,6 +23,8 @@ namespace Enivate.ResponseHub.Model.Spatial
 
 		public Coordinates Coordinates { get; set; }
 
+		public string PrecisionCoordinate { get; set; }
+
 		public LocationInfo()
 		{
 			Coordinates = new Coordinates();

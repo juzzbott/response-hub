@@ -1,0 +1,12 @@
+﻿<ul class="breadcrumb">
+	<li class="home"><a href="/"><i class="fa fa-fw fa-home"></i></a></li>
+	@if (ViewContext.RouteData.DataTokens["area"] != null)
+	{
+		<li>@Html.BreadcrumbAreaLink()</li>
+	}
+	<li>@Html.BreadcrumbControllerLink()</li>
+	@if (ViewContext.RouteData.Values["Action"].ToString().ToLower() != "index")
+	{
+		<li>@ViewBag.Title</li>
+	}
+</ul>

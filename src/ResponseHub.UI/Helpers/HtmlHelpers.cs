@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.Mvc;
 
 using Enivate.ResponseHub.Common.Extensions;
 using System.Security.Claims;
 using Enivate.ResponseHub.Model.Identity;
+using System.Web.Routing;
 
 namespace Enivate.ResponseHub.UI.Helpers
 {
@@ -105,5 +107,75 @@ namespace Enivate.ResponseHub.UI.Helpers
 			}
 		}
 
+		public static MvcHtmlString BreadcrumbControllerLink(this HtmlHelper helper)
+		{
+
+			// If the current action name is index, we just need to return the friendly name of the controller
+			if (helper.ViewContext.RouteData.Values["Action"].ToString().Equals("index", StringComparison.CurrentCultureIgnoreCase))
+			{
+				return new MvcHtmlString(SpaceBeforeCapital(helper.ViewContext.RouteData.Values["Controller"].ToString(), true));
+			}
+			else
+			{
+
+				// Get the route as a route
+				Route route = (Route)helper.ViewContext.RouteData.Route;
+
+				string url = route.Url;
+
+				// Remove the last part of the url
+				int lastIndex = url.LastIndexOf('/');
+				url = url.Substring(0, lastIndex);
+
+				// Set the url based on the prefix value
+				return new MvcHtmlString(String.Format("<a href=\"/{0}\">{1}</a>",
+					url,
+					SpaceBeforeCapital(helper.ViewContext.RouteData.Values["Controller"].ToString(), true)));
+
+			}
+			
+		}
+
+		public static MvcHtmlString BreadcrumbAreaLink(this HtmlHelper helper)
+		{
+			// Get the route as a route
+			Route route = (Route)helper.ViewContext.RouteData.Route;
+
+			// Get the area url from the route url
+			string areaUrl = route.Url;
+			
+			// Get the first index of the / for the area
+			int index = route.Url.IndexOf('/');
+			if (index > 0)
+			{
+				areaUrl = areaUrl.Substring(0, index);
+			}
+
+			// Set the url based on the prefix value
+			return new MvcHtmlString(String.Format("<a href=\"/{0}\">{1}</a>",
+				areaUrl,
+				SpaceBeforeCapital(helper.ViewContext.RouteData.DataTokens["area"].ToString(), true)));
+		}
+
+		/// <summary>
+		/// Add a space char before each capital letter and trims leading and trailing whitespace
+		/// </summary>
+		/// <param name="str">The string to add spaces to.</param>
+		/// <returns></returns>
+		private static string SpaceBeforeCapital(string str, bool enforceFirstCapital)
+		{
+			str = Regex.Replace(str, "([A-Z])", " $1").Trim();
+
+			// Ensure the first letter is capital
+			if (enforceFirstCapital)
+			{
+				if (Regex.IsMatch(str, "^[a-z].*"))
+				{
+					str = String.Format("{0}{1}", str.Substring(0, 1).ToUpper(), str.Substring(1));
+				}
+			}
+
+			return str;
+		}
 	}
 }

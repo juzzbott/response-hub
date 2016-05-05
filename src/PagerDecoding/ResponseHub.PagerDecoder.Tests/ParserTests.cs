@@ -64,10 +64,10 @@ namespace Enivate.ResponseHub.WindowsService.Tests
 
 		[Trait("Category", "Parser tests - Parsed messages")]
 		[Theory(DisplayName = "Can parse pager message - Location information")]
-		[InlineData("GLENMORE RD PARWAN SVVB C 6608A E2 (747184) BACC1 CPARW [BACC]", "SVVB C 6608A E2", MapType.SpatialVision, "6608A", "E2")]
-		[InlineData("RACECOURSE RD SVC 6439 K15 TREE DOWN BLOCKING 1 EAST BOUND LANE [BACC]", "SVC 6439 K15" , MapType.SpatialVision, "6439", "K15")]
-		[InlineData("RACECOURSE RD M 316 B4 TREE DOWN BLOCKING 1 EAST BOUND LANE [BACC]", "M 316 B4", MapType.Melway, "316", "B4")]
-		public void CanParsePagerMessages_Location(string messageContent, string mapReference, MapType mapType, string mapPage, string gridReference)
+		[InlineData("GLENMORE RD PARWAN SVVB C 6608A E2 (747184) BACC1 CPARW [BACC]", "SVVB C 6608A E2 (747184)", MapType.SpatialVision, "6608A", "E2", "747184")]
+		[InlineData("RACECOURSE RD SVC 6439 K15 TREE DOWN BLOCKING 1 EAST BOUND LANE [BACC]", "SVC 6439 K15" , MapType.SpatialVision, "6439", "K15", "")]
+		[InlineData("RACECOURSE RD M 316 B4 TREE DOWN BLOCKING 1 EAST BOUND LANE [BACC]", "M 316 B4", MapType.Melway, "316", "B4", "")]
+		public void CanParsePagerMessages_Location(string messageContent, string mapReference, MapType mapType, string mapPage, string gridReference, string precisionCoordinates)
 		{
 			// Create the pager message
 			PagerMessage pagerMessage = CreateTestPagerMessage(messageContent);
@@ -82,10 +82,9 @@ namespace Enivate.ResponseHub.WindowsService.Tests
 			Assert.Equal(parsedMessage.Location.MapType, mapType);
 			Assert.Equal(parsedMessage.Location.MapPage, mapPage);
 			Assert.Equal(parsedMessage.Location.GridReference, gridReference, true);
+			Assert.Equal(parsedMessage.Location.PrecisionCoordinate, precisionCoordinates, true);
 		}
-
-
-
+		
 		[Trait("Category", "Parser tests - Parsed messages")]
 		[Theory(DisplayName = "Can parse pager message - Unknown location information")]
 		[InlineData("QDThis is a test page. [BACC]")]

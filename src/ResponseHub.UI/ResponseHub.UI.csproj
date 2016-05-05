@@ -463,6 +463,7 @@
     <Content Include="Views\MyAccount\ResetPasswordInvalidToken.cshtml" />
     <Content Include="Views\Messages\ViewMessage.cshtml" />
     <Content Include="Views\Jobs\JobLocation.cshtml" />
+    <Content Include="Views\Shared\Breadcrumbs.cshtml" />
     <None Include="Web.Staging.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
