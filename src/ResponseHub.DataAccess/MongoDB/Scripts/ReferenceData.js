@@ -26,3 +26,6 @@ db.agencies.insert({ _id: UUID("70a5caf80daa44889ee4e752bb287c13"), Name: "Count
 db.agencies.insert({ _id: UUID("0038c291b483471c9096c2236794ef40"), Name: "Parks Victoria" });
 db.agencies.insert({ _id: UUID("d9273f4fe1224ba6bb14f0d88bc9a86d"), Name: "Victoria Police" });
 db.agencies.insert({ _id: UUID("cdaad166ee3a439aa2d3bf52b4fa3f02"), Name: "DELWP" });
+
+// Users
+db.users.insert({ _id: UUID('32a5b3f3e6f04c5c85e26bfc1d773d54'), UserName: "admin@responsehub.com.au", PasswordHash: "ANl4mBpCh+YW/tcGhVrwu/17L45LbwOWWyamBpwrEcA2RNRVU1SboovQEZGYXRizbw==", EmailAddress: "admin@responsehub.com.au", FirstName: "ResponseHub", Surname: "Administrator", Created: ISODate("2016-02-03T12:55:44.279+0000"), PasswordResetToken: null, Claims: [{ Type: "http://schemas.microsoft.com/ws/2008/06/identity/claims/role", Value: "System Administrator", Issuer: "ResponseHub" },{ Type: "http://schemas.microsoft.com/ws/2008/06/identity/claims/role", Value: "General User", Issuer: "ResponseHub" }], Logins: [], ActivationCode: null })
