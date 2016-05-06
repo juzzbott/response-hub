@@ -26,8 +26,8 @@ namespace Enivate.ResponseHub.Model.Groups.Interface
 		Task<IList<Capcode>> GetCapcodesForUser(Guid userId);
 		
 		Task<IList<Capcode>> GetSharedCapcodes();
-
-		Task<IList<Capcode>> GetGroupOnlyCapcodes();
+		
+		Task<IList<Capcode>> GetAllByGroupOnly(bool groupOnly);
 
 		Task<Capcode> GetByCapcodeAddress(string capcodeAddress);
 

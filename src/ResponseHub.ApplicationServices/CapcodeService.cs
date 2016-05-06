@@ -254,12 +254,12 @@ namespace Enivate.ResponseHub.ApplicationServices
 		}
 
 		/// <summary>
-		/// Gets the capcodes that are only specified for use as Group capcodes.
+		/// Gets the capcodes that are only specified for use as Group capcodes or not based on the groupOnly parameter.
 		/// </summary>
 		/// <returns>The list of capcodes where IsGroupCapcode is false.</returns>
-		public async Task<IList<Capcode>> GetGroupOnlyCapcodes()
+		public async Task<IList<Capcode>> GetAllByGroupOnly(bool groupOnly)
 		{
-			return await _repository.GetGroupOnlyCapcodes();
+			return await _repository.GetAllByGroupOnly(groupOnly);
 		}
 
 	}

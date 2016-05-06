@@ -71,12 +71,12 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 		}
 
 		/// <summary>
-		/// Gets the capcodes that are only specified for use as Group capcodes.
+		/// Gets the capcodes that are only specified for use as Group capcodes or not based on the groupOnly parameter.
 		/// </summary>
 		/// <returns>The list of capcodes where IsGroupCapcode is false.</returns>
-		public async Task<IList<Capcode>> GetGroupOnlyCapcodes()
+		public async Task<IList<Capcode>> GetAllByGroupOnly(bool groupOnly)
 		{
-			return await Collection.Find(Builders<Capcode>.Filter.Eq(i => i.IsGroupCapcode, true)).ToListAsync();
+			return await Collection.Find(Builders<Capcode>.Filter.Eq(i => i.IsGroupCapcode, groupOnly)).ToListAsync();
 		}
 
 	}

@@ -19,7 +19,7 @@ namespace Enivate.ResponseHub.DataAccess.Interface
 
 		Task<IList<Capcode>> GetSharedCapcodes();
 
-		Task<IList<Capcode>> GetGroupOnlyCapcodes();
+		Task<IList<Capcode>> GetAllByGroupOnly(bool groupOnly);
 
 		Task<Capcode> GetByCapcodeAddress(string capcodeAddress);
 

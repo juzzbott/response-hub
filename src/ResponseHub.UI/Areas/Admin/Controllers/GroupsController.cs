@@ -113,7 +113,8 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 
 			CreateGroupModel model = new CreateGroupModel();
 			model.AvailableRegions = await GetAvailableRegions();
-			model.AvailableAdditionalCapcodes = await CapcodeService.GetAll();
+			model.AvailableGroupCapcodes = await CapcodeService.GetAllByGroupOnly(true);
+			model.AvailableAdditionalCapcodes = await CapcodeService.GetAllByGroupOnly(false);
 
 			return View("CreateEdit", model);
 		}
@@ -131,7 +132,8 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 
 			// Get the regions select list.
 			model.AvailableRegions = await GetAvailableRegions();
-			model.AvailableAdditionalCapcodes = await CapcodeService.GetAll();
+			model.AvailableGroupCapcodes = await CapcodeService.GetAllByGroupOnly(true);
+			model.AvailableAdditionalCapcodes = await CapcodeService.GetAllByGroupOnly(false);
 
 			// If the model is not valid, return view.
 			if (!ModelState.IsValid)
