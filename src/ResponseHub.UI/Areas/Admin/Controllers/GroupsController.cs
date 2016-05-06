@@ -9,7 +9,7 @@ using System.Web.Mvc;
 using Microsoft.Practices.Unity;
 
 using Enivate.ResponseHub.Common;
-using Enivate.ResponseHub.Common.Extensions;	
+using Enivate.ResponseHub.Common.Extensions;
 using Enivate.ResponseHub.Logging;
 using Enivate.ResponseHub.Model;
 using Enivate.ResponseHub.Model.Groups;
@@ -20,6 +20,7 @@ using Enivate.ResponseHub.Model.Spatial;
 using Enivate.ResponseHub.UI.Areas.Admin.Models.Groups;
 using Enivate.ResponseHub.UI.Filters;
 using Enivate.ResponseHub.UI.Models.Users;
+using Enivate.ResponseHub.UI.Controllers;
 
 namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 {
@@ -27,7 +28,7 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 	[RouteArea("admin")]
 	[RoutePrefix("groups")]
 	[ClaimsAuthorize(Roles = RoleTypes.SystemAdministrator)]
-	public class GroupsController : Controller
+	public class GroupsController : BaseController
 	{
 
 		private const string CreateGroupViewModelSesionKey = "CreateGroupViewModel";
@@ -40,15 +41,6 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 			get
 			{
 				return _groupService ?? (_groupService = UnityConfiguration.Container.Resolve<IGroupService>());
-			}
-		}
-
-		private IUserService _userService;
-		protected IUserService UserService
-		{
-			get
-			{
-				return _userService ?? (_userService = UnityConfiguration.Container.Resolve<IUserService>());
 			}
 		}
 
@@ -67,15 +59,6 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 			get
 			{
 				return _capcodeService ?? (_capcodeService = UnityConfiguration.Container.Resolve<ICapcodeService>());
-			}
-		}
-
-		private ILogger _log;
-		protected ILogger Log
-		{
-			get
-			{
-				return _log ?? (_log = UnityConfiguration.Container.Resolve<ILogger>());
 			}
 		}
 
@@ -272,7 +255,7 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 			// If the region is null, log the error and return error message
 			if (region == null)
 			{
-				await _log.Error(String.Format("Unable to create group. Region '{0}' does not exist.", createGroupModel.Region));
+				await Log.Error(String.Format("Unable to create group. Region '{0}' does not exist.", createGroupModel.Region));
 				ModelState.AddModelError("", "There was a system error creating the group.");
 				return View("ConfirmUser", model);
 			}
@@ -666,7 +649,7 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 			// If the region is null, log the error and return error message
 			if (region == null)
 			{
-				await _log.Error(String.Format("Unable to update group. Region '{0}' does not exist.", model.Region));
+				await Log.Error(String.Format("Unable to update group. Region '{0}' does not exist.", model.Region));
 				ModelState.AddModelError("", "There was a system error updating the group.");
 				return View("CreateEdit", model);
 			}
@@ -700,7 +683,7 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 			}
 			catch (Exception ex)
 			{
-				await _log.Error(String.Format("Unable to update group. System exception: {0}", ex.Message), ex);
+				await Log.Error(String.Format("Unable to update group. System exception: {0}", ex.Message), ex);
 				ModelState.AddModelError("", "There was a system error updating the group.");
 				return View("CreateEdit", model);
 			}
@@ -855,14 +838,14 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 		{
 
 			// Check if the capcode exists 
-			IList<Capcode> allCapcodes = await _capcodeService.GetAll();
+			IList<Capcode> allCapcodes = await CapcodeService.GetAll();
 			
 			// Check if the capcode exists in the collection
 			if (!allCapcodes.Any(i => i.CapcodeAddress == capcode))
 			{
 
 				// Create the capcode
-				await _capcodeService.Create(groupName, capcode, "", service, true);
+				await CapcodeService.Create(groupName, capcode, "", service, true);
 
 			}			
 

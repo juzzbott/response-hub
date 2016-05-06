@@ -119,6 +119,18 @@
 
 	<h3 class="legend">HQ location</h3>
 
+	<div class="row">
+		<div class="col-xs-12">
+			@if (Model.Latitude != 0 && Model.Longitude != 0)
+			{
+				<div class="group-hq-map bottom-10">
+					<img src="/media/mapbox-static/@Model.Latitude,@Model.Longitude,15/350x200" width="350" height="200" />
+					<span><i class="fa fa-fw fa-3x fa-map-marker"></i></span>
+				</div>
+			}
+		</div>
+	</div>
+
 	<div class="form-group">
 		<div class="row">
 			<div class="col-sm-5 col-md-4 col-lg-3">

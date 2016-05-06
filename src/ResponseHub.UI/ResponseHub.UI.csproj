@@ -256,6 +256,7 @@
     <Content Include="assets\css\lib\leaflet.css" />
     <Content Include="assets\css\response-hub.css" />
     <Content Include="assets\fonts\fontawesome-webfont.svg" />
+    <Content Include="assets\images\email\response-hub-logo.png" />
     <Content Include="assets\images\leaflet\layers-2x.png" />
     <Content Include="assets\images\leaflet\layers.png" />
     <Content Include="assets\images\leaflet\marker-icon-2x.png" />
