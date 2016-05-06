@@ -34,6 +34,18 @@ namespace Enivate.ResponseHub.UI.Filters
 				if (userIdentity.IsAuthenticated)
 				{
 
+					//// Determine if we need to skip authentication.
+					//bool skipAuthorization = filterContext.ActionDescriptor.IsDefined(typeof(AllowAnonymousAttribute), inherit: true)
+					//						 || filterContext.ActionDescriptor.ControllerDescriptor.IsDefined(typeof(AllowAnonymousAttribute), inherit: true);
+					//
+					//// If the user is a system admin, but they are not in the "Admin" area, redirect now
+					//if (!skipAuthorization &&  userIdentity.Claims.Any(i => i.Type == ClaimTypes.Role && i.Value == RoleTypes.SystemAdministrator) &&
+					//	filterContext.RouteData.DataTokens["area"] == null || filterContext.RouteData.DataTokens["area"].ToString().ToLower() != "admin")
+					//{
+					//	filterContext.HttpContext.Response.Redirect("/admin");
+					//	return;
+					//}
+
 					// Create the user service
 					IUserRepository userRepo = UnityConfiguration.Container.Resolve<IUserRepository>();
 					ILogger logger = UnityConfiguration.Container.Resolve<ILogger>();

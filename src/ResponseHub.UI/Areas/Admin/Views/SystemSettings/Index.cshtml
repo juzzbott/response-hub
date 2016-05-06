@@ -11,12 +11,16 @@
 <div class="row">
 	<div class="col-xs-12">
 
-		<p>
-			<strong>Items in cache: </strong> @Model.Cache.TotalItems<br />
-			<strong>Memory limit (MB): </strong> @Model.Cache.CacheMemoryLimit<br />
-			<strong>Physical memory allocation (%): </strong> @Model.Cache.PysicalMemoryLimit<br />
-			<strong>Polling interval: </strong> @Model.Cache.PollingInterval.ToString("hh\\:mm\\:ss")
-		</p>
+		<dl class="dl-horizontal">
+			<dt>Items in cache</dt> 
+			<dd>@Model.Cache.TotalItems</dd>
+			<dt>Memory limit (MB)</dt> 
+			<dd>@Model.Cache.CacheMemoryLimit</dd>
+			<dt>Physical memory (%)</dt> 
+			<dd>@Model.Cache.PysicalMemoryLimit</dd>
+			<dt>Polling interval</dt> 
+			<dd>@Model.Cache.PollingInterval.ToString("hh\\:mm\\:ss")</dd>
+		</dl>
 
 		<p>
 			<a class="btn-icon" role="button" data-toggle="collapse" href="#cacheKeys" aria-expanded="false" aria-controls="cacheKeys"><i class="fa fa-fw fa-plus"></i>Show cache items</a>
