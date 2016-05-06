@@ -185,8 +185,11 @@
     <Compile Include="Areas\Admin\Controllers\GroupsController.cs" />
     <Compile Include="Areas\Admin\Controllers\HomeController.cs" />
     <Compile Include="Areas\Admin\Controllers\ReportsController.cs" />
+    <Compile Include="Areas\Admin\Controllers\SystemSettingsController.cs" />
     <Compile Include="Areas\Admin\Controllers\UsersController.cs" />
     <Compile Include="Areas\Admin\Models\Capcodes\CreateCapcodeViewModel.cs" />
+    <Compile Include="Areas\Admin\Models\SystemSettings\CacheDetails.cs" />
+    <Compile Include="Areas\Admin\Models\SystemSettings\SystemSettingsViewModel.cs" />
     <Compile Include="Controllers\Api\EventsController.cs" />
     <Compile Include="Controllers\BaseJobsMessagesController.cs" />
     <Compile Include="Controllers\MessagesController.cs" />
@@ -297,6 +300,10 @@
     <ProjectReference Include="..\ResponseHub.ApplicationServices\ResponseHub.ApplicationServices.csproj">
       <Project>{a77ef1a1-1492-41ac-b62e-d14f9c01014f}</Project>
       <Name>ResponseHub.ApplicationServices</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ResponseHub.Caching\ResponseHub.Caching.csproj">
+      <Project>{adde3186-948d-4296-8f92-b4ef9d3379b9}</Project>
+      <Name>ResponseHub.Caching</Name>
     </ProjectReference>
     <ProjectReference Include="..\ResponseHub.Common\ResponseHub.Common.csproj">
       <Project>{64b4f6f9-8e0e-4475-8895-d7d4b0c1da4b}</Project>
@@ -461,6 +468,7 @@
     <Content Include="Views\Messages\ViewMessage.cshtml" />
     <Content Include="Views\Jobs\JobLocation.cshtml" />
     <Content Include="Views\Shared\Breadcrumbs.cshtml" />
+    <Content Include="Areas\Admin\Views\SystemSettings\Index.cshtml" />
     <None Include="Web.Staging.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

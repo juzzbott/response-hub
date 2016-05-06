@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
@@ -15,7 +16,6 @@ using Enivate.ResponseHub.Model.Groups.Interface;
 using Enivate.ResponseHub.Logging;
 using Enivate.ResponseHub.Common;
 using Enivate.ResponseHub.Model.Groups;
-using System.Net;
 
 namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 {

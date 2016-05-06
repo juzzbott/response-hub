@@ -9,9 +9,36 @@ using Enivate.ResponseHub.Model;
 
 namespace Enivate.ResponseHub.Caching
 {
-    public class CacheManager
+    public static class CacheManager
     {
 
+		private const string CacheName = "ResponseHub_Cache";
+
+		private static volatile MemoryCache _instance;
+		private static volatile Dictionary<string, DateTime> _keysInstance;
+		private static object _lock = new Object();
+
+		public static MemoryCache Cache
+		{
+			get
+			{
+				// Perform a double check lock on the private instance to implement singleton
+				if (_instance == null)
+				{
+					lock (_lock)
+					{
+						if (_instance == null)
+						{
+							_instance = new MemoryCache(CacheName);
+							_keysInstance = new Dictionary<string, DateTime>();
+						}
+					}
+				}
+				// return the cache instance.
+				return _instance;
+			}
+		}
+		
 		private const int DefaultTimeoutMinutes = 60;
 
 		#region Add Item
@@ -100,11 +127,13 @@ namespace Enivate.ResponseHub.Caching
 			// Create the cache policy
 			CacheItemPolicy policy = new CacheItemPolicy()
 			{
-				AbsoluteExpiration = expiry
+				AbsoluteExpiration = expiry,
+				RemovedCallback = CacheRemovedCallback
 			};
 
 			// Add to the memory cache
-			MemoryCache.Default.Add(cacheItem, policy);
+			Cache.Add(cacheItem, policy);
+			_keysInstance.Add(key, policy.AbsoluteExpiration.DateTime);
 
 		}
 
@@ -149,7 +178,7 @@ namespace Enivate.ResponseHub.Caching
 			}
 
 			// Get the cache item
-			T item = (T)MemoryCache.Default.Get(key);
+			T item = (T)Cache.Get(key);
 
 			// return the cache item
 			return item;
@@ -191,10 +220,59 @@ namespace Enivate.ResponseHub.Caching
 			}
 
 			// Remove the item from cache
-			MemoryCache.Default.Remove(key);
+			Cache.Remove(key);
 		}
 
 		#endregion
-		
+
+		#region Clear Items
+
+		public static void ClearCache()
+		{
+			lock (_lock)
+			{
+				_instance = new MemoryCache(CacheName);
+				_keysInstance = new Dictionary<string, DateTime>();
+			}
+		}
+
+		#endregion
+
+		#region Cache sizes and item information
+
+		public static long GetItemCount()
+		{
+			return Cache.GetCount();
+		}
+
+		public static Dictionary<string, DateTime> GetCacheKeys()
+		{
+			return _keysInstance;
+		}
+
+		public static long CacheMemoryLimit()
+		{
+			return Cache.CacheMemoryLimit;
+		}
+
+		public static long CachePhysicalMemoryLimit()
+		{
+			return Cache.PhysicalMemoryLimit;
+		}
+
+		public static TimeSpan PollingInterval()
+		{
+			return Cache.PollingInterval;
+		}
+
+		#endregion
+
+		#region Remove item callback
+		private static void CacheRemovedCallback(CacheEntryRemovedArguments args)
+		{
+			_keysInstance.Remove(args.CacheItem.Key);
+		}
+		#endregion
+
 	}
 }
