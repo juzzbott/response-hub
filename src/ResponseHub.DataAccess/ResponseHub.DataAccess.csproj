@@ -125,6 +125,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="MongoDB\Scripts\AdminUser.js" />
     <Content Include="MongoDB\Scripts\CreateIndexes.js" />
     <Content Include="MongoDB\Scripts\ReferenceData.js" />
   </ItemGroup>

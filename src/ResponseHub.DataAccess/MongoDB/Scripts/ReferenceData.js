@@ -1,4 +1,28 @@
-﻿/*
+﻿function HexToBase64(hex) {
+	var base64Digits = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+	var base64 = "";
+	var group;
+	for (var i = 0; i < 30; i += 6) {
+		group = parseInt(hex.substr(i, 6), 16);
+		base64 += base64Digits[(group >> 18) & 0x3f];
+		base64 += base64Digits[(group >> 12) & 0x3f];
+		base64 += base64Digits[(group >> 6) & 0x3f];
+		base64 += base64Digits[group & 0x3f];
+	}
+	group = parseInt(hex.substr(30, 2), 16);
+	base64 += base64Digits[(group >> 2) & 0x3f];
+	base64 += base64Digits[(group << 4) & 0x3f];
+	base64 += "==";
+	return base64;
+}
+
+function UUID(uuid) {
+	var hex = uuid.replace(/[{}-]/g, ""); // remove extra characters
+	var base64 = HexToBase64(hex);
+	return new BinData(4, base64); // new subtype 4
+}
+
+/*
 	Inserts the reference data into the relevant tables.
 */
 
@@ -26,6 +50,3 @@ db.agencies.insert({ _id: UUID("70a5caf80daa44889ee4e752bb287c13"), Name: "Count
 db.agencies.insert({ _id: UUID("0038c291b483471c9096c2236794ef40"), Name: "Parks Victoria" });
 db.agencies.insert({ _id: UUID("d9273f4fe1224ba6bb14f0d88bc9a86d"), Name: "Victoria Police" });
 db.agencies.insert({ _id: UUID("cdaad166ee3a439aa2d3bf52b4fa3f02"), Name: "DELWP" });
-
-// Users
-db.users.insert({ _id: UUID('32a5b3f3e6f04c5c85e26bfc1d773d54'), UserName: "admin@responsehub.com.au", PasswordHash: "ANl4mBpCh+YW/tcGhVrwu/17L45LbwOWWyamBpwrEcA2RNRVU1SboovQEZGYXRizbw==", EmailAddress: "admin@responsehub.com.au", FirstName: "ResponseHub", Surname: "Administrator", Created: ISODate("2016-02-03T12:55:44.279+0000"), PasswordResetToken: null, Claims: [{ Type: "http://schemas.microsoft.com/ws/2008/06/identity/claims/role", Value: "System Administrator", Issuer: "ResponseHub" },{ Type: "http://schemas.microsoft.com/ws/2008/06/identity/claims/role", Value: "General User", Issuer: "ResponseHub" }], Logins: [], ActivationCode: null })
