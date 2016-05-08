@@ -75,21 +75,6 @@ namespace Enivate.ResponseHub.PagerDecoder
 				Int32.TryParse(ConfigurationManager.AppSettings[_intervalKey], out timerInterval);
 			}
 
-			// On the first start of the service, we want to process any log file. We do this prior to the initiation and start of the time, 
-			// so that we don't get into a race condition with the response from a potentially large request.
-			try
-			{
-
-				// Create the PdwLogFileParser
-				PdwLogFileParser pdwParser = new PdwLogFileParser(Log, MapIndexRepository);
-				pdwParser.ProcessLogFiles();
-
-			}
-			catch (Exception ex)
-			{
-				Log.Error(String.Format("Error processing log file on timer elapse. Message: {0}", ex.Message), ex);
-			}
-
 			// Initialise the timer
 			_msgServiceTimer = new Timer(timerInterval);
 			_msgServiceTimer.AutoReset = true;
@@ -116,6 +101,21 @@ namespace Enivate.ResponseHub.PagerDecoder
 			// Log the start event.
 			string startLog = buildStartupLog();
 			Log.Info(startLog);
+
+			// On the first start of the service, we want to process any log file. We do this prior to the initiation and start of the time, 
+			// so that we don't get into a race condition with the response from a potentially large request.
+			try
+			{
+
+				// Create the PdwLogFileParser
+				PdwLogFileParser pdwParser = new PdwLogFileParser(Log, MapIndexRepository);
+				pdwParser.ProcessLogFiles();
+
+			}
+			catch (Exception ex)
+			{
+				Log.Error(String.Format("Error processing log file on timer elapse. Message: {0}", ex.Message), ex);
+			}
 
 			_msgServiceTimer.Start();
 		}
