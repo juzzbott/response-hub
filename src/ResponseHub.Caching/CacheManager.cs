@@ -133,6 +133,14 @@ namespace Enivate.ResponseHub.Caching
 
 			// Add to the memory cache
 			Cache.Add(cacheItem, policy);
+
+			// If the cache key already exists, remove it
+			if (_keysInstance.ContainsKey(key))
+			{
+				_keysInstance.Remove(key);
+			}
+
+			// Add the cache key to the lookup keys.
 			_keysInstance.Add(key, policy.AbsoluteExpiration.DateTime);
 
 		}
