@@ -230,7 +230,7 @@ namespace Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers
 				Task.Run(async () =>
 				{
 					mapIndex = await _repository.GetMapIndexByPageNumber(mapType, mapPage);
-				});
+				}).Wait();
 
 				// if the mapIndex exists, add to the cache for next time
 				if (mapIndex != null)

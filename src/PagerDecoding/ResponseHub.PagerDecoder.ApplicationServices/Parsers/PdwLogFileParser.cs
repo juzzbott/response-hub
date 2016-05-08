@@ -116,18 +116,18 @@ namespace Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers
 			if (result && PagerMessagesToSubmit.Count > 0)
 			{
 				// Get the last message sha
-				string lastMessageSha = PagerMessagesToSubmit.Last().ShaHash;
+				_lastInsertedMessageSha = PagerMessagesToSubmit.Last().ShaHash;
 
 				// Write the last message sha to the web service
-				WriteLastMessageSha(lastMessageSha);
+				WriteLastMessageSha(_lastInsertedMessageSha);
 			}
+
+			// Write some stats to the log files.
+			_log.Info(String.Format("Processed and submitted '{0}' job message{1}", JobMessagesToSubmit.Count, (JobMessagesToSubmit.Count != 1 ? "s" : "")));
 
 			// Clear the lists
 			PagerMessagesToSubmit.Clear();
 			JobMessagesToSubmit.Clear();
-
-			// Write some stats to the log files.
-			_log.Info(String.Format("Processed and submitted '{0}' job message{1}", JobMessagesToSubmit.Count, (JobMessagesToSubmit.Count != 1 ? "s" : "")));
 
 		}
 
@@ -230,6 +230,7 @@ namespace Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers
 				// If the last message wasn't reached, then recurse into the previous days log files
 				if (!lastMessageReached)
 				{
+					_log.Info("End of log file detected. Processing previous log file.");
 					ProcessPagerMessagesInLogFile(logDate.AddDays(-1));
 				}
 
@@ -273,17 +274,20 @@ namespace Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers
 			string responseText = "";
 
 			// Get the response
-			Task.Run(async () =>
-			{
-				HttpWebResponse response = ((HttpWebResponse)await request.GetResponseAsync());
+			//Task.Run(async () =>
+			//{
+			HttpWebResponse response = (HttpWebResponse)request.GetResponse();
 
 				// If all went well, set the last message sha to the last in the list of jbo messages
-				if (response.StatusCode == HttpStatusCode.OK)
+			if (response.StatusCode == HttpStatusCode.OK)
+			{
+				using (StreamReader reader = new StreamReader(response.GetResponseStream()))
 				{
-					responseText = JobMessagesToSubmit.Last().Key;
+					responseText = reader.ReadToEnd();
 				}
+			}
 
-			}).Wait();
+			//}).Wait();
 
 			// return the message sha
 			return (responseText.ToLower() == "true");

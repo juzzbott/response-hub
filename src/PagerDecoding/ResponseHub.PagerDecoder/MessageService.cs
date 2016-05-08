@@ -36,6 +36,11 @@ namespace Enivate.ResponseHub.PagerDecoder
 		/// </summary>
 		private string _intervalKey = "ServiceTimerInterval";
 
+		/// <summary>
+		/// The configuration key for the last message file.
+		/// </summary>
+		private string _lastMessageFileKey = "LastMessageFile";
+
 		protected ILogger Log
 		{
 			get
@@ -125,6 +130,7 @@ namespace Enivate.ResponseHub.PagerDecoder
 			sbStartLog.AppendLine(String.Format("  Timer Interval: {0}", ConfigurationManager.AppSettings[_intervalKey]));
 			sbStartLog.AppendLine(String.Format("  Log Level: {0}", LoggingConfiguration.Current.LogLevel));
 			sbStartLog.AppendLine(String.Format("  Log Directory: {0}", LoggingConfiguration.Current.LogDirectory));
+			sbStartLog.AppendLine(String.Format("  Last Message File: {0}", ConfigurationManager.AppSettings[_lastMessageFileKey]));
 			sbStartLog.AppendLine();
 			return sbStartLog.ToString();
 		}
