@@ -36,21 +36,19 @@ namespace Enivate.ResponseHub.PagerDecoder
 		/// </summary>
 		private string _intervalKey = "ServiceTimerInterval";
 
-		private ILogger _log;
 		protected ILogger Log
 		{
 			get
 			{
-				return _log ?? (_log = UnityConfiguration.Container.Resolve<ILogger>());
+				return ServiceLocator.Get<ILogger>();
 			}
 		}
 
-		private IMapIndexRepository _mapIndexRepository;
 		protected IMapIndexRepository MapIndexRepository
 		{
 			get
 			{
-				return _mapIndexRepository ?? (_mapIndexRepository = UnityConfiguration.Container.Resolve<IMapIndexRepository>());
+				return ServiceLocator.Get<IMapIndexRepository>();
 			}
 		}
 
