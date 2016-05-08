@@ -266,6 +266,8 @@ namespace Enivate.ResponseHub.MapIndexParser
 			Console.WriteLine();
 			Console.WriteLine("ResponseHub map index parser utility.");
 			Console.WriteLine();
+			Console.WriteLine("Parameters: [[-shp <path_to_shapefile> | -lf <path_to_list_file>] | -melway] -db <conn_string>  [-R]");
+			Console.WriteLine();
 			Console.WriteLine("You must specify either the -shp or the -lf options along with the -db option.");
 			Console.WriteLine("If you select the -shp option, you must also specify the -map option.");
 			Console.WriteLine();
@@ -275,7 +277,6 @@ namespace Enivate.ResponseHub.MapIndexParser
 			Console.WriteLine("-h\t\t\t\tDisplays this help message.");
 			Console.WriteLine();
 			Console.WriteLine("-shp <path_to_shapefile>\tPath to a single shapefile to parse.");
-			Console.WriteLine("-map\t\t\t\tThe map type. 1 = Spatial Vision, 2 = Melway.");
 			Console.WriteLine("-lf <path_to_listfile>\t\tPath to a file that contains the paths to multiple shapefiles to parse. ");
 			Console.WriteLine("\t\t\t\tEach shape file should be on its own line.");
 			Console.WriteLine("-melway\t\t\t Parses the Melway services for the map indexes.");
@@ -293,7 +294,7 @@ namespace Enivate.ResponseHub.MapIndexParser
 		/// </summary>
 		private static void DisplayInvalidUsage()
 		{
-			Console.WriteLine("ResponseHub map index parser - Invalid arguments. Parameters: -shp <path_to_shapefile> -map [1 = SpatialVision] | -lf <path_to_list_file> | -melway -db <conn_string>  [-R]");
+			Console.WriteLine("ResponseHub map index parser - Invalid arguments. Parameters: [[-shp <path_to_shapefile> | -lf <path_to_list_file>] | -melway] -db <conn_string>  [-R]");
 			Console.WriteLine("Use the option '-h' for further information.");
 		}
 

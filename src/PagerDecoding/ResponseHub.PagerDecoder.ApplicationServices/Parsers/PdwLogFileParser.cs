@@ -116,7 +116,9 @@ namespace Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers
 			if (result && PagerMessagesToSubmit.Count > 0)
 			{
 				// Get the last message sha
-				_lastInsertedMessageSha = PagerMessagesToSubmit.Last().ShaHash;
+				// However, we need to get the 'First' message in the list, because we reverse the entries in the file
+				// We actually want the last message sha to be the first in the processed list so that we can ensure we only add additional messages.
+				_lastInsertedMessageSha = PagerMessagesToSubmit.First().ShaHash;
 
 				// Write the last message sha to the web service
 				WriteLastMessageSha(_lastInsertedMessageSha);
@@ -213,6 +215,7 @@ namespace Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers
 						if (pagerMessage.ShaHash.Equals(_lastInsertedMessageSha, StringComparison.CurrentCultureIgnoreCase))
 						{
 							lastMessageReached = true;
+							_log.Info(String.Format("Last message hash detected. Exiting log file. Last message hash: '{0}'.", pagerMessage.ShaHash));
 							break;
 						}
 

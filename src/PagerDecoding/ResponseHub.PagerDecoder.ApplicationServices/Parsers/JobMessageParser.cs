@@ -200,7 +200,10 @@ namespace Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers
 				GridReference gridRefFromIndex = mapIndex.GridReferences.FirstOrDefault(i => i.GridSquare.ToLower() == gridReference.ToLower());
 
 				// Set the properties of the location
-				location.Coordinates = new Coordinates(gridRefFromIndex.Latitude, gridRefFromIndex.Longitude);
+				if (gridRefFromIndex != null)
+				{
+					location.Coordinates = new Coordinates(gridRefFromIndex.Latitude, gridRefFromIndex.Longitude);
+				}
 
 			}
 
