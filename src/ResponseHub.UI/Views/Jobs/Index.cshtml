@@ -1,7 +1,7 @@
 ﻿@model Enivate.ResponseHub.UI.Models.Messages.JobMessageListViewModel
 
 @{
-    ViewBag.Title = "Jobs";
+    ViewBag.Title = ViewContext.RouteData.Values["Controller"].ToString().ToLower() == "jobs" ? "Jobs" : "Messages";
 }
 
 <h1>@ViewBag.Title</h1>

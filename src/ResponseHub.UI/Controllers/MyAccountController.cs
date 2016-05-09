@@ -173,7 +173,8 @@ namespace Enivate.ResponseHub.UI.Controllers
 				Created = currentUser.Created.ToLocalTime(),
 				EmailAddress = currentUser.EmailAddress,
 				FirstName = currentUser.FirstName,
-				Surname = currentUser.Surname
+				Surname = currentUser.Surname,
+				CanChangePassword = !String.IsNullOrEmpty(currentUser.PasswordHash)
 			};
 
 			return View(model);

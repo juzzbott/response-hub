@@ -13,6 +13,7 @@ namespace Enivate.ResponseHub.UI
 		{
 			filters.Add(new HandleErrorAttribute());
 			filters.Add(new ClaimsAuthorizeAttribute(ClaimTypes.Role, RoleTypes.GeneralUser));
+			filters.Add(new SystemAdminUserRedirectAttribute());
 			filters.Add(new ResponseHubPageAttribute());
 		}
 	}

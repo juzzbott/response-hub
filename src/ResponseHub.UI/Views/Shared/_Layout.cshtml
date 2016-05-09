@@ -56,7 +56,12 @@
 				}
 				else
 				{
-					@Html.Partial("~/Views/Shared/DefaultSidebar.cshtml")
+					if (Html.IsAdminUser())
+					{
+						@Html.Partial("~/Areas/Admin/Views/Shared/AdminSidebarMenu.cshtml")
+					} else {
+						@Html.Partial("~/Views/Shared/DefaultSidebar.cshtml")
+					}
 				}
 
 				<footer>

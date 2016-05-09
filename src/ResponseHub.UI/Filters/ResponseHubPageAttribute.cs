@@ -62,8 +62,6 @@ namespace Enivate.ResponseHub.UI.Filters
 					}
 				}
 			}
-
-			base.OnActionExecuting(filterContext);
 		}
 
 	}

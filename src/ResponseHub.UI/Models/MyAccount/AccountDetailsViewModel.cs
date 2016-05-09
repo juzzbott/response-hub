@@ -21,5 +21,7 @@ namespace Enivate.ResponseHub.UI.Models.MyAccount
 
 		public DateTime Created { get; set; }
 
+		public bool CanChangePassword { get; set; }
+
 	}
 }

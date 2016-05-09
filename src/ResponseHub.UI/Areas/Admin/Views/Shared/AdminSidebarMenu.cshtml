@@ -16,4 +16,7 @@
 	<li class="@(ViewContext.RouteData.Values["Controller"].ToString() == "SystemSettings" ? "active" : "")">
 		<a href="/admin/system-settings"><i class="fa fa-fw fa-cogs"></i>System Settings</a>
 	</li>
+	<li class="@(ViewContext.RouteData.Values["Controller"].ToString() == "MyAccount" ? "active" : "")">
+		<a href="/my-account"><i class="fa fa-fw fa-user"></i>My account</a>
+	</li>
 </ul>

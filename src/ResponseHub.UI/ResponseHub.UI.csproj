@@ -193,6 +193,7 @@
     <Compile Include="Controllers\Api\EventsController.cs" />
     <Compile Include="Controllers\BaseJobsMessagesController.cs" />
     <Compile Include="Controllers\MessagesController.cs" />
+    <Compile Include="Filters\SystemAdminUserRedirectAttribute.cs" />
     <Compile Include="Models\Api\Events\AddResourcePostModel.cs" />
     <Compile Include="Models\Api\Events\AddResourceResponseModel.cs" />
     <Compile Include="Models\Events\AdditionalResourceViewModel.cs" />

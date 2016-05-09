@@ -12,17 +12,55 @@
 
 <div class="row">
 	<div class="col-xs-12">
-		<p>
-			<strong>Name:</strong><br />
-			@Model.FirstName @Model.Surname
-		</p>
-		<p>
-			<strong>Email address:</strong><br />
-			@Model.EmailAddress
-		</p>
-		<div class="bottom-20">
-			<a href="/my-account/update-account" class="btn btn-default btn-icon btn-spacer"><i class="fa fa-fw fa-pencil-square-o"></i>Update account</a>
-			<a href="/my-account/update-email" class="btn btn-default btn-icon"><i class="fa fa-fw fa-envelope-o"></i>Update email address</a>
-		</div>
+		<h3>Account details</h3>
+		<dl class="dl-horizontal">
+			<dt>Name:</dt>
+			<dd>@Model.FirstName @Model.Surname</dd>
+			<dt>Email address:</dt>
+			<dd>@Model.EmailAddress</dd>
+		</dl>
+		<hr />
 	</div>
 </div>
+
+<div class="row">
+	<div class="col-xs-12">
+		<h3>Update your account</h3>
+		<p>
+			Update the details of your account such as your name, profile settings, etc.
+		</p>
+		<p>
+			<a href="/my-account/update-account" class="btn-link-cta btn-icon"><i class="fa fa-fw fa-pencil-square-o"></i>Update account</a>
+		</p>
+		<hr />
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-xs-12">
+		<h3>Change your email address</h3>
+		<p>
+			Change you primary contact email address and ResponseHub username.
+		</p>
+		<p>
+			<a href="/my-account/update-email" class="btn-link-cta btn-icon"><i class="fa fa-fw fa-envelope-o"></i>Update email address</a>
+		</p>
+		<hr />
+	</div>
+</div>
+
+@if (Model.CanChangePassword)
+{
+<div class="row">
+	<div class="col-xs-12">
+		<h3>Change your account password</h3>
+		<p>
+			Keep your account secure by regularly changing your password.
+		</p>
+		<p>
+			<a href="/my-account/change-password" class="btn-link-cta btn-icon"><i class="fa fa-fw fa-key"></i>Change account password</a>
+		</p>
+		<hr />
+	</div>
+</div>
+}
