@@ -18,6 +18,8 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB.DataObjects.Spatial
 
 		public string MapPage { get; set; }
 
+		public string GridSqaure { get; set; }
+
 		public string GridReference { get; set; }
 
 		public string AddressInfo { get; set; }

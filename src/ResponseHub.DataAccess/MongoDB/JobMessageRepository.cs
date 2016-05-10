@@ -243,6 +243,7 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 			LocationInfo model = new LocationInfo()
 			{
 				AddressInfo = dbObject.AddressInfo,
+				GridSquare = dbObject.GridSqaure,
 				GridReference = dbObject.GridReference,
 				MapPage = dbObject.MapPage,
 				MapReference = dbObject.MapReference,
@@ -274,6 +275,7 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 			LocationInfoDto dbObject = new LocationInfoDto()
 			{
 				AddressInfo = modelObject.AddressInfo,
+				GridSqaure = modelObject.GridSquare,
 				GridReference = modelObject.GridReference,
 				MapPage = modelObject.MapPage,
 				MapReference = modelObject.MapReference,

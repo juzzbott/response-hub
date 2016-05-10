@@ -108,7 +108,7 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 			};
 
 			// Map the grid references
-			foreach(GridReferenceDto gridRefDto in dataObject.GridReferences)
+			foreach(MapGridReferenceInfoDto gridRefDto in dataObject.GridReferences)
 			{
 
 				if (gridRefDto == null)
@@ -117,7 +117,7 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 				}
 
 				// Create the GridReference
-				GridReference gridRef = new GridReference()
+				MapGridReferenceInfo gridRef = new MapGridReferenceInfo()
 				{
 					GridSquare = gridRefDto.GridSquare,
 					Latitude = gridRefDto.Coordinates.Latitude,
@@ -150,7 +150,7 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 			};
 
 			// Map the grid references
-			foreach (GridReference gridRef in modelObject.GridReferences)
+			foreach (MapGridReferenceInfo gridRef in modelObject.GridReferences)
 			{
 
 				if (gridRef == null)
@@ -159,7 +159,7 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 				}
 				
 				// Create the GridReference
-				GridReferenceDto gridRefDto = new GridReferenceDto()
+				MapGridReferenceInfoDto gridRefDto = new MapGridReferenceInfoDto()
 				{
 					GridSquare = gridRef.GridSquare,
 					Coordinates = new GeoJson2DGeographicCoordinates(gridRef.Longitude, gridRef.Latitude)

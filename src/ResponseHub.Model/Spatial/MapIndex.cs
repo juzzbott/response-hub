@@ -17,14 +17,14 @@ namespace Enivate.ResponseHub.Model.Spatial
 
 		public int Scale { get; set; }
 
-		public IList<GridReference> GridReferences { get; set; }
+		public IList<MapGridReferenceInfo> GridReferences { get; set; }
 
 		public MapType MapType { get; set; }
 
 		public MapIndex()
 		{
 			Id = Guid.NewGuid();
-			GridReferences = new List<GridReference>();
+			GridReferences = new List<MapGridReferenceInfo>();
 		}
 
 

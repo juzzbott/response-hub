@@ -8,7 +8,7 @@ using MongoDB.Driver.GeoJsonObjectModel;
 
 namespace Enivate.ResponseHub.DataAccess.MongoDB.DataObjects.Spatial
 {
-	public class GridReferenceDto
+	public class MapGridReferenceInfoDto
 	{
 
 		public string GridSquare { get; set; }

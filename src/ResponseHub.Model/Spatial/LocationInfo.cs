@@ -17,13 +17,13 @@ namespace Enivate.ResponseHub.Model.Spatial
 
 		public string MapPage { get; set; }
 
-		public string GridReference { get; set; }
+		public string GridSquare { get; set; }
 
 		public string AddressInfo { get; set; }
 
 		public Coordinates Coordinates { get; set; }
 
-		public string PrecisionCoordinate { get; set; }
+		public string GridReference { get; set; }
 
 		public LocationInfo()
 		{

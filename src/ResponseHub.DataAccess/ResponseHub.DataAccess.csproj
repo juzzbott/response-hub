@@ -90,7 +90,7 @@
     <Compile Include="MongoDB\DataObjects\Events\EventDto.cs" />
     <Compile Include="MongoDB\DataObjects\Groups\GroupDto.cs" />
     <Compile Include="MongoDB\DataObjects\Messages\JobMessageDto.cs" />
-    <Compile Include="MongoDB\DataObjects\Spatial\GridReferenceDto.cs" />
+    <Compile Include="MongoDB\DataObjects\Spatial\MapGridReferenceInfoDto.cs" />
     <Compile Include="MongoDB\DataObjects\Spatial\LocationInfoDto.cs" />
     <Compile Include="MongoDB\DataObjects\Spatial\MapIndexDto.cs" />
     <Compile Include="MongoDB\DataObjects\Users\ClaimDto.cs" />

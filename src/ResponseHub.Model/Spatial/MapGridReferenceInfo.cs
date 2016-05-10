@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Enivate.ResponseHub.Model.Spatial
 {
-	public class GridReference
+	public class MapGridReferenceInfo
 	{
 
 		public string GridSquare { get; set; }

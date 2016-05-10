@@ -81,8 +81,8 @@ namespace Enivate.ResponseHub.WindowsService.Tests
 			Assert.Equal(parsedMessage.Location.MapReference, mapReference, true);
 			Assert.Equal(parsedMessage.Location.MapType, mapType);
 			Assert.Equal(parsedMessage.Location.MapPage, mapPage);
-			Assert.Equal(parsedMessage.Location.GridReference, gridReference, true);
-			Assert.Equal(parsedMessage.Location.PrecisionCoordinate, precisionCoordinates, true);
+			Assert.Equal(parsedMessage.Location.GridSquare, gridReference, true);
+			Assert.Equal(parsedMessage.Location.GridReference, precisionCoordinates, true);
 		}
 		
 		[Trait("Category", "Parser tests - Parsed messages")]

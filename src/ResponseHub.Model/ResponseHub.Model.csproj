@@ -94,7 +94,7 @@
     <Compile Include="RadarImages\Interface\IRadarImageService.cs" />
     <Compile Include="ServiceType.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Spatial\GridReference.cs" />
+    <Compile Include="Spatial\MapGridReferenceInfo.cs" />
     <Compile Include="Spatial\MapIndex.cs" />
     <Compile Include="Spatial\Coordinates.cs" />
     <Compile Include="Spatial\MapType.cs" />

@@ -192,6 +192,12 @@ namespace Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers
 						continue;
 					}
 
+					if (message.ToUpper().Contains(")&)E51ASN"))
+					{
+						_log.Debug("Skipping E51ASN message.");
+						continue;
+					}
+
 					try
 					{
 

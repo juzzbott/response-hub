@@ -219,7 +219,7 @@ namespace Enivate.ResponseHub.MapIndexParser.Parsers
 				}
 
 				// Create the grid reference
-				GridReference gridRefObj = MapGridReference(feature);
+				MapGridReferenceInfo gridRefObj = MapGridReference(feature);
 
 				// Set the grid reference
 				MapIndexes[pageNumber].GridReferences.Add(gridRefObj);
@@ -241,7 +241,7 @@ namespace Enivate.ResponseHub.MapIndexParser.Parsers
 		/// </summary>
 		/// <param name="feature">The feature to map to the grid reference.</param>
 		/// <returns>The mapped grid reference</returns>
-		private GridReference MapGridReference(IFeature feature)
+		private MapGridReferenceInfo MapGridReference(IFeature feature)
 		{
 			// Get the grid reference
 			string gridReference = feature.DataRow[3].ToString();
@@ -250,7 +250,7 @@ namespace Enivate.ResponseHub.MapIndexParser.Parsers
 			IFeature centroid = feature.Centroid();
 
 			// Create the GridReference
-			GridReference gridReferenceObj = new GridReference()
+			MapGridReferenceInfo gridReferenceObj = new MapGridReferenceInfo()
 			{
 				GridSquare = gridReference,
 				Latitude = centroid.Coordinates[0].Y,

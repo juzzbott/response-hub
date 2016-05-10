@@ -19,13 +19,13 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB.DataObjects.Spatial
 
 		public int Scale { get; set; }
 
-		public IList<GridReferenceDto> GridReferences { get; set; }
+		public IList<MapGridReferenceInfoDto> GridReferences { get; set; }
 
 		public MapType MapType { get; set; }
 
 		public MapIndexDto()
 		{
-			GridReferences = new List<GridReferenceDto>();
+			GridReferences = new List<MapGridReferenceInfoDto>();
 		}
 
 	}

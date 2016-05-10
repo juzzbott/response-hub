@@ -169,15 +169,15 @@ namespace Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers
 		/// <param name="fullMapRef">The full map reference value.</param>
 		/// <param name="mapType">The type of map the map reference relates to.</param>
 		/// <param name="mapPage">The page number of the map reference.</param>
-		/// <param name="gridReference">THe grid reference on the page of the map reference (e.g. A1, B5 etc).</param>
+		/// <param name="gridSquare">THe grid reference on the page of the map reference (e.g. A1, B5 etc).</param>
 		/// <returns>The location from the pager message details.</returns>
-		private LocationInfo PopulateLocationFromMapReference(string fullMapRef, MapType mapType, string mapPage, string gridReference, string precisionCoord)
+		private LocationInfo PopulateLocationFromMapReference(string fullMapRef, MapType mapType, string mapPage, string gridSquare, string gridRef)
 		{
 
 			// Get just the numbers from the precision coordinate
-			if (!String.IsNullOrEmpty(precisionCoord))
+			if (!String.IsNullOrEmpty(gridRef))
 			{
-				precisionCoord = precisionCoord.Replace("(", "").Replace(")", "");
+				gridRef = gridRef.Replace("(", "").Replace(")", "");
 			}
 
 			// Create the location object
@@ -186,8 +186,8 @@ namespace Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers
 				MapReference = fullMapRef,
 				MapType = mapType,
 				MapPage = mapPage,
-				GridReference = gridReference,
-				PrecisionCoordinate = precisionCoord
+				GridSquare = gridSquare,
+				GridReference = gridRef
 			};
 
 			// Get the coordinates from the index maps
@@ -197,12 +197,18 @@ namespace Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers
 			{
 
 				// get the grid reference from the map index.
-				GridReference gridRefFromIndex = mapIndex.GridReferences.FirstOrDefault(i => i.GridSquare.ToLower() == gridReference.ToLower());
+				MapGridReferenceInfo mapGridRefFromIndex = mapIndex.GridReferences.FirstOrDefault(i => i.GridSquare.ToLower() == gridSquare.ToLower());
 
 				// Set the properties of the location
-				if (gridRefFromIndex != null)
+				if (mapGridRefFromIndex != null)
 				{
-					location.Coordinates = new Coordinates(gridRefFromIndex.Latitude, gridRefFromIndex.Longitude);
+					location.Coordinates = new Coordinates(mapGridRefFromIndex.Latitude, mapGridRefFromIndex.Longitude);
+					
+					// If we get a coordinates, and we get a 6 figure grid ref, then we want to get the more precise coordinate for the location
+					if (!String.IsNullOrEmpty(gridRef))
+					{
+						location.Coordinates = SpatialUtility.GetCoordinatesFromGridReference(location.Coordinates, gridRef, mapIndex.Scale);
+					}
 				}
 
 			}
@@ -211,7 +217,7 @@ namespace Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers
 			return location;
 
 		}
-
+		
 		/// <summary>
 		/// Gets the map index from the cache. If the cache object doesn't exist, then load it from the database.
 		/// </summary>

@@ -165,7 +165,7 @@ namespace Enivate.ResponseHub.MapIndexParser.Parsers
 				{
 
 					// Create the GridReference from the JsonData
-					GridReference gridRef = ParseJsonResponse(reader.ReadToEnd());
+					MapGridReferenceInfo gridRef = ParseJsonResponse(reader.ReadToEnd());
 
 					if (gridRef == null)
 					{
@@ -189,7 +189,7 @@ namespace Enivate.ResponseHub.MapIndexParser.Parsers
 
 		}
 
-		private GridReference ParseJsonResponse(string jsonResponse)
+		private MapGridReferenceInfo ParseJsonResponse(string jsonResponse)
 		{
 
 			// Format of the response string: 
@@ -205,7 +205,7 @@ namespace Enivate.ResponseHub.MapIndexParser.Parsers
 			}
 
 			// Create the grid reference.
-			GridReference gridRef = new GridReference()
+			MapGridReferenceInfo gridRef = new MapGridReferenceInfo()
 			{
 				GridSquare = response.Grid,
 				Latitude = Double.Parse(response.Lat.ToString()),
