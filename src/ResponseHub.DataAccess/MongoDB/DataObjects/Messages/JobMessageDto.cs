@@ -36,8 +36,6 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB.DataObjects.Messages
 			// Instantiate the id
 			Id = Guid.NewGuid();
 
-			Location = new LocationInfoDto();
-
 			// Default to administration.
 			Priority = MessagePriority.Administration;
 
