@@ -35,9 +35,6 @@ namespace Enivate.ResponseHub.Model.Messages
 			// Instantiate the id
 			Id = Guid.NewGuid();
 
-			// Create the location info so it's not null
-			Location = new LocationInfo();
-
 			// Default to administration.
 			Priority = MessagePriority.Administration;
 

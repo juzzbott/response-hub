@@ -40,13 +40,14 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 		/// <param name="capcodes"></param>
 		/// <param name="count"></param>
 		/// <returns></returns>
-		public async Task<IList<JobMessage>> GetMostRecent(IEnumerable<string> capcodes, int count, MessageType messageTypes)
+		public async Task<IList<JobMessage>> GetMostRecent(IEnumerable<string> capcodes, MessageType messageTypes, int count)
 		{
 
 			// Create the filter and sort
 			FilterDefinitionBuilder<JobMessageDto> builder = Builders<JobMessageDto>.Filter;
 			FilterDefinition<JobMessageDto> filter = builder.In(i => i.Capcode, capcodes);
 
+			// Add the message type to the filter.
 			if (messageTypes.HasFlag(MessageType.Job))
 			{
 				filter = filter & builder.Ne(i => i.Priority, MessagePriority.Administration);
@@ -56,10 +57,65 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 				filter = filter & builder.Eq(i => i.Priority, MessagePriority.Administration);
 			}
 
+			// Create the sort filter
 			SortDefinition<JobMessageDto> sort = Builders<JobMessageDto>.Sort.Descending(i => i.Timestamp);
 
 			// Find the job messages by capcode
 			IList<JobMessageDto> results = await Collection.Find(filter).Sort(sort).Limit(count).ToListAsync();
+
+			// Map the dto objects to model objects and return
+			List<JobMessage> messages = new List<JobMessage>();
+			messages.AddRange(results.Select(i => MapDbObjectToModel(i)));
+
+			// return the messages
+			return messages;
+
+
+		}
+
+		/// <summary>
+		/// Gets the list of latest messages that are new since the last message. The results are limited to the selected message types and capcodes.
+		/// </summary>
+		/// <param name="lastId"></param>
+		/// <param name="capcodes"></param>
+		/// <param name="messageTypes"></param>
+		/// <returns></returns>
+		public async Task<IList<JobMessage>> GetLatestFromLastMessage(Guid lastId, IEnumerable<string> capcodes, MessageType messageTypes)
+		{
+			// Get the 'Created' date from the last message id.
+			JobMessageDto lastMessage = await Collection.Find(i => i.Id == lastId).SingleOrDefaultAsync();
+
+			// If the last message cannot be found, return empty list
+			if (lastMessage == null)
+			{
+				return new List<JobMessage>();
+			}
+
+			// Get the last message date time
+			DateTime lastMessageDate = lastMessage.Timestamp;
+
+			// Create the filter and sort
+			FilterDefinitionBuilder<JobMessageDto> builder = Builders<JobMessageDto>.Filter;
+			FilterDefinition<JobMessageDto> filter = builder.In(i => i.Capcode, capcodes);
+
+			// Add the message type to the filter.
+			if (messageTypes.HasFlag(MessageType.Job))
+			{
+				filter = filter & builder.Ne(i => i.Priority, MessagePriority.Administration);
+			}
+			else if (messageTypes.HasFlag(MessageType.Message))
+			{
+				filter = filter & builder.Eq(i => i.Priority, MessagePriority.Administration);
+			}
+
+			// Add the date time filter
+			filter = filter & builder.Gt(i => i.Timestamp, lastMessageDate);
+
+			// Create the sort filter
+			SortDefinition<JobMessageDto> sort = Builders<JobMessageDto>.Sort.Descending(i => i.Timestamp);
+
+			// Find the job messages by capcode
+			IList<JobMessageDto> results = await Collection.Find(filter).Sort(sort).ToListAsync();
 
 			// Map the dto objects to model objects and return
 			List<JobMessage> messages = new List<JobMessage>();
@@ -178,10 +234,6 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 			{
 				model.Location = MapLocationInfoDbObjectToModel(dbObject.Location);
 			}
-			else
-			{
-				model.Location = new LocationInfo();
-			}
 
 			// return the model
 			return model;
@@ -217,10 +269,6 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 			if (modelObject.Location != null)
 			{
 				dbObject.Location = MapLocationInfoModelToDbObject(modelObject.Location);
-			} 
-			else
-			{
-				dbObject.Location = new LocationInfoDto();
 			}
 
 			// return the db object

@@ -2,6 +2,12 @@
 
 	var currentRadarImageIndex = 0;
 
+	var jobListPollingInterval = 30000;
+
+	var jobListPollingEnabled = true;
+
+	var jobListInterval = null;
+
 	function showHideWarnings(warningsContainer) {
 
 		// If the container has the hidden class, remove it, otherwise add it
@@ -56,6 +62,49 @@
 			$('#message-type').attr('class', 'fa fa-info-circle p-message-admin');
 		}
 
+		// Set the map reference
+		var mapRef = $(elem).data('map-ref');
+
+		if (mapRef != "") {
+			$('.wallboard-main .map-reference').text(mapRef);
+			$('.wallboard-main .job-location').removeClass('hidden');
+		} else {
+			$('.wallboard-main .job-location').addClass('hidden');
+		}
+
+		var lat = parseFloat($(elem).data('lat'));
+		var lon = parseFloat($(elem).data('lon'));
+
+		if (lat != 0 && lon != 0) {
+
+			// Set the height of the map canvas
+			$('#map-canvas').css('height', '550px');
+
+			if (!responseHub.maps.mapExists()) 
+			{
+				var mapConfig = {
+					lat: lat,
+					lon: lon,
+					zoom: 15,
+					minZoom: 4,
+					scrollWheel: true,
+					mapContainer: 'map-canvas',
+					loadCallback: null
+				};
+				responseHub.maps.displayMap(mapConfig);
+			}
+			else
+			{
+				responseHub.maps.setMapCenter(lat, lon);
+			}
+
+			responseHub.maps.clearMarkers();
+			responseHub.maps.addMarkerToMap(lat, lon);
+
+		} else {
+			$('#map-canvas').css('height', '0px');
+		}
+
 		// Set the active class on the list item
 		$('.message-list li').removeClass('selected');
 		$(elem).addClass('selected');
@@ -78,6 +127,9 @@
 		if (!$('body').hasClass('wallboard-layout')) {
 			return;
 		}
+
+		// Set the job list update interval to poll for new jobs
+		setJobListPolling();
 
 		// Initially set the container heights
 		setContainerHeights($(window).width());
@@ -124,6 +176,14 @@
 			currentRadarImageIndex = nextIndex;
 		
 		}, 250);
+
+	}
+
+	function setJobListPolling()
+	{
+
+		// Set the interval
+
 
 	}
 

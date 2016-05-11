@@ -5,18 +5,20 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Threading.Tasks;
 using System.Web.Http;
 
 using Microsoft.AspNet.Identity;
 using Microsoft.Practices.Unity;
 
 using Enivate.ResponseHub.Common;
+using Enivate.ResponseHub.Model.Groups;
+using Enivate.ResponseHub.Model.Groups.Interface;
+using Enivate.ResponseHub.Model.Identity;
 using Enivate.ResponseHub.Model.Messages.Interface;
 using Enivate.ResponseHub.Model.Messages;
-using System.Threading.Tasks;
 using Enivate.ResponseHub.UI.Models.Api.Messages;
-using Enivate.ResponseHub.Model.Identity.Interface;
-using Enivate.ResponseHub.Model.Identity;
+using Enivate.ResponseHub.UI.Models.Messages;
 
 namespace Enivate.ResponseHub.UI.Controllers.Api
 {
@@ -24,16 +26,22 @@ namespace Enivate.ResponseHub.UI.Controllers.Api
 	[RoutePrefix("api/job-messages")]
     public class JobMessageController : BaseApiController
     {
-
-		private IJobMessageService _jobMessageService;
 		protected IJobMessageService JobMessageService
 		{
 			get
 			{
-				return _jobMessageService ?? (_jobMessageService = UnityConfiguration.Container.Resolve<IJobMessageService>());
+				return ServiceLocator.Get<IJobMessageService>();
 			}
 		}
-		
+
+		protected ICapcodeService CapcodeService
+		{
+			get
+			{
+				return ServiceLocator.Get<ICapcodeService>();
+			}
+		}
+
 		[Route]
 		[HttpPost]
 		public async Task<bool> Post(IList<JobMessage> jobMessages)
@@ -127,7 +135,7 @@ namespace Enivate.ResponseHub.UI.Controllers.Api
 			catch(Exception ex)
 			{
 				// If the exception messge relates to not being able to set the progress update because a progress type already exists, treat as warning
-				if (ex.Message.StartsWith("", StringComparison.CurrentCultureIgnoreCase))
+				if (ex.Message.StartsWith("The job message already contains a progress update", StringComparison.CurrentCultureIgnoreCase))
 				{
 					await Log.Warn(String.Format("Error adding progress to job message. Message: {0}", ex.Message));
 					return new MessageProgressResponseModel()
@@ -144,6 +152,59 @@ namespace Enivate.ResponseHub.UI.Controllers.Api
 			}
 
 
+
+		}
+
+		[Route("latest-from-last-id")]
+		[HttpPost]
+		public async Task<IList<JobMessageViewModel>> GetLatestMessagesFromLast(PostGetLatestFromLastModel model)
+		{
+
+			try
+			{
+
+				// Get the capcodes for the current user
+				IList<Capcode> capcodes = await CapcodeService.GetCapcodesForUser(UserId);
+				IList<string> capcodeStrings = capcodes.Select(i => i.CapcodeAddress).ToList();
+
+				// Get the latest messages
+				IList<JobMessage> latestMessages = await JobMessageService.GetLatestFromLastMessage(model.LastMessageId, capcodeStrings, model.MessageType);
+
+				// Create the list of job message view models
+				IList<JobMessageViewModel> latestMessagesModels = new List<JobMessageViewModel>();
+
+				// Map the job messages to the JobMesageViewModel type
+				if (latestMessages != null && latestMessages.Count > 0)
+				{
+					
+					// Iterate through each message and add to the list
+					foreach(JobMessage message in latestMessages)
+					{
+						// Get the capcode group name from the list of capcodes
+						Capcode messageCapcode = capcodes.FirstOrDefault(i => i.CapcodeAddress == message.Capcode);
+						string capcodeGroupName = messageCapcode?.FormattedName();
+
+						// If there was no group capcode name, just set to unknown
+						if (String.IsNullOrEmpty(capcodeGroupName))
+						{
+							capcodeGroupName = "Unknown";
+						}
+
+						// Map to the JobMessageViewModel
+						latestMessagesModels.Add(BaseJobsMessagesController.MapJobMessageToViewModel(message, capcodeGroupName));
+					}
+
+				}
+
+				// return the latest messages models
+				return latestMessagesModels;
+
+			}
+			catch (Exception ex)
+			{
+				await Log.Error("Unable to get latest messages from last id from the api. Message: " + ex.Message, ex);
+				throw new HttpResponseException(new HttpResponseMessage(HttpStatusCode.InternalServerError));
+			}
 
 		}
 

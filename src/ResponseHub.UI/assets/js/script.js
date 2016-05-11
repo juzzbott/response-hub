@@ -277,6 +277,13 @@ responseHub.maps = (function () {
 	};
 
 	/**
+	 * Sets the map center to the specified coordinates
+	 */
+	function setMapCenter(lat, lon) {
+		map.setView(new L.LatLng(lat, lon));
+	}
+
+	/**
 	 * Gets the current location and sends the coordinates to the specified text boxes.
 	 */
 	function getCurrentLocation(latSelector, lngSelector) {
@@ -300,6 +307,13 @@ responseHub.maps = (function () {
 			});
 		}
 
+	}
+
+	/**
+	 * Determines if the map exists
+	 */
+	function mapExists() {
+		return map != null;
 	}
 
 	/**
@@ -330,7 +344,9 @@ responseHub.maps = (function () {
 		mapMarkers: mapMarkers,
 		addMarkerToMap: addMarkerToMap,
 		clearMarkers: clearMarkers,
-		getCurrentLocation: getCurrentLocation
+		getCurrentLocation: getCurrentLocation,
+		setMapCenter: setMapCenter,
+		mapExists: mapExists
 	}
 
 })();
@@ -640,6 +656,12 @@ responseHub.wallboard = (function () {
 
 	var currentRadarImageIndex = 0;
 
+	var jobListPollingInterval = 30000;
+
+	var jobListPollingEnabled = true;
+
+	var jobListInterval = null;
+
 	function showHideWarnings(warningsContainer) {
 
 		// If the container has the hidden class, remove it, otherwise add it
@@ -694,6 +716,49 @@ responseHub.wallboard = (function () {
 			$('#message-type').attr('class', 'fa fa-info-circle p-message-admin');
 		}
 
+		// Set the map reference
+		var mapRef = $(elem).data('map-ref');
+
+		if (mapRef != "") {
+			$('.wallboard-main .map-reference').text(mapRef);
+			$('.wallboard-main .job-location').removeClass('hidden');
+		} else {
+			$('.wallboard-main .job-location').addClass('hidden');
+		}
+
+		var lat = parseFloat($(elem).data('lat'));
+		var lon = parseFloat($(elem).data('lon'));
+
+		if (lat != 0 && lon != 0) {
+
+			// Set the height of the map canvas
+			$('#map-canvas').css('height', '550px');
+
+			if (!responseHub.maps.mapExists()) 
+			{
+				var mapConfig = {
+					lat: lat,
+					lon: lon,
+					zoom: 15,
+					minZoom: 4,
+					scrollWheel: true,
+					mapContainer: 'map-canvas',
+					loadCallback: null
+				};
+				responseHub.maps.displayMap(mapConfig);
+			}
+			else
+			{
+				responseHub.maps.setMapCenter(lat, lon);
+			}
+
+			responseHub.maps.clearMarkers();
+			responseHub.maps.addMarkerToMap(lat, lon);
+
+		} else {
+			$('#map-canvas').css('height', '0px');
+		}
+
 		// Set the active class on the list item
 		$('.message-list li').removeClass('selected');
 		$(elem).addClass('selected');
@@ -716,6 +781,9 @@ responseHub.wallboard = (function () {
 		if (!$('body').hasClass('wallboard-layout')) {
 			return;
 		}
+
+		// Set the job list update interval to poll for new jobs
+		setJobListPolling();
 
 		// Initially set the container heights
 		setContainerHeights($(window).width());
@@ -762,6 +830,14 @@ responseHub.wallboard = (function () {
 			currentRadarImageIndex = nextIndex;
 		
 		}, 250);
+
+	}
+
+	function setJobListPolling()
+	{
+
+		// Set the interval
+
 
 	}
 

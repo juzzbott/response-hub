@@ -57,9 +57,21 @@ namespace Enivate.ResponseHub.ApplicationServices
 		/// <param name="capcodes"></param>
 		/// <param name="count"></param>
 		/// <returns></returns>
-		public async Task<IList<JobMessage>> GetMostRecent(IEnumerable<string> capcodes, int count, MessageType messageTypes)
+		public async Task<IList<JobMessage>> GetMostRecent(IEnumerable<string> capcodes, MessageType messageTypes, int count)
 		{
-			return await _repository.GetMostRecent(capcodes, count, messageTypes);
+			return await _repository.GetMostRecent(capcodes, messageTypes, count);
+		}
+
+		/// <summary>
+		/// Gets the list of latest messages that are new since the last message. The results are limited to the selected message types and capcodes.
+		/// </summary>
+		/// <param name="lastId"></param>
+		/// <param name="capcodes"></param>
+		/// <param name="messageTypes"></param>
+		/// <returns></returns>
+		public async Task<IList<JobMessage>> GetLatestFromLastMessage(Guid lastId, IEnumerable<string> capcodes, MessageType messageTypes)
+		{
+			return await _repository.GetLatestFromLastMessage(lastId, capcodes, messageTypes);
 		}
 
 		/// <summary>

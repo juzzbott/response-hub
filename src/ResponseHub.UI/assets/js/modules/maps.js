@@ -198,6 +198,13 @@
 	};
 
 	/**
+	 * Sets the map center to the specified coordinates
+	 */
+	function setMapCenter(lat, lon) {
+		map.setView(new L.LatLng(lat, lon));
+	}
+
+	/**
 	 * Gets the current location and sends the coordinates to the specified text boxes.
 	 */
 	function getCurrentLocation(latSelector, lngSelector) {
@@ -221,6 +228,13 @@
 			});
 		}
 
+	}
+
+	/**
+	 * Determines if the map exists
+	 */
+	function mapExists() {
+		return map != null;
 	}
 
 	/**
@@ -251,7 +265,9 @@
 		mapMarkers: mapMarkers,
 		addMarkerToMap: addMarkerToMap,
 		clearMarkers: clearMarkers,
-		getCurrentLocation: getCurrentLocation
+		getCurrentLocation: getCurrentLocation,
+		setMapCenter: setMapCenter,
+		mapExists: mapExists
 	}
 
 })();

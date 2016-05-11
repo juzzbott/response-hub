@@ -196,6 +196,7 @@
     <Compile Include="Filters\SystemAdminUserRedirectAttribute.cs" />
     <Compile Include="Models\Api\Events\AddResourcePostModel.cs" />
     <Compile Include="Models\Api\Events\AddResourceResponseModel.cs" />
+    <Compile Include="Models\Api\Messages\PostGetLatestFromLastModel.cs" />
     <Compile Include="Models\Events\AdditionalResourceViewModel.cs" />
     <Compile Include="Models\Events\EventListItemViewModel.cs" />
     <Compile Include="Models\Events\EventViewModel.cs" />
@@ -235,7 +236,6 @@
     <Compile Include="Models\Api\Messages\PostJobNoteModel.cs" />
     <Compile Include="Models\Api\Messages\PostProgressViewModel.cs" />
     <Compile Include="Models\Messages\JobMessageViewModel.cs" />
-    <Compile Include="Models\Messages\ParsedMessageViewModel.cs" />
     <Compile Include="Models\MyAccount\ChangePasswordViewModel.cs" />
     <Compile Include="Models\MyAccount\CreatePasswordViewModel.cs" />
     <Compile Include="Models\MyAccount\LoginViewModel.cs" />

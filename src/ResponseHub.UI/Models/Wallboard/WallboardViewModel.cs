@@ -10,7 +10,7 @@ namespace Enivate.ResponseHub.UI.Models.Wallboard
 	public class WallboardViewModel
 	{
 
-		public IList<ParsedMessageViewModel> Messages { get; set; }
+		public IList<JobMessageViewModel> Messages { get; set; }
 
 		public IDictionary<WarningSource, IWarning> Warnings { get; set; }
 
@@ -18,7 +18,7 @@ namespace Enivate.ResponseHub.UI.Models.Wallboard
 
 		public WallboardViewModel()
 		{
-			Messages = new List<ParsedMessageViewModel>();
+			Messages = new List<JobMessageViewModel>();
 			Warnings = new Dictionary<WarningSource, IWarning>();
 			RadarImageFiles = new List<string>();
 		}

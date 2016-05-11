@@ -17,37 +17,61 @@
 	</div>
 </div>
 
+@if (Model.Messages == null || Model.Messages.Count == 0)
+{
+	<div class="row">
+		<div class="col-xs-12">
+			<p class="lead no-jobs">No jobs are currently available.</p>
+		</div>
+	</div>
+}
+
 <div class="row">
 	<ul class="list-unstyled message-list">
+		
 		@for(int i = 0; i < Model.Messages.Count; i++)
 		{
 			var message = Model.Messages[i];
+			string mapReference = "";
+			double lat = 0;
+			double lon = 0;
 
-		<li class="@(i == 0 ? "selected" : "")" data-message="@message.MessageBody" data-job-number="@message.JobNumber" data-date="@message.Timestamp.ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss")" data-priority="@message.Priority" data-lat="@message.Location.Coordinates.Latitude" data-lng="@message.Location.Coordinates.Longitude" data-id="@message.Id">
-			<div class="p-message-meta">
-				<h4 class="group-heading">@message.CapcodeGroupName</h4>
-				<p class="text-info message-date">@message.Timestamp.ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss")</p>
-			</div>
-			<div class="p-message">
-				<h3>
-					@if (message.Priority == Enivate.ResponseHub.Model.Messages.MessagePriority.Emergency)
-					{
-					<i class="fa fa-exclamation-triangle p-message-emergency"></i>
-					}
-					else if (message.Priority == Enivate.ResponseHub.Model.Messages.MessagePriority.NonEmergency)
-					{
-						<i class="fa fa-exclamation-circle p-message-non-emergency"></i>
-					}
-					else
-					{
-						<i class="fa fa-info-circle p-message-admin"></i>
-					}
-					<span class="job-number">@(String.IsNullOrEmpty(message.JobNumber) ? "No job number" : message.JobNumber)</span> 
-					<span class="job-status"><i class="fa fa-arrow-circle-o-right"></i></span>
-				</h3>
-				<small class="text-muted">@message.MessageBodyShort</small>
-			</div>
-		</li>
+			if (message.Location != null)
+			{
+				mapReference = message.Location.MapReference;
+
+				if (message.Location.Coordinates != null)
+				{
+					lat = message.Location.Coordinates.Latitude;
+					lon = message.Location.Coordinates.Longitude;
+				}
+			}
+
+			<li class="@(i == 0 ? "selected" : "")" data-message="@message.MessageBody" data-job-number="@message.JobNumber" data-date="@message.Timestamp.ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss")" data-priority="@message.Priority" data-map-ref="@mapReference" data-lat="@lat" data-lon="@lon" data-id="@message.Id">
+				<div class="p-message-meta">
+					<h4 class="group-heading">@message.CapcodeGroupName</h4>
+					<p class="text-info message-date">@message.Timestamp.ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss")</p>
+				</div>
+				<div class="p-message">
+					<h3>
+						@if (message.Priority == Enivate.ResponseHub.Model.Messages.MessagePriority.Emergency)
+						{
+						<i class="fa fa-exclamation-triangle p-message-emergency"></i>
+						}
+						else if (message.Priority == Enivate.ResponseHub.Model.Messages.MessagePriority.NonEmergency)
+						{
+							<i class="fa fa-exclamation-circle p-message-non-emergency"></i>
+						}
+						else
+						{
+							<i class="fa fa-info-circle p-message-admin"></i>
+						}
+						<span class="job-number">@(String.IsNullOrEmpty(message.JobNumber) ? "No job number" : message.JobNumber)</span> 
+						<span class="job-status"><i class="fa fa-arrow-circle-o-right"></i></span>
+					</h3>
+					<small class="text-muted">@message.MessageBodyTruncated</small>
+				</div>
+			</li>
 		}
 	</ul>
 </div>

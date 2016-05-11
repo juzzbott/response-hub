@@ -1,34 +1,50 @@
 ﻿@model Enivate.ResponseHub.UI.Models.Messages.JobMessageListViewModel
 
 @{
-    ViewBag.Title = ViewContext.RouteData.Values["Controller"].ToString().ToLower() == "jobs" ? "Jobs" : "Messages";
+	ViewBag.Title = ViewContext.RouteData.Values["Controller"].ToString().ToLower() == "jobs" ? "Jobs" : "Messages";
+	ViewBag.JobsOrMessages = ViewContext.RouteData.Values["Controller"].ToString().ToLower() == "jobs" ? "jobs" : "messages";
 }
 
 <h1>@ViewBag.Title</h1>
 
-@foreach(var message in Model.Messages)
-{
-	<div class="row">
-		<div class="col-sm-12 job-list">
 
-			<h3>
-				@if (message.Priority == Enivate.ResponseHub.Model.Messages.MessagePriority.Emergency)
-				{
-					<i class="fa fa-exclamation-triangle p-message-emergency"></i>
-				}
-				else if (message.Priority == Enivate.ResponseHub.Model.Messages.MessagePriority.NonEmergency)
-				{
-					<i class="fa fa-exclamation-circle p-message-non-emergency"></i>
-				}
-				else
-				{
-					<i class="fa fa-info-circle p-message-admin"></i>
-				}
-				<a href="/@ViewContext.RouteData.Values["Controller"].ToString().ToLower()/@message.Id">@(!String.IsNullOrEmpty(message.JobNumber) ? message.JobNumber : message.Timestamp.ToString("dd/MM/yyyy HH:mm:ss"))</a>
-			</h3>
-			<p class="capcode-meta text-muted">@message.CapcodeGroupName</p>
-			<p>@message.MessageBody</p>
+<div class="row">
+	<div class="col-sm-12 job-list">
 
-		</div>
+		<ul class="job-list list-unstyled">
+
+			@if (Model.Messages == null || Model.Messages.Count == 0)
+			{
+				<li class="no-jobs-msg">
+					<p class="lead">There are no @ViewBag.JobsOrMessages to display.</p>
+				</li>
+			}
+
+			@foreach (var message in Model.Messages)
+			{
+
+				<li data-message-id="@message.Id">
+					<h3>
+						@if (message.Priority == Enivate.ResponseHub.Model.Messages.MessagePriority.Emergency)
+						{
+							<i class="fa fa-exclamation-triangle p-message-emergency"></i>
+						}
+						else if (message.Priority == Enivate.ResponseHub.Model.Messages.MessagePriority.NonEmergency)
+						{
+							<i class="fa fa-exclamation-circle p-message-non-emergency"></i>
+						}
+						else
+						{
+							<i class="fa fa-info-circle p-message-admin"></i>
+						}
+						<a href="/@ViewContext.RouteData.Values["Controller"].ToString().ToLower()/@message.Id">@(!String.IsNullOrEmpty(message.JobNumber) ? message.JobNumber : message.Timestamp.ToString("dd/MM/yyyy HH:mm:ss"))</a>
+					</h3>
+					<p class="capcode-meta text-muted">@message.CapcodeGroupName</p>
+					<p>@message.MessageBody</p>
+				</li>
+			}
+
+		</ul>
+
 	</div>
-}
+</div>

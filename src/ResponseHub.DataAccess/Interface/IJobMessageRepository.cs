@@ -13,7 +13,9 @@ namespace Enivate.ResponseHub.DataAccess.Interface
 
 		Task AddMessages(IList<JobMessage> messages);
 
-		Task<IList<JobMessage>> GetMostRecent(IEnumerable<string> capcodes, int count, MessageType messageTypes);
+		Task<IList<JobMessage>> GetMostRecent(IEnumerable<string> capcodes, MessageType messageTypes, int count);
+
+		Task<IList<JobMessage>> GetLatestFromLastMessage(Guid lastId, IEnumerable<string> capcodes, MessageType messageTypes);
 
 		Task<JobMessage> GetById(Guid id);
 

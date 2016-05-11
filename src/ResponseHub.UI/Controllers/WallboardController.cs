@@ -1,83 +1,74 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 
-using Microsoft.Practices.Unity;
-
 using Enivate.ResponseHub.Common;
-using Enivate.ResponseHub.Common.Extensions;
-using Enivate.ResponseHub.Logging;
+using Enivate.ResponseHub.Model.Groups;
+using Enivate.ResponseHub.Model.Groups.Interface;
 using Enivate.ResponseHub.Model.Messages;
 using Enivate.ResponseHub.Model.RadarImages.Interface;
 using Enivate.ResponseHub.Model.Warnings;
 using Enivate.ResponseHub.Model.Warnings.Interface;
 using Enivate.ResponseHub.UI.Models.Messages;
 using Enivate.ResponseHub.UI.Models.Wallboard;
+using Enivate.ResponseHub.Model.Messages.Interface;
 
 namespace Enivate.ResponseHub.UI.Controllers
 {
+	[RoutePrefix("wallboard")]
     public class WallboardController : BaseController
 	{
 
-		private IWarningService _warningService;
 		protected IWarningService WarningService
 		{
 			get
 			{
-				return _warningService ?? (_warningService = UnityConfiguration.Container.Resolve<IWarningService>());
+				return ServiceLocator.Get<IWarningService>();
 			}
 		}
-
-		private IRadarImageService _radarImageService;
+		
 		protected IRadarImageService RadarImageService
 		{
 			get
 			{
-				return _radarImageService ?? (_radarImageService = UnityConfiguration.Container.Resolve<IRadarImageService>());
+				return ServiceLocator.Get<IRadarImageService>();
 			}
 		}
 
-		// GET: Wallboard
-		public ActionResult Index()
+		protected ICapcodeService CapcodeService
+		{
+			get
+			{
+				return ServiceLocator.Get<ICapcodeService>();
+			}
+		}
+
+		protected IJobMessageService JobMessageService
+		{
+			get
+			{
+				return ServiceLocator.Get<IJobMessageService>();
+			}
+		}
+
+		[Route]
+		public async Task<ActionResult> Index()
         {
 
 			WallboardViewModel model = new WallboardViewModel();
-			model.Messages.Add(new ParsedMessageViewModel() {
-				Capcode = "0001235",
-				MessageBody = "ALERT F160203101 PARW1 RESCC1 * CAR ACCIDENT - POSS PERSON TRAPPED/FIRE CNR GLENMORE RD/NEROWIE RD PARWAN SVC 6608 E2 (747184) BACC1 CBMSH CEYNE CPARW [BACC]",
-				MessageBodyShort = "ALERT F160203101 PARW1 RESCC1 * CAR ACCIDENT - POSS PERSON TRAPPED/FIRE CNR GLENMORE RD/NEROWIE RD PARWAN SVC 6608 E2 (747184) BACC1 CBMSH CEYNE CPARW [BACC]".Truncate(60, "..."),
-				CapcodeGroupId = Guid.NewGuid(),
-				CapcodeGroupName = "Bacchus Marsh SES",
-				JobNumber = "F160203101",
-				Priority = MessagePriority.Emergency,
-				Timestamp = DateTime.UtcNow,
-				Id = Guid.NewGuid()
-			});
-			model.Messages.Add(new ParsedMessageViewModel()
-			{
-				Capcode = "0001235",
-				MessageBody = "S160230607 SES BACCHUS MARSH TREE DOWN / TRF HAZARD JANELLE PROSSER 0439966838 / BALLAN-EGERTON RD MOUNT EGERTON /SOUTH MAIN RD //MANLEYS RD SVVB C 6523 J4 TREE BRANCH DOWN ONTO THE ROAD - COVERING ONE LANE [BACC]",
-				MessageBodyShort = "S160230607 SES BACCHUS MARSH TREE DOWN / TRF HAZARD JANELLE PROSSER 0439966838 / BALLAN-EGERTON RD MOUNT EGERTON /SOUTH MAIN RD //MANLEYS RD SVVB C 6523 J4 TREE BRANCH DOWN ONTO THE ROAD - COVERING ONE LANE [BACC]".Truncate(60, "..."),
-				CapcodeGroupId = Guid.NewGuid(),
-				CapcodeGroupName = "Bacchus Marsh SES",
-				JobNumber = "S160230607",
-				Priority = MessagePriority.NonEmergency,
-				Timestamp = DateTime.UtcNow.AddHours(-2),
-				Id = Guid.NewGuid()
-			});
-			//model.Messages.Add(new ParsedMessageViewModel()
-			//{
-			//	Capcode = "0001235",
-			//	MessageBody = "members required for line search at 0800 tomorrow the 18th February for missing person contact Bacchus marsh duty officer if you are available duration all day. From Bacchus marsh duty officer. [BACC]",
-			//	CapcodeGroupId = Guid.NewGuid(),
-			//	CapcodeGroupName = "Bacchus Marsh SES",
-			//	JobNumber = "",
-			//	Priority = MessagePriority.Administration,
-			//	Timestamp = DateTime.UtcNow.AddHours(-20),
-			//	Id = Guid.NewGuid()
-			//});
+			
+			// Get the capcodes for the current user
+			IList<Capcode> capcodes = await CapcodeService.GetCapcodesForUser(UserId);
+
+			// Get the messages for the capcodes
+			IList<JobMessage> jobMessages = await JobMessageService.GetMostRecent(capcodes.Select(i => i.CapcodeAddress), MessageType.Job, 30);
+
+			// Create the jobs list view model.
+			JobMessageListViewModel jobListModel = BaseJobsMessagesController.CreateJobMessageListModel(capcodes, jobMessages);
+			model.Messages = jobListModel.Messages;
 
 			// Get the warnings
 			try
@@ -86,7 +77,7 @@ namespace Enivate.ResponseHub.UI.Controllers
 			}
 			catch (Exception ex)
 			{
-				Log.Error(String.Format("Error loading warnings. Message: {0}", ex.Message), ex);
+				await Log.Error(String.Format("Error loading warnings. Message: {0}", ex.Message), ex);
 				ViewBag.LoadWarningsError = true;
 			}
 

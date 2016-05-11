@@ -1,4 +1,5 @@
-﻿using Enivate.ResponseHub.Model.Messages;
+﻿using Enivate.ResponseHub.Common.Extensions;
+using Enivate.ResponseHub.Model.Messages;
 using Enivate.ResponseHub.Model.Spatial;
 using System;
 using System.Collections.Generic;
@@ -13,6 +14,14 @@ namespace Enivate.ResponseHub.UI.Models.Messages
 		public Guid Id { get; set; }
 
 		public string MessageBody { get; set; }
+
+		public string MessageBodyTruncated
+		{
+			get
+			{
+				return MessageBody.Truncate(60, "...");
+			}
+		}
 
 		public DateTime Timestamp { get; set; }
 
