@@ -8,17 +8,20 @@ using System.Threading.Tasks;
 
 using Microsoft.AspNet.Identity;
 
+using Enivate.ResponseHub.Caching;
+using Enivate.ResponseHub.Common;
+using Enivate.ResponseHub.Common.Constants;
 using Enivate.ResponseHub.DataAccess.Interface;
 using Enivate.ResponseHub.Logging;
 using Enivate.ResponseHub.Model.Identity;
 using Enivate.ResponseHub.Model.Identity.Interface;
-using Enivate.ResponseHub.Common.Constants;
-using Enivate.ResponseHub.Common;
 
 namespace Enivate.ResponseHub.ApplicationServices
 {
 	public class UserService : UserManager<IdentityUser, Guid>, IUserService
 	{
+
+		private readonly string UserObjectCachePrefix = "IdentityUser_";
 
 		private IUserRepository _repository;
 
@@ -56,8 +59,8 @@ namespace Enivate.ResponseHub.ApplicationServices
 				user.PasswordResetToken = token;
 
 				// Update the user object
-				await _repository.UpdateAsync(user);
-
+				await UpdateAsync(user);
+				
 				// return the token
 				return token.Token;
 
@@ -104,7 +107,10 @@ namespace Enivate.ResponseHub.ApplicationServices
 				user.PasswordResetToken = null;
 
 				// Save the new password details
-				await _repository.UpdateAsync(user);
+				await UpdateAsync(user);
+
+				// Clear the cache object
+				CacheManager.RemoveEntity(user);
 
 				return IdentityResult.Success;
 
@@ -230,6 +236,9 @@ namespace Enivate.ResponseHub.ApplicationServices
 				// Get the user and update the email
 				await _repository.UpdateAccountUsername(userId, newUsername);
 
+				// Clear the cache object
+				CacheManager.RemoveEntity(user);
+
 				return IdentityResult.Success;
 
 			}
@@ -283,6 +292,62 @@ namespace Enivate.ResponseHub.ApplicationServices
 				await _log.Error(String.Format("Unable to create password for account '{0}'.", user.Id), ex);
 				return IdentityResult.Failed("Unable to create account password.");
 			}
+		}
+
+		#endregion
+
+		#region Find By Id
+
+		/// <summary>
+		/// Overrides the standard FindByIdAsync method to enable user object caching.
+		/// </summary>
+		/// <param name="userId">The Id of the user to return.</param>
+		/// <returns></returns>
+		public override async Task<IdentityUser> FindByIdAsync(Guid userId)
+		{
+
+			// Get the user from the cache
+			IdentityUser user = CacheManager.GetItem<IdentityUser>(CacheUtility.GetEntityCacheKey(typeof(IdentityUser), userId.ToString()));
+
+			// If the user doesn't exist in the cache, get it from the store
+			if (user == null)
+			{
+				// Get the user from the store
+				user = await base.FindByIdAsync(userId);
+
+				// If it's not null, add to cache
+				if (user != null)
+				{
+					CacheManager.AddItem(user);
+				}
+			}
+
+			// return the user.
+			return user;
+		}
+
+		#endregion
+
+		#region Update user
+
+		/// <summary>
+		/// Overrides the UpdateAsync method to remove the entity from cache on update.
+		/// </summary>
+		/// <param name="user"></param>
+		/// <returns></returns>
+		public override async Task<IdentityResult> UpdateAsync(IdentityUser user)
+		{
+			// Update the user details
+			IdentityResult result = await base.UpdateAsync(user);
+
+			// If the result was successful, then remove it from the cache.
+			if (result.Succeeded)
+			{
+				CacheManager.RemoveEntity(user);
+			}
+
+			// return the result
+			return result;
 		}
 
 		#endregion
@@ -426,8 +491,44 @@ namespace Enivate.ResponseHub.ApplicationServices
 		public async Task UpdateAccountDetails(Guid userId, string firstName, string surname)
 		{
 			await _repository.UpdateAccountDetails(userId, firstName, surname);
+
+			// Clear the cache object
+			ClearUserFromCache(userId);
 		}
-		
+
+		#endregion
+
+		#region Clear cache methods
+
+		/// <summary>
+		/// Removes all user objects from the cache.
+		/// </summary>
+		private void ClearAllUsersCacheObjects()
+		{
+			// Get the list of cache keys for user objects
+			IList<string> userCacheKeys = CacheManager.GetCacheKeys().Where(i => i.StartsWith(UserObjectCachePrefix)).ToList();
+
+			// Loop through each of the cache keys and remove it
+			foreach (string cacheKey in userCacheKeys)
+			{
+				CacheManager.RemoveItem(cacheKey);
+			}
+
+		}
+
+		/// <summary>
+		/// Removes a single user from the cache.
+		/// </summary>
+		/// <param name="userId"></param>
+		private void ClearUserFromCache(Guid userId)
+		{
+			// Get the cache key
+			string cacheKey = CacheUtility.GetEntityCacheKey(typeof(IdentityUser), userId.ToString());
+
+			// remove the user from the cache
+			CacheManager.RemoveItem(cacheKey);
+		}
+
 		#endregion
 
 	}
