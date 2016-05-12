@@ -190,6 +190,9 @@
     <Compile Include="Areas\Admin\Models\Capcodes\CreateCapcodeViewModel.cs" />
     <Compile Include="Areas\Admin\Models\SystemSettings\CacheDetails.cs" />
     <Compile Include="Areas\Admin\Models\SystemSettings\SystemSettingsViewModel.cs" />
+    <Compile Include="Areas\ControlPanel\Controllers\BaseControlPanelController.cs" />
+    <Compile Include="Areas\ControlPanel\Controllers\HomeController.cs" />
+    <Compile Include="Areas\ControlPanel\ControlPanelAreaRegistration.cs" />
     <Compile Include="Controllers\Api\EventsController.cs" />
     <Compile Include="Controllers\BaseJobsMessagesController.cs" />
     <Compile Include="Controllers\MessagesController.cs" />
@@ -292,6 +295,10 @@
     <Content Include="Views\Shared\_Layout.cshtml" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Areas\ControlPanel\Models\" />
+    <Folder Include="Areas\ControlPanel\Views\BaseControlPanel\" />
+    <Folder Include="Areas\ControlPanel\Views\Home\" />
+    <Folder Include="Areas\ControlPanel\Views\Shared\" />
     <Folder Include="Views\Base\" />
     <Folder Include="Views\Media\" />
   </ItemGroup>
@@ -471,6 +478,7 @@
     <Content Include="Views\Jobs\JobLocation.cshtml" />
     <Content Include="Views\Shared\Breadcrumbs.cshtml" />
     <Content Include="Areas\Admin\Views\SystemSettings\Index.cshtml" />
+    <Content Include="Areas\ControlPanel\Views\web.config" />
     <None Include="Web.Staging.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
