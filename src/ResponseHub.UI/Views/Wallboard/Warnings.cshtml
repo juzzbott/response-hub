@@ -7,10 +7,10 @@
 		<label class="checkbox-inline">
 			<input type="checkbox" id="warnings-bom" value="warnings-bom" checked="checked" onclick="responseHub.wallboard.showHideWarnings('bom-warnings');"> Bureau of Meteorology
 		</label>
-		<label class="checkbox-inline">
-			<input type="checkbox" id="warnings-ses" value="option2" checked="checked" onclick="responseHub.wallboard.showHideWarnings('ses-warnings');"> SES
+		<label class="checkbox-inline hidden">
+			<input type="checkbox" id="warnings-ses" value="option2" onclick="responseHub.wallboard.showHideWarnings('ses-warnings');"> SES
 		</label>
-		<label class="checkbox-inline">
+		<label class="checkbox-inline hidden">
 			<input type="checkbox" id="warnings-cfa" value="option3" onclick="responseHub.wallboard.showHideWarnings('cfa-warnings');"> CFA
 		</label>
 	</div>
@@ -34,7 +34,7 @@ else
 
 	</div>
 
-	<div class="ses-warnings">
+	<div class="ses-warnings hidden">
 
 		<p><strong>Victoria State Emergency Service</strong></p>
 		<ul class="warnings-list list-unstyled">

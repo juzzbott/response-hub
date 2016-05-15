@@ -10,6 +10,9 @@
 
 	var selectedJobIndex = 0;
 
+	/**
+	 * Determines if the specific warnings should be displayed on the screen.
+	 */
 	function showHideWarnings(warningsContainer) {
 
 		// If the container has the hidden class, remove it, otherwise add it
@@ -23,6 +26,9 @@
 
 	}
 
+	/**
+	 * Sets the container height for the columns. Only for devices above mobile.
+	 */
 	function setContainerHeights(width) {
 
 		// If the width is < 768 then just set the heights to auto
@@ -39,6 +45,9 @@
 
 	}
 
+	/**
+	 * Method that is called when a job is selected from the left list for the deatils to be displayed in the center column.
+	 */
 	function selectMessage(elemIndex) {
 
 		// Set the index
@@ -144,6 +153,9 @@
 		$('.wallboard-layout .message-details').append(location);
 	}
 
+	/**
+	 * Binds the UI events
+	 */
 	function bindUI() {
 
 		// If the window is resize, reset container heights (i.e. moving to fullscreen).
@@ -172,6 +184,9 @@
 
 	}
 
+	/**
+	 * Loads the UI of the wallboard. Sets the column heights dynamically and loads the jobs and radar images.
+	 */
 	function loadUI() {
 
 		// If the body class does not contain the 'wallboard-layout' class, exit as we aren't in wallboard view.
@@ -191,6 +206,9 @@
 
 	}
 
+	/**
+	 * Creates the loop for iterating through the list of radar images.
+	 */
 	function loopRadarImageUrls() {
 
 		// If there are no radar images, then show error message
@@ -226,6 +244,9 @@
 
 	}
 
+	/**
+	 * Calls the jobs api to load the list of most recent jobs. 
+	 */
 	function loadJobList() {
 
 		$.ajax({
@@ -290,6 +311,9 @@
 
 	}
 
+	/**
+	 * Builds the markup to display the job message in the list of messages left in the left column.
+	 */
 	function buildJobListItem(jobMessage, index) {
 
 		// Get the job date
@@ -361,6 +385,9 @@
 
 	}
 
+	/**
+	 * Enables the polling for new jobs by setting the interval for the jobs api to be called.
+	 */
 	function setJobListPolling()
 	{
 
@@ -378,12 +405,33 @@
 
 	}
 
+	/**
+	 * Toggles the display of the weather panel in the wallboard view.
+	 */
+	function toggleWeatherDisplay() {
+
+		if ($('.wallboard-warnings').hasClass('hidden')) {
+
+			// Show the wallboard panel
+			$('.wallboard-main').removeClass('col-sm-9').removeClass('col-md-9').addClass('col-sm-8').addClass('col-md-5');
+			$('.wallboard-warnings').removeClass('hidden');
+
+		} else {
+
+			// Hide the wallboard panel
+			$('.wallboard-main').removeClass('col-sm-8').removeClass('col-md-5').addClass('col-sm-9').addClass('col-md-9');
+			$('.wallboard-warnings').addClass('hidden');
+		}
+
+	}
+
 	// Bind and load the UI
 	bindUI();
 	loadUI();
 	
 	return {
-		showHideWarnings: showHideWarnings
+		showHideWarnings: showHideWarnings,
+		toggleWeatherDisplay: toggleWeatherDisplay
 	}
 
 })();

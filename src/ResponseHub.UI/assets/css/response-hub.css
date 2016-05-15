@@ -697,6 +697,16 @@ i.p-message-admin {
   width: 512px;
   height: 512px;
 }
+@media (max-width: 768px) {
+  .wallboard-layout .navbar-nav {
+    display: none;
+  }
+}
+@media (max-width: 992px) {
+  .wallboard-layout .toggle-weather {
+    display: none;
+  }
+}
 /***
  * Password Strength
 **/
