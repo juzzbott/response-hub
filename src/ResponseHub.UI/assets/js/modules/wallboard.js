@@ -8,6 +8,8 @@
 
 	var jobListIntervalId = null;
 
+	var selectedJobIndex = 0;
+
 	function showHideWarnings(warningsContainer) {
 
 		// If the container has the hidden class, remove it, otherwise add it
@@ -37,7 +39,13 @@
 
 	}
 
-	function selectMessage(elem) {
+	function selectMessage(elemIndex) {
+
+		// Set the index
+		selectedJobIndex = elemIndex;
+
+		// Get the element at the index
+		var elem = $('.wallboard-layout .message-list li').get(elemIndex);
 
 		var isFirstSelected = $('.wallboard-layout .message-list').first().hasClass('selected');
 
@@ -240,15 +248,13 @@
 
 					// loop through each job message and add to the list
 					for (var i = 0; i < data.length; i++) {
-
 						var jobMessage = data[i];
 						buildJobListItem(jobMessage, i);
+					}
 
-						// Get the first list item and then set the active job
-						var firstElem = $('.message-list li').first();
-						console.log(firstElem);
-						selectMessage(firstElem);
-
+					// Get the first list item and then set the active job
+					if (selectedJobIndex == 0) {
+						selectMessage(0);
 					}
 				}
 
@@ -272,8 +278,10 @@
 				}
 
 				// Set the list item click event for message list
-				$('.message-list li').click(function () {
-					selectMessage($(this));
+				$('.wallboard-layout .message-list li').each(function (index) {
+					$(this).click(function () {
+						selectMessage(index);
+					});
 				});
 
 				$('.wallboard-layout .message-list-options .checkbox i').remove();
@@ -304,7 +312,7 @@
 		}
 
 		// Creat the list item
-		var listItem = $('<li class="' + (index == 0 ? "selected" : "") + '" data-message="' + jobMessage.MessageBody + '" data-job-number="' + jobMessage.JobNumber + '" data-date="' + localDateString + '" data-priority="' + jobMessage.Priority + '" data-map-ref="' + mapReference + '" data-lat="' + lat + '" data-lon="' + lon + '" data-id="' + jobMessage.Id + '">');
+		var listItem = $('<li class="' + (selectedJobIndex == index ? "selected" : "") + '" data-message="' + jobMessage.MessageBody + '" data-job-number="' + jobMessage.JobNumber + '" data-date="' + localDateString + '" data-priority="' + jobMessage.Priority + '" data-map-ref="' + mapReference + '" data-lat="' + lat + '" data-lon="' + lon + '" data-id="' + jobMessage.Id + '">');
 
 		// Add the job name and date
 		listItem.append('<div class="message-meta"><h4 class="group-heading">' + jobMessage.CapcodeGroupName + '</h4><p class="text-info message-date">' + localDateString + '</p></div>');
