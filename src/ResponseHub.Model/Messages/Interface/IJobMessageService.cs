@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using Enivate.ResponseHub.Model.Groups;
+
 namespace Enivate.ResponseHub.Model.Messages.Interface
 {
 	public interface IJobMessageService
@@ -11,7 +13,7 @@ namespace Enivate.ResponseHub.Model.Messages.Interface
 
 		Task AddMessages(IList<JobMessage> messages);
 
-		Task<IList<JobMessage>> GetMostRecent(IEnumerable<string> capcodes, MessageType messageTypes, int count);
+		Task<IList<JobMessage>> GetMostRecent(IEnumerable<Capcode> capcodes, MessageType messageTypes, int count);
 
 		Task<IList<JobMessage>> GetLatestFromLastMessage(Guid lastId, IEnumerable<string> capcodes, MessageType messageTypes);
 

@@ -43,6 +43,34 @@ namespace Enivate.ResponseHub.UI.Controllers.Api
 		}
 
 		[Route]
+		[HttpGet]
+		public async Task<IList<JobMessageViewModel>> Get()
+		{
+
+			// Get the capcodes for the user.
+			IList<Capcode> capcodes = await CapcodeService.GetCapcodesForUser(UserId);
+
+			// Get the job messages
+			IList<JobMessage> jobMessages = await JobMessageService.GetMostRecent(capcodes, MessageType.Job, 30);
+
+			// return the mapped view models
+			IList<JobMessageViewModel> models = new List<JobMessageViewModel>();
+			foreach(JobMessage message in jobMessages)
+			{
+
+				// Get the capcode
+				string capcodeGroupName = capcodes.FirstOrDefault(i => i.CapcodeAddress == message.Capcode).FormattedName();
+
+				// Add the mapped job message view model
+				models.Add(await BaseJobsMessagesController.MapJobMessageToViewModel(message, capcodeGroupName));
+			}
+
+			// return the mapped models
+			return models;
+
+		}
+
+		[Route]
 		[HttpPost]
 		public async Task<bool> Post(IList<JobMessage> jobMessages)
 		{
@@ -191,7 +219,7 @@ namespace Enivate.ResponseHub.UI.Controllers.Api
 						}
 
 						// Map to the JobMessageViewModel
-						latestMessagesModels.Add(BaseJobsMessagesController.MapJobMessageToViewModel(message, capcodeGroupName));
+						latestMessagesModels.Add(await BaseJobsMessagesController.MapJobMessageToViewModel(message, capcodeGroupName));
 					}
 
 				}

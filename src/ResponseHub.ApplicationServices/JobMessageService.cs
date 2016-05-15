@@ -8,6 +8,7 @@ using Enivate.ResponseHub.Logging;
 using Enivate.ResponseHub.Model.Messages;
 using Enivate.ResponseHub.Model.Messages.Interface;
 using Enivate.ResponseHub.DataAccess.Interface;
+using Enivate.ResponseHub.Model.Groups;
 
 namespace Enivate.ResponseHub.ApplicationServices
 {
@@ -57,9 +58,9 @@ namespace Enivate.ResponseHub.ApplicationServices
 		/// <param name="capcodes"></param>
 		/// <param name="count"></param>
 		/// <returns></returns>
-		public async Task<IList<JobMessage>> GetMostRecent(IEnumerable<string> capcodes, MessageType messageTypes, int count)
+		public async Task<IList<JobMessage>> GetMostRecent(IEnumerable<Capcode> capcodes, MessageType messageTypes, int count)
 		{
-			return await _repository.GetMostRecent(capcodes, messageTypes, count);
+			return await _repository.GetMostRecent(capcodes.Select(i => i.CapcodeAddress), messageTypes, count);
 		}
 
 		/// <summary>

@@ -40,10 +40,10 @@ namespace Enivate.ResponseHub.UI.Controllers
 			IList<Capcode> capcodes = await CapcodeService.GetCapcodesForUser(userId);
 
 			// Get the messages for the capcodes
-			IList<JobMessage> jobMessages = await JobMessageService.GetMostRecent(capcodes.Select(i => i.CapcodeAddress), MessageType.Job, 50);
+			IList<JobMessage> jobMessages = await JobMessageService.GetMostRecent(capcodes, MessageType.Job, 50);
 
 			// Create the jobs list view model.
-			JobMessageListViewModel model = CreateJobMessageListModel(capcodes, jobMessages);
+			JobMessageListViewModel model = await CreateJobMessageListModel(capcodes, jobMessages);
 
 			return View(model);
 		}
@@ -68,7 +68,7 @@ namespace Enivate.ResponseHub.UI.Controllers
 				Capcode capcode = await CapcodeService.GetByCapcodeAddress(job.Capcode);
 
 				// Create the model object.
-				JobMessageViewModel model = MapJobMessageToViewModel(job, capcode.FormattedName());
+				JobMessageViewModel model = await MapJobMessageToViewModel(job, capcode.FormattedName());
 
 				// Set the progress updates.
 				model.OnRoute = await GetProgressModel(job, MessageProgressType.OnRoute);

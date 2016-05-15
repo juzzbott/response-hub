@@ -632,35 +632,49 @@ i.p-message-admin {
 .wallboard-layout .message-list li:hover {
   background-color: #f3f5f9;
 }
-.wallboard-layout .message-list .p-message {
+.wallboard-layout .message-list li .no-jobs {
+  padding-left: 15px;
+  padding-right: 15px;
+}
+.wallboard-layout .message-list .message {
   clear: both;
   position: relative;
   padding: 0 15px 15px;
   border-bottom: 1px solid #c8c5ba;
   margin-bottom: 0;
 }
-.wallboard-layout .message-list .p-message h2,
-.wallboard-layout .message-list .p-message h3 {
+.wallboard-layout .message-list .message h2,
+.wallboard-layout .message-list .message h3 {
   margin-top: 0;
 }
-.wallboard-layout .message-list .p-message i {
+.wallboard-layout .message-list .message i {
   padding-right: 5px;
 }
-.wallboard-layout .message-list .p-message .job-status i {
+.wallboard-layout .message-list .message .job-status i {
   padding-right: 0;
   float: right;
+  color: #999;
 }
-.wallboard-layout .message-list .p-message-meta {
+.wallboard-layout .message-list .message .job-status.job-clear i {
+  color: #64B752;
+}
+.wallboard-layout .message-list .message .job-status.on-scene i {
+  color: #476890;
+}
+.wallboard-layout .message-list .message .job-status.on-route i {
+  color: #DC9A63;
+}
+.wallboard-layout .message-list .message-meta {
   padding: 0 15px;
 }
-.wallboard-layout .message-list .p-message-meta .group-heading {
+.wallboard-layout .message-list .message-meta .group-heading {
   float: left;
 }
-.wallboard-layout .message-list .p-message-meta .message-date {
+.wallboard-layout .message-list .message-meta .message-date {
   float: right;
   padding-top: 10px;
 }
-.wallboard-layout .wallboard-main > h2 > i {
+.wallboard-layout .wallboard-main h2 i {
   padding-right: 10px;
 }
 .wallboard-layout .wallboard-warnings {

@@ -48,7 +48,7 @@ namespace Enivate.ResponseHub.UI.Controllers
 		/// <param name="capcodes"></param>
 		/// <param name="jobMessages"></param>
 		/// <returns></returns>
-		public static JobMessageListViewModel CreateJobMessageListModel(IList<Capcode> capcodes, IList<JobMessage> jobMessages)
+		public static async Task<JobMessageListViewModel> CreateJobMessageListModel(IList<Capcode> capcodes, IList<JobMessage> jobMessages)
 		{
 			// Create the list of job message view models
 			IList<JobMessageViewModel> jobMessageViewModels = new List<JobMessageViewModel>();
@@ -59,7 +59,7 @@ namespace Enivate.ResponseHub.UI.Controllers
 				Capcode capcode = capcodes.FirstOrDefault(i => i.CapcodeAddress == jobMessage.Capcode);
 
 				// Map the view model and add to the list
-				jobMessageViewModels.Add(MapJobMessageToViewModel(jobMessage, capcode.FormattedName()));
+				jobMessageViewModels.Add(await MapJobMessageToViewModel(jobMessage, capcode.FormattedName()));
 
 			}
 
@@ -72,9 +72,9 @@ namespace Enivate.ResponseHub.UI.Controllers
 			return model;
 		}
 
-		public static JobMessageViewModel MapJobMessageToViewModel(JobMessage job, string capcodeGroupName)
+		public static async Task<JobMessageViewModel> MapJobMessageToViewModel(JobMessage job, string capcodeGroupName)
 		{
-			return new JobMessageViewModel()
+			JobMessageViewModel model = new JobMessageViewModel()
 			{
 				Capcode = job.Capcode,
 				CapcodeGroupName = capcodeGroupName,
@@ -86,15 +86,24 @@ namespace Enivate.ResponseHub.UI.Controllers
 				Priority = job.Priority,
 				Timestamp = job.Timestamp.ToLocalTime()
 			};
-		}
 
+			// Set the on route, on scene, job clear values
+			model.OnRoute = await GetProgressModel(job, MessageProgressType.OnRoute);
+			model.OnScene = await GetProgressModel(job, MessageProgressType.OnScene);
+			model.JobClear = await GetProgressModel(job, MessageProgressType.JobClear);
+
+			// return the mapped job view model
+			return model;
+
+		}
+		
 		/// <summary>
 		/// Gets the progress model for the specific progress type, if it exists. 
 		/// </summary>
 		/// <param name="job">The job to get the progress from. </param>
 		/// <param name="progressType">The progress type to get.</param>
 		/// <returns></returns>
-		public async Task<MessageProgressViewModel> GetProgressModel(JobMessage job, MessageProgressType progressType)
+		public static async Task<MessageProgressViewModel> GetProgressModel(JobMessage job, MessageProgressType progressType)
 		{
 			MessageProgress progress = job.ProgressUpdates.FirstOrDefault(i => i.ProgressType == progressType);
 			if (progress != null)
@@ -102,7 +111,8 @@ namespace Enivate.ResponseHub.UI.Controllers
 				MessageProgressViewModel progressModel = new MessageProgressViewModel()
 				{
 					Timestamp = progress.Timestamp.ToLocalTime(),
-					UserId = progress.UserId
+					UserId = progress.UserId,
+					ProgressType = progress.ProgressType
 				};
 
 				// Get the user who updated the progress.

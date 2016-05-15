@@ -660,7 +660,7 @@ responseHub.wallboard = (function () {
 
 	var jobListPollingEnabled = true;
 
-	var jobListInterval = null;
+	var jobListIntervalId = null;
 
 	function showHideWarnings(warningsContainer) {
 
@@ -693,10 +693,17 @@ responseHub.wallboard = (function () {
 
 	function selectMessage(elem) {
 
-		// If the current element is already selected, just return
-		if (elem.hasClass('selected')) {
+		var isFirstSelected = $('.wallboard-layout .message-list').first().hasClass('selected');
+
+		// If the message details markup does not exist, we need to build it
+		if ($('.wallboard-layout .message-details h2').length == 0) {
+			buildMessageDetailsMarkup();
+		} else if (isFirstSelected) {
+			// If the current element is already selected, just return
 			return;
 		}
+
+		
 
 		// Set the message text, date and job number
 		var jobNumber = $(elem).data('job-number');
@@ -708,9 +715,9 @@ responseHub.wallboard = (function () {
 		$('.wallboard-main .job-date').text($(elem).data('date'));
 
 		$('#message-type').attr('class', '');
-		if ($(elem).data('priority').toLowerCase() == 'emergency') {
+		if ($(elem).data('priority') == '1') {
 			$('#message-type').attr('class', 'fa fa-exclamation-triangle p-message-emergency');
-		} else if ($(elem).data('priority').toLowerCase() == 'nonemergency') {
+		} else if ($(elem).data('priority') == '2') {
 			$('#message-type').attr('class', 'fa fa-exclamation-circle p-message-non-emergency');
 		} else {
 			$('#message-type').attr('class', 'fa fa-info-circle p-message-admin');
@@ -760,9 +767,27 @@ responseHub.wallboard = (function () {
 		}
 
 		// Set the active class on the list item
-		$('.message-list li').removeClass('selected');
+		$('.wallboard-layout .message-list li').removeClass('selected');
 		$(elem).addClass('selected');
 
+	}
+
+	/**
+	 * Builds the markup required for the message details to be displayed.
+	 */
+	function buildMessageDetailsMarkup() {
+
+		// Build the h2 element
+		var h2 = $('<h2><i id="message-type"></i><span class="job-number"></span><small class="job-date pull-right"></span></h2>');
+
+		// Build the location element
+		var location = $('<div class="job-location"><h3>Location</h3><p class="lead map-reference"></p><div id="map-canvas" style="height: 0px;"></div></div>');
+
+		// Clear the message detail of any other elements
+		$('.wallboard-layout .message-details').empty();
+		$('.wallboard-layout .message-details').append(h2);
+		$('.wallboard-layout .message-details').append($('<p class="lead job-message-body"></p>'));
+		$('.wallboard-layout .message-details').append(location);
 	}
 
 	function bindUI() {
@@ -770,6 +795,25 @@ responseHub.wallboard = (function () {
 		// If the window is resize, reset container heights (i.e. moving to fullscreen).
 		$(window).resize(function (e) {
 			setContainerHeights(e.target.innerWidth);
+		});
+
+		$('.wallboard-layout .message-list-options input').click(function () {
+
+			// The is in this case is 'being check' not 'is checked'. So for 'is being checked' we load the job list, not 'is not being checked' we clear the interval.
+			if ($(this).is(":checked")) {
+				loadJobList();
+				setJobListPolling();
+			} else {
+				clearInterval(jobListIntervalId);
+			}
+		});
+
+		$('.wallboard-layout .message-list-options select').on('change', function () {
+			// reset the interval to the new time
+			clearInterval(jobListIntervalId);
+			var delay = parseInt($(this).val()) * 1000;
+			jobListPollingInterval = delay;
+			setJobListPolling();
 		});
 
 	}
@@ -782,16 +826,11 @@ responseHub.wallboard = (function () {
 			return;
 		}
 
-		// Set the job list update interval to poll for new jobs
-		setJobListPolling();
-
 		// Initially set the container heights
 		setContainerHeights($(window).width());
 
-		// Set the list item click event for message list
-		$('.message-list li').click(function () {
-			selectMessage($(this));
-		});
+		// Load the jobs list
+		loadJobList();
 
 		// Get the radar image urls
 		loopRadarImageUrls();
@@ -833,10 +872,154 @@ responseHub.wallboard = (function () {
 
 	}
 
+	function loadJobList() {
+
+		$.ajax({
+			url: responseHub.apiPrefix + '/job-messages',
+			dataType: 'json',
+			success: function (data) {
+
+				// Populate the list of jobs
+				$('.wallboard-layout .message-list').empty();
+				$('.wallboard-layout .message-list-options .checkbox i').remove();
+
+				// If there is no elements, show the no jobs messages
+				if (data == null || data.length == 0) {
+
+					$('.wallboard-layout .message-list').append($('<li><p class="lead no-jobs">No jobs are currently available.</p></li>'));
+					$('.wallboard-layout .message-details').empty();
+					$('.wallboard-layout .message-details').append($('<p class="lead top-20">No jobs are currently available.</p>'));
+
+				} else {
+
+					// loop through each job message and add to the list
+					for (var i = 0; i < data.length; i++) {
+
+						var jobMessage = data[i];
+						buildJobListItem(jobMessage, i);
+
+						// Get the first list item and then set the active job
+						var firstElem = $('.message-list li').first();
+						console.log(firstElem);
+						selectMessage(firstElem);
+
+					}
+				}
+
+			},
+			error: function () {
+
+				$('.wallboard-layout .message-list').empty();
+				$('.wallboard-layout .message-list').append($('<li><p class="lead no-jobs text-danger">Error loading jobs.</p></li>'));
+				$('.wallboard-layout .message-details').empty();
+				$('.wallboard-layout .message-details').append($('<div class="alert alert-danger top-20" role="alert"><p>Error loading jobs.</p></div>'));
+
+			},
+			complete: function () {
+
+				// Set the job list update interval to poll for new jobs only if it's not already set.
+				// This is used to ensure once page has loaded and the inital call is called, then we do so at the interval, 
+				// but only create a single interval object
+				if (jobListIntervalId == null)
+				{
+					setJobListPolling();
+				}
+
+				// Set the list item click event for message list
+				$('.message-list li').click(function () {
+					selectMessage($(this));
+				});
+
+				$('.wallboard-layout .message-list-options .checkbox i').remove();
+			}
+		});
+
+	}
+
+	function buildJobListItem(jobMessage, index) {
+
+		// Get the job date
+		var jobDate = moment(jobMessage.Timestamp).local();
+		var localDateString = jobDate.format('DD-MM-YYYY HH:mm:ss');
+
+		var mapReference = "";
+		var lat = 0;
+		var lon = 0;
+
+		if (jobMessage.Location != null)
+		{
+			mapReference = jobMessage.Location.MapReference;
+
+			if (jobMessage.Location.Coordinates != null)
+			{
+				lat = jobMessage.Location.Coordinates.Latitude;
+				lon = jobMessage.Location.Coordinates.Longitude;
+			}
+		}
+
+		// Creat the list item
+		var listItem = $('<li class="' + (index == 0 ? "selected" : "") + '" data-message="' + jobMessage.MessageBody + '" data-job-number="' + jobMessage.JobNumber + '" data-date="' + localDateString + '" data-priority="' + jobMessage.Priority + '" data-map-ref="' + mapReference + '" data-lat="' + lat + '" data-lon="' + lon + '" data-id="' + jobMessage.Id + '">');
+
+		// Add the job name and date
+		listItem.append('<div class="message-meta"><h4 class="group-heading">' + jobMessage.CapcodeGroupName + '</h4><p class="text-info message-date">' + localDateString + '</p></div>');
+
+		// Build the h3 tag
+		var h3 = $('<h3></h3>');
+
+		// Add the priority icon
+		switch (jobMessage.Priority) {
+			case 1:
+				h3.append('<i class="fa fa-exclamation-triangle p-message-emergency"></i>');
+				break;
+
+			case 2:
+				h3.append('<i class="fa fa-exclamation-circle p-message-non-emergency"></i>');
+				break;
+
+			default:
+				h3.append('<i class="fa fa-info-circle p-message-admin"></i>');
+				break;
+		}
+
+		// Add the job number
+		h3.append('<span class="job-number">' + (jobMessage.JobNumber == "" ? "No job number" : jobMessage.JobNumber) + '</span>');
+
+		// Add the progress indicator
+		if (jobMessage.JobClear != null) {
+			h3.append('<span class="job-status job-clear"><i class="fa fa-check-circle-o"></i></span>');
+		} else if (jobMessage.OnScene != null) {
+			h3.append('<span class="job-status on-scene"><i class="fa fa-hourglass-half"></i></span>');
+		} else if (jobMessage.OnRoute != null) {
+			h3.append('<span class="job-status on-route"><i class="fa fa-arrow-circle-o-right"></i></span>');
+		} else {
+			h3.append('<span class="job-status"><i class="fa fa-dot-circle-o"></i></span>');
+		}
+
+		// Create the message element
+		var messageElem = $('<div class="message"></div>');
+		messageElem.append(h3);
+		messageElem.append('<small class="text-muted">' + jobMessage.MessageBodyTruncated + '</small>');
+		
+		listItem.append(messageElem);
+
+		// Add the list item to the list object
+		$('.wallboard-layout .message-list').append(listItem);
+
+	}
+
 	function setJobListPolling()
 	{
 
 		// Set the interval
+		jobListIntervalId = setInterval(function () {
+
+			// Display the loading animation
+			$('.wallboard-layout .message-list-options .checkbox').append('<i class="fa fa-spinner fa-pulse fa-fw"></i>');
+
+			// Call the jobs list
+			loadJobList();
+
+		}, jobListPollingInterval);
 
 
 	}
