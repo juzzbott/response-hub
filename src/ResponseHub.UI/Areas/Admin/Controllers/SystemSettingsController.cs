@@ -26,7 +26,7 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 			// Create the view model
 			SystemSettingsViewModel model = new SystemSettingsViewModel();
 			model.Cache.TotalItems = CacheManager.GetItemCount();
-			model.Cache.CacheKeys = CacheManager.GetCacheKeys();
+			model.Cache.CacheKeys = CacheManager.GetCacheKeysWithExpiry();
 			// Convert to MB
 			model.Cache.CacheMemoryLimit = (CacheManager.CacheMemoryLimit() / 1000000);
 			model.Cache.PysicalMemoryLimit = CacheManager.CachePhysicalMemoryLimit();

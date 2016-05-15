@@ -230,7 +230,7 @@ namespace Enivate.ResponseHub.Caching
 			// Remove the item from cache
 			Cache.Remove(key);
 		}
-
+		
 		#endregion
 
 		#region Clear Items
@@ -253,7 +253,19 @@ namespace Enivate.ResponseHub.Caching
 			return Cache.GetCount();
 		}
 
-		public static Dictionary<string, DateTime> GetCacheKeys()
+		public static IList<string> GetCacheKeys()
+		{
+			// If the keys is null, return empty list
+			if (_keysInstance == null)
+			{
+				return new List<string>();
+			}
+
+			// Return the list of keys
+			return _keysInstance.Select(i => i.Key).ToList();
+		}
+
+		public static Dictionary<string, DateTime> GetCacheKeysWithExpiry()
 		{
 			return _keysInstance;
 		}
