@@ -1,3 +1,6 @@
+/** Import the Bootstrap variables files*/
+@import (reference) "../../../bower_components/bootstrap/less/variables.less";
+
 @body-bg: #fafafa;
 @body-color: #333;
 
@@ -19,6 +22,7 @@
 @job-clear-color: #64B752;
 @on-scene-color: #476890;
 @on-route-color: #DC9A63;
+@cancelled-color: #AA3939;
 @job-status-color: #999;
 
 button:focus,
@@ -748,7 +752,7 @@ h4.legend {
 
 }
 
-.progress-time {
+.progress-time .text-muted {
 	margin-bottom: 20px;
 }
 
@@ -784,11 +788,22 @@ h4.legend {
 		margin-right: 10px;
 	}
 
-	.capcode-meta {
-		text-transform: uppercase;
+	.job-message-meta {
+		/*text-transform: uppercase; */
 		font-style: italic;
 		margin-bottom: 0;
 		font-size: 17px;
+
+		i {
+			padding-right: 10px;
+		}
+
+	}
+
+	.message-date {
+		font-style: italic;
+		margin-bottom: 5px;
+		padding-left: 30px
 	}
 
 }
@@ -876,6 +891,10 @@ i.p-message-admin {
 				&.on-route i {
 					color: @on-route-color;
 				}
+
+				&.job-cancelled i {
+					color: @cancelled-color;
+				}
 			}
 			
 		}
@@ -897,6 +916,39 @@ i.p-message-admin {
 
 	.wallboard-main h2 i {
 		padding-right: 10px;
+	}
+
+	.wallboard-main .job-date {
+		margin-top: 15px;
+		margin-bottom: 0;
+		font-size: 22px;
+		color: @state-info-text;
+	}
+
+	.wallboard-main .job-status {
+		font-size: 15px;
+
+		i {
+			padding-right: 10px;
+			color: @job-status-color;
+		}
+
+		.job-clear i {
+			color: @job-clear-color;
+		}
+
+		.on-scene i {
+			color: @on-scene-color;
+		}
+
+		.on-route i {
+			color: @on-route-color;
+		}
+
+		.job-cancelled i {
+			color: @cancelled-color;
+		}
+
 	}
 
 	.wallboard-warnings {

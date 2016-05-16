@@ -91,6 +91,7 @@ namespace Enivate.ResponseHub.UI.Controllers
 			model.OnRoute = await GetProgressModel(job, MessageProgressType.OnRoute);
 			model.OnScene = await GetProgressModel(job, MessageProgressType.OnScene);
 			model.JobClear = await GetProgressModel(job, MessageProgressType.JobClear);
+			model.Cancelled = await GetProgressModel(job, MessageProgressType.Cancelled);
 
 			// return the mapped job view model
 			return model;

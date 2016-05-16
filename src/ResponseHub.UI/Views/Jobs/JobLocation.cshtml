@@ -1,29 +1,33 @@
 ﻿@model Enivate.ResponseHub.UI.Models.Messages.JobMessageViewModel
 
-<h3>Location</h3>
-
-<p class="lead">Map ref: @Html.EnumDescription(Model.Location.MapType) @Model.Location.MapReference</p>
-
-
-@if (Model.Location.Coordinates.Latitude != 0 && Model.Location.Coordinates.Longitude != 0)
+@if (Model.Location != null)
 {
-	<div id="map-canvas" style="height: 400px;"></div>
-	<script type="text/javascript">
 
-		var mapConfig = {
-			lat: Number(@Model.Location.Coordinates.Latitude),
-			lon: Number(@Model.Location.Coordinates.Longitude),
-			zoom: 15,
-			minZoom: 4,
-			scrollWheel: false,
-			mapContainer: 'map-canvas',
-			loadCallback: function () {
+	<h3>Location</h3>
 
-				//// Add the map marker for the place.
-				responseHub.maps.addMarkerToMap(Number(@Model.Location.Coordinates.Latitude), Number(@Model.Location.Coordinates.Longitude));
+	<p class="lead">Map ref: @Html.EnumDescription(Model.Location.MapType) @Model.Location.MapReference</p>
 
-			}
-		};
 
-	</script>
+	if (Model.Location.Coordinates.Latitude != 0 && Model.Location.Coordinates.Longitude != 0)
+	{
+		<div id="map-canvas" style="height: 400px;"></div>
+		<script type="text/javascript">
+
+			var mapConfig = {
+				lat: Number(@Model.Location.Coordinates.Latitude),
+				lon: Number(@Model.Location.Coordinates.Longitude),
+				zoom: 15,
+				minZoom: 4,
+				scrollWheel: false,
+				mapContainer: 'map-canvas',
+				loadCallback: function () {
+
+					//// Add the map marker for the place.
+					responseHub.maps.addMarkerToMap(Number(@Model.Location.Coordinates.Latitude), Number(@Model.Location.Coordinates.Longitude));
+
+				}
+			};
+
+		</script>
+	}
 }

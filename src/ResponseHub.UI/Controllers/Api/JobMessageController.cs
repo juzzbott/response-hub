@@ -136,18 +136,18 @@ namespace Enivate.ResponseHub.UI.Controllers.Api
 		[HttpPost]
 		public async Task<MessageProgressResponseModel> PostProgress(Guid id, [FromBody] MessageProgressType progressType)
 		{
+			
+			// Get the identity user for the current user
+			IdentityUser user = await GetCurrentUser();
+
+			// If the user cannot be found, return null
+			if (user == null)
+			{
+				return null;
+			}
 
 			try
 			{
-				
-				// Get the identity user for the current user
-				IdentityUser user = await GetCurrentUser();
-
-				// If the user cannot be found, return null
-				if (user == null)
-				{
-					return null;
-				}
 
 				// Create the progress object and return it
 				MessageProgress progress = await JobMessageService.AddProgress(id, UserId, progressType);
@@ -166,6 +166,15 @@ namespace Enivate.ResponseHub.UI.Controllers.Api
 				if (ex.Message.StartsWith("The job message already contains a progress update", StringComparison.CurrentCultureIgnoreCase))
 				{
 					await Log.Warn(String.Format("Error adding progress to job message. Message: {0}", ex.Message));
+					return new MessageProgressResponseModel()
+					{
+						Success = false,
+						ErrorMessage = ex.Message
+					};
+				}
+				else if (ex.Message.StartsWith("Cannot add progress to cancelled job", StringComparison.CurrentCultureIgnoreCase))
+				{
+					await Log.Warn(String.Format("Cannot update progress on cancelled job.", ex.Message));
 					return new MessageProgressResponseModel()
 					{
 						Success = false,

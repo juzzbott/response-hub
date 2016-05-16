@@ -1,3 +1,4 @@
+/** Import the Bootstrap variables files*/
 button:focus,
 button:active {
   outline: none !important;
@@ -569,7 +570,7 @@ fieldset[disabled] .form-control {
     margin-bottom: 5px;
   }
 }
-.progress-time {
+.progress-time .text-muted {
   margin-bottom: 20px;
 }
 #job-notes ul li {
@@ -594,11 +595,19 @@ fieldset[disabled] .form-control {
 .job-list h3 i {
   margin-right: 10px;
 }
-.job-list .capcode-meta {
-  text-transform: uppercase;
+.job-list .job-message-meta {
+  /*text-transform: uppercase; */
   font-style: italic;
   margin-bottom: 0;
   font-size: 17px;
+}
+.job-list .job-message-meta i {
+  padding-right: 10px;
+}
+.job-list .message-date {
+  font-style: italic;
+  margin-bottom: 5px;
+  padding-left: 30px;
 }
 i.p-message-emergency {
   color: #b60500;
@@ -664,6 +673,9 @@ i.p-message-admin {
 .wallboard-layout .message-list .message .job-status.on-route i {
   color: #DC9A63;
 }
+.wallboard-layout .message-list .message .job-status.job-cancelled i {
+  color: #AA3939;
+}
 .wallboard-layout .message-list .message-meta {
   padding: 0 15px;
 }
@@ -676,6 +688,31 @@ i.p-message-admin {
 }
 .wallboard-layout .wallboard-main h2 i {
   padding-right: 10px;
+}
+.wallboard-layout .wallboard-main .job-date {
+  margin-top: 15px;
+  margin-bottom: 0;
+  font-size: 22px;
+  color: #31708f;
+}
+.wallboard-layout .wallboard-main .job-status {
+  font-size: 15px;
+}
+.wallboard-layout .wallboard-main .job-status i {
+  padding-right: 10px;
+  color: #999;
+}
+.wallboard-layout .wallboard-main .job-status .job-clear i {
+  color: #64B752;
+}
+.wallboard-layout .wallboard-main .job-status .on-scene i {
+  color: #476890;
+}
+.wallboard-layout .wallboard-main .job-status .on-route i {
+  color: #DC9A63;
+}
+.wallboard-layout .wallboard-main .job-status .job-cancelled i {
+  color: #AA3939;
 }
 .wallboard-layout .wallboard-warnings {
   background-color: #fff;

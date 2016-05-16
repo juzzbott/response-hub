@@ -720,7 +720,28 @@ responseHub.wallboard = (function () {
 			return;
 		}
 
-		
+		// Get the progress information from the data attribute. It's a JSON object.
+		var latestProgress = null;
+		$(".wallboard-main .job-status").html('');
+		if ($(elem).data('progress') != "") {
+			var progressData = $(elem).data('progress');
+
+			// Format the progress dae
+			var progressTimestamp = moment(progressData.Timestamp).format('DD-MM-YYYY HH:mm');
+
+			if (progressData.ProgressType == 4) {
+				$(".wallboard-main .job-status").html('<span class="job-cancelled"><i class="fa fa-fw fa-ban"></i>Job cancelled by ' + progressData.UserFullName + ' on ' + progressTimestamp + '</span>');
+			} else if (progressData.ProgressType == 3) {
+				$(".wallboard-main .job-status").html('<span class="job-clear"><i class="fa fa-fw fa-check-circle-o"></i>Job cleared by ' + progressData.UserFullName + ' on ' + progressTimestamp + '</span>');
+			} else if (progressData.ProgressType == 2) {
+				$(".wallboard-main .job-status").html('<span class="on-scene"><i class="fa fa-fw fa-hourglass-half"></i>On scene by ' + progressData.UserFullName + ' on ' + progressTimestamp + '</span>');
+			} else if (progressData.ProgressType == 1) {
+				$(".wallboard-main .job-status").html('<span class="on-route"><i class="fa fa-fw fa-arrow-circle-right"></i>On route by ' + progressData.UserFullName + ' on ' + progressTimestamp + '</span>');
+			}
+
+		} else {
+
+		}
 
 		// Set the message text, date and job number
 		var jobNumber = $(elem).data('job-number');
@@ -794,15 +815,22 @@ responseHub.wallboard = (function () {
 	 */
 	function buildMessageDetailsMarkup() {
 
-		// Build the h2 element
-		var h2 = $('<h2><i id="message-type"></i><span class="job-number"></span><small class="job-date pull-right"></span></h2>');
+		// Build the header row
+		var messageHeader = $('<div class="row"></div></div>')
+
+		// Build the h2 elements
+		var h2 = $('<div class="col-sm-5"><h2><i id="message-type"></i><span class="job-number"></span></h2></div>');
+		var h2Date = $('<div class="col-sm-7"><p class="text-right job-date"></p><p class="job-status text-right"></p></div>');
+
+		messageHeader.append(h2);
+		messageHeader.append(h2Date);
 
 		// Build the location element
 		var location = $('<div class="job-location"><h3>Location</h3><p class="lead map-reference"></p><div id="map-canvas" style="height: 0px;"></div></div>');
 
 		// Clear the message detail of any other elements
 		$('.wallboard-layout .message-details').empty();
-		$('.wallboard-layout .message-details').append(h2);
+		$('.wallboard-layout .message-details').append(messageHeader);
 		$('.wallboard-layout .message-details').append($('<p class="lead job-message-body"></p>'));
 		$('.wallboard-layout .message-details').append(location);
 	}
@@ -971,7 +999,7 @@ responseHub.wallboard = (function () {
 	function buildJobListItem(jobMessage, index) {
 
 		// Get the job date
-		var jobDate = moment(jobMessage.Timestamp).local();
+		var jobDate = moment(jobMessage.Timestamp);
 		var localDateString = jobDate.format('DD-MM-YYYY HH:mm:ss');
 
 		var mapReference = "";
@@ -989,8 +1017,23 @@ responseHub.wallboard = (function () {
 			}
 		}
 
+		// Get the latest priority json
+		var latestProgress = "";
+
+		if (jobMessage.Cancelled != null) {
+			latestProgress = getJobProgressJson(jobMessage.Cancelled);
+		} else if (jobMessage.JobClear != null) {
+			latestProgress = getJobProgressJson(jobMessage.JobClear);
+		} else if (jobMessage.OnScene != null) {
+			latestProgress = getJobProgressJson(jobMessage.OnScene);
+		} else if (jobMessage.OnRoute != null) {
+			latestProgress = getJobProgressJson(jobMessage.OnRoute);
+		}
+
 		// Creat the list item
-		var listItem = $('<li class="' + (selectedJobIndex == index ? "selected" : "") + '" data-message="' + jobMessage.MessageBody + '" data-job-number="' + jobMessage.JobNumber + '" data-date="' + localDateString + '" data-priority="' + jobMessage.Priority + '" data-map-ref="' + mapReference + '" data-lat="' + lat + '" data-lon="' + lon + '" data-id="' + jobMessage.Id + '">');
+		var listItem = $('<li class="' + (selectedJobIndex == index ? "selected" : "") + '" data-message="' + jobMessage.MessageBody + '" data-job-number="' + jobMessage.JobNumber +
+			'" data-date="' + localDateString + '" data-priority="' + jobMessage.Priority + '" data-map-ref="' + mapReference + '" data-lat="' + lat + '" data-lon="' + lon +
+			'" data-id="' + jobMessage.Id + '" data-progress="' + latestProgress + '">');
 
 		// Add the job name and date
 		listItem.append('<div class="message-meta"><h4 class="group-heading">' + jobMessage.CapcodeGroupName + '</h4><p class="text-info message-date">' + localDateString + '</p></div>');
@@ -1017,7 +1060,9 @@ responseHub.wallboard = (function () {
 		h3.append('<span class="job-number">' + (jobMessage.JobNumber == "" ? "No job number" : jobMessage.JobNumber) + '</span>');
 
 		// Add the progress indicator
-		if (jobMessage.JobClear != null) {
+		if (jobMessage.Cancelled != null) {
+			h3.append('<span class="job-status job-cancelled"><i class="fa fa-ban"></i></span>');
+		} else if (jobMessage.JobClear != null) {
 			h3.append('<span class="job-status job-clear"><i class="fa fa-check-circle-o"></i></span>');
 		} else if (jobMessage.OnScene != null) {
 			h3.append('<span class="job-status on-scene"><i class="fa fa-hourglass-half"></i></span>');
@@ -1037,6 +1082,13 @@ responseHub.wallboard = (function () {
 		// Add the list item to the list object
 		$('.wallboard-layout .message-list').append(listItem);
 
+	}
+
+	/**
+	 * Gets the Json for passing the job progress details through to the display message method.
+	 */
+	function getJobProgressJson(jobProgress) {
+		return '{ &quot;ProgressType&quot;: ' + jobProgress.ProgressType + ', &quot;Timestamp&quot;: &quot;' + jobProgress.Timestamp + '&quot;, &quot;UserFullName&quot;: &quot;' + jobProgress.UserFullName + '&quot;, &quot;UserId&quot;: &quot;' + jobProgress.UserId + '&quot; }';
 	}
 
 	/**

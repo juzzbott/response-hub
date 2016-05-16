@@ -123,6 +123,15 @@ namespace Enivate.ResponseHub.ApplicationServices
 		public async Task<MessageProgress> AddProgress(Guid jobMessageId, Guid userId, MessageProgressType progressType)
 		{
 
+			// Get the job
+			JobMessage job = await GetById(jobMessageId);
+
+			// If the job is already cancelled, throw error indicating job is already cancelled
+			if (job.ProgressUpdates.Any(i => i.ProgressType == MessageProgressType.Cancelled))
+			{
+				throw new ApplicationException("Cannot add progress to cancelled job.");
+			}
+
 			// Create the progress object
 			MessageProgress progress = new MessageProgress()
 			{

@@ -43,6 +43,8 @@ namespace Enivate.ResponseHub.UI.Models.Messages
 
 		public MessageProgressViewModel JobClear { get; set; }
 
+		public MessageProgressViewModel Cancelled { get; set; }
+
 		public IList<JobNote> Notes { get; set; }
 
 		public JobMessageViewModel()
