@@ -681,9 +681,9 @@ responseHub.wallboard = (function () {
 	}
 
 	/**
-	 * Sets the container height for the columns. Only for devices above mobile.
+	 * Gets the height of the containers for the screen size.
 	 */
-	function setContainerHeights(width) {
+	function getContainerHeight(width) {
 
 		// If the width is < 768 then just set the heights to auto
 		if (width < 768) {
@@ -695,6 +695,19 @@ responseHub.wallboard = (function () {
 		var headerHeight = $('.page-navbar').height();
 		var containerHeight = ($(window).height() - headerHeight);
 
+		// return the height
+		return containerHeight;
+
+	}
+
+	/**
+	 * Sets the container height for the columns. Only for devices above mobile.
+	 */
+	function setContainerHeights(width) {
+
+		var containerHeight = getContainerHeight(width);
+
+		// Set the height of the columns.
 		$('.wallboard-sidebar, .wallboard-main, .wallboard-warnings').height(containerHeight);
 
 	}
@@ -840,9 +853,13 @@ responseHub.wallboard = (function () {
 	 */
 	function bindUI() {
 
+		// Get the container height
+		$('.wallboard-sidebar').scrollator();
+
 		// If the window is resize, reset container heights (i.e. moving to fullscreen).
 		$(window).resize(function (e) {
 			setContainerHeights(e.target.innerWidth);
+			$('.wallboard-sidebar').scrollator();
 		});
 
 		$('.wallboard-layout .message-list-options input').click(function () {

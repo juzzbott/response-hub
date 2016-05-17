@@ -626,6 +626,7 @@ i.p-message-admin {
 .wallboard-layout .wallboard-sidebar {
   background-color: #fff;
   border-right: 1px solid #ccc;
+  overflow-y: scroll;
 }
 .wallboard-layout .message-list-options {
   padding-top: 5px;
@@ -837,6 +838,12 @@ i.p-message-admin {
   color: #fff;
   cursor: pointer;
   padding-left: 6px;
+}
+/**
+ * Scrollator
+*/
+.scrollator_handle {
+  background-color: rgba(64, 64, 64, 0.5);
 }
 /**
  * Mixins
