@@ -749,10 +749,8 @@ responseHub.wallboard = (function () {
 			} else if (progressData.ProgressType == 2) {
 				$(".wallboard-main .job-status").html('<span class="on-scene"><i class="fa fa-fw fa-hourglass-half"></i>On scene by ' + progressData.UserFullName + ' on ' + progressTimestamp + '</span>');
 			} else if (progressData.ProgressType == 1) {
-				$(".wallboard-main .job-status").html('<span class="on-route"><i class="fa fa-fw fa-arrow-circle-right"></i>On route by ' + progressData.UserFullName + ' on ' + progressTimestamp + '</span>');
+				$(".wallboard-main .job-status").html('<span class="on-route"><i class="fa fa-fw fa-arrow-circle-o-right"></i>On route by ' + progressData.UserFullName + ' on ' + progressTimestamp + '</span>');
 			}
-
-		} else {
 
 		}
 
@@ -1045,10 +1043,13 @@ responseHub.wallboard = (function () {
 			latestProgress = getJobProgressJson(jobMessage.OnRoute);
 		}
 
+		// Determine if the job has notes
+		var hasNotes = (jobMessage.Notes != null && jobMessage.Notes.length > 0);
+
 		// Creat the list item
 		var listItem = $('<li class="' + (selectedJobIndex == index ? "selected" : "") + '" data-message="' + jobMessage.MessageBody + '" data-job-number="' + jobMessage.JobNumber +
 			'" data-date="' + localDateString + '" data-priority="' + jobMessage.Priority + '" data-map-ref="' + mapReference + '" data-lat="' + lat + '" data-lon="' + lon +
-			'" data-id="' + jobMessage.Id + '" data-progress="' + latestProgress + '">');
+			'" data-id="' + jobMessage.Id + '" data-progress="' + latestProgress + '" data-has-notes="' + (hasNotes ? 'true' : 'false') + '">');
 
 		// Add the job name and date
 		listItem.append('<div class="message-meta"><h4 class="group-heading">' + jobMessage.CapcodeGroupName + '</h4><p class="text-info message-date">' + localDateString + '</p></div>');
@@ -1085,6 +1086,13 @@ responseHub.wallboard = (function () {
 			h3.append('<span class="job-status on-route"><i class="fa fa-arrow-circle-o-right"></i></span>');
 		} else {
 			h3.append('<span class="job-status"><i class="fa fa-dot-circle-o"></i></span>');
+		}
+
+		// Add the comments indication
+		if (hasNotes) {
+			h3.append('<span class="has-notes text-info"><i class="fa fa-fw fa-comments"></i></span>');
+		} else {
+			h3.append('<span class="has-notes text-muted"><i class="fa fa-fw fa-comments-o"></i></span>');
 		}
 
 		// Create the message element

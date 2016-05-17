@@ -676,6 +676,10 @@ i.p-message-admin {
 .wallboard-layout .message-list .message .job-status.job-cancelled i {
   color: #AA3939;
 }
+.wallboard-layout .message-list .message .has-notes {
+  float: right;
+  padding-right: 5px;
+}
 .wallboard-layout .message-list .message-meta {
   padding: 0 15px;
 }
@@ -696,7 +700,7 @@ i.p-message-admin {
   color: #31708f;
 }
 .wallboard-layout .wallboard-main .job-status {
-  font-size: 15px;
+  font-size: 16px;
 }
 .wallboard-layout .wallboard-main .job-status i {
   padding-right: 10px;
