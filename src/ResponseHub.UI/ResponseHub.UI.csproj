@@ -254,6 +254,7 @@
     <Content Include="assets\css\framework.css" />
     <Content Include="assets\css\lib\bootstrap-datepicker3.min.css" />
     <Content Include="assets\css\lib\bootstrap-grid-xl.css" />
+    <Content Include="assets\css\lib\fm.scrollator.jquery.css" />
     <Content Include="assets\css\lib\leaflet.css" />
     <Content Include="assets\css\response-hub.css" />
     <Content Include="assets\fonts\fontawesome-webfont.svg" />
@@ -267,6 +268,7 @@
     <Content Include="assets\js\lib\bootstrap-datepicker.min.js" />
     <Content Include="assets\js\lib\bootstrap-tabcollapse.js" />
     <Content Include="assets\js\lib\bootstrap-typeahead.min.js" />
+    <Content Include="assets\js\lib\fm.scrollator.jquery.js" />
     <Content Include="assets\js\lib\leaflet.js" />
     <Content Include="assets\js\modules\capcodes.js" />
     <Content Include="assets\js\modules\groups.js" />
