@@ -972,10 +972,8 @@ responseHub.wallboard = (function () {
 						buildJobListItem(jobMessage, i);
 					}
 
-					// Get the first list item and then set the active job
-					if (selectedJobIndex == 0) {
-						selectMessage(0);
-					}
+					// Select the first list item.
+					selectMessage(selectedJobIndex);
 				}
 
 			},
