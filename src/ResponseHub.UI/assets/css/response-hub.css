@@ -570,8 +570,8 @@ fieldset[disabled] .form-control {
     margin-bottom: 5px;
   }
 }
-.progress-time .text-muted {
-  margin-bottom: 20px;
+.progress-action {
+  margin-bottom: 15px;
 }
 #job-notes ul li {
   border-left: 3px solid #D6E3E0;

@@ -7,7 +7,7 @@
 </div>
 
 <div class="row">
-	<div class="col-xs-12 col-sm-4 col-md-3 col-lg-3 col-xl-2">
+	<div class="col-xs-12 col-sm-4 col-md-3 col-lg-3 col-xl-2 progress-action">
 		@if (Model.OnRoute == null && Model.Cancelled == null)
 		{
 			<button class="btn btn-primary btn-icon btn-block btn-lg btn-on-route"><i class="fa fa-fw fa-check-square-o"></i> On route</button>
@@ -21,7 +21,7 @@
 			}
 		</div>
 	</div>
-	<div class="col-xs-12 col-sm-4 col-md-3 col-md-offset-1 col-lg-3 col-xl-2">
+	<div class="col-xs-12 col-sm-4 col-md-3 col-md-offset-1 col-lg-3 col-xl-2 progress-action">
 		@if (Model.OnScene == null && Model.Cancelled == null)
 		{
 			<button class="btn btn-primary btn-icon btn-block btn-lg btn-on-scene"><i class="fa fa-fw fa-check-square-o"></i> On scene</button>
@@ -35,7 +35,7 @@
 			}
 		</div>
 	</div>
-	<div class="col-xs-12 col-sm-4 col-md-3 col-md-offset-1 col-lg-3 col-xl-2">
+	<div class="col-xs-12 col-sm-4 col-md-3 col-md-offset-1 col-lg-3 col-xl-2 progress-action">
 		@if (Model.JobClear == null && Model.Cancelled == null)
 		{
 			<button class="btn btn-primary btn-icon btn-block btn-lg btn-job-clear"><i class="fa fa-fw fa-check-square-o"></i> Job clear</button>
