@@ -12,7 +12,7 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 {
 
 	[RouteArea("admin")]
-	[ClaimsAuthorize(Roles = RoleTypes.GroupAdministrator)]
+	[ClaimsAuthorize(Roles = RoleTypes.SystemAdministrator)]
 	public class HomeController : BaseController
     {
         // GET: Admin/Home

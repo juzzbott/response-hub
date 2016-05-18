@@ -188,11 +188,41 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 												Builders<GroupDto>.Filter.ElemMatch(i => i.Users, u => u.UserId == userId);
 
 			// Create the update definition.
+			// -1 is used for $ in mongodb
 			UpdateDefinition<GroupDto> update = Builders<GroupDto>.Update.Set(i => i.Users[-1].Role, newRole);
 
 			// Update the document. 
 			UpdateResult result = await Collection.UpdateOneAsync(filter, update);
 			
+		}
+
+		/// <summary>
+		/// Gets the group id and user mappings for each of the groups a given user id is a member of.
+		/// </summary>
+		/// <param name="userId"></param>
+		/// <returns></returns>
+		public async Task<IDictionary<Guid, UserMapping>> GetUserMappingsForUser(Guid userId)
+		{
+
+			// Create the filter to get the user in the groups.
+			FilterDefinition<GroupDto> filter = Builders<GroupDto>.Filter.ElemMatch(i => i.Users, u => u.UserId == userId);
+
+			// Create the projection
+			ProjectionDefinition<GroupDto> projection = Builders<GroupDto>.Projection.Include(i => i.Id).Include(i => i.Users);
+
+			// Get the results.
+			IList<GroupDto> results = await Collection.Find(filter).Project<GroupDto>(projection).ToListAsync();
+
+			// Create the dictionary of user mappings
+			IDictionary<Guid, UserMapping> userMappings = new Dictionary<Guid, UserMapping>();
+
+			foreach(GroupDto result in results)
+			{
+				userMappings.Add(new KeyValuePair<Guid, UserMapping>(result.Id, result.Users.FirstOrDefault(i => i.UserId == userId)));
+			}
+
+			return userMappings;
+
 		}
 
 		#region Object mapping functions

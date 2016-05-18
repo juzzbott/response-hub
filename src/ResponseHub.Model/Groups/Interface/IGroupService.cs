@@ -35,6 +35,8 @@ namespace Enivate.ResponseHub.Model.Groups.Interface
 
 		Task ChangeUserRoleInGroup(Guid groupId, Guid userId, string newRole);
 
+		Task<IDictionary<Guid, UserMapping>> GetUserMappingsForUser(Guid userId);
+
 	}
 
 }

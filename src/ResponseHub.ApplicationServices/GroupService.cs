@@ -300,5 +300,15 @@ namespace Enivate.ResponseHub.ApplicationServices
 			CacheManager.RemoveItem(CacheUtility.GetEntityCacheKey(typeof(Group), groupId.ToString()));
 
 		}
+
+		/// <summary>
+		/// Gets the group id and user mappings for each of the groups a given user id is a member of.
+		/// </summary>
+		/// <param name="userId"></param>
+		/// <returns></returns>
+		public async Task<IDictionary<Guid, UserMapping>> GetUserMappingsForUser(Guid userId)
+		{
+			return await _repository.GetUserMappingsForUser(userId);
+		}
 	}
 }

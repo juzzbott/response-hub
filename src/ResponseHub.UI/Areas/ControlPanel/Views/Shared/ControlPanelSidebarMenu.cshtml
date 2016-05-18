@@ -1,0 +1,13 @@
+﻿<p class="explore">System Administration</p>
+
+<ul class="nav nav-sidebar">
+	<li class="@(ViewContext.RouteData.Values["Controller"].ToString() == "Groups" ? "active" : "")">
+		<a href="/control-panel/groups"><i class="fa fa-fw fa-users"></i>Groups</a>
+	</li>
+	<li class="@(ViewContext.RouteData.Values["Controller"].ToString() == "DataExport" ? "active" : "")">
+		<a href="/control-panel/groups"><i class="fa fa-fw fa-database"></i>Data export</a>
+	</li>
+	<li class="@(ViewContext.RouteData.Values["Controller"].ToString() == "MyAccount" ? "active" : "")">
+		<a href="/my-account"><i class="fa fa-fw fa-user"></i>My account</a>
+	</li>
+</ul>

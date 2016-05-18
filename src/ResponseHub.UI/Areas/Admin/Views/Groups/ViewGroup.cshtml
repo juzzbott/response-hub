@@ -1,6 +1,7 @@
 ﻿@model Enivate.ResponseHub.UI.Areas.Admin.Models.Groups.SingleGroupViewModel
 @{
 	ViewBag.Title = Model.Name;
+	Layout = Html.IsAdminUser() ? "~/Areas/Admin/Views/Shared/_Layout.cshtml" : "~/Areas/ControlPanel/Views/Shared/_Layout.cshtml";
 }
 
 <div class="row">
@@ -8,7 +9,7 @@
 		<h1>@Model.Name</h1>
 	</div>
 	<div class="col-sm-3">
-		<a href="/admin/groups/@Model.Id/edit" class="btn btn-link btn-icon btn-lg pull-right"><i class="fa fa-pencil-square-o"></i>Edit group</a>
+		<a href="@Request.Url.LocalPath/edit" class="btn btn-link btn-icon btn-lg pull-right"><i class="fa fa-pencil-square-o"></i>Edit group</a>
 	</div>
 </div>
 
@@ -40,7 +41,7 @@
 			<div class="col-sm-12">
 				<strong>Description:</strong><br />
 				<p>@Model.Description</p>
-			</div>
+			</div> 
 		</div>
 
 
@@ -60,7 +61,7 @@
 
 <h3>Members</h3>
 
-<p><a href="/admin/groups/@Model.Id/add-member" class="btn btn-primary btn-lg icon-link"><i class="fa fa-user-plus"></i>Add member</a></p>
+<p><a href="@Request.Url.LocalPath/add-member" class="btn btn-primary btn-lg icon-link"><i class="fa fa-user-plus"></i>Add member</a></p>
 
 @Html.Partial("~/Views/Shared/SearchControl.cshtml", new Enivate.ResponseHub.UI.Models.SearchViewModel(Model.Users.Count, "members"))
 
@@ -90,7 +91,7 @@
 					<td>@user.EmailAddress</td>
 					<td>@user.GroupRole</td>
 					<td>
-						<a href="/admin/groups/@Model.Id/change-role/@user.Id" class="btn-icon btn-action-icon" title="Change user role"><i class="fa fa-shield"></i></a>
+						<a href="@Request.Url.LocalPath/change-role/@user.Id" class="btn-icon btn-action-icon" title="Change user role"><i class="fa fa-shield"></i></a>
 						<a data-href="/admin/users/@user.Id/delete" data-toggle="modal" data-target="#confirm-delete" class="cursor-pointer btn-icon btn-action-icon" title="Remove user from group"><i class="fa fa-user-times"></i></a>
 					</td>
 				</tr>

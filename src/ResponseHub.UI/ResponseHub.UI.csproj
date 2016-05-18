@@ -181,6 +181,7 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Areas\Admin\AdminAreaRegistration.cs" />
+    <Compile Include="Areas\Admin\Controllers\BaseAdminController.cs" />
     <Compile Include="Areas\Admin\Controllers\CapcodesController.cs" />
     <Compile Include="Areas\Admin\Controllers\GroupsController.cs" />
     <Compile Include="Areas\Admin\Controllers\HomeController.cs" />
@@ -191,6 +192,7 @@
     <Compile Include="Areas\Admin\Models\SystemSettings\CacheDetails.cs" />
     <Compile Include="Areas\Admin\Models\SystemSettings\SystemSettingsViewModel.cs" />
     <Compile Include="Areas\ControlPanel\Controllers\BaseControlPanelController.cs" />
+    <Compile Include="Areas\ControlPanel\Controllers\GroupsController.cs" />
     <Compile Include="Areas\ControlPanel\Controllers\HomeController.cs" />
     <Compile Include="Areas\ControlPanel\ControlPanelAreaRegistration.cs" />
     <Compile Include="Controllers\Api\EventsController.cs" />
@@ -295,10 +297,11 @@
     <Content Include="Views\Shared\_Layout.cshtml" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Areas\Admin\Views\BaseAdmin\" />
     <Folder Include="Areas\ControlPanel\Models\" />
     <Folder Include="Areas\ControlPanel\Views\BaseControlPanel\" />
+    <Folder Include="Areas\ControlPanel\Views\Groups\" />
     <Folder Include="Areas\ControlPanel\Views\Home\" />
-    <Folder Include="Areas\ControlPanel\Views\Shared\" />
     <Folder Include="Views\Base\" />
     <Folder Include="Views\Media\" />
   </ItemGroup>
@@ -479,6 +482,8 @@
     <Content Include="Views\Shared\Breadcrumbs.cshtml" />
     <Content Include="Areas\Admin\Views\SystemSettings\Index.cshtml" />
     <Content Include="Areas\ControlPanel\Views\web.config" />
+    <Content Include="Areas\ControlPanel\Views\Shared\_Layout.cshtml" />
+    <Content Include="Areas\ControlPanel\Views\Shared\ControlPanelSidebarMenu.cshtml" />
     <None Include="Web.Staging.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
