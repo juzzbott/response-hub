@@ -1,0 +1,30 @@
+﻿@model Enivate.ResponseHub.UI.Areas.Admin.Models.Logs.LogViewModel
+
+@{
+    ViewBag.Title = "Log viewer";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<h1>@ViewBag.Title</h1>
+
+<div class="row">
+	<div class="col-xs-12">
+		<div class="form-group">
+			<label for="Service">Select log file</label>
+			<div class="row">
+				<div class="col-sm-8 col-md-6 col-lg-4">
+					@Html.DropDownListFor(model => model.SelectedFile, Model.LogFilenames, new { @class = "form-control log-file-select" })
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+@if (!String.IsNullOrEmpty(Model.SelectedFile) && !String.IsNullOrEmpty(Model.LogFileData))
+{
+	<h3>@Model.SelectedFile</h3>
+
+	<div class="log-file-data">
+		<pre>@Html.Raw(Model.LogFileData)</pre>
+	</div>
+}

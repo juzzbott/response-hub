@@ -14,9 +14,9 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 {
 
 	[RouteArea("admin")]
-	[RoutePrefix("logs")]
+	[RoutePrefix("log-viewer")]
 	[ClaimsAuthorize(Roles = RoleTypes.SystemAdministrator)]
-	public class LogsController : Controller
+	public class LogViewerController : Controller
     {
 
 		// GET: Admin/Logs
@@ -92,7 +92,6 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 
 			// Create the list of file names (not the full paths)
 			IList<SelectListItem> fileNames = new List<SelectListItem>();
-			fileNames.Add(new SelectListItem() { Text = "Select file..." });
 
 			// Loop through the file paths, and get only the file names to add to the list
 			foreach(string filePath in filePaths)
