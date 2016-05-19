@@ -43,7 +43,8 @@ module.exports = function(grunt) {
 					'assets/js/modules/groups.js',
 					'assets/js/modules/password-strength.js',
 					'assets/js/modules/capcodes.js',
-					'assets/js/modules/resources.js'
+					'assets/js/modules/resources.js',
+					'assets/js/modules/logs.js'
 				],
 				dest: 'assets/js/script.js'
 			},

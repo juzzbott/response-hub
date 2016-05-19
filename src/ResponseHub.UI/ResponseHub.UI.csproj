@@ -184,10 +184,12 @@
     <Compile Include="Areas\Admin\Controllers\CapcodesController.cs" />
     <Compile Include="Areas\Admin\Controllers\GroupsController.cs" />
     <Compile Include="Areas\Admin\Controllers\HomeController.cs" />
+    <Compile Include="Areas\Admin\Controllers\LogsController.cs" />
     <Compile Include="Areas\Admin\Controllers\ReportsController.cs" />
     <Compile Include="Areas\Admin\Controllers\SystemSettingsController.cs" />
     <Compile Include="Areas\Admin\Controllers\UsersController.cs" />
     <Compile Include="Areas\Admin\Models\Capcodes\CreateCapcodeViewModel.cs" />
+    <Compile Include="Areas\Admin\Models\Logs\LogViewModel.cs" />
     <Compile Include="Areas\Admin\Models\SystemSettings\CacheDetails.cs" />
     <Compile Include="Areas\Admin\Models\SystemSettings\SystemSettingsViewModel.cs" />
     <Compile Include="Controllers\Api\EventsController.cs" />
@@ -273,6 +275,7 @@
     <Content Include="assets\js\modules\capcodes.js" />
     <Content Include="assets\js\modules\groups.js" />
     <Content Include="assets\js\modules\joblog.js" />
+    <Content Include="assets\js\modules\logs.js" />
     <Content Include="assets\js\modules\maps.js" />
     <Content Include="assets\js\modules\password-strength.js" />
     <Content Include="assets\js\modules\resources.js" />
@@ -473,6 +476,7 @@
     <Content Include="Views\Jobs\JobLocation.cshtml" />
     <Content Include="Views\Shared\Breadcrumbs.cshtml" />
     <Content Include="Areas\Admin\Views\SystemSettings\Index.cshtml" />
+    <Content Include="Areas\Admin\Views\Logs\Index.cshtml" />
     <None Include="Web.Staging.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
