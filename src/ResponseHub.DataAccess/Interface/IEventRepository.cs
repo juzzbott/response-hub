@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 using Enivate.ResponseHub.Model.Events;
+using Enivate.ResponseHub.Model.Crews;
 
 namespace Enivate.ResponseHub.DataAccess.Interface
 {
@@ -20,6 +21,8 @@ namespace Enivate.ResponseHub.DataAccess.Interface
 		Task<IList<Event>> FindByKeywords(string keywords, IEnumerable<Guid> groupIds);
 
 		Task<bool> AddResourceToEvent(Guid eventId, EventResource resource);
+
+		Task<Crew> CreateCrew(Guid eventId, string name);
 
 	}
 }

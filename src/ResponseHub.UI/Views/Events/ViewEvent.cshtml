@@ -21,6 +21,7 @@
 	<!-- Nav tabs -->
 	<ul class="nav nav-tabs tab-collapse" role="tablist">
 		<li role="presentation" class="active"><a href="#overview" aria-controls="overview" role="tab" data-toggle="tab" class="btn-icon"><i class="fa fa-fw fa-bar-chart"></i>Overview</a></li>
+		<li role="presentation"><a href="#crews" aria-controls="crews" role="tab" data-toggle="tab" class="btn-icon"><i class="fa fa-fw fa-users"></i>Crews</a></li>
 		<li role="presentation"><a href="#resources" aria-controls="resources" role="tab" data-toggle="tab" class="btn-icon"><i class="fa fa-fw fa-cubes"></i>Resources</a></li>
 		<!-- <li role="presentation"><a href="#sectors" aria-controls="sectors" role="tab" data-toggle="tab" class="btn-icon"><i class="fa fa-fw fa-object-group"></i>Sectors</a></li> -->
 	</ul>
@@ -29,6 +30,9 @@
 	<div class="tab-content">
 		<div role="tabpanel" class="tab-pane active" id="overview">
 
+		</div>
+		<div role="tabpanel" class="tab-pane" id="crews">
+			@Html.Partial("Crews")
 		</div>
 		<div role="tabpanel" class="tab-pane" id="resources">
 

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Enivate.ResponseHub.Model.Crews;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -18,6 +19,8 @@ namespace Enivate.ResponseHub.Model.Events.Interface
 		Task<IList<Event>> FindByKeywords(string keywords, IEnumerable<Guid> groupIds);
 
 		Task<EventResource> AddResourceToEvent(Guid eventId, string name, Guid agency, Guid? userId, ResourceType resourceType);
+
+		Task<Crew	> CreateCrew(Guid eventId, string name);
 
 	}
 }

@@ -20,14 +20,14 @@
 		@Html.ValidationMessageFor(model => model.Name)
 	</div>
 
-	@if (Model.AvailableGroups.Count == 2) // 2 is actuall only 1 group, as first item is please select.
+	@if (Model.AvailableGroups.Count == 1) // When there is only 1 group. no please select option
 	{
 		<div class="form-group">
 			<label>Managing group *</label>
 			<div class="row">
 				<div class="col-sm-8 col-md-6 col-lg-4">
-					<input type="text" class="form-control" disabled="disabled" value="@Model.AvailableGroups[1].Text" />
-					@Html.HiddenFor(i => i.GroupId, new { @value = Model.AvailableGroups[1].Value })
+					<input type="text" class="form-control" disabled="disabled" value="@Model.AvailableGroups[0].Text" />
+					<input type="hidden" name="GroupId" value="@Model.AvailableGroups[0].Value" />
 				</div>
 			</div>
 		</div>
@@ -78,7 +78,7 @@
 	</div>
 
 	<div class="top-20">
-		<button type="submit" class="btn btn-primary">Save</button>
+		<button type="submit" class="btn btn-primary">Create event</button>
 		<a href="/events" class="btn btn-link">Cancel</a>
 	</div>
 

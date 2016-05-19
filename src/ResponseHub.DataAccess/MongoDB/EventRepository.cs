@@ -9,12 +9,13 @@ using MongoDB.Driver;
 using Enivate.ResponseHub.DataAccess.Interface;
 using Enivate.ResponseHub.DataAccess.MongoDB.DataObjects.Events;
 using Enivate.ResponseHub.Model.Events;
+using Enivate.ResponseHub.Model.Crews;
 
 namespace Enivate.ResponseHub.DataAccess.MongoDB
 {
 
 	[MongoCollectionName("events")]
-	public class EventRepository : MongoRepository<EventDto>, IEventRepository
+	public class EventRepository : MongoRepository<Event>, IEventRepository
 	{
 
 		/// <summary>
@@ -26,10 +27,10 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 		{
 
 			// Save the event to the database
-			EventDto savedEvent = await Save(MapModelObjectToDb(newEvent));
+			Event savedEvent = await Save(newEvent);
 
 			// return the mapped model
-			return MapDbObjectToModel(savedEvent);
+			return savedEvent;
 
 		}
 
@@ -41,10 +42,10 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 		public new async Task<Event> GetById(Guid id)
 		{
 			// Get the db event from the database
-			EventDto dbEvent = await Collection.Find(i => i.Id == id).FirstOrDefaultAsync();
+			Event dbEvent = await Collection.Find(i => i.Id == id).FirstOrDefaultAsync();
 
 			// return the mapped item
-			return MapDbObjectToModel(dbEvent);
+			return dbEvent;
 		}
 
 		/// <summary>
@@ -56,16 +57,13 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 		{
 
 			// Define the 'in' filter
-			FilterDefinition<EventDto> filter = Builders<EventDto>.Filter.In(i => i.GroupId, groupIds);
+			FilterDefinition<Event> filter = Builders<Event>.Filter.In(i => i.GroupId, groupIds);
 
 			// Find the event data objects
-			IList<EventDto> dbEvents = await Collection.Find(filter).ToListAsync();
-
-			// Map the events
-			IList<Event> modelEvents = dbEvents.Select(i => MapDbObjectToModel(i)).ToList();
+			IList<Event> events = await Collection.Find(filter).ToListAsync();
 
 			// return the events return events
-			return modelEvents;
+			return events;
 		}
 
 		/// <summary>
@@ -77,23 +75,14 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 		{
 
 			// Build the query
-			FilterDefinition<EventDto> filter = Builders<EventDto>.Filter.Text(keywords) &
-												Builders<EventDto>.Filter.In(i => i.GroupId, groupIds);
+			FilterDefinition<Event> filter = Builders<Event>.Filter.Text(keywords) &
+												Builders<Event>.Filter.In(i => i.GroupId, groupIds);
 
 			// Get the results of the text search.
-			IList<EventDto> results = await Collection.Find(filter).ToListAsync();
-
-			// Create the list of events
-			List<Event> mappedEvents = new List<Event>();
-
-			// For each result, map to a Event model object.
-			foreach (EventDto result in results)
-			{
-				mappedEvents.Add(MapDbObjectToModel(result));
-			}
-
+			IList<Event> events = await Collection.Find(filter).ToListAsync();
+		
 			// return the mapped groups.
-			return mappedEvents;
+			return events;
 		}
 
 		/// <summary>
@@ -106,15 +95,50 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 		{
 
 			// Create the filter 
-			FilterDefinition<EventDto> filter = Builders<EventDto>.Filter.Eq(i => i.Id, eventId);
+			FilterDefinition<Event> filter = Builders<Event>.Filter.Eq(i => i.Id, eventId);
 
 			// Create the push
-			UpdateDefinition<EventDto> update = Builders<EventDto>.Update.Push(i => i.Resources, resource);
+			UpdateDefinition<Event> update = Builders<Event>.Update.Push(i => i.Resources, resource);
 
 			// Do the update
 			UpdateResult result = await Collection.UpdateOneAsync(filter, update);
 
 			return result.ModifiedCount > 0;
+
+		}
+
+		/// <summary>
+		/// Creates a new crew for the event.
+		/// </summary>
+		/// <param name="eventId">The id of the event to create the crew for.</param>
+		/// <param name="name">The name of the crew.</param>
+		/// <returns></returns>
+		public async Task<Crew> CreateCrew(Guid eventId, string name)
+		{
+
+			// Ensure there is a crew name
+			if (String.IsNullOrEmpty(name))
+			{
+				throw new ArgumentException("The crew must have a name.");
+			}
+
+			// Create the new crew object
+			Crew crew = new Crew()
+			{
+				Name = name
+			};
+
+			// Create the filter
+			FilterDefinition<Event> filter = Builders<Event>.Filter.Eq(i => i.Id, eventId);
+
+			// Create the update
+			UpdateDefinition<Event> update = Builders<Event>.Update.Push(i => i.Crews, crew);
+
+			// Perform the update
+			await Collection.UpdateOneAsync(filter, update);
+
+			// return the crew
+			return crew;
 
 		}
 
@@ -142,7 +166,8 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 				GroupId = dbObject.GroupId,
 				Id = dbObject.Id,
 				Name = dbObject.Name,
-				Resources = dbObject.Resources
+				Resources = dbObject.Resources,
+				Crews = dbObject.Crews
 			};
 
 			// return the model event
@@ -171,7 +196,8 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 				GroupId = modelObject.GroupId,
 				Id = modelObject.Id,
 				Name = modelObject.Name,
-				Resources = modelObject.Resources
+				Resources = modelObject.Resources,
+				Crews = modelObject.Crews
 			};
 
 			// return the model event

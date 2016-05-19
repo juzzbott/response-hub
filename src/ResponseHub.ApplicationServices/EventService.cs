@@ -8,6 +8,7 @@ using Enivate.ResponseHub.DataAccess.Interface;
 using Enivate.ResponseHub.Logging;
 using Enivate.ResponseHub.Model.Events;
 using Enivate.ResponseHub.Model.Events.Interface;
+using Enivate.ResponseHub.Model.Crews;
 
 namespace Enivate.ResponseHub.ApplicationServices
 {
@@ -116,6 +117,10 @@ namespace Enivate.ResponseHub.ApplicationServices
 			return resource;
 		}
 
+		public async Task<Crew> CreateCrew(Guid eventId, string name)
+		{
+			return await _repository.CreateCrew(eventId, name);
+		}
 
 	}
 }

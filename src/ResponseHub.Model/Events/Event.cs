@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Enivate.ResponseHub.Model.Crews;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -23,10 +24,13 @@ namespace Enivate.ResponseHub.Model.Events
 
 		public IList<EventResource> Resources { get; set; }
 
+		public IList<Crew> Crews { get; set; }
+
 		public Event()
 		{
 			Id = Guid.NewGuid();
 			Resources = new List<EventResource>();
+			Crews = new List<Crew>();
 		}
 
 	}

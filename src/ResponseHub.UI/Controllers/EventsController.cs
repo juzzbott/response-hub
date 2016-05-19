@@ -202,10 +202,13 @@ namespace Enivate.ResponseHub.UI.Controllers
 			IList<Group> userGroups = await GroupService.GetGroupsForUser(userId);
 
 			// Create the list of select list items
-			IList<SelectListItem> availableGroups = new List<SelectListItem>()
+			IList<SelectListItem> availableGroups = new List<SelectListItem>();
+
+			// Create the list of select list items
+			if (userGroups == null || userGroups.Count > 1)
 			{
-				new SelectListItem() { Text = "Please select...", Value = "" }
-			};
+				availableGroups.Add(new SelectListItem() { Text = "Please select...", Value = "" });
+			}
 
 			// Loop through the groups and add to the list of available groups
 			foreach (Group group in userGroups)
