@@ -1450,18 +1450,42 @@ responseHub.events = (function () {
 
 	function createCrew() {
 
-		// Build the new accordion markuo
-		var crewName = $('#CrewName').val();
-		buildNewAccordionMarkup(crewName);
+		var eventId = "";
 
-		// Hide the no crews message
-		if (!$('.no-crews').hasClass("hidden")) {
-			$('.no-crews').addClass("hidden");
-		}
+		var postData = {
+			Name: $('#CrewName').val()
+		};
+
+		$.ajax({
+			url: responseHub.apiPrefix + '/events/' + eventId + '/add-crew',
+			type: 'post',
+			dataType: 'json',
+			data: postData,
+			success: function (data) {
+
+				// Build the new accordion markuo
+				buildNewCrewAccordionMarkup(postData.Name);
+
+				// Hide the no crews message
+				if (!$('.no-crews').hasClass("hidden")) {
+					$('.no-crews').addClass("hidden");
+				}
+
+				// Clear the textbox
+				$('#CrewName').val('');
+
+			},
+			error: function () {
+
+			},
+			complete: function () {
+
+			}
+		});
 
 	}
 
-	function buildNewAccordionMarkup(crewName) {
+	function buildNewCrewAccordionMarkup(crewName) {
 
 		// Get the count of current accordions and define the accordion name based on the count
 		var currentAccordionCount = $('.crew-list .panel').length;

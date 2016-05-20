@@ -15,10 +15,13 @@ namespace Enivate.ResponseHub.Model.Crews
 
 		public IList<Guid> JobMessageIds { get; set; }
 
+		public IList<Guid> CrewMembers { get; set; }
+
 		public Crew()
 		{
 			Id = Guid.NewGuid();
 			JobMessageIds = new List<Guid>();
+			CrewMembers = new List<Guid>();
 		}
 
 	}

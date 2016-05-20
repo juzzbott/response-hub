@@ -15,7 +15,7 @@ namespace Enivate.ResponseHub.Caching
 		private const string CacheName = "ResponseHub_Cache";
 
 		private static volatile MemoryCache _instance;
-		private static volatile Dictionary<string, DateTime> _keysInstance;
+		private static Dictionary<string, DateTime> _keysInstance = new Dictionary<string, DateTime>();
 		private static object _lock = new Object();
 
 		public static MemoryCache Cache
@@ -30,7 +30,6 @@ namespace Enivate.ResponseHub.Caching
 						if (_instance == null)
 						{
 							_instance = new MemoryCache(CacheName);
-							_keysInstance = new Dictionary<string, DateTime>();
 						}
 					}
 				}
