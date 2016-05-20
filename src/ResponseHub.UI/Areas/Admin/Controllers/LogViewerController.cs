@@ -89,6 +89,9 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 			{
 				filePaths = Directory.GetFiles(logDir);
 			}
+			
+			// reverse the list so that the newest files are first
+			filePaths = filePaths.Reverse().ToList();
 
 			// Create the list of file names (not the full paths)
 			IList<SelectListItem> fileNames = new List<SelectListItem>();
