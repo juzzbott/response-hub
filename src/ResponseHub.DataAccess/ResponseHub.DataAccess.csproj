@@ -1,0 +1,140 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{CF5C523B-660B-4538-9A64-928E7601804E}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Enivate.ResponseHub.DataAccess</RootNamespace>
+    <AssemblyName>ResponseHub.DataAccess</AssemblyName>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Test|AnyCPU'">
+    <OutputPath>bin\Test\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Staging|AnyCPU'">
+    <OutputPath>bin\Staging\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.AspNet.Identity.Core, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.Identity.Core.2.2.1\lib\net45\Microsoft.AspNet.Identity.Core.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="MongoDB.Bson, Version=2.2.3.3, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MongoDB.Bson.2.2.3\lib\net45\MongoDB.Bson.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="MongoDB.Driver, Version=2.2.3.3, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MongoDB.Driver.2.2.3\lib\net45\MongoDB.Driver.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="MongoDB.Driver.Core, Version=2.2.3.3, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MongoDB.Driver.Core.2.2.3\lib\net45\MongoDB.Driver.Core.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Interface\IAgencyRepository.cs" />
+    <Compile Include="Interface\ICapcodeRepository.cs" />
+    <Compile Include="Interface\IEventRepository.cs" />
+    <Compile Include="Interface\IGroupRepository.cs" />
+    <Compile Include="Interface\IJobMessageRepository.cs" />
+    <Compile Include="Interface\IMapIndexRepository.cs" />
+    <Compile Include="Interface\IPagerMessageRepository.cs" />
+    <Compile Include="Interface\IRegionRepository.cs" />
+    <Compile Include="Interface\IRepository.cs" />
+    <Compile Include="Interface\IUserRepository.cs" />
+    <Compile Include="MongoDB\AgencyRepository.cs" />
+    <Compile Include="MongoDB\CapcodeRepository.cs" />
+    <Compile Include="MongoDB\DataObjects\Events\EventDto.cs" />
+    <Compile Include="MongoDB\DataObjects\Groups\GroupDto.cs" />
+    <Compile Include="MongoDB\DataObjects\Messages\JobMessageDto.cs" />
+    <Compile Include="MongoDB\DataObjects\Spatial\MapGridReferenceInfoDto.cs" />
+    <Compile Include="MongoDB\DataObjects\Spatial\LocationInfoDto.cs" />
+    <Compile Include="MongoDB\DataObjects\Spatial\MapIndexDto.cs" />
+    <Compile Include="MongoDB\DataObjects\Users\ClaimDto.cs" />
+    <Compile Include="MongoDB\DataObjects\Users\IdentityUserDto.cs" />
+    <Compile Include="MongoDB\EventRepository.cs" />
+    <Compile Include="MongoDB\GroupRepository.cs" />
+    <Compile Include="MongoCollectionNameAttribute.cs" />
+    <Compile Include="MongoDB\JobMessageRepository.cs" />
+    <Compile Include="MongoDB\MapIndexRepository.cs" />
+    <Compile Include="MongoDB\PagerMessageRepository.cs" />
+    <Compile Include="MongoDB\RegionRepository.cs" />
+    <Compile Include="MongoDB\UserRepository.cs" />
+    <Compile Include="MongoRepository.cs" />
+    <Compile Include="PagedResultSet.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ResponseHub.Common\ResponseHub.Common.csproj">
+      <Project>{64b4f6f9-8e0e-4475-8895-d7d4b0c1da4b}</Project>
+      <Name>ResponseHub.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ResponseHub.Logging\ResponseHub.Logging.csproj">
+      <Project>{38015057-6ff4-4ee7-b101-550a99578671}</Project>
+      <Name>ResponseHub.Logging</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ResponseHub.Model\ResponseHub.Model.csproj">
+      <Project>{63ebc394-caed-4b0b-974c-ba56f619f853}</Project>
+      <Name>ResponseHub.Model</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="MongoDB\Scripts\AdminUser.js" />
+    <Content Include="MongoDB\Scripts\CreateIndexes.js" />
+    <Content Include="MongoDB\Scripts\ReferenceData.js" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

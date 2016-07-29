@@ -1,0 +1,29 @@
+﻿@model Enivate.ResponseHub.UI.Models.SearchViewModel
+
+<div class="search-group-form">
+	<h4>Search @Model.SearchLabel</h4>
+	<form class="form-inline" method="get" action="@Request.Url.LocalPath">
+		<div class="row">
+			<div class="col-sm-6 col-lg-4">
+				<div class="input-group">
+					<input type="text" class="form-control" placeholder="Search keywords..." name="q" id="Search" value="@Request.QueryString["q"]">
+					<span class="input-group-btn">
+						<button class="btn btn-default btn-icon" type="submit"><i class="fa fa-search"></i>Search</button>
+					</span>
+				</div><!-- /input-group -->
+			</div><!-- /.col-lg-6 -->
+		</div><!-- /.row -->
+	</form>
+</div>
+
+@if (!String.IsNullOrEmpty(Request.QueryString["q"]))
+{
+
+	<div class="row">
+		<div class="col-xs-12">
+			<p class="lead bottom-5">Displaying @Model.Results result@(Model.Results != 1 ? "s" : "") for <strong>'@Request.QueryString["q"]'</strong></p>
+			<p><a href="@Request.Url.LocalPath" class="btn-icon text-muted"><i class="fa fa-times-circle-o"></i>Clear search results</a></p>
+		</div>
+	</div>
+
+}

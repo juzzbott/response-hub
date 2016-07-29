@@ -1,0 +1,55 @@
+﻿@model IList<Enivate.ResponseHub.Model.Groups.Capcode>
+
+@{
+    ViewBag.Title = "Capcodes";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<h1>@ViewBag.Title</h1>
+
+@Html.SuccessFromQueryString("saved", "1", "The capcode detals have been successfully saved.")
+
+@Html.SuccessFromQueryString("created", "1", "The capcode has been successfully created.")
+
+<a href="/admin/capcodes/create" class="btn btn-primary btn-icon btn-lg top-10"><i class="fa fa-plus"></i> Create capcode</a>
+
+@Html.Partial("~/Views/Shared/SearchControl.cshtml", new Enivate.ResponseHub.UI.Models.SearchViewModel(Model.Count, "capcodes"))
+
+<table class="table table-hover table-striped">
+	<thead>
+		<tr>
+			<th>Name</th>
+			<th>Capcode Address</th>
+			<th>Short Name</th>
+			<th>Service</th>
+			<th>Group only</th>
+		</tr>
+	</thead>
+	<tbody>
+		@if (Model == null || Model.Count == 0)
+		{
+			<tr>
+				<td colspan="5">No capcodes found. <a href="/admin/capcodes/create">Create one now</a>.</td>
+			</tr>
+		}
+		else
+		{
+			foreach (var capcode in Model)
+			{
+				<tr>
+					<td><a href="/admin/capcodes/@capcode.Id">@capcode.Name</a></td>
+					<td>@capcode.CapcodeAddress</td>
+					<td>@capcode.ShortName</td>
+					<td>@Html.EnumDescription(capcode.Service)</td>
+					@if (capcode.IsGroupCapcode)
+					{
+						<td><i class="fa fa-fw fa-check"></i></td>
+					} else
+					{
+						<td>&nbsp;</td>
+					}
+				</tr>
+			}
+		}
+	</tbody>
+</table>

@@ -1,0 +1,570 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.1\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props" Condition="Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.1\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" />
+  <Import Project="..\packages\Microsoft.Net.Compilers.1.1.1\build\Microsoft.Net.Compilers.props" Condition="Exists('..\packages\Microsoft.Net.Compilers.1.1.1\build\Microsoft.Net.Compilers.props')" />
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>
+    </ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{AE4E432F-C3FA-49DC-A0C3-CCC564F1E3A8}</ProjectGuid>
+    <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Enivate.ResponseHub.UI</RootNamespace>
+    <AssemblyName>ResponseHub.UI</AssemblyName>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <MvcBuildViews>false</MvcBuildViews>
+    <UseIISExpress>true</UseIISExpress>
+    <IISExpressSSLPort />
+    <IISExpressAnonymousAuthentication />
+    <IISExpressWindowsAuthentication />
+    <IISExpressUseClassicPipelineMode />
+    <UseGlobalApplicationHostFile />
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+    <DeploymentFolder>C:\inetpub\websites\ResponseHub</DeploymentFolder>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.AspNet.Identity.Core, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.Identity.Core.2.2.1\lib\net45\Microsoft.AspNet.Identity.Core.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.AspNet.Identity.Owin, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.Identity.Owin.2.2.1\lib\net45\Microsoft.AspNet.Identity.Owin.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.1\lib\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.Owin, Version=3.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Owin.3.0.1\lib\net45\Microsoft.Owin.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Host.SystemWeb, Version=3.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Owin.Host.SystemWeb.3.0.1\lib\net45\Microsoft.Owin.Host.SystemWeb.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Security, Version=3.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Owin.Security.3.0.1\lib\net45\Microsoft.Owin.Security.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Security.Cookies, Version=3.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Owin.Security.Cookies.3.0.1\lib\net45\Microsoft.Owin.Security.Cookies.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Security.OAuth, Version=3.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Owin.Security.OAuth.3.0.1\lib\net45\Microsoft.Owin.Security.OAuth.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.3.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\CommonServiceLocator.1.3\lib\portable-net4+sl5+netcore45+wpa81+wp8\Microsoft.Practices.ServiceLocation.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Practices.Unity, Version=4.0.0.0, Culture=neutral, PublicKeyToken=6d32ff45e0ccc69f, processorArchitecture=MSIL">
+      <HintPath>..\packages\Unity.4.0.1\lib\net45\Microsoft.Practices.Unity.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Practices.Unity.Configuration, Version=4.0.0.0, Culture=neutral, PublicKeyToken=6d32ff45e0ccc69f, processorArchitecture=MSIL">
+      <HintPath>..\packages\Unity.4.0.1\lib\net45\Microsoft.Practices.Unity.Configuration.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Practices.Unity.RegistrationByConvention, Version=4.0.0.0, Culture=neutral, PublicKeyToken=6d32ff45e0ccc69f, processorArchitecture=MSIL">
+      <HintPath>..\packages\Unity.4.0.1\lib\net45\Microsoft.Practices.Unity.RegistrationByConvention.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="MongoDB.Bson, Version=2.2.3.3, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MongoDB.Bson.2.2.3\lib\net45\MongoDB.Bson.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="MongoDB.Driver, Version=2.2.3.3, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MongoDB.Driver.2.2.3\lib\net45\MongoDB.Driver.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="MongoDB.Driver.Core, Version=2.2.3.3, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MongoDB.Driver.Core.2.2.3\lib\net45\MongoDB.Driver.Core.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.8.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Owin, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f0ebd12fd5e55cc5, processorArchitecture=MSIL">
+      <HintPath>..\packages\Owin.1.0\lib\net40\Owin.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Web.DynamicData" />
+    <Reference Include="System.Web.Entity" />
+    <Reference Include="System.Web.ApplicationServices" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Web.Abstractions" />
+    <Reference Include="System.Web.Routing" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.EnterpriseServices" />
+    <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http">
+    </Reference>
+    <Reference Include="System.Net.Http.WebRequest">
+    </Reference>
+    <Reference Include="System.Web.Helpers, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.Helpers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Mvc, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.Mvc.5.2.3\lib\net45\System.Web.Mvc.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.Razor.3.2.3\lib\net45\System.Web.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Deployment, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.Deployment.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.Razor.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System.Net.Http.Formatting">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Client.5.2.3\lib\net45\System.Net.Http.Formatting.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Http">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Core.5.2.3\lib\net45\System.Web.Http.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Http.WebHost">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.WebHost.5.2.3\lib\net45\System.Web.Http.WebHost.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="App_Start\FilterConfig.cs" />
+    <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Areas\Admin\AdminAreaRegistration.cs" />
+    <Compile Include="Areas\Admin\Controllers\CapcodesController.cs" />
+    <Compile Include="Areas\Admin\Controllers\GroupsController.cs" />
+    <Compile Include="Areas\Admin\Controllers\HomeController.cs" />
+    <Compile Include="Areas\Admin\Controllers\LogViewerController.cs" />
+    <Compile Include="Areas\Admin\Controllers\ReportsController.cs" />
+    <Compile Include="Areas\Admin\Controllers\SystemSettingsController.cs" />
+    <Compile Include="Areas\Admin\Controllers\UsersController.cs" />
+    <Compile Include="Areas\Admin\Models\Capcodes\CreateCapcodeViewModel.cs" />
+    <Compile Include="Areas\Admin\Models\LogViewer\LogViewModel.cs" />
+    <Compile Include="Areas\Admin\Models\SystemSettings\CacheDetails.cs" />
+    <Compile Include="Areas\Admin\Models\SystemSettings\SystemSettingsViewModel.cs" />
+    <Compile Include="Controllers\Api\EventsController.cs" />
+    <Compile Include="Controllers\BaseJobsMessagesController.cs" />
+    <Compile Include="Controllers\MessagesController.cs" />
+    <Compile Include="Filters\SystemAdminUserRedirectAttribute.cs" />
+    <Compile Include="Models\Api\Events\AddResourcePostModel.cs" />
+    <Compile Include="Models\Api\Events\AddResourceResponseModel.cs" />
+    <Compile Include="Models\Api\Messages\PostGetLatestFromLastModel.cs" />
+    <Compile Include="Models\Events\AdditionalResourceViewModel.cs" />
+    <Compile Include="Models\Events\EventListItemViewModel.cs" />
+    <Compile Include="Models\Events\EventViewModel.cs" />
+    <Compile Include="Areas\Admin\Models\Groups\ChangeUserRoleViewModel.cs" />
+    <Compile Include="Areas\Admin\Models\Groups\CreateGroupModel.cs" />
+    <Compile Include="Areas\Admin\Models\Reports\GroupsCapcodesReportViewModel.cs" />
+    <Compile Include="Controllers\BaseController.cs" />
+    <Compile Include="Models\Events\CreateEventViewModel.cs" />
+    <Compile Include="Models\Messages\JobMessageListViewModel.cs" />
+    <Compile Include="Models\MyAccount\AccountDetailsViewModel.cs" />
+    <Compile Include="Models\MyAccount\ForgottenPasswordViewModel.cs" />
+    <Compile Include="Models\MyAccount\ResetPasswordViewModel.cs" />
+    <Compile Include="Models\MyAccount\UpdateAccountViewModel.cs" />
+    <Compile Include="Models\MyAccount\UpdateEmailViewModel.cs" />
+    <Compile Include="Models\SearchViewModel.cs" />
+    <Compile Include="Areas\Admin\Models\Groups\ConfirmUserViewModel.cs" />
+    <Compile Include="Areas\Admin\Models\Groups\NewUserViewModel.cs" />
+    <Compile Include="Areas\Admin\Models\Groups\SingleGroupViewModel.cs" />
+    <Compile Include="Areas\Admin\Models\Users\NewAdminUserViewModel.cs" />
+    <Compile Include="Areas\Admin\Models\Users\UserViewModel.cs" />
+    <Compile Include="Controllers\Api\BaseApiController.cs" />
+    <Compile Include="Controllers\Api\JobMessageController.cs" />
+    <Compile Include="Controllers\EventsController.cs" />
+    <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\JobsController.cs" />
+    <Compile Include="Controllers\MediaController.cs" />
+    <Compile Include="Controllers\MyAccountController.cs" />
+    <Compile Include="Controllers\WallboardController.cs" />
+    <Compile Include="Filters\ClaimsAuthorizeAttribute.cs" />
+    <Compile Include="Filters\ResponseHubPageAttribute.cs" />
+    <Compile Include="Global.asax.cs">
+      <DependentUpon>Global.asax</DependentUpon>
+    </Compile>
+    <Compile Include="Helpers\HtmlHelpers.cs" />
+    <Compile Include="Models\Api\Messages\MessageProgressResponseModel.cs" />
+    <Compile Include="Models\Messages\MessageProgressViewModel.cs" />
+    <Compile Include="Models\Api\Messages\PostJobNoteModel.cs" />
+    <Compile Include="Models\Api\Messages\PostProgressViewModel.cs" />
+    <Compile Include="Models\Messages\JobMessageViewModel.cs" />
+    <Compile Include="Models\MyAccount\ChangePasswordViewModel.cs" />
+    <Compile Include="Models\MyAccount\CreatePasswordViewModel.cs" />
+    <Compile Include="Models\MyAccount\LoginViewModel.cs" />
+    <Compile Include="Models\Users\GroupUserViewModel.cs" />
+    <Compile Include="Models\Wallboard\WallboardViewModel.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Startup.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="App_Data\EmailTemplates\activate_account.html" />
+    <Content Include="App_Data\EmailTemplates\base_template.html" />
+    <Content Include="App_Data\EmailTemplates\forgotten_password.html" />
+    <Content Include="App_Data\EmailTemplates\group_created.html" />
+    <Content Include="App_Data\EmailTemplates\password_changed.html" />
+    <Content Include="App_Data\EmailTemplates\password_reset.html" />
+    <Content Include="assets\css\framework.css" />
+    <Content Include="assets\css\lib\bootstrap-datepicker3.min.css" />
+    <Content Include="assets\css\lib\bootstrap-grid-xl.css" />
+    <Content Include="assets\css\lib\fm.scrollator.jquery.css" />
+    <Content Include="assets\css\lib\leaflet.css" />
+    <Content Include="assets\css\response-hub.css" />
+    <Content Include="assets\fonts\fontawesome-webfont.svg" />
+    <Content Include="assets\images\email\response-hub-logo.png" />
+    <Content Include="assets\images\leaflet\layers-2x.png" />
+    <Content Include="assets\images\leaflet\layers.png" />
+    <Content Include="assets\images\leaflet\marker-icon-2x.png" />
+    <Content Include="assets\images\leaflet\marker-icon.png" />
+    <Content Include="assets\images\leaflet\marker-shadow.png" />
+    <Content Include="assets\js\framework.js" />
+    <Content Include="assets\js\lib\bootstrap-datepicker.min.js" />
+    <Content Include="assets\js\lib\bootstrap-tabcollapse.js" />
+    <Content Include="assets\js\lib\bootstrap-typeahead.min.js" />
+    <Content Include="assets\js\lib\fm.scrollator.jquery.js" />
+    <Content Include="assets\js\lib\leaflet.js" />
+    <Content Include="assets\js\modules\capcodes.js" />
+    <Content Include="assets\js\modules\groups.js" />
+    <Content Include="assets\js\modules\joblog.js" />
+    <Content Include="assets\js\modules\logviewer.js" />
+    <Content Include="assets\js\modules\maps.js" />
+    <Content Include="assets\js\modules\password-strength.js" />
+    <Content Include="assets\js\modules\resources.js" />
+    <Content Include="assets\js\modules\wallboard.js" />
+    <Content Include="assets\js\modules\_core.js" />
+    <Content Include="assets\js\script.js" />
+    <Content Include="favicon.ico" />
+    <Content Include="Global.asax" />
+    <Content Include="Gruntfile.js" />
+    <Content Include="Web.config" />
+    <Content Include="Web.Debug.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </Content>
+    <Content Include="Web.Release.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </Content>
+    <Content Include="Views\Web.config" />
+    <Content Include="Views\_ViewStart.cshtml" />
+    <Content Include="Views\Shared\_Layout.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Views\Base\" />
+    <Folder Include="Views\Media\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ResponseHub.ApplicationServices\ResponseHub.ApplicationServices.csproj">
+      <Project>{a77ef1a1-1492-41ac-b62e-d14f9c01014f}</Project>
+      <Name>ResponseHub.ApplicationServices</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ResponseHub.Caching\ResponseHub.Caching.csproj">
+      <Project>{adde3186-948d-4296-8f92-b4ef9d3379b9}</Project>
+      <Name>ResponseHub.Caching</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ResponseHub.Common\ResponseHub.Common.csproj">
+      <Project>{64b4f6f9-8e0e-4475-8895-d7d4b0c1da4b}</Project>
+      <Name>ResponseHub.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ResponseHub.DataAccess\ResponseHub.DataAccess.csproj">
+      <Project>{cf5c523b-660b-4538-9a64-928e7601804e}</Project>
+      <Name>ResponseHub.DataAccess</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ResponseHub.Logging\ResponseHub.Logging.csproj">
+      <Project>{38015057-6ff4-4ee7-b101-550a99578671}</Project>
+      <Name>ResponseHub.Logging</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ResponseHub.Mail\ResponseHub.Mail.csproj">
+      <Project>{bac4ba31-d159-4c2d-a508-bfe3522bfe1d}</Project>
+      <Name>ResponseHub.Mail</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ResponseHub.Model\ResponseHub.Model.csproj">
+      <Project>{63ebc394-caed-4b0b-974c-ba56f619f853}</Project>
+      <Name>ResponseHub.Model</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Unity.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Areas\Admin\Views\web.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Areas\Admin\Views\_ViewStart.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Areas\Admin\Views\Shared\_Layout.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Areas\Admin\Views\Home\Index.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="assets\css\less\response-hub.less" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include=".bowerrc" />
+    <Content Include="bower.json" />
+    <Content Include="package.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="assets\fonts\fontawesome-webfont.eot" />
+    <Content Include="assets\fonts\fontawesome-webfont.ttf" />
+    <Content Include="assets\fonts\fontawesome-webfont.woff" />
+    <Content Include="assets\fonts\fontawesome-webfont.woff2" />
+    <Content Include="assets\fonts\FontAwesome.otf" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Areas\Admin\Views\Groups\Index.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Areas\Admin\Views\Groups\CreateEdit.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Areas\Admin\Views\Groups\ViewGroup.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\MyAccount\Login.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Areas\Admin\Views\Shared\AdminSidebarMenu.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Shared\LoginLayout.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Areas\Admin\Views\Groups\ConfirmUser.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Areas\Admin\Views\Groups\NewUser.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Home\Index.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Shared\DefaultSidebar.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Wallboard\Index.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Shared\WallboardLayout.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Wallboard\MessageList.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Wallboard\Warnings.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\MyAccount\ChangePassword.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\MyAccount\CreatePassword.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\MyAccount\ChangePasswordComplete.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\MyAccount\ActivateAccount.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Shared\UnauthenticatedSingleColumn.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\MyAccount\ActivateAccountComplete.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Areas\Admin\Views\Groups\ChangeUserRole.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Areas\Admin\Views\Capcodes\Index.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Areas\Admin\Views\Capcodes\CreateEdit.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Shared\SearchControl.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Jobs\Index.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Areas\Admin\Views\Users\Index.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Areas\Admin\Views\Users\Create.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Jobs\ViewJob.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Areas\Admin\Views\Reports\Index.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Areas\Admin\Views\Reports\GroupsCapcodes.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Jobs\JobNotes.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Jobs\JobProgress.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Events\Index.cshtml" />
+    <Content Include="Views\Events\Create.cshtml" />
+    <Content Include="Views\Events\ViewEvent.cshtml" />
+    <Content Include="Views\Events\AddResourceForm.cshtml" />
+    <Content Include="Views\MyAccount\Index.cshtml" />
+    <Content Include="Views\MyAccount\UpdateAccountDetails.cshtml" />
+    <Content Include="Views\MyAccount\UpdateEmailAddress.cshtml" />
+    <Content Include="Views\MyAccount\ForgottenPassword.cshtml" />
+    <Content Include="Views\MyAccount\ForgottenPasswordSent.cshtml" />
+    <Content Include="Views\MyAccount\ResetPassword.cshtml" />
+    <Content Include="Views\MyAccount\ResetPasswordComplete.cshtml" />
+    <Content Include="Views\MyAccount\ResetPasswordInvalidToken.cshtml" />
+    <Content Include="Views\Messages\ViewMessage.cshtml" />
+    <Content Include="Views\Jobs\JobLocation.cshtml" />
+    <Content Include="Views\Shared\Breadcrumbs.cshtml" />
+    <Content Include="Areas\Admin\Views\SystemSettings\Index.cshtml" />
+    <Content Include="Areas\Admin\Views\LogViewer\Index.cshtml" />
+    <None Include="Web.Staging.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </None>
+    <None Include="Web.Test.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </None>
+  </ItemGroup>
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Test|AnyCPU'">
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Staging|AnyCPU'">
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" Condition="false" />
+  <Target Name="MvcBuildViews" AfterTargets="AfterBuild" Condition="'$(MvcBuildViews)'=='true'">
+    <AspNetCompiler VirtualPath="temp" PhysicalPath="$(WebProjectOutputDir)" />
+  </Target>
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <UseIIS>True</UseIIS>
+          <AutoAssignPort>True</AutoAssignPort>
+          <DevelopmentServerPort>14853</DevelopmentServerPort>
+          <DevelopmentServerVPath>/</DevelopmentServerVPath>
+          <IISUrl>http://localhost:14853/</IISUrl>
+          <NTLMAuthentication>False</NTLMAuthentication>
+          <UseCustomServer>False</UseCustomServer>
+          <CustomServerUrl>
+          </CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\Microsoft.Net.Compilers.1.1.1\build\Microsoft.Net.Compilers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Net.Compilers.1.1.1\build\Microsoft.Net.Compilers.props'))" />
+    <Error Condition="!Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.1\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.1\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props'))" />
+  </Target>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target> -->
+  <!-- <Target Name="AfterBuild"> -->
+  <!-- Local Build Steps -->
+  <!-- <Message Text="Afterbuild Started" />
+    <CallTarget Condition=" '$(Configuration)' == 'Debug' " RunEachTargetSeparately="true" Targets="BuildLocal" ContinueOnError="false" />
+    <Message Text="Starting Transforms" />
+  </Target> -->
+  <!-- Local Build Steps -->
+  <Target Name="BuildLocal">
+    <ItemGroup>
+      <CopyDlls Include="bin\*.dll" />
+      <CopyFiles Include="**\*.openssh;**\*.resx;**\*.xml;**\*.aspx;**\*.ascx;**\*.master;**\*.js;**\*.css;**\*.asax;**\*.config;**\img\*.*;favicon.ico;**\*.html;**\img\*\*.*;**\*.txt;**\*.asmx;**\*.pdf;**\*.csv;**\*.ashx;**\*.cshtml;**\bin\roslyn\*.*;**\assets\fonts\*.*" Exclude="**\bower_components\**;**\node_modules\**;**\obj\**;**\Web.*.config;**\Gruntfile.js" />
+    </ItemGroup>
+    <Message Text="Copy Dlls" Importance="high" />
+    <Copy SourceFiles="@(CopyDlls)" DestinationFiles="@(CopyDlls->'$(DeploymentFolder)\%(RelativeDir)%(Filename)%(Extension)')" ContinueOnError="false" SkipUnchangedFiles="true" />
+    <Message Text="Copy Other Files" Importance="high" />
+    <Copy SourceFiles="@(CopyFiles)" DestinationFiles="@(CopyFiles->'$(DeploymentFolder)\%(RecursiveDir)%(Filename)%(Extension)')" ContinueOnError="false" SkipUnchangedFiles="true" />
+    <Message Text="Copy current build configuration patch files" Importance="high" />
+    <Message Text="Copy Complete" Importance="high" />
+    <Message Text="Starting Transforms" />
+    <Message Text="Deploying to $(DeploymentFolder)\Web.config" />
+    <Message Text="Transforming environment level config (Web.debug.config)" />
+    <TransformXml Source="$(DeploymentFolder)\Web.config" Transform="$(SolutionDir)ResponseHub.UI\Web.$(Configuration).config" Destination="$(DeploymentFolder)\Web.config" StackTrace="true" />
+    <Message Text="Transforms Completed" />
+  </Target>
+</Project>

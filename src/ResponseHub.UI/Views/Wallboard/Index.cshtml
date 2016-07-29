@@ -1,0 +1,16 @@
+﻿@model Enivate.ResponseHub.UI.Models.Wallboard.WallboardViewModel
+
+@{
+	ViewBag.Title = "Wallboard";
+	Layout = "~/Views/Shared/WallboardLayout.cshtml";
+
+	var message = Model.Messages.FirstOrDefault();
+
+}
+
+<div class="message-details">
+	<p class="text-center top-20">
+		<i class="fa fa-spinner fa-pulse fa-2x fa-fw margin-bottom"></i>
+		<span class="sr-only">Loading...</span>
+	</p>
+</div>

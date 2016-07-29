@@ -1,0 +1,42 @@
+﻿@model Enivate.ResponseHub.UI.Models.Messages.JobMessageViewModel
+
+@{
+	ViewBag.Title = (!String.IsNullOrEmpty(Model.JobNumber) ? Model.JobNumber : Model.Timestamp.ToString("dd/MM/yyyy HH:mm:ss"));
+}
+
+@Html.HiddenFor(i => i.Id)
+
+<div class="row">
+	<div class="col-sm-7">
+
+		<h1>
+			@if (Model.Priority == Enivate.ResponseHub.Model.Messages.MessagePriority.Emergency)
+			{
+				<i class="fa fa-exclamation-triangle p-message-emergency"></i>
+			}
+			else if (Model.Priority == Enivate.ResponseHub.Model.Messages.MessagePriority.NonEmergency)
+			{
+				<i class="fa fa-exclamation-circle p-message-non-emergency"></i>
+			}
+			else
+			{
+				<i class="fa fa-info-circle p-message-admin"></i>
+			}
+			@ViewBag.Title
+		</h1>
+
+	</div>
+	<div class="col-sm-5">
+		<h3 class="text-right text-xs-left text-info">@Model.Timestamp.ToString("yyyy-MM-dd HH:mm")</h3>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-xs-12">
+		<p class="lead text-muted"><em>@Model.CapcodeGroupName</em></p>
+	</div>
+</div>
+
+<p class="lead">@Model.MessageBody</p>
+
+@Html.Partial("~/Views/Jobs/JobNotes.cshtml", Model.Notes)

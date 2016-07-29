@@ -1,0 +1,43 @@
+﻿@model List<Enivate.ResponseHub.UI.Models.Events.EventListItemViewModel>
+@{
+    ViewBag.Title = "Events";
+}
+
+<h1>@ViewBag.Title</h1>
+
+<p>Events allow groups to manage multiple jobs within a given timeframe. Within an event, you can create sectors and then assign jobs and resources to those sectors. Resources in the field can then view the assigned jobs, and work through the list of jobs.</p>
+
+<a href="/events/create" class="btn btn-primary btn-lg btn-icon"><i class="fa fa-plus"></i>Start new event</a>
+
+@Html.Partial("~/Views/Shared/SearchControl.cshtml", new Enivate.ResponseHub.UI.Models.SearchViewModel(Model.Count, "events"))
+
+<table class="table table-striped table-hover">
+	<thead>
+		<tr>
+			<th>Name</th>
+			<th>Group</th>
+			<th>Started</th>
+			<th>Jobs</th>
+		</tr>
+	</thead>
+	<tbody>
+		@if (Model == null || Model.Count == 0)
+		{
+			<tr>
+				<td colspan="3">No events found.</td>
+			</tr>
+		}
+		else
+		{
+			foreach (var eventObj in Model)
+			{
+				<tr>
+					<td><a href="/events/@eventObj.Id">@eventObj.Name</a></td>
+					<td><a href="/events/@eventObj.GroupId">@eventObj.GroupName</a></td>
+					<td>@eventObj.StartDate.ToString("d MMMM yyyy HH:mm")</td>
+					<td>0</td>
+				</tr>
+			}
+		}
+	</tbody>
+</table>

@@ -1,0 +1,51 @@
+﻿@model Enivate.ResponseHub.UI.Models.MyAccount.UpdateEmailViewModel
+
+@{
+	ViewBag.Title = "Change your email address";
+}
+
+<h1>@ViewBag.Title</h1>
+
+<div class="row">
+	<div class="col-sm-12">
+
+		<form action="/my-account/update-email" method="post">
+
+			@Html.AntiForgeryToken()
+
+			@Html.ValidationSummary(true)
+
+			<div class="form-group top-20">
+				<label for="Name">Email address *</label>
+				<div class="row">
+					<div class="col-sm-8 col-md-6 col-lg-4">
+						@Html.TextBoxFor(model => model.EmailAddress, new { @class = "form-control", placeholder = "user@domain.com" })
+					</div>
+				</div>
+				@Html.ValidationMessageFor(model => model.EmailAddress)
+			</div>
+
+			<div class="row">
+				<div class="col-lg-10 col-xl-6">
+					<p class="section-help">For security reasons, you must enter your account password to be able to update your email address.</p>
+				</div>
+			</div>
+
+			<div class="form-group top-20">
+				<label for="Name">Account password *</label>
+				<div class="row">
+					<div class="col-sm-8 col-md-6 col-lg-4">
+						@Html.PasswordFor(model => model.Password, new { @class = "form-control" })
+					</div>
+				</div>
+				@Html.ValidationMessageFor(model => model.Password)
+			</div>
+
+			<button type="submit" class="btn btn-primary">Update email</button>
+			<a href="/my-account" class="btn btn-link">Cancel</a>
+
+		</form>
+
+	</div>
+</div>
+

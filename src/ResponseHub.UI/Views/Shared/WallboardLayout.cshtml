@@ -1,0 +1,65 @@
+﻿@model Enivate.ResponseHub.UI.Models.Wallboard.WallboardViewModel
+
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>@ViewBag.Title - ResponseHub</title>
+
+	<link rel="stylesheet" href="~/assets/css/framework.css" />
+	<link rel="stylesheet" href="~/assets/css/response-hub.css" />
+
+	<link href='https://fonts.googleapis.com/css?family=Ubuntu:400,300,300italic,700,700italic' rel='stylesheet' type='text/css'>
+
+</head>
+<body class="wallboard-layout">
+
+	<div class="navbar navbar-default navbar-fixed-top page-navbar">
+		<div class="container-fluid">
+			<div class="navbar-header">
+				<a href="/" class="navbar-brand">ResponseHub</a>
+			</div>
+			<div class="">
+				<ul class="nav navbar-nav navbar-right">
+					<li><a href="/wallboard" title="Auto-reload messages"><i class="fa fa-fw fa-refresh"></i></a></li>
+					<li class="toggle-weather"><a href="#" onclick="responseHub.wallboard.toggleWeatherDisplay(); return false;" title="Display weather"><i class="fa fa-fw fa-bolt"></i></a></li>
+					<li><a href="/" title="Exit wallboard view"><i class="fa fa-fw fa-sign-out"></i></a></li>
+				</ul>
+			</div>
+		</div>
+	</div>
+
+	<div class="container-fluid body-content">
+
+		<div class="row">
+
+			<!-- Left column -->
+			<div class="col-sm-4 col-md-3 wallboard-sidebar">
+
+				@Html.Partial("~/Views/Wallboard/MessageList.cshtml", Model)
+
+			</div>
+			<!-- END Main Body -->
+
+			<!-- Main Body -->
+			<div class="col-sm-8 col-md-5 wallboard-main">
+				@RenderBody()
+			</div>
+			<!-- END Main Body -->
+
+			<!-- Warnings Panel -->
+			<div class="hidden-xs hidden-sm col-md-4 wallboard-warnings">
+				@Html.Partial("~/Views/Wallboard/Warnings.cshtml", Model)
+			</div>
+			<!-- END Warnings Panel -->
+
+		</div>
+
+	</div>
+
+	<script language="javascript" src="~/assets/js/framework.js"></script>
+	<script language="javascript" src="~/assets/js/script.js"></script>
+
+</body>
+</html>

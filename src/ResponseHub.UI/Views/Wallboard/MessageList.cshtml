@@ -1,0 +1,29 @@
+﻿@model Enivate.ResponseHub.UI.Models.Wallboard.WallboardViewModel
+
+<div class="row message-list-options">
+	<div class="col-xs-6">
+		<div class="checkbox">
+			<label>
+				<input type="checkbox" checked="checked" /> Auto-refresh
+			</label>
+		</div>
+	</div>
+	<div class="col-xs-6 pull-right">
+		<select class="form-control">
+			<option value="10">10 Seconds</option>
+			<option value="30" selected="selected">30 Seconds</option>
+			<option value="60">60 Seconds</option>
+		</select>
+	</div>
+</div>
+
+<div class="row">
+	<ul class="list-unstyled message-list">
+		<li>
+			<p class="text-center top-10">
+				<i class="fa fa-spinner fa-pulse fa-2x fa-fw margin-bottom"></i>
+				<span class="sr-only">Loading...</span>
+			</p>
+		</li>
+	</ul>
+</div>

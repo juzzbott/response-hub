@@ -1,0 +1,60 @@
+﻿@model Enivate.ResponseHub.UI.Areas.Admin.Models.SystemSettings.SystemSettingsViewModel
+
+@{
+    ViewBag.Title = "System settings";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<h1>@ViewBag.Title</h1>
+
+<h3>Caching</h3>
+<div class="row">
+	<div class="col-xs-12">
+
+		<dl class="dl-horizontal">
+			<dt>Items in cache</dt> 
+			<dd>@Model.Cache.TotalItems</dd>
+			<dt>Memory limit (MB)</dt> 
+			<dd>@Model.Cache.CacheMemoryLimit</dd>
+			<dt>Physical memory (%)</dt> 
+			<dd>@Model.Cache.PysicalMemoryLimit</dd>
+			<dt>Polling interval</dt> 
+			<dd>@Model.Cache.PollingInterval.ToString("hh\\:mm\\:ss")</dd>
+		</dl>
+
+		<p>
+			<a class="btn-icon" role="button" data-toggle="collapse" href="#cacheKeys" aria-expanded="false" aria-controls="cacheKeys"><i class="fa fa-fw fa-plus"></i>Show cache items</a>
+		</p>
+
+		<div class="collapse" id="cacheKeys">
+			<table class="table table-striped table-responsive table-bordered">
+				<thead>
+					<tr>
+						<th>Cache Item</th>
+						<th>Expiry</th>
+					</tr>
+				</thead>
+				<tbody>
+					@if (Model.Cache.CacheKeys == null || Model.Cache.CacheKeys.Count == 0)
+					{
+						<tr>
+							<td colspan="2">No items currently exist in the cache.</td>
+						</tr>
+					}
+					@foreach(KeyValuePair<string, DateTime> cacheKey in Model.Cache.CacheKeys)
+					{
+						<tr>
+							<td>@cacheKey.Key</td>
+							<td>@cacheKey.Value.ToString("dd/MM/yyyy HH:mm:ss")</td>
+						</tr>
+					}
+				</tbody>
+			</table>
+		</div>
+
+		<a href="/admin/system-settings/clear-cache" class="btn btn-default btn-icon"><i class="fa fa-fw fa-trash"></i>Clear cache</a>
+
+	</div>
+</div>
+<hr />
+

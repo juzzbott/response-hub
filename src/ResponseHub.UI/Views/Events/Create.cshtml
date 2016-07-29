@@ -1,0 +1,86 @@
+﻿@model Enivate.ResponseHub.UI.Models.Events.CreateEventViewModel
+
+@{
+    ViewBag.Title = "Create event";
+}
+
+<h1>@ViewBag.Title</h1>
+
+<form action="@Request.Url.LocalPath" method="post">
+
+	@Html.AntiForgeryToken()
+
+	<div class="form-group">
+		<label for="Name">Name *</label>
+		<div class="row">
+			<div class="col-sm-8 col-md-6 col-lg-4">
+				@Html.TextBoxFor(model => model.Name, new { @class = "form-control", placeholder = "Event name" })
+			</div>
+		</div>
+		@Html.ValidationMessageFor(model => model.Name)
+	</div>
+
+	@if (Model.AvailableGroups.Count == 2) // 2 is actuall only 1 group, as first item is please select.
+	{
+		<div class="form-group">
+			<label>Managing group *</label>
+			<div class="row">
+				<div class="col-sm-8 col-md-6 col-lg-4">
+					<input type="text" class="form-control" disabled="disabled" value="@Model.AvailableGroups[1].Text" />
+					@Html.HiddenFor(i => i.GroupId, new { @value = Model.AvailableGroups[1].Value })
+				</div>
+			</div>
+		</div>
+	}
+	else
+	{
+		<div class="form-group">
+			<label for="GroupId">Managing group *</label>
+			<div class="row">
+				<div class="col-sm-8 col-md-6 col-lg-4">
+					@Html.DropDownListFor(model => model.GroupId, Model.AvailableGroups, new { @class = "form-control" })
+				</div>
+			</div>
+			@Html.ValidationMessageFor(model => model.GroupId)
+		</div>
+	}
+
+	<div class="form-group">
+		<label for="DateStarted">Start date *</label>
+		<div class="row">
+			<div class="col-sm-8 col-md-6 col-lg-4">
+				<div class="input-group date datepicker-control" data-provide="datepicker" data-date-format="yyyy-mm-dd" data-date-autoclose="true" data-date-show-on-focus="false">
+					@Html.TextBoxFor(model => model.StartDate, new { @class = "form-control" })
+					<div class="input-group-addon">
+						<i class="fa fa-fw fa-calendar"></i>
+					</div>
+				</div>
+				<div class="text-muted"><em>Date format should be yyyy-mm-dd.</em></div>
+			</div>
+		</div>
+		@Html.ValidationMessageFor(model => model.StartDate)
+	</div>
+
+	<div class="form-group">
+		<label for="DateStarted">Start time *</label>
+		<div class="row">
+			<div class="col-sm-8 col-md-6 col-lg-4">
+				<div class="input-group">
+					@Html.TextBoxFor(model => model.StartTime, new { @class = "form-control" })
+					<div class="input-group-addon">
+						<i class="fa fa-fw fa-clock-o"></i>
+					</div>
+				</div>
+				<div class="text-muted"><em>Date format should be hh:mm and in 24 hour time.</em></div>
+			</div>
+		</div>
+		@Html.ValidationMessageFor(model => model.StartTime)
+	</div>
+
+	<div class="top-20">
+		<button type="submit" class="btn btn-primary">Save</button>
+		<a href="/events" class="btn btn-link">Cancel</a>
+	</div>
+
+
+</form>

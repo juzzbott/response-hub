@@ -1,0 +1,71 @@
+﻿@model Enivate.ResponseHub.UI.Models.MyAccount.CreatePasswordViewModel
+
+@{
+	ViewBag.Title = "Active your account";
+	Layout = "~/Views/Shared/UnauthenticatedSingleColumn.cshtml";
+}
+
+<h1>@ViewBag.Title</h1>
+
+@if (ViewBag.InvalidActivationToken == true)
+{
+	<div class="row">
+		<div class="col-sm-12">
+			<div class="error-summary">
+				<strong>Invalid activation token</strong><br />
+				Sorry, the activation token is invalid. For assisstance activating your account, please send an email to <a href="mailto:info@responsehub.com.au">info@responsehub.com.au</a>
+			</div>
+		</div>
+	</div>
+}
+else
+{
+
+	<p>Use the form below to create an account password. If you don't wish to create an account password with ResponseHub, you can login with Facebook below.</p>
+	
+	<h2>Create account password</h2>
+
+	<form method="post" action="@Request.Path">
+
+		@Html.AntiForgeryToken()
+
+		@Html.ValidationSummary(true)
+
+		<div class="form-group">
+			<label for="NewPassword">New password *</label>
+			<div class="row">
+				<div class="col-sm-8 col-md-6 col-lg-4">
+					@Html.PasswordFor(model => model.NewPassword, new { @class = "form-control", data_password_strength_target = "#password-strength" })
+				</div>
+			</div>
+			@Html.ValidationMessageFor(model => model.NewPassword)
+		</div>
+
+		<div class="form-group">
+			<label for="ConfirmPassword">Confirm password *</label>
+			<div class="row">
+				<div class="col-sm-8 col-md-6 col-lg-4">
+					@Html.PasswordFor(model => model.ConfirmPassword, new { @class = "form-control" })
+				</div>
+			</div>
+			@Html.ValidationMessageFor(model => model.ConfirmPassword)
+		</div>
+
+		<div id="password-strength" class="password-strength clearfix">
+			<div class="strength-bar first"></div>
+			<div class="strength-bar second"></div>
+			<div class="strength-bar third"></div>
+		</div>
+
+		<button type="submit" class="btn btn-default btn-mobile-block">Activate account</button>
+
+	</form>
+
+	<h2>Activate with Facebook</h2>
+	<p>Logging in with Facebook will activate your account and allow you to login to ResponseHub using only your Facebook account.</p>
+
+	<form action="/my-account/facebook-activate@(Request.Url.Query)" method="post">
+		<button type="submit" class="btn btn-default btn-icon btn-mobile-block" id="Facebook" name="provider" value="Facebook" title="Log in using your Facebook account"><i class="fa fa-facebook"></i>Login with facebook</button>
+	</form>
+
+}

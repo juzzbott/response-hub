@@ -1,0 +1,11 @@
+﻿@{ 
+	Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@RenderBody()
+
+@section Sidebar {
+
+	@Html.Partial("~/Areas/Admin/Views/Shared/AdminSidebarMenu.cshtml")
+
+}

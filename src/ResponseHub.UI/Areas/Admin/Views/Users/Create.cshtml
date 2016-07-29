@@ -1,0 +1,65 @@
+﻿@model Enivate.ResponseHub.UI.Areas.Admin.Models.Users.NewAdminUserViewModel
+
+@{
+    ViewBag.Title = "New system administrator";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<h1>@ViewBag.Title</h1>
+
+<p>Enter the details of the new system administrator for this group. The email address will become the useranem for the account.</p>
+
+<form action="@Request.Url.PathAndQuery" method="post">
+
+	@Html.AntiForgeryToken()
+
+	<div class="row">
+		<div class="col-lg-10 col-xl-6">
+			@Html.ValidationSummary(true)
+		</div>
+	</div>
+
+	<div class="form-group top-20">
+		<label for="Name">Email address *</label>
+		<div class="row">
+			<div class="col-sm-8 col-md-6 col-lg-4">
+				@Html.TextBoxFor(model => model.EmailAddress, new { @class = "form-control", placeholder = "user@domain.com" })
+			</div>
+		</div>
+		@Html.ValidationMessageFor(model => model.EmailAddress)
+	</div>
+
+	<div class="form-group top-20">
+		<label for="Name">Confirm email address *</label>
+		<div class="row">
+			<div class="col-sm-8 col-md-6 col-lg-4">
+				@Html.TextBoxFor(model => model.ConfirmEmailAddress, new { @class = "form-control", placeholder = "user@domain.com" })
+			</div>
+		</div>
+		@Html.ValidationMessageFor(model => model.ConfirmEmailAddress)
+	</div>
+
+	<div class="form-group">
+		<label for="Name">First name *</label>
+		<div class="row">
+			<div class="col-sm-8 col-md-6 col-lg-4">
+				@Html.TextBoxFor(model => model.FirstName, new { @class = "form-control", placeholder = "John" })
+			</div>
+		</div>
+		@Html.ValidationMessageFor(model => model.FirstName)
+	</div>
+
+	<div class="form-group">
+		<label for="Name">Surname *</label>
+		<div class="row">
+			<div class="col-sm-8 col-md-6 col-lg-4">
+				@Html.TextBoxFor(model => model.Surname, new { @class = "form-control", placeholder = "Smith" })
+			</div>
+		</div>
+		@Html.ValidationMessageFor(model => model.Surname)
+	</div>
+
+	<button type="submit" class="btn btn-default">Create user</button>
+	<a href="/admin/users" class="btn btn-link">Cancel</a>
+
+</form>
