@@ -70,6 +70,24 @@ namespace Enivate.ResponseHub.UI.Controllers.Api
 
 		}
 
+		[Route("all-pages")]
+		[HttpGet]
+		public async Task<IList<JobMessage>> AllPages()
+		{
+			int count = 50;
+			int skip = 0;
+
+			// Get the skip query string
+			var queryString = Request.GetQueryNameValuePairs().Where(i => i.Key.ToLower() == "skip");
+			if (queryString.Any())
+			{
+				Int32.TryParse(queryString.First().Value, out skip);
+			}
+			
+			// return the list of messages
+			return await JobMessageService.GetMostRecent(count, skip);
+		}
+
 		[Route]
 		[HttpPost]
 		public async Task<bool> Post(IList<JobMessage> jobMessages)

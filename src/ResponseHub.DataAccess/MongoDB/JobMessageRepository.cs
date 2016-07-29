@@ -69,7 +69,29 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 
 			// return the messages
 			return messages;
+			
+		}
 
+		/// <summary>
+		/// Gets the most recent job messages, limited by count and skip.
+		/// </summary>
+		/// <param name="count"></param>
+		/// <param name="skip"></param>
+		/// <returns></returns>
+		public async Task<IList<JobMessage>> GetMostRecent(int count, int skip)
+		{
+			// Create the sort filter
+			SortDefinition<JobMessageDto> sort = Builders<JobMessageDto>.Sort.Descending(i => i.Timestamp);
+
+			// Find the job messages by capcode
+			IList<JobMessageDto> results = await Collection.Find(new BsonDocument()).Sort(sort).Limit(count).Skip(skip).ToListAsync();
+
+			// Map the dto objects to model objects and return
+			List<JobMessage> messages = new List<JobMessage>();
+			messages.AddRange(results.Select(i => MapDbObjectToModel(i)));
+
+			// return the messages
+			return messages;
 
 		}
 
