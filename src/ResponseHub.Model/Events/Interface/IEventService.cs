@@ -20,7 +20,9 @@ namespace Enivate.ResponseHub.Model.Events.Interface
 
 		Task<EventResource> AddResourceToEvent(Guid eventId, string name, Guid agency, Guid? userId, ResourceType resourceType);
 
-		Task<Crew	> CreateCrew(Guid eventId, string name);
+		Task<Crew> CreateCrew(Guid eventId, string name);
+
+		Task<IList<Crew>> GetCrewsForEvent(Guid eventId);
 
 	}
 }

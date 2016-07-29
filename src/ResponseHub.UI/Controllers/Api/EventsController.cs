@@ -14,6 +14,7 @@ using Enivate.ResponseHub.Model.Agencies.Interface;
 using Enivate.ResponseHub.Model.Events;
 using Enivate.ResponseHub.Model.Events.Interface;
 using Enivate.ResponseHub.UI.Models.Api.Events;
+using Enivate.ResponseHub.Model.Crews;
 
 namespace Enivate.ResponseHub.UI.Controllers.Api
 {
@@ -92,6 +93,18 @@ namespace Enivate.ResponseHub.UI.Controllers.Api
 				await Log.Error(String.Format("Unable to create new event resource. Message: {0}", ex.Message), ex);
 				throw new HttpResponseException(HttpStatusCode.InternalServerError);
 			}
+
+		}
+
+		#endregion
+
+		#region Crews
+
+		[Route("{id:guid}/crews")]
+		[HttpGet]
+
+		public async Task<IList<Crew>> GetCrews(Guid eventId)
+		{
 
 		}
 
