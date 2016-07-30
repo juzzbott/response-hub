@@ -14,8 +14,8 @@ using Enivate.ResponseHub.Model.Messages;
 namespace Enivate.ResponseHub.UI.Controllers
 {
 
-	[RoutePrefix("all-pages")]
-    public class AllPagesController : Controller
+	[RoutePrefix("pager-messages")]
+    public class PagerMessagesController : Controller
     {
 
 		private IJobMessageService _jobMessageService;

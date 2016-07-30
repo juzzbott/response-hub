@@ -1,7 +1,7 @@
 ﻿@model System.Collections.Generic.List<Enivate.ResponseHub.Model.Messages.JobMessage>
 
 @{
-    ViewBag.Title = "All pager messages";
+    ViewBag.Title = "Pager messages";
 }
 
 <h1>@ViewBag.Title</h1>
@@ -35,7 +35,7 @@
 					@Html.Raw(message.JobNumber) 
 					@Html.Raw(" - ")
 				}
-			</strong><span class="text-info">@message.Timestamp.ToString("HH:mm:ss d MMMM yyyy")</span></p>
+			</strong><span class="text-info">@message.Timestamp.ToString("HH:mm:ss d MMMM yyyy")</span> - <span class="text-muted">(@message.Capcode)</span></p>
 			<p>@message.MessageContent</p>
 		</li>
 	}
@@ -44,6 +44,6 @@
 
 <div class="row bottom-20 top-20" id="all-pages-load-more">
 	<div class="col-sm-12 text-center">
-		<button class="btn btn-primary" onclick="responseHub.allPages.getNextPages();">Load more</button>
+		<button class="btn btn-primary" onclick="responseHub.pagerMessages.getNextPages();">Load more</button>
 	</div>
 </div>

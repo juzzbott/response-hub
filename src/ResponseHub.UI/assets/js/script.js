@@ -652,7 +652,7 @@ responseHub.jobLog = (function () {
 
 })();
 
-responseHub.allPages = (function () {
+responseHub.pagerMessages = (function () {
 
 	/**
 	 * Gets the next set of pager messages to display.
@@ -664,7 +664,7 @@ responseHub.allPages = (function () {
 
 		// Create the ajax request
 		$.ajax({
-			url: responseHub.apiPrefix + '/job-messages/all-pages?skip=' + skipCount,
+			url: responseHub.apiPrefix + '/job-messages/pager-messages?skip=' + skipCount,
 			dataType: 'json',
 			success: function (data) {
 
@@ -681,15 +681,15 @@ responseHub.allPages = (function () {
 					// Add the priority icon
 					switch (data[i].Priority) {
 						case 1:
-							topMarkup += '<i class="fa fa-exclamation-triangle p-message-emergency"></i>';
+							topMarkup += '<i class="fa fa-exclamation-triangle p-message-emergency"></i> ';
 							break;
 
 						case 2:
-							topMarkup += '<i class="fa fa-exclamation-circle p-message-non-emergency"></i>';
+							topMarkup += '<i class="fa fa-exclamation-circle p-message-non-emergency"></i> ';
 							break;
 
 						default:
-							topMarkup += '<i class="fa fa-info-circle p-message-admin"></i>';
+							topMarkup += '<i class="fa fa-info-circle p-message-admin"></i> ';
 							break;
 					}
 
@@ -705,7 +705,7 @@ responseHub.allPages = (function () {
 					// Get the job date
 					var jobDate = moment(data[i].Timestamp);
 					var localDateString = jobDate.format('HH:mm:ss D MMMM YYYY');
-					topMarkup += '<span class="text-info">' + localDateString + '</span>';
+					topMarkup += '<span class="text-info">' + localDateString + '</span> - <span class="text-muted">(' + data[i].Capcode + ')</span>';
 					// Append the top row
 					topRow.append($(topMarkup));
 

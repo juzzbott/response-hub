@@ -70,7 +70,7 @@ namespace Enivate.ResponseHub.UI.Controllers.Api
 
 		}
 
-		[Route("all-pages")]
+		[Route("pager-messages")]
 		[HttpGet]
 		public async Task<IList<JobMessage>> AllPages()
 		{
