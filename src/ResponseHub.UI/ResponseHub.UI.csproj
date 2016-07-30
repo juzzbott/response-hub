@@ -192,7 +192,7 @@
     <Compile Include="Areas\Admin\Models\LogViewer\LogViewModel.cs" />
     <Compile Include="Areas\Admin\Models\SystemSettings\CacheDetails.cs" />
     <Compile Include="Areas\Admin\Models\SystemSettings\SystemSettingsViewModel.cs" />
-    <Compile Include="Controllers\AllPagesController.cs" />
+    <Compile Include="Controllers\PagerMessagesController.cs" />
     <Compile Include="Controllers\Api\EventsController.cs" />
     <Compile Include="Controllers\BaseJobsMessagesController.cs" />
     <Compile Include="Controllers\MessagesController.cs" />
@@ -273,7 +273,7 @@
     <Content Include="assets\js\lib\bootstrap-typeahead.min.js" />
     <Content Include="assets\js\lib\fm.scrollator.jquery.js" />
     <Content Include="assets\js\lib\leaflet.js" />
-    <Content Include="assets\js\modules\all-pages.js" />
+    <Content Include="assets\js\modules\pager-messages.js" />
     <Content Include="assets\js\modules\capcodes.js" />
     <Content Include="assets\js\modules\groups.js" />
     <Content Include="assets\js\modules\joblog.js" />
@@ -479,7 +479,7 @@
     <Content Include="Views\Shared\Breadcrumbs.cshtml" />
     <Content Include="Areas\Admin\Views\SystemSettings\Index.cshtml" />
     <Content Include="Areas\Admin\Views\LogViewer\Index.cshtml" />
-    <Content Include="Views\AllPages\Index.cshtml" />
+    <Content Include="Views\PagerMessages\Index.cshtml" />
     <None Include="Web.Staging.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
