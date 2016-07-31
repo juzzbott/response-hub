@@ -41,6 +41,9 @@
 			dataType: 'json',
 			success: function (data) {
 
+				console.log("Success");
+				console.log(data);
+
 				for (var i = 0; i < data.length; i++) {
 
 					addMessageToList(data[i]);
@@ -58,6 +61,8 @@
 	}
 
 	function addMessageToList(pagerMessage) {
+
+		console.log(pagerMessage.Id);
 
 		var listItem = $('<li data-message-id="' + pagerMessage.Id + '"></li>');
 
@@ -84,7 +89,7 @@
 
 		// If there is job number, then show it here
 		if (pagerMessage.JobNumber != "") {
-			topMarkup += pagerMessage.JobNumber + " - "
+			topMarkup += pagerMessage.JobNumber + "!! - "
 		}
 
 		// Close the job and icon section
