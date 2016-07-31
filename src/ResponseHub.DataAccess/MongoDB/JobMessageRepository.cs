@@ -96,6 +96,46 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 		}
 
 		/// <summary>
+		/// Gets the list of latest messages that are new since the last message.
+		/// </summary>
+		/// <param name="lastId"></param>
+		/// <param name="capcodes"></param>
+		/// <param name="messageTypes"></param>
+		/// <returns></returns>
+		public async Task<IList<JobMessage>> GetMostRecent(Guid lastId)
+		{
+			// Get the 'Created' date from the last message id.
+			JobMessageDto lastMessage = await Collection.Find(i => i.Id == lastId).SingleOrDefaultAsync();
+
+			// If the last message cannot be found, return empty list
+			if (lastMessage == null)
+			{
+				return new List<JobMessage>();
+			}
+
+			// Get the last message date time
+			DateTime lastMessageDate = lastMessage.Timestamp;
+
+			// Create the filter and sort
+			FilterDefinitionBuilder<JobMessageDto> builder = Builders<JobMessageDto>.Filter;
+			FilterDefinition<JobMessageDto> filter = builder.Gt(i => i.Timestamp, lastMessageDate);
+
+			// Create the sort filter
+			SortDefinition<JobMessageDto> sort = Builders<JobMessageDto>.Sort.Descending(i => i.Timestamp);
+
+			// Find the job messages by capcode
+			IList<JobMessageDto> results = await Collection.Find(filter).Sort(sort).Limit(200).ToListAsync();
+
+			// Map the dto objects to model objects and return
+			List<JobMessage> messages = new List<JobMessage>();
+			messages.AddRange(results.Select(i => MapDbObjectToModel(i)));
+
+			// return the messages
+			return messages;
+
+		}
+
+		/// <summary>
 		/// Gets the list of latest messages that are new since the last message. The results are limited to the selected message types and capcodes.
 		/// </summary>
 		/// <param name="lastId"></param>
@@ -137,7 +177,7 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 			SortDefinition<JobMessageDto> sort = Builders<JobMessageDto>.Sort.Descending(i => i.Timestamp);
 
 			// Find the job messages by capcode
-			IList<JobMessageDto> results = await Collection.Find(filter).Sort(sort).ToListAsync();
+			IList<JobMessageDto> results = await Collection.Find(filter).Sort(sort).Limit(200).ToListAsync();
 
 			// Map the dto objects to model objects and return
 			List<JobMessage> messages = new List<JobMessage>();

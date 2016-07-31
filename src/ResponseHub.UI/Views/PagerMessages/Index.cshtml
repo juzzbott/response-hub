@@ -15,7 +15,7 @@
 
 	@foreach(var message in Model)
 	{
-		<li>
+		<li data-message-id="@message.Id">
 			<p class="bottom-0">
 			<strong>
 				@if (message.Priority == Enivate.ResponseHub.Model.Messages.MessagePriority.Emergency)

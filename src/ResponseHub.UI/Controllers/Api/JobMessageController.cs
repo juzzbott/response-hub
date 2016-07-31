@@ -72,7 +72,7 @@ namespace Enivate.ResponseHub.UI.Controllers.Api
 
 		[Route("pager-messages")]
 		[HttpGet]
-		public async Task<IList<JobMessage>> AllPages()
+		public async Task<IList<JobMessage>> PagerMessages()
 		{
 			int count = 50;
 			int skip = 0;
@@ -86,6 +86,13 @@ namespace Enivate.ResponseHub.UI.Controllers.Api
 			
 			// return the list of messages
 			return await JobMessageService.GetMostRecent(count, skip);
+		}
+
+		[Route("latest-pager-messages/{lastId}")]
+		[HttpGet]
+		public async Task<IList<JobMessage>> LatestPagerMessages(Guid lastId)
+		{
+			return await JobMessageService.GetMostRecent(lastId);
 		}
 
 		[Route]
