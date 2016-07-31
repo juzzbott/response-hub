@@ -64,6 +64,17 @@ namespace Enivate.ResponseHub.ApplicationServices
 		}
 
 		/// <summary>
+		/// Gets the most recent job messages, up to the last message id.
+		/// </summary>
+		/// <param name="count"></param>
+		/// <param name="skip"></param>
+		/// <returns></returns>
+		public async Task<IList<JobMessage>> GetMostRecent(Guid lastId)
+		{
+			return await _repository.GetMostRecent(lastId);
+		}
+
+		/// <summary>
 		/// Gets the most recent count capcodes. 
 		/// </summary>
 		/// <param name="capcodes"></param>
