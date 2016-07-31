@@ -670,7 +670,7 @@ responseHub.pagerMessages = (function () {
 
 				for (var i = 0; i < data.length; i++) {
 
-					addMessageToList(data[i]);
+					addMessageToList(data[i], true);
 
 				}
 
@@ -695,15 +695,13 @@ responseHub.pagerMessages = (function () {
 			dataType: 'json',
 			success: function (data) {
 
+				// Because we are prepending we need to reverse the array so the jobs are displayed in order
+				data.reverse();
+
 				for (var i = 0; i < data.length; i++) {
 
-					addMessageToList(data[i]);
+					addMessageToList(data[i], false);
 
-				}
-
-				// If there is zero results, hide the show more button
-				if (data.length == 0) {
-					$("#all-pages-load-more").remove();
 				}
 
 			}
@@ -711,7 +709,7 @@ responseHub.pagerMessages = (function () {
 
 	}
 
-	function addMessageToList(pagerMessage) {
+	function addMessageToList(pagerMessage, append) {
 
 		var listItem = $('<li data-message-id="' + pagerMessage.Id + '"></li>');
 
@@ -756,7 +754,12 @@ responseHub.pagerMessages = (function () {
 		listItem.append($("<p>" + pagerMessage.MessageContent + "</p>"));
 
 		// Append the list item to list of jobs
-		$("#all-pages-list").append(listItem);
+		if (append == true) {
+			$("#all-pages-list").append(listItem);
+		} else {
+			$("#all-pages-list").prepend(listItem);
+		}
+		
 
 	}
 
