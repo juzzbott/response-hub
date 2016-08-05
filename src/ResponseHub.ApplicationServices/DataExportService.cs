@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -15,6 +16,11 @@ using iTextSharp;
 using iTextSharp.text;
 using iTextSharp.text.pdf;
 using iTextSharp.tool.xml;
+using iTextSharp.tool.xml.pipeline.html;
+using iTextSharp.tool.xml.pipeline.css;
+using iTextSharp.tool.xml.pipeline.end;
+using iTextSharp.tool.xml.parser;
+using Enivate.ResponseHub.Common.Constants;
 
 namespace Enivate.ResponseHub.ApplicationServices
 {
@@ -23,7 +29,7 @@ namespace Enivate.ResponseHub.ApplicationServices
 
 		private const string OverviewTemplateFilename = "DataExportOverview.html";
 
-		public byte[] BuildPdfExportFile(IList<JobMessage> messages)
+		public async Task<byte[]> BuildPdfExportFile(Guid groupId, DateTime dateFrom, DateTime dateTo)
 		{
 			// Create the document
 			Document doc = new Document(new Rectangle(PageSize.A4), 30, 30, 30, 30);
@@ -32,18 +38,29 @@ namespace Enivate.ResponseHub.ApplicationServices
 
 				// Create the pdf writer
 				PdfWriter writer = PdfWriter.GetInstance(doc, ms);
+				writer.CloseStream = false;
+
+				// Create the HTML context
+				HtmlPipelineContext htmlContext = new HtmlPipelineContext(null);
+				htmlContext.SetTagFactory(iTextSharp.tool.xml.html.Tags.GetHtmlTagProcessorFactory());
+
+				// Generate the CSS resolvers
+				ICSSResolver cssResolver = XMLWorkerHelper.GetInstance().GetDefaultCssResolver(false);
+				cssResolver.AddCssFile(System.Web.HttpContext.Current.Server.MapPath("~/assets/css/framework.css"), true);
+				cssResolver.AddCssFile(System.Web.HttpContext.Current.Server.MapPath("~/assets/css/response-hub.css"), true);
+				CssResolverPipeline pipeline = new CssResolverPipeline(cssResolver, new HtmlPipeline(htmlContext, new PdfWriterPipeline(doc, writer)));
+
+				// Create the XML Worker and parser
+				XMLWorker worker = new XMLWorker(pipeline, true);
+				XMLParser parser = new XMLParser(worker);
 
 				// Open the document
-				doc.SetPageSize(PageSize.A4.Rotate());
 				doc.Open();
 
 				// Create the html writer
-				TextReader reader = new StringReader(GetOverviewHtml(messages));
-				XMLWorkerHelper.GetInstance().ParseXHtml(writer, doc, reader);
-
-				doc.SetPageSize(PageSize.A4);
-				doc.NewPage();
-
+				TextReader reader = new StringReader(await GetReportHtml(groupId, dateFrom, dateTo));
+				parser.Parse(reader);
+				
 				// Close the document
 				doc.Close();
 
@@ -52,24 +69,29 @@ namespace Enivate.ResponseHub.ApplicationServices
 			
 		}
 
-		private string GetOverviewHtml(IList<JobMessage> messages)
+		private async Task<string> GetReportHtml(Guid groupId, DateTime dateFrom, DateTime dateTo)
 		{
-			// Get the path to the overview file
-			string basePath = System.Web.HttpContext.Current.Server.MapPath(ConfigurationManager.AppSettings["DataExportTemplatePath"]);
-			string filePath = String.Format("{0}\\{1}", basePath, OverviewTemplateFilename);
+			// Get the web response for the report
+			// To force a page break: style="page-break-before: always"
+			HttpWebRequest request = HttpWebRequest.CreateHttp(String.Format("{0}/control-panel/data-export/generate-pdf-export?group_id={1}&date_from={2}&date_to={3}",
+				ConfigurationManager.AppSettings[ConfigurationKeys.BaseWebsiteUrl],
+				groupId,
+				dateFrom.ToString("yyyyMMddHHmmss"),
+				dateTo.ToString("yyyyMMddHHmmss")));
 
-			// Read the html into a string
-			string html = File.ReadAllText(filePath);
+			HttpWebResponse response = (HttpWebResponse)await request.GetResponseAsync();
 
-			// Build the job list html for overview
-			string jobListHtml = BuildJobListOverviewHtml(messages);
+			// If the response is not successful, then throw exception
+			if (response.StatusCode != HttpStatusCode.OK)
+			{
+				throw new Exception("There was an error response from the Generate PDF Export request.");
+			}
 
-			// Replace the overview placeholder with the jobList markup
-			html = html.Replace("#JobListOverview#", jobListHtml);
-			html = html.Replace("#JobCount#", messages.Count.ToString());
-
-			// return the html
-			return html;
+			// Get the test from the response
+			using (StreamReader reader = new StreamReader(response.GetResponseStream()))
+			{
+				return reader.ReadToEnd();
+			}
 		}
 
 		private string BuildJobListOverviewHtml(IList<JobMessage> messages)

@@ -1,0 +1,118 @@
+﻿@model Enivate.ResponseHub.UI.Areas.ControlPanel.Models.DataExport.PdfDataExportViewModel
+@using Enivate.ResponseHub.Common.Extensions;
+@{
+    ViewBag.Title = "GeneratePdfReport";
+    Layout = "~/Areas/ControlPanel/Views/Shared/PdfExportLayout.cshtml";
+}
+
+<h1 class="text-primary">Job data report</h1>
+
+<p>Export contains @Model.Messages.Count job@(Model.Messages.Count != 1 ? "s" : "").</p>
+
+<table class="table results-overview">
+	<thead>
+		<tr>
+			<th class="job-number">Job Number</th>
+			<th class="date-time">Date/Time</th>
+			<th class="message">Message</th>
+		</tr>
+	</thead>
+	<tbody>
+		@foreach(var message in Model.Messages)
+		{
+			<tr>
+				<td>@message.JobNumber</td>
+				<td>@message.Timestamp.ToLocalTime().ToString("dd/MM/yyyy HH:mm:ss")</td>
+				<td>@message.MessageContent</td>
+			</tr>
+		}
+	</tbody>
+</table>
+
+@foreach (var message in Model.Messages)
+{
+	<div class="job-message-detail" style="page-break-before: always">
+		<h2 class="text-primary">@(!String.IsNullOrEmpty(message.JobNumber) ? message.JobNumber : "No job number")</h2>
+		<p class="text-muted">Time: @message.Timestamp.ToLocalTime().ToString("dd/MM/yyyy HH:mm:ss") | Priority: @message.Priority.GetEnumDescription() | Capcode: @message.Capcode</p>
+		<p class="lead">@message.MessageContent</p>
+
+		@if (message.Location != null)
+		{
+			<div class="location-info">
+				<p>
+					Map reference: @message.Location.MapReference
+					@if (message.Location.Coordinates != null && !message.Location.Coordinates.IsEmpty())
+					{
+						<br />
+						@:GPS Coordinates: @message.Location.Coordinates.ToString()
+					}
+				</p>
+				@if (message.Location.Coordinates != null && !message.Location.Coordinates.IsEmpty())
+				{
+				<p class="message-map-image">
+					<img src="@System.Configuration.ConfigurationManager.AppSettings["BaseWebsiteUrl"]/media/mapbox-static/@message.Location.Coordinates.Latitude,@message.Location.Coordinates.Longitude,13/640x250" width="640" height="250" />
+				</p>
+				}
+			</div>
+		}
+
+		<div class="row">
+			<div class="col-xs-4">
+				<div class="progress-time progress-on-route">
+					<h4>On route</h4>
+					@{
+						var onRoute = message.ProgressUpdates.FirstOrDefault(i => i.ProgressType == Enivate.ResponseHub.Model.Messages.MessageProgressType.OnRoute);
+						if (onRoute != null)
+						{
+						<span class="btn-icon"><i class="fa fa-fw fa-clock-o"></i>@onRoute.Timestamp.ToLocalTime().ToString("yyyy-MM-dd HH:mm")</span><br />
+						}
+					}
+				</div>
+			</div>
+			<div class="col-xs-4">
+				<div class="progress-time progress-on-scene">
+					<h4>On scene</h4>
+					@{
+						var onScene = message.ProgressUpdates.FirstOrDefault(i => i.ProgressType == Enivate.ResponseHub.Model.Messages.MessageProgressType.OnScene);
+						if (onScene != null)
+						{
+							<span class="btn-icon"><i class="fa fa-fw fa-clock-o"></i>@onScene.Timestamp.ToLocalTime().ToString("yyyy-MM-dd HH:mm")</span><br />
+						}
+					}
+				</div>
+			</div>
+			<div class="col-xs-4">
+				<div class="progress-time progress-job-clear">
+					<h4>On route</h4>
+					@{
+						var jobClear = message.ProgressUpdates.FirstOrDefault(i => i.ProgressType == Enivate.ResponseHub.Model.Messages.MessageProgressType.JobClear);
+						if (jobClear != null)
+						{
+							<span class="btn-icon"><i class="fa fa-fw fa-clock-o"></i>@jobClear.Timestamp.ToLocalTime().ToString("yyyy-MM-dd HH:mm")</span><br />
+						}
+					}
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-xs-12">
+				<h4>Notes</h4>
+
+				@if (message.Notes.Count == 0)
+				{
+					<p>No notes available.</p>
+				}
+				@foreach(var note in message.Notes)
+				{
+					<div class="job-note">
+						<span class="text-info">@note.Created.ToLocalTime().ToString("dd/MM/yyyy HH:mm:ss")</span>
+						<p>@note.Body</p>
+					</div>
+				}
+
+			</div>
+		</div>
+
+	</div>
+}

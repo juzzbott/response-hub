@@ -205,6 +205,7 @@
     <Compile Include="Areas\ControlPanel\Controllers\HomeController.cs" />
     <Compile Include="Areas\ControlPanel\ControlPanelAreaRegistration.cs" />
     <Compile Include="Areas\ControlPanel\Models\DataExport\DataExportFilterViewModel.cs" />
+    <Compile Include="Areas\ControlPanel\Models\DataExport\PdfDataExportViewModel.cs" />
     <Compile Include="Controllers\Api\EventsController.cs" />
     <Compile Include="Controllers\BaseJobsMessagesController.cs" />
     <Compile Include="Controllers\MessagesController.cs" />
@@ -266,7 +267,6 @@
     <Content Include="App_Data\EmailTemplates\group_created.html" />
     <Content Include="App_Data\EmailTemplates\password_changed.html" />
     <Content Include="App_Data\EmailTemplates\password_reset.html" />
-    <Content Include="App_Data\ExportTemplates\DataExportOverview.html" />
     <Content Include="assets\css\framework.css" />
     <Content Include="assets\css\lib\bootstrap-datepicker3.min.css" />
     <Content Include="assets\css\lib\bootstrap-grid-xl.css" />
@@ -279,6 +279,7 @@
     <Content Include="assets\images\leaflet\marker-icon-2x.png" />
     <Content Include="assets\images\leaflet\marker-icon.png" />
     <Content Include="assets\images\leaflet\marker-shadow.png" />
+    <Content Include="assets\images\map-marker.png" />
     <Content Include="assets\js\framework.js" />
     <Content Include="assets\js\lib\bootstrap-datepicker.min.js" />
     <Content Include="assets\js\lib\bootstrap-tabcollapse.js" />
@@ -495,6 +496,8 @@
     <Content Include="Areas\ControlPanel\Views\Shared\_Layout.cshtml" />
     <Content Include="Areas\ControlPanel\Views\Shared\ControlPanelSidebarMenu.cshtml" />
     <Content Include="Areas\ControlPanel\Views\DataExport\Index.cshtml" />
+    <Content Include="Areas\ControlPanel\Views\DataExport\GeneratePdfExport.cshtml" />
+    <Content Include="Areas\ControlPanel\Views\Shared\PdfExportLayout.cshtml" />
     <None Include="Web.Staging.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

@@ -14,6 +14,7 @@ using Enivate.ResponseHub.Model.Messages;
 using Enivate.ResponseHub.Model.Messages.Interface;
 using Enivate.ResponseHub.Common;
 using Enivate.ResponseHub.Model.DataExport.Interface;
+using System.Globalization;
 
 namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 {
@@ -80,16 +81,17 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 			DateTime dateFrom = model.DateFrom.Date;
 			DateTime dateTo = new DateTime(model.DateTo.Year, model.DateTo.Month, model.DateTo.Day, 23, 59, 59);
 
-			// Get the list of messages for the capcode
-			IList<JobMessage> messages = await JobMessageService.GetJobMessagesBetweenDates(
-				new List<string> { group.Capcode },
-				MessageType.Job & MessageType.Message,
-				dateFrom,
-				dateTo);
-
 			// Now that we have the messages, get the export type from the model, and return
 			if (model.ExportType == "csv")
 			{
+				
+				// Get the list of messages for the capcode
+				IList<JobMessage> messages = await JobMessageService.GetJobMessagesBetweenDates(
+					new List<string> { group.Capcode },
+					MessageType.Job & MessageType.Message,
+					dateFrom,
+					dateTo);
+
 				string export = DataExportService.BuildCsvExportFile(messages);
 
 				// return the file as a download
@@ -99,12 +101,48 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 			}
 			else
 			{
-				FileContentResult result = new FileContentResult(DataExportService.BuildPdfExportFile(messages), "application/pdf");
+
+				// Get the PDF bytes
+				byte[] pdfBytes = await DataExportService.BuildPdfExportFile(model.GroupId, dateFrom, dateTo);
+
+				FileContentResult result = new FileContentResult(pdfBytes, "application/pdf");
 				result.FileDownloadName = String.Format("data-export-{0}.pdf", DateTime.Now.ToString("yyyy-MM-dd-HHmmss"));
 				return result;
 			}
 
 		}
+
+		[Route("generate-pdf-export")]
+		[HttpGet]
+		[AllowAnonymous]
+		public async Task<ActionResult> GeneratePdfExport()
+		{
+
+			// Get the parameters from the query string
+			Guid groupId = new Guid(Request.QueryString["group_id"]);
+			DateTime dateFrom = DateTime.ParseExact(Request.QueryString["date_from"], "yyyyMMddHHmmss", CultureInfo.CurrentCulture);
+			DateTime dateTo = DateTime.ParseExact(Request.QueryString["date_to"], "yyyyMMddHHmmss", CultureInfo.CurrentCulture);
+
+			// Get the group by the id
+			Group group = await GroupService.GetById(groupId);
+
+			// Get the list of messages for the capcode
+			IList<JobMessage> messages = await JobMessageService.GetJobMessagesBetweenDates(
+				new List<string> { group.Capcode },
+				MessageType.Job & MessageType.Message,
+				dateFrom,
+				dateTo);
+
+			// Create the model
+			PdfDataExportViewModel model = new PdfDataExportViewModel
+			{
+				Messages = messages
+			};
+
+			return View(model);
+
+		}
+
 		
 	}
 }

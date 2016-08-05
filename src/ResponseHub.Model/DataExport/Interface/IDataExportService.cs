@@ -13,7 +13,7 @@ namespace Enivate.ResponseHub.Model.DataExport.Interface
 
 		string BuildCsvExportFile(IList<JobMessage> messages);
 
-		byte[] BuildPdfExportFile(IList<JobMessage> messages);
+		Task<byte[]> BuildPdfExportFile(Guid groupId, DateTime dateFrom, DateTime dateTo);
 
 	}
 }

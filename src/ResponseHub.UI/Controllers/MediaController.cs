@@ -18,6 +18,7 @@ namespace Enivate.ResponseHub.UI.Controllers
 	public class MediaController : BaseController
     {
 
+		[AllowAnonymous]
 		[Route("mapbox-static/{lat:double},{lng:double},{zoom:int}/{size}")]
 		// GET: Media/mapbox-static
 		public async Task<ActionResult> MapBoxStatic(double lat, double lng, int zoom, string size)

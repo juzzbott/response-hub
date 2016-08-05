@@ -78,5 +78,10 @@ namespace Enivate.ResponseHub.Model.Spatial
 			return radians * radToDegFactor;
 		}
 
+		public bool IsEmpty()
+		{
+			return (Latitude == 0 && Longitude == 0);
+		}
+
 	}
 }
