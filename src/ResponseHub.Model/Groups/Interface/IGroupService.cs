@@ -19,6 +19,8 @@ namespace Enivate.ResponseHub.Model.Groups.Interface
 
 		Task<Group> GetById(Guid id);
 
+		Task<IList<Group>> GetByIds(IEnumerable<Guid> ids);
+
 		Task<bool> CheckIfGroupExists(string name, ServiceType service);
 
 		Task AddUserToGroup(Guid userId, string role, Guid groupId);

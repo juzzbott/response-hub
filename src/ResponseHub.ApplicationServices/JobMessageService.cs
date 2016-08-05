@@ -138,5 +138,10 @@ namespace Enivate.ResponseHub.ApplicationServices
 
 		}
 
+		public async Task<IList<JobMessage>> GetJobMessagesBetweenDates(IEnumerable<string> capcodes, MessageType messageTypes, DateTime dateFrom, DateTime dateTo)
+		{
+			return await _repository.GetJobMessagesBetweenDates(capcodes, messageTypes, dateFrom, dateTo);
+		}
+
 	}
 }

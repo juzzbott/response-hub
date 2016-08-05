@@ -288,6 +288,16 @@ body {
 		}
 	}
 
+	.nav > li.muted-nav {
+		background-color: lighten(@sidebar-backgroud, 3%);
+		border-top: 1px solid darken(@sidebar-backgroud, 2%);
+		border-bottom: 1px solid darken(@sidebar-backgroud, 2%);
+
+		i {
+			color: darken(@sidebar-highlight, 10%);
+		}
+	}
+
 	.nav > li > a {
 		color: @sidebar-foreground;
 		
@@ -1021,6 +1031,20 @@ i.p-message-admin {
 		}
 	}
 
+}
+
+/**
+ * Filters
+ */
+.filter-container {
+	padding-top: 20px;
+	background-color: #fbfbfb;
+	border: 1px solid #eee;
+	margin-bottom: 20px;
+	margin-left: 0;
+	margin-right: 0;
+	padding-left: 10px;
+	padding-right: 10px;
 }
 
 /**

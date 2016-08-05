@@ -64,6 +64,7 @@
   <ItemGroup>
     <Compile Include="Agencies\Agency.cs" />
     <Compile Include="Agencies\Interface\IAgencyService.cs" />
+    <Compile Include="DataExport\Interface\IDataExportService.cs" />
     <Compile Include="Events\Event.cs" />
     <Compile Include="Events\EventResource.cs" />
     <Compile Include="Events\Interface\IEventService.cs" />

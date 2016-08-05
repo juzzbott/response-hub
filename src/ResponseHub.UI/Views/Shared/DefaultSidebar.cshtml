@@ -30,4 +30,10 @@
 		</ul>
 		}
 	</li>
+	@if (Html.IsGroupAdminUser())
+	{
+		<li class="muted-nav">
+			<a href="/control-panel"><i class="fa fa-fw fa-cogs"></i>Group administration</a>
+		</li>
+	}
 </ul>

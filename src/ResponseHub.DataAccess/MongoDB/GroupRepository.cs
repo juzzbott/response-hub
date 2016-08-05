@@ -41,7 +41,7 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 		/// Gets all of the groups in the system.
 		/// </summary>
 		/// <returns></returns>
-		public new async Task<IList<Group>> GetAll()
+		public async Task<IList<Group>> GetAll(IList<Region> regions)
 		{
 			IList<GroupDto> allResults = await base.GetAll();
 
@@ -49,7 +49,7 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 			IList<Group> groups = new List<Group>();
 			foreach(GroupDto groupDto in allResults)
 			{
-				groups.Add(await MapDtoToModel(groupDto));
+				groups.Add(MapDtoToModel(groupDto, regions));
 			}
 
 			return groups;
@@ -60,10 +60,28 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 		/// </summary>
 		/// <param name="id"></param>
 		/// <returns></returns>
-		public new async Task<Group> GetById(Guid id)
+		public async Task<Group> GetById(Guid id, IList<Region> regions)
 		{
 			GroupDto group = await base.GetById(id);
-			return await MapDtoToModel(group);
+			return MapDtoToModel(group, regions);
+		}
+
+		/// <summary>
+		/// Gets the groups based on the collection of ids submitted. 
+		/// </summary>
+		/// <param name="ids"></param>
+		/// <returns></returns>
+		public async Task<IList<Group>> GetByIds(IEnumerable<Guid> ids, IList<Region> regions)
+		{
+
+			// Create the filter definition
+			FilterDefinition<GroupDto> filter = Builders<GroupDto>.Filter.In(i => i.Id, ids);
+
+			// Get the group dtos from the database
+			IList<GroupDto> groups = await Collection.Find(filter).ToListAsync();
+
+			// return the mapped list of objects.
+			return MapDbObjectListToModelObjectList(groups, regions);
 		}
 
 		/// <summary>
@@ -71,7 +89,7 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 		/// </summary>
 		/// <param name="group">The group to create.</param>
 		/// <returns>The saved group.</returns>
-		public async Task<Group> CreateGroup(Group group)
+		public async Task<Group> CreateGroup(Group group, IList<Region> regions)
 		{
 
 			// Debug logging
@@ -81,7 +99,7 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 			GroupDto groupDto = await Save(MapModelToDto(group));
 
 			// return the group
-			return await MapDtoToModel(groupDto);
+			return MapDtoToModel(groupDto, regions);
 		}
 
 		/// <summary>
@@ -89,14 +107,14 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 		/// </summary>
 		/// <param name="count">The limit of results to return from the database query.</param>
 		/// <returns>The most recent groups found.</returns>
-		public async Task<IList<Group>> GetRecentlyAdded(int count)
+		public async Task<IList<Group>> GetRecentlyAdded(int count, IList<Region> regions)
 		{
 
 			// Find most recent groups and limit by count
 			IList<GroupDto> groups = await Collection.Find(new BsonDocument()).Sort(Builders<GroupDto>.Sort.Descending(i => i.Created)).Limit(count).ToListAsync();
 
 			// return the mapped result set
-			return await MapDbObjectListToModelObjectList(groups);
+			return MapDbObjectListToModelObjectList(groups, regions);
 
 		}
 
@@ -132,7 +150,7 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 		/// </summary>
 		/// <param name="userId">The id of the user to get the groups for.</param>
 		/// <returns>The collection of groups the user is a member of.</returns>
-		public async Task<IList<Group>> GetGroupsForUser(Guid userId)
+		public async Task<IList<Group>> GetGroupsForUser(Guid userId, IList<Region> regions)
 		{
 
 			// Create the filter to search the Users sub collection for the users id
@@ -142,7 +160,7 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 			IList<GroupDto> usersGroups = await Collection.Find(filter).ToListAsync();
 
 			// return the mapped result set
-			return await MapDbObjectListToModelObjectList(usersGroups);
+			return MapDbObjectListToModelObjectList(usersGroups, regions);
 
 		}
 
@@ -151,7 +169,7 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 		/// </summary>
 		/// <param name="name">The name to find the group by.</param>
 		/// <returns>The list of groups matching the result.</returns>
-		public async Task<IList<Group>> FindByName(string name)
+		public async Task<IList<Group>> FindByName(string name, IList<Region> regions)
 		{
 
 			// Get the results of the text search.
@@ -163,7 +181,7 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 			// For each result, map to a Group model object.
 			foreach(GroupDto result in results.Items)
 			{
-				mappedGroups.Add(await MapDtoToModel(result));
+				mappedGroups.Add(MapDtoToModel(result, regions));
 			}
 
 			// return the mapped groups.
@@ -255,7 +273,7 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 		/// </summary>
 		/// <param name="dbObj"></param>
 		/// <returns></returns>
-		private async Task<Group> MapDtoToModel(GroupDto dbObj)
+		private Group MapDtoToModel(GroupDto dbObj, IList<Region> regions)
 		{
 
 			// If the database object is null, nothing we can do, so just return null.
@@ -263,9 +281,6 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 			{
 				return null;
 			}
-
-			// Get the region from the dto region id
-			IList<Region> regions = await _mongoDb.GetCollection<Region>("regions").Find(new BsonDocument()).ToListAsync();
 
 			return new Group()
 			{
@@ -288,13 +303,13 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 		/// </summary>
 		/// <param name="groups"></param>
 		/// <returns></returns>
-		private async Task<IList<Group>> MapDbObjectListToModelObjectList(IList<GroupDto> groups)
+		private IList<Group> MapDbObjectListToModelObjectList(IList<GroupDto> groups, IList<Region> regions)
 		{
 			// return the groups found in the database.
 			IList<Group> mappedGroups = new List<Group>();
 			foreach (GroupDto group in groups)
 			{
-				mappedGroups.Add(await MapDtoToModel(group));
+				mappedGroups.Add(MapDtoToModel(group, regions));
 			}
 
 			return mappedGroups;

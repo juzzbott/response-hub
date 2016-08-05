@@ -213,6 +213,14 @@ body {
 .sidebar .nav > li.active a:focus i {
   color: #e2c498;
 }
+.sidebar .nav > li.muted-nav {
+  background-color: #263339;
+  border-top: 1px solid #1c262a;
+  border-bottom: 1px solid #1c262a;
+}
+.sidebar .nav > li.muted-nav i {
+  color: #d7ad70;
+}
 .sidebar .nav > li > a {
   color: #c8c5ba;
 }
@@ -777,6 +785,19 @@ i.p-message-admin {
   color: #fff;
   cursor: pointer;
   padding-left: 6px;
+}
+/**
+ * Filters
+ */
+.filter-container {
+  padding-top: 20px;
+  background-color: #fbfbfb;
+  border: 1px solid #eee;
+  margin-bottom: 20px;
+  margin-left: 0;
+  margin-right: 0;
+  padding-left: 10px;
+  padding-right: 10px;
 }
 /**
  * Mixins

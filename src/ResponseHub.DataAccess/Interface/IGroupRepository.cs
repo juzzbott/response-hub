@@ -11,21 +11,23 @@ namespace Enivate.ResponseHub.DataAccess.Interface
 	public interface IGroupRepository
 	{
 
-		Task<Group> CreateGroup(Group group);
+		Task<Group> CreateGroup(Group group, IList<Region> regions);
 
-		Task<IList<Group>> GetRecentlyAdded(int count);
+		Task<IList<Group>> GetRecentlyAdded(int count, IList<Region> regions);
 
 		Task<bool> CheckIfGroupExists(string name, ServiceType service);
 
 		Task AddUserToGroup(UserMapping userMapping, Guid groupId);
 
-		Task<IList<Group>> GetGroupsForUser(Guid userId);
+		Task<IList<Group>> GetGroupsForUser(Guid userId, IList<Region> regions);
 
-		Task<IList<Group>> GetAll();
+		Task<IList<Group>> GetAll(IList<Region> regions);
 
-		Task<Group> GetById(Guid id);
+		Task<Group> GetById(Guid id, IList<Region> regions);
 
-		Task<IList<Group>> FindByName(string name);
+		Task<IList<Group>> GetByIds(IEnumerable<Guid> ids, IList<Region> regions);
+
+		Task<IList<Group>> FindByName(string name, IList<Region> regions);
 
 		/// <summary>
 		/// Updates a group in the database with the specified group values.

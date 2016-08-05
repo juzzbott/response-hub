@@ -1,0 +1,71 @@
+﻿@model Enivate.ResponseHub.UI.Areas.ControlPanel.Models.DataExport.DataExportFilterViewModel
+@{
+    ViewBag.Title = "Data export";
+    Layout = "~/Areas/ControlPanel/Views/Shared/_Layout.cshtml";
+}
+
+<h1>@ViewBag.Title</h1>
+
+<div class="filter-container">
+
+	<form action="@Request.Url.LocalPath" method="post" id="export-form">
+
+		@Html.AntiForgeryToken()
+
+		<div class="form-group">
+			<label for="Service">Group *</label>
+			<div class="row">
+				<div class="col-sm-8 col-md-6 col-lg-4">
+					@Html.DropDownListFor(model => model.GroupId, Model.AvailableGroups, new { @class = "form-control" })
+				</div>
+			</div>
+			@Html.ValidationMessageFor(model => model.GroupId)
+		</div>
+
+		<div class="form-group">
+			<label for="DateStarted">Date from *</label>
+			<div class="row">
+				<div class="col-sm-6 col-md-4">
+					<div class="input-group date datepicker-control" data-provide="datepicker" data-date-format="dd/mm/yyyy" data-date-autoclose="true" data-date-show-on-focus="false">
+						@Html.TextBoxFor(model => model.DateFrom, new { @class = "form-control", @Value = DateTime.Now.AddMonths(-1).ToString("dd/MM/yyyy") })
+						<div class="input-group-addon">
+							<i class="fa fa-fw fa-calendar"></i>
+						</div>
+					</div>
+					<div class="text-muted"><em>Date format should be dd/mm/yyyy.</em></div>
+				</div>
+			</div>
+		</div>
+
+		<div class="form-group">
+			<label for="DateStarted">Date to *</label>
+			<div class="row">
+				<div class="col-sm-6 col-md-4">
+					<div class="input-group date datepicker-control" data-provide="datepicker" data-date-format="dd/mm/yyyy" data-date-autoclose="true" data-date-show-on-focus="false">
+						@Html.TextBoxFor(model => model.DateTo, new { @class = "form-control", @Value = DateTime.Now.ToString("dd/MM/yyyy") })
+						<div class="input-group-addon">
+							<i class="fa fa-fw fa-calendar"></i>
+						</div>
+					</div>
+					<div class="text-muted"><em>Date format should be dd/MM/yyyy.</em></div>
+				</div>
+			</div>
+			
+		</div>
+
+		@Html.HiddenFor(model => model.ExportType, new { @Value = "csv" })
+
+		<div class="btn-group">
+			<button type="submit" class="btn btn-primary btn-icon"><i class="fa fa-fw fa-download"></i> Export to CSV</button>
+			<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+				<span class="caret"></span>
+				<span class="sr-only">Toggle Dropdown</span>
+			</button>
+			<ul class="dropdown-menu">
+				<li><a href="#" onclick="$('#ExportType').val('pdf'); $('#export-form').submit(); return false;">Export to PDF</a></li>
+			</ul>
+		</div>
+
+	</form>
+
+</div>

@@ -18,7 +18,6 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
     {
 
 		[Route]
-
 		[ClaimsAuthorize(Roles = RoleTypes.GroupAdministrator)]
 		// GET: ControlPanel/Home
 		public async Task<ActionResult> Index()

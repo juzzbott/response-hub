@@ -66,7 +66,7 @@ namespace Enivate.ResponseHub.ApplicationServices
 			});
 
 			// Create the new group
-			Group newGroup = await _repository.CreateGroup(group);
+			Group newGroup = await _repository.CreateGroup(group, await GetRegions());
 
 			// If the new group exists, we need to clear the recently added group cache
 			if (newGroup != null)
@@ -84,7 +84,7 @@ namespace Enivate.ResponseHub.ApplicationServices
 		/// <returns></returns>
 		public async Task<IList<Group>> GetAll()
 		{
-			return await _repository.GetAll();
+			return await _repository.GetAll(await _regionRepository.GetAll());
 		}
 
 		/// <summary>
@@ -107,7 +107,7 @@ namespace Enivate.ResponseHub.ApplicationServices
 			if (groups == null)
 			{
 				// Get the groups from the db
-				groups = await _repository.GetRecentlyAdded(count);
+				groups = await _repository.GetRecentlyAdded(count, await GetRegions());
 
 				// If the groups arent null and contains items, add to the cache
 				if (groups != null && groups.Count > 0)
@@ -134,7 +134,7 @@ namespace Enivate.ResponseHub.ApplicationServices
 			if (group == null)
 			{
 				// Get the group from the db
-				group = await _repository.GetById(id);
+				group = await _repository.GetById(id, await GetRegions());
 
 				// If the group is not null, store it in cache for next use.
 				if (group != null)
@@ -146,6 +146,16 @@ namespace Enivate.ResponseHub.ApplicationServices
 
 			// return the group
 			return group;
+		}
+
+		/// <summary>
+		/// Gets the groups by the specified collection of Ids.
+		/// </summary>
+		/// <param name="ids">The collection of ids to get the groups by.</param>
+		/// <returns>The collection of groups that have the ids.</returns>
+		public async Task<IList<Group>> GetByIds(IEnumerable<Guid> ids)
+		{
+			return await _repository.GetByIds(ids, await GetRegions());
 		}
 
 		/// <summary>
@@ -184,7 +194,7 @@ namespace Enivate.ResponseHub.ApplicationServices
 		/// <returns>The collection of groups the user is a member of.</returns>
 		public async Task<IList<Group>> GetGroupsForUser(Guid userId)
 		{
-			return await _repository.GetGroupsForUser(userId);
+			return await _repository.GetGroupsForUser(userId, await GetRegions());
 		}
 
 		/// <summary>
@@ -195,7 +205,7 @@ namespace Enivate.ResponseHub.ApplicationServices
 		public async Task<IList<IdentityUser>> GetUsersForGroup(Guid groupId)
 		{
 			// Get the group
-			Group group = await _repository.GetById(groupId);
+			Group group = await _repository.GetById(groupId, await GetRegions());
 
 			// If the group is null, just return an empty list
 			if (group == null)
@@ -243,7 +253,7 @@ namespace Enivate.ResponseHub.ApplicationServices
 		/// <returns>The list of groups that match against the group name.</returns>
 		public async Task<IList<Group>> FindByName(string name)
 		{
-			return await _repository.FindByName(name);
+			return await _repository.FindByName(name, await GetRegions());
 		}
 
 		/// <summary>
