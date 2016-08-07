@@ -1053,31 +1053,54 @@ i.p-message-admin {
 
 body.data-export-pdf {
 	background-color: #fff;
-	font-size: 11px;
+	font-size: 13px;
 	padding-top: 0;
 
 	table {
-		font-size: 11px;
+		font-size: 13px;
 
 		td {
-			padding: 0 4px;
+			padding: 6px 4px;
 			line-height: 1.1;
+		}
+
+		th {
+			padding: 6px 4px;
 		}
 
 		&.results-overview {
 			.job-number {
-				width: 80px;
+				width: 110px;
 			}
 			.date-time {
-				width: 120px;
+				width: 150px;
 			}
+		}
+	}
+
+	.job-progress-table  {
+
+		thead th {
+			border-bottom: 0px;
+		}
+	
+		td {
+			border-top: 0px;
+		}
+
+		.on-route {
+			padding-left: 0;
+		}
+
+		h4 {
+			margin-bottom: 0;
 		}
 	}
 
 	.message-map-image {
 		position: relative;
-		width: 640px;
-		height: 250px;
+		width: 900px;
+		height: 300px;
 
 		img {
 			position: absolute;
@@ -1088,20 +1111,26 @@ body.data-export-pdf {
 		span {
 			display: block;
 			position: absolute;
-			left: 296px;
-			top: 77px;
+			left: 426px;
+			top: 102px;
 		}
 
 	}
 
-	.job-note {
-		padding-left: 10px;
-		border: 0;    /*First set all the borders to 0, then set the desired borders width*/
-		border-left-color: #d6e3e0;
-		border-left-width: 2px; /*PDF*/
-		border-left-style: solid;
+	.notes li {
+		border-left: 3px solid #D6E3E0;
+		border-top: 1px solid #e5edeb;
+		border-right: 1px solid #e5edeb;
+		border-bottom: 1px solid #e5edeb;
+		background-color: #fafafa;
+		padding-left: 8px;
+		padding-top: 4px;
+		padding-bottom: 2px;
 		margin-bottom: 10px;
-		border-bottom: 1px solid #ccc;
+
+		.wordback-icon {
+			margin-left: 5px;
+		}
 	}
 
 }

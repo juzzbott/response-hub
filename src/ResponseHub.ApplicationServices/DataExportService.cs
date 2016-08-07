@@ -7,10 +7,13 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
+using Enivate.ResponseHub.Common.Constants;
 using Enivate.ResponseHub.Model.Groups;
 using Enivate.ResponseHub.Model.Messages;
 using Enivate.ResponseHub.Model.DataExport.Interface;
 using Enivate.ResponseHub.Model.Spatial;
+
+using EvoPdf;
 
 using iTextSharp;
 using iTextSharp.text;
@@ -20,7 +23,6 @@ using iTextSharp.tool.xml.pipeline.html;
 using iTextSharp.tool.xml.pipeline.css;
 using iTextSharp.tool.xml.pipeline.end;
 using iTextSharp.tool.xml.parser;
-using Enivate.ResponseHub.Common.Constants;
 
 namespace Enivate.ResponseHub.ApplicationServices
 {
@@ -32,40 +34,56 @@ namespace Enivate.ResponseHub.ApplicationServices
 		public async Task<byte[]> BuildPdfExportFile(Guid groupId, DateTime dateFrom, DateTime dateTo)
 		{
 			// Create the document
-			Document doc = new Document(new Rectangle(PageSize.A4), 30, 30, 30, 30);
-			using (MemoryStream ms = new MemoryStream())
-			{
+			//Document doc = new Document(new Rectangle(PageSize.A4), 30, 30, 30, 30);
+			//using (MemoryStream ms = new MemoryStream())
+			//{
+			//
+			//	// Create the pdf writer
+			//	PdfWriter writer = PdfWriter.GetInstance(doc, ms);
+			//	writer.CloseStream = false;
+			//
+			//	// Create the HTML context
+			//	HtmlPipelineContext htmlContext = new HtmlPipelineContext(null);
+			//	htmlContext.SetTagFactory(iTextSharp.tool.xml.html.Tags.GetHtmlTagProcessorFactory());
+			//
+			//	// Generate the CSS resolvers
+			//	ICSSResolver cssResolver = XMLWorkerHelper.GetInstance().GetDefaultCssResolver(false);
+			//	cssResolver.AddCssFile(System.Web.HttpContext.Current.Server.MapPath("~/assets/css/framework.css"), true);
+			//	cssResolver.AddCssFile(System.Web.HttpContext.Current.Server.MapPath("~/assets/css/response-hub.css"), true);
+			//	CssResolverPipeline pipeline = new CssResolverPipeline(cssResolver, new HtmlPipeline(htmlContext, new PdfWriterPipeline(doc, writer)));
+			//
+			//	// Create the XML Worker and parser
+			//	XMLWorker worker = new XMLWorker(pipeline, true);
+			//	XMLParser parser = new XMLParser(worker);
+			//
+			//	// Open the document
+			//	doc.Open();
+			//
+			//	// Create the html writer
+			//	TextReader reader = new StringReader(await GetReportHtml(groupId, dateFrom, dateTo));
+			//	parser.Parse(reader);
+			//	
+			//	// Close the document
+			//	doc.Close();
+			//
+			//	return ms.ToArray();
+			//}
 
-				// Create the pdf writer
-				PdfWriter writer = PdfWriter.GetInstance(doc, ms);
-				writer.CloseStream = false;
+			HtmlToPdfConverter converter = new HtmlToPdfConverter();
 
-				// Create the HTML context
-				HtmlPipelineContext htmlContext = new HtmlPipelineContext(null);
-				htmlContext.SetTagFactory(iTextSharp.tool.xml.html.Tags.GetHtmlTagProcessorFactory());
+			//set the PDF document margins
+			converter.PdfDocumentOptions.LeftMargin = 30;
+			converter.PdfDocumentOptions.RightMargin = 30;
+			converter.PdfDocumentOptions.TopMargin = 30;
+			converter.PdfDocumentOptions.BottomMargin = 30;
 
-				// Generate the CSS resolvers
-				ICSSResolver cssResolver = XMLWorkerHelper.GetInstance().GetDefaultCssResolver(false);
-				cssResolver.AddCssFile(System.Web.HttpContext.Current.Server.MapPath("~/assets/css/framework.css"), true);
-				cssResolver.AddCssFile(System.Web.HttpContext.Current.Server.MapPath("~/assets/css/response-hub.css"), true);
-				CssResolverPipeline pipeline = new CssResolverPipeline(cssResolver, new HtmlPipeline(htmlContext, new PdfWriterPipeline(doc, writer)));
+			// embed the true type fonts in the generated PDF document
+			converter.PdfDocumentOptions.EmbedFonts = true;
 
-				// Create the XML Worker and parser
-				XMLWorker worker = new XMLWorker(pipeline, true);
-				XMLParser parser = new XMLParser(worker);
+			// compress the images in PDF with JPEG to reduce the PDF document size
+			converter.PdfDocumentOptions.JpegCompressionEnabled = false;
 
-				// Open the document
-				doc.Open();
-
-				// Create the html writer
-				TextReader reader = new StringReader(await GetReportHtml(groupId, dateFrom, dateTo));
-				parser.Parse(reader);
-				
-				// Close the document
-				doc.Close();
-
-				return ms.ToArray();
-			}
+			return converter.ConvertHtml(await GetReportHtml(groupId, dateFrom, dateTo), ConfigurationManager.AppSettings["BaseWebsiteUrl"]);
 			
 		}
 
@@ -93,26 +111,7 @@ namespace Enivate.ResponseHub.ApplicationServices
 				return reader.ReadToEnd();
 			}
 		}
-
-		private string BuildJobListOverviewHtml(IList<JobMessage> messages)
-		{
-			// Create the string builder
-			StringBuilder sb = new StringBuilder();
-
-			// Loop through each message
-			foreach(JobMessage message in messages)
-			{
-				sb.AppendLine("<tr>");
-				sb.AppendLine(String.Format("<td>{0}</td>", message.JobNumber));
-				sb.AppendLine(String.Format("<td>{0}</td>", message.Timestamp.ToLocalTime().ToString("dd/MM/yyyy HH:mm:ss")));
-				sb.AppendLine(String.Format("<td>{0}</td>", message.MessageContent));
-				sb.AppendLine("</tr>");
-			}
-
-			// return the markup
-			return sb.ToString();
-		}
-
+		
 		public string BuildCsvExportFile(IList<JobMessage> messages)
 		{
 			// Create the string builder to store the data in
