@@ -9,6 +9,7 @@ using Enivate.ResponseHub.Logging.Configuration;
 using Enivate.ResponseHub.Model.Identity;
 using Enivate.ResponseHub.UI.Filters;
 using Enivate.ResponseHub.UI.Areas.Admin.Models.Logs;
+using System.Net.Mime;
 
 namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 {
@@ -71,6 +72,48 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 			// return the model
             return View(model);
         }
+
+		[Route("download")]
+		public ActionResult Download()
+		{
+
+			string file = "";
+			// If there is a query string, override it
+			if (!String.IsNullOrEmpty(Request.QueryString["file"]))
+			{
+				// Get the file name from the query string
+				file = Request.QueryString["file"];
+
+				// Ensure there is no directory separator chars. If there are, throw bad request
+				if (file.IndexOf('/') != -1 || file.IndexOf('\\') != -1)
+				{
+					throw new HttpException(400, "Invalid filename in url.");
+				}
+			}
+			else
+			{
+				throw new HttpException(400, "Invalid query string parameters.");
+			}
+
+			// Get the full path to the file
+			string logFilePath = Server.MapPath(String.Format("{0}\\{1}", LoggingConfiguration.Current.LogDirectory, file));
+
+			// if the file exists, read it into the model
+			if (System.IO.File.Exists(logFilePath))
+			{
+				ContentDisposition cd = new ContentDisposition()
+				{
+					FileName = file,
+					Inline = false
+				};
+				Response.AppendHeader("Content-Disposition", cd.ToString());
+				return File(logFilePath, "text/plain", file);
+			}
+			else
+			{
+				throw new HttpException(404, "THe log file could not be found.");
+			}
+		}
 
 		/// <summary>
 		/// Gets the log files in the current configured log directory.
