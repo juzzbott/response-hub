@@ -22,7 +22,10 @@
 
 @if (!String.IsNullOrEmpty(Model.SelectedFile) && !String.IsNullOrEmpty(Model.LogFileData))
 {
-	<h3>@Model.SelectedFile</h3>
+	<h3>
+		@Model.SelectedFile
+		<small><a href="/admin/log-viewer/download?file=@Model.SelectedFile" class="btn btn-link btn-icon"><i class="fa fa-fw fa-download"></i>Download file</a></small>
+	</h3>
 
 	<div class="log-file-data">
 		<pre>@Html.Raw(Model.LogFileData)</pre>
