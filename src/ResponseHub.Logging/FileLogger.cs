@@ -105,7 +105,7 @@ namespace Enivate.ResponseHub.Logging
 
 			// Create the log item
 			StringBuilder sb = new StringBuilder();
-			sb.AppendFormat("{0}  ({1}):  {2}", DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss"), logLevel.ToUpper(), message);
+			sb.AppendFormat("{0}  ({1}):  {2}", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), logLevel.ToUpper(), message);
 			sb.AppendLine();
 
 			// Log the exception details
