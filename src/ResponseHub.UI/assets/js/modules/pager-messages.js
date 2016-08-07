@@ -16,7 +16,7 @@
 
 				for (var i = 0; i < data.length; i++) {
 
-					addMessageToList(data[i]);
+					addMessageToList(data[i], true);
 
 				}
 
@@ -41,18 +41,11 @@
 			dataType: 'json',
 			success: function (data) {
 
-				console.log("Success");
-				console.log(data);
+				// Because we are pre-pending these results, we need to reverse them.
+				data.reverse();
 
 				for (var i = 0; i < data.length; i++) {
-
-					addMessageToList(data[i]);
-
-				}
-
-				// If there is zero results, hide the show more button
-				if (data.length == 0) {
-					$("#all-pages-load-more").remove();
+					addMessageToList(data[i], false);
 				}
 
 			}
@@ -60,7 +53,7 @@
 
 	}
 
-	function addMessageToList(pagerMessage) {
+	function addMessageToList(pagerMessage, append) {
 
 		console.log(pagerMessage.Id);
 
@@ -107,7 +100,11 @@
 		listItem.append($("<p>" + pagerMessage.MessageContent + "</p>"));
 
 		// Append the list item to list of jobs
-		$("#all-pages-list").append(listItem);
+		if (append) {
+			$("#all-pages-list").append(listItem);
+		} else {
+			$("#all-pages-list").prepend(listItem);
+		}
 
 	}
 

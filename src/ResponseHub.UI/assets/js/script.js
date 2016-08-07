@@ -695,13 +695,11 @@ responseHub.pagerMessages = (function () {
 			dataType: 'json',
 			success: function (data) {
 
-				// Because we are prepending we need to reverse the array so the jobs are displayed in order
+				// Because we are pre-pending these results, we need to reverse them.
 				data.reverse();
 
 				for (var i = 0; i < data.length; i++) {
-
 					addMessageToList(data[i], false);
-
 				}
 
 			}
@@ -710,6 +708,8 @@ responseHub.pagerMessages = (function () {
 	}
 
 	function addMessageToList(pagerMessage, append) {
+
+		console.log(pagerMessage.Id);
 
 		var listItem = $('<li data-message-id="' + pagerMessage.Id + '"></li>');
 
@@ -736,7 +736,7 @@ responseHub.pagerMessages = (function () {
 
 		// If there is job number, then show it here
 		if (pagerMessage.JobNumber != "") {
-			topMarkup += pagerMessage.JobNumber + " - "
+			topMarkup += pagerMessage.JobNumber + "!! - "
 		}
 
 		// Close the job and icon section
@@ -754,12 +754,11 @@ responseHub.pagerMessages = (function () {
 		listItem.append($("<p>" + pagerMessage.MessageContent + "</p>"));
 
 		// Append the list item to list of jobs
-		if (append == true) {
+		if (append) {
 			$("#all-pages-list").append(listItem);
 		} else {
 			$("#all-pages-list").prepend(listItem);
 		}
-		
 
 	}
 
