@@ -22,23 +22,8 @@ namespace Enivate.ResponseHub.UI.Controllers
 	public abstract class BaseJobsMessagesController : BaseController
 	{
 
-		private ICapcodeService _capcodeService;
-		protected ICapcodeService CapcodeService
-		{
-			get
-			{
-				return _capcodeService ?? (_capcodeService = UnityConfiguration.Container.Resolve<ICapcodeService>());
-			}
-		}
-
-		private IJobMessageService _jobMessageService;
-		protected IJobMessageService JobMessageService
-		{
-			get
-			{
-				return _jobMessageService ?? (_jobMessageService = UnityConfiguration.Container.Resolve<IJobMessageService>());
-			}
-		}
+		protected readonly ICapcodeService CapcodeService = ServiceLocator.Get<ICapcodeService>();
+		protected readonly IJobMessageService JobMessageService = ServiceLocator.Get<IJobMessageService>();
 
 		#region Helpers
 

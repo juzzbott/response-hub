@@ -12,6 +12,7 @@ using Enivate.ResponseHub.Common.Extensions;
 using Enivate.ResponseHub.DataAccess.Interface;
 using Enivate.ResponseHub.DataAccess.MongoDB.DataObjects.Messages;
 using Enivate.ResponseHub.DataAccess.MongoDB.DataObjects.Spatial;
+using Enivate.ResponseHub.Model;
 using Enivate.ResponseHub.Model.Messages;
 using Enivate.ResponseHub.Model.Spatial;
 
@@ -48,13 +49,21 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 			FilterDefinition<JobMessageDto> filter = builder.In(i => i.Capcode, capcodes);
 
 			// Add the message type to the filter.
+			FilterDefinition<JobMessageDto> priorityFilter = builder.Or();
+			bool prioritySet = false;
 			if (messageTypes.HasFlag(MessageType.Job))
 			{
-				filter = filter & builder.Ne(i => i.Priority, MessagePriority.Administration);
+				priorityFilter = priorityFilter | (builder.Eq(i => i.Priority, MessagePriority.Emergency) | builder.Eq(i => i.Priority, MessagePriority.NonEmergency));
+				prioritySet = true;
 			}
-			else if (messageTypes.HasFlag(MessageType.Message))
+			if (messageTypes.HasFlag(MessageType.Message))
 			{
-				filter = filter & builder.Eq(i => i.Priority, MessagePriority.Administration);
+				priorityFilter = priorityFilter | builder.Eq(i => i.Priority, MessagePriority.Administration);
+				prioritySet = true;
+			}
+			if (prioritySet)
+			{
+				filter &= priorityFilter;
 			}
 
 			// Create the sort filter
@@ -161,13 +170,21 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 			FilterDefinition<JobMessageDto> filter = builder.In(i => i.Capcode, capcodes);
 
 			// Add the message type to the filter.
+			FilterDefinition<JobMessageDto> priorityFilter = builder.Or();
+			bool prioritySet = false;
 			if (messageTypes.HasFlag(MessageType.Job))
 			{
-				filter = filter & builder.Ne(i => i.Priority, MessagePriority.Administration);
+				priorityFilter = priorityFilter | (builder.Eq(i => i.Priority, MessagePriority.Emergency) | builder.Eq(i => i.Priority, MessagePriority.NonEmergency));
+				prioritySet = true;
 			}
-			else if (messageTypes.HasFlag(MessageType.Message))
+			if (messageTypes.HasFlag(MessageType.Message))
 			{
-				filter = filter & builder.Eq(i => i.Priority, MessagePriority.Administration);
+				priorityFilter = priorityFilter | builder.Eq(i => i.Priority, MessagePriority.Administration);
+				prioritySet = true;
+			}
+			if (prioritySet)
+			{
+				filter &= priorityFilter;
 			}
 
 			// Add the date time filter
@@ -262,6 +279,73 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 			// Do the update
 			await Collection.UpdateOneAsync(filter, update);
 		}
+
+		#region Text search
+
+		public async Task<PagedResultSet<JobMessage>> FindByKeyword(string keywords, IEnumerable<string> capcodes, MessageType messageTypes, DateTime dateFrom, DateTime dateTo, int limit, int skip, bool countTotal)
+		{
+
+			// Create the search filter
+			FilterDefinitionBuilder<JobMessageDto> builder = Builders<JobMessageDto>.Filter;
+			FilterDefinition<JobMessageDto> filter = builder.Text(keywords);
+
+			if (capcodes != null)
+			{
+				filter = filter & builder.In(i => i.Capcode, capcodes);
+			}
+
+			// Add the message type to the filter.
+			FilterDefinition<JobMessageDto> priorityFilter = builder.Or();
+			bool prioritySet = false;
+			if (messageTypes.HasFlag(MessageType.Job))
+			{
+				priorityFilter = priorityFilter | (builder.Eq(i => i.Priority, MessagePriority.Emergency) | builder.Eq(i => i.Priority, MessagePriority.NonEmergency));
+				prioritySet = true;
+			}
+			if (messageTypes.HasFlag(MessageType.Message))
+			{
+				priorityFilter = priorityFilter | builder.Eq(i => i.Priority, MessagePriority.Administration);
+				prioritySet = true;
+			}
+			if (prioritySet)
+			{
+				filter &= priorityFilter;
+			}
+
+			// Reset DateTo to 23:59:59 of that date and dateFrom to 00:00:00 so that the entire day is captured
+			dateFrom = new DateTime(dateFrom.Year, dateFrom.Month, dateFrom.Day, 0, 0, 0);
+			dateTo = new DateTime(dateTo.Year, dateTo.Month, dateTo.Day, 23, 59, 59);
+
+			// Add the date filters
+			filter = filter & builder.Gte(i => i.Timestamp, dateFrom);
+			filter = filter & builder.Lte(i => i.Timestamp, dateTo);
+
+			long totalCount = 0;
+			if (countTotal)
+			{
+				totalCount = await Collection.Find<JobMessageDto>(filter).CountAsync();
+			}
+
+			// Create the sort definition
+			SortDefinition<JobMessageDto> sort = Builders<JobMessageDto>.Sort.Descending(i => i.Timestamp);
+
+			// Return the find results.
+			IList<JobMessageDto> results = await Collection.Find<JobMessageDto>(filter).Sort(sort).Skip(skip).Limit(limit).ToListAsync();
+
+			// Create the result object and return it
+			PagedResultSet<JobMessage> resultSet = new PagedResultSet<JobMessage>()
+			{
+				Items = results.Select(i => MapDbObjectToModel(i)).ToList(),
+				Limit = limit,
+				Skip = skip,
+				TotalResults = (int)totalCount
+			};
+
+			return resultSet;
+
+		}
+
+		#endregion
 
 		#region Mappers
 

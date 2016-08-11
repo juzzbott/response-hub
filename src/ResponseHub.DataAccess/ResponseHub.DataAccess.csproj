@@ -104,7 +104,6 @@
     <Compile Include="MongoDB\RegionRepository.cs" />
     <Compile Include="MongoDB\UserRepository.cs" />
     <Compile Include="MongoRepository.cs" />
-    <Compile Include="PagedResultSet.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

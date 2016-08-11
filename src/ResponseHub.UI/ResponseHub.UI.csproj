@@ -196,6 +196,7 @@
     <Compile Include="Controllers\Api\EventsController.cs" />
     <Compile Include="Controllers\BaseJobsMessagesController.cs" />
     <Compile Include="Controllers\MessagesController.cs" />
+    <Compile Include="Controllers\SearchController.cs" />
     <Compile Include="Filters\SystemAdminUserRedirectAttribute.cs" />
     <Compile Include="Models\Api\Events\AddResourcePostModel.cs" />
     <Compile Include="Models\Api\Events\AddResourceResponseModel.cs" />
@@ -242,6 +243,7 @@
     <Compile Include="Models\MyAccount\ChangePasswordViewModel.cs" />
     <Compile Include="Models\MyAccount\CreatePasswordViewModel.cs" />
     <Compile Include="Models\MyAccount\LoginViewModel.cs" />
+    <Compile Include="Models\Search\SearchViewModel.cs" />
     <Compile Include="Models\Users\GroupUserViewModel.cs" />
     <Compile Include="Models\Wallboard\WallboardViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -288,6 +290,14 @@
     <Content Include="Global.asax" />
     <Content Include="Gruntfile.js" />
     <Content Include="robots.txt" />
+    <None Include="Scripts\jquery-1.10.2.intellisense.js" />
+    <Content Include="Scripts\jquery-1.10.2.js" />
+    <Content Include="Scripts\jquery-1.10.2.min.js" />
+    <None Include="Scripts\jquery.validate-vsdoc.js" />
+    <Content Include="Scripts\jquery.validate.js" />
+    <Content Include="Scripts\jquery.validate.min.js" />
+    <Content Include="Scripts\jquery.validate.unobtrusive.js" />
+    <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -481,6 +491,9 @@
     <Content Include="Areas\Admin\Views\SystemSettings\Index.cshtml" />
     <Content Include="Areas\Admin\Views\LogViewer\Index.cshtml" />
     <Content Include="Views\PagerMessages\Index.cshtml" />
+    <Content Include="Views\Search\Index.cshtml" />
+    <Content Include="Scripts\jquery-1.10.2.min.map" />
+    <Content Include="Views\Jobs\JobListItem.cshtml" />
     <None Include="Web.Staging.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

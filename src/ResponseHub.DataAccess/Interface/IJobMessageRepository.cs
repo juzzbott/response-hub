@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using Enivate.ResponseHub.Model;
 using Enivate.ResponseHub.Model.Messages;
 
 namespace Enivate.ResponseHub.DataAccess.Interface
@@ -26,6 +27,8 @@ namespace Enivate.ResponseHub.DataAccess.Interface
 		Task AddNoteToJobMessage(Guid jobMessageId, JobNote note);
 
 		Task AddProgress(Guid jobMessageId, MessageProgress progress);
+
+		Task<PagedResultSet<JobMessage>> FindByKeyword(string keyword, IEnumerable<string> capcodes, MessageType messageTypes, DateTime dateFrom, DateTime dateTo, int limit, int skip, bool countTotal);
 
 	}
 }

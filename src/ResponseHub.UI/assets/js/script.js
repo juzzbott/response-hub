@@ -60,6 +60,25 @@ var responseHub = (function () {
 			$('.tab-collapse').tabCollapse();
 		}
 
+		$('.toggle-header a').click(function () {
+
+			// Get the toggle id
+			var controlId = $(this).data('toggle-id');
+
+			// If the control has hidden, remove it, otherwise add hidden class
+			if ($('#' + controlId).hasClass('hidden'))
+			{
+				$('#' + controlId).removeClass('hidden')
+			}
+			else
+			{
+				$('#' + controlId).addClass('hidden')
+			}
+
+			return false;
+
+		});
+
 	}
 
 	// Bind the modal

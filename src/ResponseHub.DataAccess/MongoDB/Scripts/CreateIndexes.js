@@ -12,7 +12,7 @@ db.groups.createIndex({ "Users.UserId": 1 }, { background: true, name: "Users_Us
 
 // Job Messages
 db.job_messages.createIndex({ "Location.Coordinates": "2dsphere" }, { background: true, name: "Loc_Coords_2dsphere" });
-db.job_messages.createIndex({ MessageContent: "text" }, { background: true });
+db.job_messages.createIndex({ MessageContent: "text", JobNumber: "text" }, { background: true, name: "job_messages_text" });
 
 // Users
 db.users.createIndex({ FirstName: "text", Surname: "text", EmailAddress: "text" }, { background: true, name: "users_text" });

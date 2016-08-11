@@ -38,6 +38,20 @@ body {
 
 }
 
+.unstyled::-webkit-inner-spin-button,
+.unstyled::-webkit-calendar-picker-indicator {
+    display: none;
+    -webkit-appearance: none;
+}
+
+input::-webkit-calendar-picker-indicator{
+	display: none;
+}
+
+input[type="date"]::-webkit-input-placeholder{ 
+	visibility: hidden !important;
+}
+
 .top-0 {
 	margin-top: 0;
 }
@@ -161,6 +175,10 @@ body {
 			color: @header-navbar-highlight;
 		}
 	}
+}
+
+.page-navbar > .container-fluid > .navbar-header {
+    width: 100%;
 }
 
 @media screen and (max-width: 992px) {
@@ -785,7 +803,8 @@ h4.legend {
 
 .job-list {
 	h3 i {
-		margin-right: 10px;
+		margin-right: 1px;
+		text-align: left;
 	}
 
 	.job-message-meta {
@@ -795,14 +814,19 @@ h4.legend {
 		font-size: 17px;
 
 		i {
-			padding-right: 10px;
+			padding-right: 19px;
 		}
 
 	}
 
+	.capcode-group-name {
+		margin-bottom: 5px;
+	}
+
 	.message-date {
 		font-style: italic;
-		margin-bottom: 5px;
+		font-size: 18px;
+		white-space: nowrap;
 	}
 
 }
@@ -1123,6 +1147,36 @@ i.p-message-admin {
 */
 .scrollator_handle {
 	background-color: rgba(64, 64, 64, 0.5);
+}
+
+/**
+ * Filters
+ */
+.filter-container {
+	background-color: #fbfbfb;
+	border: 1px solid #eee;
+	margin-bottom: 20px;
+	margin-left: 0;
+	margin-right: 0;
+	padding-left: 10px;
+	padding-right: 10px;
+}
+
+.toggle-header {
+	a {
+		font-size: 48px;
+		margin-top: -12px;
+		padding-right: 20px;
+		color: #888;
+		text-decoration: none;
+
+		&:hover {
+			text-decoration: none;
+		}
+		&:visited {
+			text-decoration: none;
+		}
+	}
 }
 
 /**
