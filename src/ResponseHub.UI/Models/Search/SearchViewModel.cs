@@ -15,13 +15,15 @@ namespace Enivate.ResponseHub.UI.Models.Search
 
 		public int TotalResults { get; set; }
 
-		public JobMessageListViewModel Results { get; set; }
+		public IList<JobMessageViewModel> Results { get; set; }
 
 		public DateTime? DateFrom { get; set; }
 
 		public DateTime? DateTo { get; set; }
 
 		public MessageType MessageTypes { get; set; }
+
+		public bool FilterApplied { get; set; }
 
 		public SearchViewModel()
 		{

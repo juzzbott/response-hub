@@ -1,4 +1,8 @@
 ﻿@model Enivate.ResponseHub.UI.Models.Messages.JobMessageViewModel
+@{ 
+	string controller = (Model.Priority == Enivate.ResponseHub.Model.Messages.MessagePriority.Administration ? "messages" : "jobs");
+}
+
 <li data-message-id="@Model.Id">
 	<h3>
 		@if (Model.Priority == Enivate.ResponseHub.Model.Messages.MessagePriority.Emergency)
@@ -15,12 +19,12 @@
 		}
 		@if (String.IsNullOrEmpty(Model.JobNumber))
 		{
-			<a href="/@ViewContext.RouteData.Values["Controller"].ToString().ToLower()/@Model.Id">@Model.Timestamp.ToString("dd/MM/yyyy HH:mm:ss")</a>
+			<a href="/@controller/@Model.Id">@Model.Timestamp.ToString("dd/MM/yyyy HH:mm:ss")</a>
 		}
 		else
 		{
-			<a href="/@ViewContext.RouteData.Values["Controller"].ToString().ToLower()/@Model.Id">@Model.JobNumber</a>
-						<span class="text-muted message-date btn-icon">@Model.Timestamp.ToString("dd/MM/yyyy HH:mm:ss")</span>
+			<a href="/@controller/@Model.Id">@Model.JobNumber</a>
+			<span class="text-muted message-date btn-icon">@Model.Timestamp.ToString("dd/MM/yyyy HH:mm:ss")</span>
 		}
 	</h3>
 	<p class="job-message-meta text-muted">

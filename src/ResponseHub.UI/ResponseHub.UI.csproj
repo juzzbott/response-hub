@@ -192,6 +192,7 @@
     <Compile Include="Areas\Admin\Models\LogViewer\LogViewModel.cs" />
     <Compile Include="Areas\Admin\Models\SystemSettings\CacheDetails.cs" />
     <Compile Include="Areas\Admin\Models\SystemSettings\SystemSettingsViewModel.cs" />
+    <Compile Include="Controllers\Api\SearchController.cs" />
     <Compile Include="Controllers\PagerMessagesController.cs" />
     <Compile Include="Controllers\Api\EventsController.cs" />
     <Compile Include="Controllers\BaseJobsMessagesController.cs" />
@@ -201,6 +202,7 @@
     <Compile Include="Models\Api\Events\AddResourcePostModel.cs" />
     <Compile Include="Models\Api\Events\AddResourceResponseModel.cs" />
     <Compile Include="Models\Api\Messages\PostGetLatestFromLastModel.cs" />
+    <Compile Include="Models\Api\Search\SearchPostModel.cs" />
     <Compile Include="Models\Events\AdditionalResourceViewModel.cs" />
     <Compile Include="Models\Events\EventListItemViewModel.cs" />
     <Compile Include="Models\Events\EventViewModel.cs" />
@@ -283,6 +285,7 @@
     <Content Include="assets\js\modules\maps.js" />
     <Content Include="assets\js\modules\password-strength.js" />
     <Content Include="assets\js\modules\resources.js" />
+    <Content Include="assets\js\modules\search.js" />
     <Content Include="assets\js\modules\wallboard.js" />
     <Content Include="assets\js\modules\_core.js" />
     <Content Include="assets\js\script.js" />

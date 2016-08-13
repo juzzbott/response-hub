@@ -12,6 +12,7 @@ using Enivate.ResponseHub.Model;
 using Enivate.ResponseHub.Model.Groups;
 using Enivate.ResponseHub.Model.Messages;
 using Enivate.ResponseHub.UI.Models.Search;
+using Enivate.ResponseHub.UI.Models.Messages;
 
 namespace Enivate.ResponseHub.UI.Controllers
 {
@@ -25,6 +26,9 @@ namespace Enivate.ResponseHub.UI.Controllers
 			// Get the search keywords from the query string
 			string keywords = Request.QueryString["q"];
 
+			// Default to filter not applied
+			bool filterApplied = false;
+
 			DateTime dateFrom = DateTime.MinValue;
 			DateTime dateTo = DateTime.Now;
 			bool dateFromSet = false;
@@ -34,12 +38,14 @@ namespace Enivate.ResponseHub.UI.Controllers
 			if (!String.IsNullOrEmpty(Request.QueryString["date_from"]))
 			{
 				dateFromSet = DateTime.TryParseExact(Request.QueryString["date_from"], "dd/MM/yyyy", CultureInfo.CurrentCulture, DateTimeStyles.AssumeLocal, out dateFrom);
+				filterApplied = true;
 			}
 
 			// If there is a date from, set it
 			if (!String.IsNullOrEmpty(Request.QueryString["date_to"]))
 			{
 				dateToSet = DateTime.TryParseExact(Request.QueryString["date_to"], "dd/MM/yyyy", CultureInfo.CurrentCulture, DateTimeStyles.AssumeLocal, out dateTo);
+				filterApplied = true;
 			}
 
 			// If there is a message type, set it
@@ -51,6 +57,12 @@ namespace Enivate.ResponseHub.UI.Controllers
 			if (String.IsNullOrEmpty(Request.QueryString["messagetype_job"]) || Request.QueryString["messagetype_job"] != "1")
 			{
 				messageTypes &= ~MessageType.Job;
+			}
+
+			// If either of the job types are set then set the applied filter 
+			if (!String.IsNullOrEmpty(Request.QueryString["messagetype_message"]) || !String.IsNullOrEmpty(Request.QueryString["messagetype_job"]))
+			{
+				filterApplied = true;
 			}
 
 			// If the keywords are not null or empty, perform the search otherwise return null model
@@ -69,15 +81,19 @@ namespace Enivate.ResponseHub.UI.Controllers
 				// Perform the search
 				PagedResultSet<JobMessage> results = await JobMessageService.FindByKeyword(keywords, capcodes.Select(i => i.CapcodeAddress), messageTypes, dateFrom, dateTo, 50, 0, true);
 
+				// Create the job message list view model
+				JobMessageListViewModel resultsModel = await CreateJobMessageListModel(capcodes, results.Items);
+
 				// Create the model
 				SearchViewModel model = new SearchViewModel
 				{
 					SearchKeywords = keywords,
-					Results = await CreateJobMessageListModel(capcodes, results.Items),
+					Results = resultsModel.Messages,
 					TotalResults = results.TotalResults,
 					DateFrom = (dateFromSet ? dateFrom : (DateTime?)null),
 					DateTo = (dateToSet ? dateTo : (DateTime?)null),
-					MessageTypes = messageTypes
+					MessageTypes = messageTypes,
+					FilterApplied = filterApplied
 				};
 
 				return View(model);

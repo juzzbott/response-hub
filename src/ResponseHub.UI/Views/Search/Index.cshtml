@@ -18,7 +18,7 @@ else
 	
 	<div class="filter-container">
 
-		<h2 class="bottom-20 toggle-header">Filter results <a href="#" class="pull-right" data-toggle-id="filter-controls">+</a></h2>
+		<h3 class="bottom-20 toggle-header">Filter results <a href="#" class="pull-right" data-toggle-id="filter-controls">+</a></h3>
 
 		<div id="filter-controls" class="hidden">
 			<form action="/search" method="get">
@@ -27,7 +27,7 @@ else
 					<label for="Name">Keywords *</label>
 					<div class="row">
 						<div class="col-sm-8 col-md-6 col-lg-4">
-							<input type="text" name="q" class="form-control" value="@Model.SearchKeywords" />
+							<input type="text" name="q" id="keywords" class="form-control" value="@Model.SearchKeywords" />
 						</div>
 					</div>
 				</div>
@@ -37,10 +37,10 @@ else
 					<div class="row">
 						<div class="col-sm-8 col-md-6 col-lg-4">
 							<label class="checkbox-inline">
-								<input type="checkbox" name="messagetype_job" value="1" @(Model.MessageTypes.HasFlag(Enivate.ResponseHub.Model.Messages.MessageType.Job) ? "checked=\"checked\"" : "")> Job
+								<input type="checkbox" name="messagetype_job" id="messagetype-job" value="1" @(Model.MessageTypes.HasFlag(Enivate.ResponseHub.Model.Messages.MessageType.Job) ? "checked=\"checked\"" : "")> Job
 							</label>
 							<label class="checkbox-inline">
-								<input type="checkbox" name="messagetype_message" value="1" @(Model.MessageTypes.HasFlag(Enivate.ResponseHub.Model.Messages.MessageType.Message) ? "checked=\"checked\"" : "")> Message
+								<input type="checkbox" name="messagetype_message" id="messagetype-message" value="1" @(Model.MessageTypes.HasFlag(Enivate.ResponseHub.Model.Messages.MessageType.Message) ? "checked=\"checked\"" : "")> Message
 							</label>
 						</div>
 					</div>
@@ -55,7 +55,7 @@ else
 							<div class="row">
 								<div class="col-sm-6">
 									<div class="input-group date datepicker-control" data-provide="datepicker" data-date-format="dd/mm/yyyy" data-date-autoclose="true" data-date-show-on-focus="false">
-										<input type="text" class="form-control" name="date_from" value="@(Model.DateFrom.HasValue ? Model.DateFrom.Value.ToString("dd/MM/yyyy") : "")" />
+										<input type="text" class="form-control" name="date_from" id="date-from" value="@(Model.DateFrom.HasValue ? Model.DateFrom.Value.ToString("dd/MM/yyyy") : "")" />
 										<div class="input-group-addon">
 											<i class="fa fa-fw fa-calendar"></i>
 										</div>
@@ -73,7 +73,7 @@ else
 							<div class="row">
 								<div class="col-sm-6">
 									<div class="input-group date datepicker-control" data-provide="datepicker" data-date-format="dd/mm/yyyy" data-date-autoclose="true" data-date-show-on-focus="false">
-										<input type="text" class="form-control" name="date_to" value="@(Model.DateFrom.HasValue ? Model.DateTo.Value.ToString("dd/MM/yyyy") : "")" />
+										<input type="text" class="form-control" name="date_to" id="date-to" value="@(Model.DateTo.HasValue ? Model.DateTo.Value.ToString("dd/MM/yyyy") : "")" />
 										<div class="input-group-addon">
 											<i class="fa fa-fw fa-calendar"></i>
 										</div>
@@ -92,19 +92,33 @@ else
 			</form>
 		</div>
 
+		@if (Model.FilterApplied)
+		{
+			<p class="text-info">These results are filtered. <a href="/search?q=@Model.SearchKeywords" class="btn btn-link btn-icon"><i class="fa fa-fw fa-times"></i>Clear filter</a></p>
+		}
+
 	</div>
 
-	if (Model.Results.Messages == null || Model.Results.Messages.Count == 0)
+	if (Model.Results == null || Model.Results.Count == 0)
 	{
 		<p class="lead">No results found matching the query.</p>
 	}
 	else
 	{
-	<ul class="job-list list-unstyled">
-		@foreach (var message in Model.Results.Messages)
+		<ul class="job-list list-unstyled">
+			@foreach (var message in Model.Results)
+			{
+				@Html.Partial("~/Views/Jobs/JobListItem.cshtml", message);
+			}
+		</ul>
+
+		if (Model.TotalResults > Model.Results.Count)
 		{
-			@Html.Partial("~/Views/Jobs/JobListItem.cshtml", message);
+			<div class="top-20 bottom-20" id="load-more-results">
+				<button class="btn btn-primary btn-lg btn-icon" onclick="responseHub.search.getNextResults();"><i class="fa fa-fw fa fa-plus"></i>Load more results</button>
+				<span class="form-loader hidden"><i class="fa fa-spin fa-spinner"></i></span>
+			</div>
 		}
-	</ul>
+
 	}
 }
