@@ -36,7 +36,7 @@
 					@Html.Raw(" - ")
 				}
 			</strong><span class="text-info">@message.Timestamp.ToLocalTime().ToString("HH:mm:ss d MMMM yyyy")</span> - <span class="text-muted">(@message.Capcode)</span></p>
-			<p>@message.MessageContent</p>
+			<p class="message-content">@message.MessageContent</p>
 		</li>
 	}
 

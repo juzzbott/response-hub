@@ -938,5 +938,11 @@ i.p-message-admin {
   font-size: 20px;
 }
 /**
+ * All pages list
+ */
+#all-pages-list .message-content {
+  word-break: break-all;
+}
+/**
  * Mixins
  */

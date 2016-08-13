@@ -55,8 +55,6 @@
 
 	function addMessageToList(pagerMessage, append) {
 
-		console.log(pagerMessage.Id);
-
 		var listItem = $('<li data-message-id="' + pagerMessage.Id + '"></li>');
 
 		var topRow = $('<p class="bottom-0"></p>');
@@ -82,7 +80,7 @@
 
 		// If there is job number, then show it here
 		if (pagerMessage.JobNumber != "") {
-			topMarkup += pagerMessage.JobNumber + "!! - "
+			topMarkup += pagerMessage.JobNumber + " - "
 		}
 
 		// Close the job and icon section
@@ -97,7 +95,7 @@
 
 		// Append the top row to the list item
 		listItem.append(topRow);
-		listItem.append($("<p>" + pagerMessage.MessageContent + "</p>"));
+		listItem.append($('<p class="message-content">' + pagerMessage.MessageContent + '</p>'));
 
 		// Append the list item to list of jobs
 		if (append) {
