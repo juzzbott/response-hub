@@ -16,6 +16,7 @@
 		"moment": "~2.11.1",
 		"fontawesome": "~4.5.0",
 		"jquery-validation": "~1.14.0",
-		"jquery-validation-unobtrusive": "~3.2.5"
+		"jquery-validation-unobtrusive": "~3.2.5",
+		"dropzone": "~4.3.0"
 	}
 }

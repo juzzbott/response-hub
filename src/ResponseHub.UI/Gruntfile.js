@@ -28,7 +28,8 @@ module.exports = function(grunt) {
 					'assets/js/lib/bootstrap-tabcollapse.js',
 					'assets/js/lib/bootstrap-typeahead.min.js',
 					'assets/js/lib/leaflet.js',
-					'assets/js/lib/fm.scrollator.jquery.js'
+					'assets/js/lib/fm.scrollator.jquery.js',
+					'bower_components/dropzone/dist/min/dropzone.min.js'
 				],
 				dest: 'assets/js/framework.js'
 			},
@@ -58,7 +59,8 @@ module.exports = function(grunt) {
 					'bower_components/bootstrap-select/dist/css/bootstrap-select.min.css',
 					'assets/css/lib/bootstrap-datepicker3.min.css',
 					'assets/css/lib/leaflet.css',
-					'assets/css/lib/fm.scrollator.jquery.css'
+					'assets/css/lib/fm.scrollator.jquery.css',
+					'bower_components/dropzone/dist/min/dropzone.min.css'
 				],
 				dest: 'assets/css/framework.css',
 			}
