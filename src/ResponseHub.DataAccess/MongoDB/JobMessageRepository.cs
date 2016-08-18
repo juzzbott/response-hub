@@ -280,6 +280,23 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 			await Collection.UpdateOneAsync(filter, update);
 		}
 
+		/// <summary>
+		/// Adds the specified attachment id to the job attachment list.
+		/// </summary>
+		/// <param name="jobMessageId">The ID of the job to store the attachment against.</param>
+		/// <param name="attachmentId">The ID of the attachment to store.</param>
+		/// <returns></returns>
+		public async Task AddAttachmentToJob(Guid jobMessageId, Guid attachmentId)
+		{
+			FilterDefinition<JobMessageDto> filter = Builders<JobMessageDto>.Filter.Eq(i => i.Id, jobMessageId);
+
+			// Create the update
+			UpdateDefinition<JobMessageDto> update = Builders<JobMessageDto>.Update.Push(i => i.AttachmentIds, attachmentId);
+
+			// Do the update
+			await Collection.UpdateOneAsync(filter, update);
+		}
+
 		#region Text search
 
 		public async Task<PagedResultSet<JobMessage>> FindByKeyword(string keywords, IEnumerable<string> capcodes, MessageType messageTypes, DateTime dateFrom, DateTime dateTo, int limit, int skip, bool countTotal)
@@ -372,7 +389,9 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 				Priority = dbObject.Priority,
 				Timestamp = dbObject.Timestamp,
 				Notes = dbObject.Notes,
-				ProgressUpdates = dbObject.ProgressUpdates
+				ProgressUpdates = dbObject.ProgressUpdates,
+				AttachmentIds = dbObject.AttachmentIds
+				
 			};
 
 			// Map the location property.
@@ -408,7 +427,8 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 				Priority = modelObject.Priority,
 				Timestamp = modelObject.Timestamp,
 				Notes = modelObject.Notes,
-				ProgressUpdates = modelObject.ProgressUpdates
+				ProgressUpdates = modelObject.ProgressUpdates,
+				AttachmentIds = modelObject.AttachmentIds
 			};
 
 			// Map the location property

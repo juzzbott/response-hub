@@ -1823,3 +1823,26 @@ responseHub.search = (function () {
 	}
 
 })();
+
+responseHub.attachments = (function () {
+
+	function bindUI() {
+
+		Dropzone.options.dropzoneAttachments = {
+			maxFilesize: 100
+		};
+
+	}
+
+	$(document).ready(function () {
+		if ($('#dropzone-attachments').length > 0) {
+			bindUI();
+		}
+	});
+
+
+})();
+
+responseHub.gallery = (function () {
+
+})();

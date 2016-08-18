@@ -64,6 +64,10 @@
       <HintPath>..\packages\MongoDB.Driver.Core.2.2.3\lib\net45\MongoDB.Driver.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="MongoDB.Driver.GridFS, Version=2.2.3.3, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MongoDB.Driver.GridFS.2.2.3\lib\net45\MongoDB.Driver.GridFS.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
@@ -76,6 +80,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Interface\IAgencyRepository.cs" />
+    <Compile Include="Interface\IAttachmentRepository.cs" />
     <Compile Include="Interface\ICapcodeRepository.cs" />
     <Compile Include="Interface\IEventRepository.cs" />
     <Compile Include="Interface\IGroupRepository.cs" />
@@ -86,7 +91,9 @@
     <Compile Include="Interface\IRepository.cs" />
     <Compile Include="Interface\IUserRepository.cs" />
     <Compile Include="MongoDB\AgencyRepository.cs" />
+    <Compile Include="MongoDB\AttachmentRepository.cs" />
     <Compile Include="MongoDB\CapcodeRepository.cs" />
+    <Compile Include="MongoDB\DataObjects\Attachments\AttachmentDto.cs" />
     <Compile Include="MongoDB\DataObjects\Events\EventDto.cs" />
     <Compile Include="MongoDB\DataObjects\Groups\GroupDto.cs" />
     <Compile Include="MongoDB\DataObjects\Messages\JobMessageDto.cs" />

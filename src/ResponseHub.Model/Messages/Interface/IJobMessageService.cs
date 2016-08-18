@@ -28,5 +28,7 @@ namespace Enivate.ResponseHub.Model.Messages.Interface
 		Task<MessageProgress> AddProgress(Guid jobMessageId, Guid userId, MessageProgressType progressType);
 
 		Task<PagedResultSet<JobMessage>> FindByKeyword(string keyword, IEnumerable<string> capcodes, MessageType messageTypes, DateTime dateFrom, DateTime dateTo, int limit, int skip, bool countTotal);
+
+		Task AddAttachmentToJob(Guid jobMessageId, Guid attachmentId);
 	}
 }

@@ -30,5 +30,7 @@ namespace Enivate.ResponseHub.DataAccess.Interface
 
 		Task<PagedResultSet<JobMessage>> FindByKeyword(string keyword, IEnumerable<string> capcodes, MessageType messageTypes, DateTime dateFrom, DateTime dateTo, int limit, int skip, bool countTotal);
 
+		Task AddAttachmentToJob(Guid jobMessageId, Guid attachmentId);
+
 	}
 }

@@ -16,6 +16,9 @@
 		"moment": "~2.11.1",
 		"fontawesome": "~4.5.0",
 		"jquery-validation": "~1.14.0",
-		"jquery-validation-unobtrusive": "~3.2.5"
+		"jquery-validation-unobtrusive": "~3.2.5",
+		"dropzone": "~4.3.0",
+		"blueimp-gallery": "~2.21.3",
+		"blueimp-bootstrap-image-gallery": "~3.4.2"
 	}
 }
