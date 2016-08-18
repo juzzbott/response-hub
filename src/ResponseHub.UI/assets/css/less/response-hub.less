@@ -1244,6 +1244,72 @@ i.p-message-admin {
 }
 
 /**
+ * Dropzone styles
+*/
+
+#dropzone-attachments {
+	min-height: 50px;
+	border: 2px dashed #ccc;
+	padding: 20px 20px;
+	margin-top: 20px;
+	margin-bottom: 20px;
+}
+
+.attachment-list
+{
+	border-top: 1px solid #ccc;
+	margin-bottom: 20px;
+
+	li {
+		padding: 7px 0px;
+		border-bottom: 1px solid #ccc;
+
+		&:hover {
+			background-color: #fafafa;
+		}
+
+		&.no-attachments-msg {
+			border-bottom-width: 0;
+
+			&:hover {
+				background-color: #fff;
+			}
+		}
+	}
+}
+
+#links {
+	div {
+		margin-bottom: 15px;
+
+		a {
+			display: block;
+
+			img {
+				width: 100%;
+				max-height: 125px;
+			}
+		}
+
+	}
+}
+
+@media (max-width: 768px) {
+	#links div {
+		width: 200px;
+		float: left;
+	}
+}
+
+@media (max-width: 440px) {
+	#links div {
+		width: 100%;
+	}
+}
+
+
+
+/**
  * Mixins
  */
  

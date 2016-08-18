@@ -3,19 +3,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-using Microsoft.AspNet.Identity;
-using Microsoft.Practices.Unity;
-
 using Enivate.ResponseHub.Common;
+using Enivate.ResponseHub.Model.Attachments.Interface;
 using Enivate.ResponseHub.Model.Groups.Interface;
 using Enivate.ResponseHub.Model.Groups;
 using Enivate.ResponseHub.Model.Messages.Interface;
 using Enivate.ResponseHub.Model.Messages;
-using Enivate.ResponseHub.Logging;
 using Enivate.ResponseHub.UI.Models.Messages;
 using Enivate.ResponseHub.Model.Identity;
 using Enivate.ResponseHub.Model.Identity.Interface;
 using System.Threading.Tasks;
+using Enivate.ResponseHub.Model.Attachments;
+using System.IO;
 
 namespace Enivate.ResponseHub.UI.Controllers
 {
@@ -24,6 +23,8 @@ namespace Enivate.ResponseHub.UI.Controllers
 
 		protected readonly ICapcodeService CapcodeService = ServiceLocator.Get<ICapcodeService>();
 		protected readonly IJobMessageService JobMessageService = ServiceLocator.Get<IJobMessageService>();
+
+		private static string[] _imageExtensions = { ".jpg", ".jpeg", ".gif", ".bmp", ".png" };
 
 		#region Helpers
 
@@ -77,6 +78,30 @@ namespace Enivate.ResponseHub.UI.Controllers
 			model.OnScene = await GetProgressModel(job, MessageProgressType.OnScene);
 			model.JobClear = await GetProgressModel(job, MessageProgressType.JobClear);
 			model.Cancelled = await GetProgressModel(job, MessageProgressType.Cancelled);
+
+			// Get the attachments for the jobs
+			IAttachmentService attachmentService = ServiceLocator.Get<IAttachmentService>();
+
+			IList<Attachment> attachments = await attachmentService.GetAttachmentsById(job.AttachmentIds);
+			IList<Attachment> imageAttachments = new List<Attachment>();
+
+			// loop through each attachment. Any that are images, add to the image list
+			foreach(Attachment attachment in attachments)
+			{
+				// Get the extension
+				string ext = Path.GetExtension(attachment.Filename);
+
+				// If the extension is in the list of image extensions, add the attachment to the imageAttachments list
+				if (_imageExtensions.Contains(ext.ToLower()))
+				{
+					imageAttachments.Add(attachment);
+				}
+			}
+			
+
+			// Add all the attachments
+			model.Attachments = attachments;
+			model.ImageAttachments = imageAttachments;
 
 			// return the mapped job view model
 			return model;

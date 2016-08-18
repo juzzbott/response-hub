@@ -1,4 +1,5 @@
 ﻿using Enivate.ResponseHub.Common.Extensions;
+using Enivate.ResponseHub.Model.Attachments;
 using Enivate.ResponseHub.Model.Messages;
 using Enivate.ResponseHub.Model.Spatial;
 using System;
@@ -47,10 +48,16 @@ namespace Enivate.ResponseHub.UI.Models.Messages
 
 		public IList<JobNote> Notes { get; set; }
 
+		public IList<Attachment> Attachments { get; set; }
+
+		public IList<Attachment> ImageAttachments { get; set; }
+
 		public JobMessageViewModel()
 		{
 			Location = new LocationInfo();
 			Notes = new List<JobNote>();
+			Attachments = new List<Attachment>();
+			ImageAttachments = new List<Attachment>();
 		}
 	}
 }

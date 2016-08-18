@@ -176,5 +176,10 @@ namespace Enivate.ResponseHub.ApplicationServices
 			return await _repository.FindByKeyword(keyword, capcodes, messageTypes, dateFrom, dateTo, limit, skip, countTotal);
 		}
 
+		public async Task AddAttachmentToJob(Guid jobMessageId, Guid attachmentId)
+		{
+			await _repository.AddAttachmentToJob(jobMessageId, attachmentId);
+		}
+
 	}
 }

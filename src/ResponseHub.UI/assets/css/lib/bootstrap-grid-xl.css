@@ -268,3 +268,9 @@
         display: none !important;
     }
 }
+
+@media (min-width: 1600px) {
+	.modal-xl {
+		width: 1300px;
+	}
+}

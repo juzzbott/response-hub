@@ -157,6 +157,24 @@ namespace Enivate.ResponseHub.UI.Helpers
 				SpaceBeforeCapital(helper.ViewContext.RouteData.DataTokens["area"].ToString(), true)));
 		}
 
+		public static MvcHtmlString GetFileSizeDisplayForBytes(this HtmlHelper helper, long bytes)
+		{
+			if (bytes < 1)
+			{
+				return new MvcHtmlString("0 kb");
+			}
+			else if (bytes < 1000000)
+			{
+				decimal kb = (bytes / 1000M);
+				return new MvcHtmlString(String.Format("{0} kb", Math.Round(kb, 2)));
+			}
+			else
+			{
+				decimal mb = (bytes / 1000000M);
+				return new MvcHtmlString(String.Format("{0} mb", Math.Round(mb, 2)));
+			}
+		}
+
 		/// <summary>
 		/// Add a space char before each capital letter and trims leading and trailing whitespace
 		/// </summary>
