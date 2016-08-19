@@ -1916,7 +1916,7 @@ responseHub.attachments = (function () {
 	{
 
 		// Create the image item
-		var imgDiv = $('<div class="col-sm-4 col-md-3 col-lg-2"><a href="/media/attachment/' + response.id + '" title="' + file.name + '" data-gallery=""><img src="/media/attachment/' + response.id + '"></a></div>');
+		var imgDiv = $('<div class="col-sm-4 col-md-3 col-lg-2"><a href="/media/attachment/' + response.id + '" title="' + file.name + '" data-gallery=""><img src="/media/attachment-thumb/' + response.id + '"></a></div>');
 
 		// prepend to the links list to be included in the gallery
 		$('#links').prepend(imgDiv);

@@ -15,6 +15,7 @@ using ICSharpCode.SharpZipLib.Zip;
 using ICSharpCode.SharpZipLib.Core;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.Drawing.Drawing2D;
 
 namespace Enivate.ResponseHub.ApplicationServices
 {
@@ -23,6 +24,7 @@ namespace Enivate.ResponseHub.ApplicationServices
 
 		private readonly IAttachmentRepository _attachmentRepository;
 		private readonly IJobMessageRepository _jobMessageRepository;
+		private string memoryStream;
 
 		public AttachmentService(IAttachmentRepository attachmentRepository, IJobMessageRepository jobMessageRepository)
 		{
@@ -130,9 +132,49 @@ namespace Enivate.ResponseHub.ApplicationServices
 			return outputMemStream.ToArray();
 
 		}
+		
+
+		public byte[] GenerateThumbnail(byte[] fileData, int width, int height)
+		{
+			using (MemoryStream msInput = new MemoryStream(fileData))
+			{
+				float ratio;
+				SizeF newSize;
+
+				Bitmap srcBmp = new Bitmap(msInput);
+
+				if (srcBmp.Width >= srcBmp.Height)
+				{
+					// Ratio for landscape
+					ratio = ((float)srcBmp.Height / (float)srcBmp.Width);
+					newSize = new SizeF(width, width * ratio);
+				}
+				else
+				{
+					// Ratio for portrait
+					ratio = ((float)srcBmp.Width / (float)srcBmp.Height);
+					newSize = new SizeF(height * ratio, height);
+				}
+				Bitmap target = new Bitmap((int)newSize.Width, (int)newSize.Height);
+
+				using (Graphics graphics = Graphics.FromImage(target))
+				{
+					graphics.CompositingQuality = CompositingQuality.HighSpeed;
+					graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
+					graphics.CompositingMode = CompositingMode.SourceCopy;
+					graphics.DrawImage(srcBmp, 0, 0, newSize.Width, newSize.Height);
+					using (MemoryStream msOutput = new MemoryStream())
+					{
+						target.Save(msOutput, ImageFormat.Jpeg);
+						return msOutput.ToArray();
+					}
+				}
+
+			}
+		}
 
 		#region Image helpers
-		
+
 		private byte[] EnsureCorrectJpegOrientation(byte[] fileDataBytes)
 		{
 

@@ -19,5 +19,7 @@ namespace Enivate.ResponseHub.Model.Attachments.Interface
 
 		Task<byte[]> GetAllJobAttachments(JobMessage job);
 
+		byte[] GenerateThumbnail(byte[] fileData, int width, int height);
+
 	}
 }
