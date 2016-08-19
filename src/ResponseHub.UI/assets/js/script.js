@@ -1829,7 +1829,13 @@ responseHub.attachments = (function () {
 	function bindUI() {
 
 		Dropzone.options.dropzoneAttachments = {
-			maxFilesize: 100
+			maxFilesize: 100,
+			previewTemplate: '',
+			init: function () {
+				this.on("addedfile", function (file) {
+					console.log(file);
+				});
+			}
 		};
 
 	}
