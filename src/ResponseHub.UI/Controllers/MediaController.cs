@@ -152,7 +152,7 @@ namespace Enivate.ResponseHub.UI.Controllers
 
 						if (upload.ContentLength > maxFileSize)
 						{
-							return Json(new { SUccess = false, Message = "Maximum filesize limit exceeded." });
+							return Json(new { success = false, message = "Maximum filesize limit exceeded." });
 						}
 
 						// Ensure valuid file extentions
@@ -163,7 +163,7 @@ namespace Enivate.ResponseHub.UI.Controllers
 						upload.FileName.EndsWith(".ps1", StringComparison.CurrentCultureIgnoreCase) ||
 						upload.FileName.EndsWith(".sh", StringComparison.CurrentCultureIgnoreCase))
 						{
-							return Json(new { Success = false, Message = "File type not allowed." });
+							return Json(new { success = false, message = "File type not allowed." });
 						}
 
 						// Get the mime type based on the filename
@@ -180,13 +180,13 @@ namespace Enivate.ResponseHub.UI.Controllers
 							await JobMessageService.AddAttachmentToJob(jobMessageId, attachment.Id);
 
 							// return the json result
-							return Json(new { Success = true, Id = attachment.Id });
+							return Json(new { success = true, id = attachment.Id });
 
 						}
 						else
 						{
 							// return the json result
-							return Json(new { Success = false });
+							return Json(new { success = false });
 						}
 
 					}
@@ -194,13 +194,13 @@ namespace Enivate.ResponseHub.UI.Controllers
 				}
 
 				// return an error 
-				return Json(new { Success = false, Message = "Unable to upload file." });
+				return Json(new { success = false, message = "Unable to upload file." });
 
 			}
 			catch (Exception ex)
 			{
 				await Log.Error(String.Format("Error uploading attachment file. Message: {0}", ex.Message), ex);
-				return Json(new { Success = false, Message = "Unable to upload file." });
+				return Json(new { success = false, message = "Unable to upload file." });
 			}
 
 		}

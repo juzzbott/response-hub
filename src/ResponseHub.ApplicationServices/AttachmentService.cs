@@ -13,6 +13,8 @@ using Enivate.ResponseHub.Model.Messages;
 using ICSharpCode.SharpZipLib;
 using ICSharpCode.SharpZipLib.Zip;
 using ICSharpCode.SharpZipLib.Core;
+using System.Drawing;
+using System.Drawing.Imaging;
 
 namespace Enivate.ResponseHub.ApplicationServices
 {
@@ -46,6 +48,16 @@ namespace Enivate.ResponseHub.ApplicationServices
 			using (BinaryReader reader = new BinaryReader(fileData))
 			{
 				fileDataBytes = reader.ReadBytes((int)fileData.Length);
+			}
+
+			// Get the extension
+			string extension = Path.GetExtension(filename).ToLower();
+
+			// If it's a JPEG, we are going to ensure orientation is correct
+			if (extension == ".jpg" || extension == ".jpeg")
+			{
+				// Ensure correct orientation
+				fileDataBytes = EnsureCorrectJpegOrientation(fileDataBytes);
 			}
 
 			// Create the Attachment object
@@ -118,5 +130,69 @@ namespace Enivate.ResponseHub.ApplicationServices
 			return outputMemStream.ToArray();
 
 		}
+
+		#region Image helpers
+		
+		private byte[] EnsureCorrectJpegOrientation(byte[] fileDataBytes)
+		{
+
+			using (MemoryStream ms = new MemoryStream(fileDataBytes))
+			{
+
+				// Create the image from the bytes
+				Image image = Image.FromStream(ms);
+
+				// Get the orientation property
+				PropertyItem orientationProp = image.PropertyItems.FirstOrDefault(i => i.Id == 0x112);
+
+				// If we need to rotate, then do so
+				if (orientationProp != null && orientationProp.Value[0] != 1)
+				{
+
+					if (orientationProp.Value[0] == 2)
+					{
+						image.RotateFlip(RotateFlipType.RotateNoneFlipX);
+					}
+					else if (orientationProp.Value[0] == 3)
+					{
+						image.RotateFlip(RotateFlipType.Rotate180FlipNone);
+					}
+					else if (orientationProp.Value[0] == 4)
+					{
+						image.RotateFlip(RotateFlipType.Rotate180FlipX);
+					}
+					else if (orientationProp.Value[0] == 5)
+					{
+						image.RotateFlip(RotateFlipType.Rotate90FlipX);
+					}
+					else if (orientationProp.Value[0] == 6)
+					{
+						image.RotateFlip(RotateFlipType.Rotate90FlipNone);
+					}
+					else if (orientationProp.Value[0] == 7)
+					{
+						image.RotateFlip(RotateFlipType.Rotate270FlipX);
+					}
+					else if (orientationProp.Value[0] == 8)
+					{
+						image.RotateFlip(RotateFlipType.Rotate270FlipNone);
+					}
+
+					// Reset the orientation flag value
+					orientationProp.Value = new byte[] { 1, 0 };
+				}
+
+				image.SetPropertyItem(orientationProp);
+
+				using (MemoryStream msOutput = new MemoryStream())
+				{
+					image.Save(msOutput, ImageFormat.Jpeg);
+					return msOutput.ToArray();
+				}
+
+			}
+		}
+
+		#endregion
 	}
 }
