@@ -14,7 +14,7 @@ namespace Enivate.ResponseHub.DataAccess.Interface
 
 		Task StoreAttachment(Attachment attachment);
 
-		Task<Attachment> GetFullAttachment(Guid id);
+		Task<Attachment> GetAttachmentById(Guid id, bool includeFileData);
 
 		Task<IList<Attachment>> GetAttachmentsById(IEnumerable<Guid> ids);
 

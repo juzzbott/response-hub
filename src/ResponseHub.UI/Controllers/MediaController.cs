@@ -107,7 +107,7 @@ namespace Enivate.ResponseHub.UI.Controllers
 			{
 
 				// Get the attachment based on the id
-				Attachment attachment = await AttachmentService.GetAttachmentById(id);
+				Attachment attachment = await AttachmentService.GetAttachmentById(id, true);
 
 				// If the attachment is not found, throw 404
 				if (attachment == null)
@@ -134,7 +134,7 @@ namespace Enivate.ResponseHub.UI.Controllers
 			{
 
 				// Get the attachment based on the id
-				Attachment attachment = await AttachmentService.GetAttachmentById(id);
+				Attachment attachment = await AttachmentService.GetAttachmentById(id, false);
 
 				// If the attachment is not found, throw 404
 				if (attachment == null)
@@ -143,7 +143,37 @@ namespace Enivate.ResponseHub.UI.Controllers
 				}
 
 				// Get the thumbnail image
-				byte[] thumbnailData = AttachmentService.GenerateThumbnail(attachment.FileData, 400, 125);
+				byte[] thumbnailData = await AttachmentService.GetThumbnail(attachment, 400, 125, false);
+
+				// return the file as a download
+				return File(thumbnailData, attachment.MimeType);
+
+			}
+			catch (Exception ex)
+			{
+				// Log the exception, throw 500 server error
+				await Log.Error(String.Format("Error getting thumbnail attachment for download. Message: {0}", ex.Message), ex);
+				throw new HttpException(500, "Internal server error");
+			}
+		}
+
+		[Route("attachment-thumb-crop/{id}")]
+		public async Task<ActionResult> DownloadAttachmentThumbnailCropped(Guid id)
+		{
+			try
+			{
+
+				// Get the attachment based on the id
+				Attachment attachment = await AttachmentService.GetAttachmentById(id, false);
+
+				// If the attachment is not found, throw 404
+				if (attachment == null)
+				{
+					throw new HttpException(404, "The file could not be found.");
+				}
+
+				// Get the thumbnail image
+				byte[] thumbnailData = await AttachmentService.GetThumbnail(attachment, 400, 300, true);
 
 				// return the file as a download
 				return File(thumbnailData, attachment.MimeType);

@@ -15,11 +15,11 @@ namespace Enivate.ResponseHub.Model.Attachments.Interface
 
 		Task<IList<Attachment>> GetAttachmentsById(IEnumerable<Guid> ids);
 
-		Task<Attachment> GetAttachmentById(Guid id);
+		Task<Attachment> GetAttachmentById(Guid id, bool includeFileData);
 
 		Task<byte[]> GetAllJobAttachments(JobMessage job);
 
-		byte[] GenerateThumbnail(byte[] fileData, int width, int height);
+		Task<byte[]> GetThumbnail(Attachment attachment, int width, int height, bool croppedcropImage);
 
 	}
 }

@@ -15,6 +15,7 @@ using Enivate.ResponseHub.Model.Identity.Interface;
 using System.Threading.Tasks;
 using Enivate.ResponseHub.Model.Attachments;
 using System.IO;
+using Enivate.ResponseHub.Common.Constants;
 
 namespace Enivate.ResponseHub.UI.Controllers
 {
@@ -23,9 +24,7 @@ namespace Enivate.ResponseHub.UI.Controllers
 
 		protected readonly ICapcodeService CapcodeService = ServiceLocator.Get<ICapcodeService>();
 		protected readonly IJobMessageService JobMessageService = ServiceLocator.Get<IJobMessageService>();
-
-		private static string[] _imageExtensions = { ".jpg", ".jpeg", ".gif", ".bmp", ".png" };
-
+		
 		#region Helpers
 
 		/// <summary>
@@ -92,7 +91,7 @@ namespace Enivate.ResponseHub.UI.Controllers
 				string ext = Path.GetExtension(attachment.Filename);
 
 				// If the extension is in the list of image extensions, add the attachment to the imageAttachments list
-				if (_imageExtensions.Contains(ext.ToLower()))
+				if (GeneralConstants.ImageExtensions.Contains(ext.ToLower()))
 				{
 					imageAttachments.Add(attachment);
 				}

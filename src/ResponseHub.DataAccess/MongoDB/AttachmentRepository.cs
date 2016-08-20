@@ -26,7 +26,7 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 		/// </summary>
 		/// <param name="id"></param>
 		/// <returns></returns>
-		public async Task<Attachment> GetFullAttachment(Guid id)
+		public async Task<Attachment> GetAttachmentById(Guid id, bool includeFileData)
 		{
 			// Find the attachment dto object based on the id
 			AttachmentDto attachment = await FindOne(i => i.Id == id);
@@ -40,9 +40,13 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 			// Create the attachment model
 			Attachment model = MapDtoToModel(attachment);
 
-			// Get the grid file based on the grid file id
-			IGridFSBucket bucket = new GridFSBucket(Collection.Database, new GridFSBucketOptions { BucketName = GridFSBucketName });
-			model.FileData = await bucket.DownloadAsBytesAsync(attachment.GridFSId);
+			// If we need to get the file data, then also get it here
+			if (includeFileData)
+			{
+				// Get the grid file based on the grid file id
+				IGridFSBucket bucket = new GridFSBucket(Collection.Database, new GridFSBucketOptions { BucketName = GridFSBucketName });
+				model.FileData = await bucket.DownloadAsBytesAsync(attachment.GridFSId);
+			}
 
 			// return the attachment model
 			return model;

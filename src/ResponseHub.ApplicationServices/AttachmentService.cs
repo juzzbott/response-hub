@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -16,6 +17,8 @@ using ICSharpCode.SharpZipLib.Core;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Drawing.Drawing2D;
+using Enivate.ResponseHub.Common.Constants;
+using System.Web;
 
 namespace Enivate.ResponseHub.ApplicationServices
 {
@@ -24,7 +27,6 @@ namespace Enivate.ResponseHub.ApplicationServices
 
 		private readonly IAttachmentRepository _attachmentRepository;
 		private readonly IJobMessageRepository _jobMessageRepository;
-		private string memoryStream;
 
 		public AttachmentService(IAttachmentRepository attachmentRepository, IJobMessageRepository jobMessageRepository)
 		{
@@ -86,9 +88,9 @@ namespace Enivate.ResponseHub.ApplicationServices
 			return await _attachmentRepository.GetAttachmentsById(ids);
 		}
 
-		public async Task<Attachment> GetAttachmentById(Guid id)
+		public async Task<Attachment> GetAttachmentById(Guid id, bool includeFileData)
 		{
-			return await _attachmentRepository.GetFullAttachment(id);
+			return await _attachmentRepository.GetAttachmentById(id, includeFileData);
 		}
 
 		public async Task<byte[]> GetAllJobAttachments(JobMessage job)
@@ -107,7 +109,7 @@ namespace Enivate.ResponseHub.ApplicationServices
 			{
 
 				// Get the full attachment
-				Attachment fullAttachment = await _attachmentRepository.GetFullAttachment(attachment.Id);
+				Attachment fullAttachment = await _attachmentRepository.GetAttachmentById(attachment.Id, true);
 				using (MemoryStream ms = new MemoryStream(fullAttachment.FileData))
 				{
 					
@@ -133,36 +135,141 @@ namespace Enivate.ResponseHub.ApplicationServices
 
 		}
 		
+		/// <summary>
+		/// Generates the attachment thumbnail, respecting aspect ratio.
+		/// </summary>
+		/// <param name="attachment"></param>
+		/// <param name="width"></param>
+		/// <param name="height"></param>
+		/// <returns></returns>
+		public async Task<byte[]> GetThumbnail(Attachment attachment, int width, int height, bool cropImage)
+		{
 
-		public byte[] GenerateThumbnail(byte[] fileData, int width, int height)
+			// Generate the thumbnail filename
+			string ext = Path.GetExtension(attachment.Filename);
+			string idString = attachment.Id.ToString();
+			string cachePath = GetConfigurationPath(ConfigurationManager.AppSettings["Attachment.ThumbnailDirectory"]);
+			string thumbnailPath = String.Format("{0}\\{1}\\{2}\\{3}", cachePath, idString[0], idString[1], idString[2]);
+			string thumbnailFilename = String.Format("{0}_thumb{1}{2}", attachment.Id, (cropImage ? "_crop" : ""), ext);
+			string thumbnailFullPath = String.Format("{0}\\{1}", thumbnailPath, thumbnailFilename);
+
+			// Validate the extension before generating thumbnail
+			if (!GeneralConstants.ImageExtensions.Contains(ext.ToLower()))
+			{
+				throw new ApplicationException("Cannot generate thumbnail for non-image file type.");
+			}
+
+			// Check if the thumbnail exists on the filesystem.
+			if (File.Exists(thumbnailFullPath))
+			{
+				return File.ReadAllBytes(thumbnailFullPath);
+			}
+
+			Attachment fullAttachment = await GetAttachmentById(attachment.Id, true);
+
+			// Get the byte array
+			byte[] thumbnailBytes = GetThumbnailImageData(fullAttachment.FileData, width, height, cropImage);
+			
+			// Ensure thumbnail path exists
+			if (!Directory.Exists(thumbnailPath))
+			{
+				Directory.CreateDirectory(thumbnailPath);
+			}
+
+			// Save the thumbnail to disk
+			File.WriteAllBytes(thumbnailFullPath, thumbnailBytes);
+
+			// return the thumbnail bytes
+			return thumbnailBytes;
+
+		}
+
+		private byte[] GetThumbnailImageData(byte[] fileData, int width, int height, bool cropImage)
 		{
 			using (MemoryStream msInput = new MemoryStream(fileData))
 			{
 				float ratio;
-				SizeF newSize;
+				SizeF newSize = new SizeF();
+				Rectangle cropRectangle = new Rectangle();
 
 				Bitmap srcBmp = new Bitmap(msInput);
 
 				if (srcBmp.Width >= srcBmp.Height)
 				{
-					// Ratio for landscape
-					ratio = ((float)srcBmp.Height / (float)srcBmp.Width);
-					newSize = new SizeF(width, width * ratio);
+
+					
+					if (cropImage)
+					{
+						// Get ratio for the new thumbnail
+						ratio = ((float)srcBmp.Width / (float)srcBmp.Height);
+						float cropWidth = srcBmp.Width;
+						float cropHeight = (srcBmp.Height / ratio);
+						float cropYStart = ((srcBmp.Height - cropHeight) / 2);
+						int cropXStart = 0;
+
+						// new size and cropSource for landscape, crop and resize
+						newSize = new SizeF(width, height);
+						cropRectangle = new Rectangle(cropXStart, (int)cropYStart, (int)cropWidth, (int)cropHeight);
+					}
+					else
+					{
+						// Get ratio for landscape
+						ratio = ((float)srcBmp.Height / (float)srcBmp.Width);
+						// new size for landscape, resize only
+						newSize = new SizeF(width, width * ratio);
+					}
 				}
 				else
 				{
-					// Ratio for portrait
-					ratio = ((float)srcBmp.Width / (float)srcBmp.Height);
-					newSize = new SizeF(height * ratio, height);
+
+					if (cropImage)
+					{
+						// Get ratio for the new thumbnail
+						ratio = ((float)srcBmp.Height / (float)srcBmp.Width);
+						float cropWidth = srcBmp.Width;
+						float cropHeight = (srcBmp.Height / ratio);
+						float cropYStart = ((srcBmp.Height - cropHeight) / 2);
+						int cropXStart = 0;
+
+						// new size and cropSource for portrait, crop and resize
+						newSize = new SizeF(width, height);
+						cropRectangle = new Rectangle((int)cropXStart, (int)cropYStart, (int)cropWidth, (int)cropHeight);
+					}
+					else
+					{
+						// Get ration of portrait
+						ratio = ((float)srcBmp.Width / (float)srcBmp.Height);
+						// new size for portrait, resize only
+						newSize = new SizeF(height * ratio, height);
+					}
 				}
 				Bitmap target = new Bitmap((int)newSize.Width, (int)newSize.Height);
 
 				using (Graphics graphics = Graphics.FromImage(target))
 				{
-					graphics.CompositingQuality = CompositingQuality.HighSpeed;
+					graphics.Clear(Color.White);
+					graphics.SmoothingMode = SmoothingMode.HighQuality;
+					graphics.CompositingQuality = CompositingQuality.HighQuality;
 					graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
-					graphics.CompositingMode = CompositingMode.SourceCopy;
-					graphics.DrawImage(srcBmp, 0, 0, newSize.Width, newSize.Height);
+					graphics.CompositingMode = CompositingMode.SourceOver;
+					graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
+					
+
+					ImageAttributes ia = new ImageAttributes();
+					ia.SetWrapMode(WrapMode.TileFlipXY);
+
+					if (cropImage)
+					{
+						// Crop and resize
+						graphics.DrawImage(srcBmp, new Rectangle(0, 0, (int)newSize.Width, (int)newSize.Height), cropRectangle, GraphicsUnit.Pixel);
+					}
+					else
+					{
+						// Just resize
+						graphics.DrawImage(srcBmp, 0, 0, newSize.Width, newSize.Height);
+					}
+
+
 					using (MemoryStream msOutput = new MemoryStream())
 					{
 						target.Save(msOutput, ImageFormat.Jpeg);
@@ -171,6 +278,25 @@ namespace Enivate.ResponseHub.ApplicationServices
 				}
 
 			}
+		}
+
+		private string GetConfigurationPath(string path)
+		{
+
+			// If the directory starts with ~, its a virtual path, so use the Server.MapPath to get full directory
+			if (path[0] == '~' && HttpContext.Current != null)
+			{
+				path = HttpContext.Current.Server.MapPath(path);
+			}
+			else if (path[0] == '.')
+			{
+				// Log directory is a relative path (../ or ./) so append to current directory
+				path = String.Format("{0}\\{1}", Environment.CurrentDirectory, path.Substring(1));
+			}
+
+			// return the path
+			return path;
+
 		}
 
 		#region Image helpers
