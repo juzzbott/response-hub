@@ -498,6 +498,7 @@
     <Content Include="Views\PagerMessages\Index.cshtml" />
     <Content Include="Views\Search\Index.cshtml" />
     <Content Include="Views\Jobs\JobListItem.cshtml" />
+    <Content Include="Views\Jobs\JobAttachments.cshtml" />
     <None Include="Web.Staging.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

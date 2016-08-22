@@ -44,7 +44,7 @@
 	<!-- Nav tabs -->
 	<ul class="nav nav-tabs" role="tablist">
 		<li role="presentation" class="active"><a href="#tab-overview" aria-controls="tab-overview" role="tab" data-toggle="tab" class="btn-icon"><i class="fa fa-fw fa-bar-chart"></i>Overview</a></li>
-		<li role="presentation"><a href="#tab-attachments" aria-controls="tab-attachments" role="tab" data-toggle="tab" class="btn-icon" id="tab-header-attachments"><i class="fa fa-fw fa-paperclip"></i>Attachments (<span>@Model.Attachments.Count</span>)</a></li>
+		<li role="presentation"><a href="#tab-attachments" aria-controls="tab-attachments" role="tab" data-toggle="tab" class="btn-icon" id="tab-header-attachments" onclick="responseHub.attachments.preloadAttachments();"><i class="fa fa-fw fa-paperclip"></i>Attachments (<span>@Model.Attachments.Count</span>)</a></li>
 	</ul>
 
 	<!-- Tab panes -->
@@ -61,87 +61,7 @@
 
 		<div role="tabpanel" class="tab-pane" id="tab-attachments">
 
-			<h3>Image gallery</h3>
-			
-
-
-			<div id="links" class="row">
-				@if (Model.ImageAttachments != null && Model.ImageAttachments.Count > 0)
-				{
-					foreach (var attachment in Model.ImageAttachments)
-					{
-						<div class="col-sm-4 col-md-3 col-lg-2">
-							<a href="/media/attachment/@attachment.Id" title="@attachment.Filename" data-gallery>
-								<img src="/media/attachment-thumb-crop/@attachment.Id">
-							</a>
-						</div>
-					}
-				}
-			</div>
-
-			<!-- The Bootstrap Image Gallery lightbox, should be a child element of the document body -->
-			<div id="blueimp-gallery" class="blueimp-gallery blueimp-gallery-controls" data-use-bootstrap-modal="false">
-				<!-- The container for the modal slides -->
-				<div class="slides"></div>
-				<!-- Controls for the borderless lightbox -->
-				<h3 class="title"></h3>
-				<a class="prev">‹</a>
-				<a class="next">›</a>
-				<a class="close">×</a>
-				<a class="play-pause"></a>
-				<ol class="indicator"></ol>
-				<!-- The modal dialog, which will be used to wrap the lightbox content -->
-				<div class="modal fade">
-					<div class="modal-dialog">
-						<div class="modal-content">
-							<div class="modal-header">
-								<button type="button" class="close" aria-hidden="true">&times;</button>
-								<h4 class="modal-title"></h4>
-							</div>
-							<div class="modal-body next"></div>
-							<div class="modal-footer">
-								<button type="button" class="btn btn-default pull-left prev">
-									<i class="fa fa-chevron-left"></i>
-									Previous
-								</button>
-								<button type="button" class="btn btn-primary next">
-									Next
-									<i class="fa fa-chevron-right"></i>
-								</button>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-
-			<div id="upload-messages"></div>
-
-			<form action="/media/job-attachments/@Model.Id" class="dropzone" id="dropzone-attachments">
-				@Html.AntiForgeryToken()
-			</form>
-
-			<h3>Attachments</h3>
-
-			@if (Model.Attachments != null && Model.Attachments.Count > 0)
-			{
-				<ul class="list-unstyled attachment-list">
-					@foreach (var attachment in Model.Attachments)
-					{
-						<li>
-							<span class="btn-icon"><i class="fa fa-fw fa-download"></i><a href="/media/attachment/@attachment.Id">@attachment.Filename</a></span> 
-							<span class="attachment-meta"> @attachment.Created.ToLocalTime().ToString("dd/MM/yyyy HH:mm") <em>(@attachment.MimeType</em> @Html.GetFileSizeDisplayForBytes(attachment.FileLength))</span>
-						</li>
-					}
-
-				</ul>
-				<p class="bottom-20"><a href="/media/download-job-attachments/@Model.Id" class="btn btn-primary btn-icon"><i class="fa fa-fw fa-file-archive-o"></i>Download all attachments</a></p>
-			}
-			else
-			{
-				<ul class="list-unstyled attachment-list">
-					<li class="no-attachments-msg"><span class="text-center">No attachments have been uploaded for this job.</span></li>
-				</ul>
-			}
+			@Html.Partial("JobAttachments", Model)
 
 		</div>
 	</div>

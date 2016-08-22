@@ -991,6 +991,13 @@ i.p-message-admin {
     width: 100%;
   }
 }
+#attachment-preload,
+#attachment-preload img {
+  display: none;
+  position: absolute;
+  left: -99999px;
+  top: -99999px;
+}
 /**
  * Mixins
  */

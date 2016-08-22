@@ -1948,6 +1948,35 @@ responseHub.attachments = (function () {
 		}
 	});
 
+	function preloadAttachments() {
+
+		// If we already have the preload container, then just exit as we don't want to re-add the images
+		if ($('#attachment-preload').length > 0) {
+			return;
+		}
+
+		// Create the attachments container
+		var attachments = $('<div id="attachment-preload"></div>');
+
+		// Loop through each image attachment
+		$('#links a').each(function () {
+
+			// Get the url to the img
+			var imgUrl = $(this).attr('href');
+			
+			// Add the image to the preload list so that it's preloaded
+			attachments.append('<img src="' + imgUrl + '" />');
+
+		});
+
+		$('body').append(attachments);
+
+	}
+
+	return {
+		preloadAttachments: preloadAttachments
+	}
+
 
 })();
 
