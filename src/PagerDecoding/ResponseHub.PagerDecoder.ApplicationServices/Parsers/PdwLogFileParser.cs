@@ -198,6 +198,12 @@ namespace Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers
 						continue;
 					}
 
+					if (message.Equals("12 minute network heartbeat", StringComparison.CurrentCulture))
+					{
+						_log.Debug("Skipping 12 minute heartbeat message");
+						continue;
+					}
+
 					try
 					{
 
