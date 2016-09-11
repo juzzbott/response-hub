@@ -47,7 +47,7 @@
 			this.toolTip = new System.Windows.Forms.ToolTip(this.components);
 			this.label4 = new System.Windows.Forms.Label();
 			this.generatorTimer = new System.Windows.Forms.Timer(this.components);
-			this.txtMessages = new System.Windows.Forms.RichTextBox();
+			this.brsMessages = new System.Windows.Forms.WebBrowser();
 			this.groupBox1.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -230,22 +230,27 @@
 			this.generatorTimer.Interval = 3000;
 			this.generatorTimer.Tick += new System.EventHandler(this.generatorTimer_Tick);
 			// 
-			// txtMessages
+			// brsMessages
 			// 
-			this.txtMessages.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.txtMessages.Location = new System.Drawing.Point(12, 259);
-			this.txtMessages.Name = "txtMessages";
-			this.txtMessages.ReadOnly = true;
-			this.txtMessages.Size = new System.Drawing.Size(940, 257);
-			this.txtMessages.TabIndex = 3;
-			this.txtMessages.Text = "";
+			this.brsMessages.AllowNavigation = false;
+			this.brsMessages.AllowWebBrowserDrop = false;
+			this.brsMessages.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.brsMessages.IsWebBrowserContextMenuEnabled = false;
+			this.brsMessages.Location = new System.Drawing.Point(12, 260);
+			this.brsMessages.MinimumSize = new System.Drawing.Size(20, 20);
+			this.brsMessages.Name = "brsMessages";
+			this.brsMessages.Size = new System.Drawing.Size(940, 256);
+			this.brsMessages.TabIndex = 3;
+			this.brsMessages.WebBrowserShortcutsEnabled = false;
 			// 
 			// frmMain
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(964, 528);
-			this.Controls.Add(this.txtMessages);
+			this.Controls.Add(this.brsMessages);
 			this.Controls.Add(this.label4);
 			this.Controls.Add(this.groupBox1);
 			this.Name = "frmMain";
@@ -278,7 +283,7 @@
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.Label label4;
 		private System.Windows.Forms.Timer generatorTimer;
-		private System.Windows.Forms.RichTextBox txtMessages;
+		private System.Windows.Forms.WebBrowser brsMessages;
 	}
 }
 

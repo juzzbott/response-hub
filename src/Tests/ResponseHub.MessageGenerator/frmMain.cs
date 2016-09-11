@@ -39,6 +39,14 @@ namespace Enivate.ResponseHub.MessageGenerator
 		/// </summary>
 		private GeneratorConfiguration _configuration;
 
+		/// <summary>
+		/// The array containing the map reference letters
+		/// </summary>
+		private string[] _mapReferenceLetters = { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J" };
+
+		string _htmlDisplayHeader;
+		string _htmlDisplayFooter;
+
 		protected ILogger Log
 		{
 			get
@@ -69,6 +77,12 @@ namespace Enivate.ResponseHub.MessageGenerator
 
 			// Instantiate the job message parser
 			_jobMessageParser = new JobMessageParser(MapIndexRepository, Log);
+
+			// Generate the html header
+			_htmlDisplayHeader = "<html><head><style type=\"text/css\"></style></head><body>";
+
+			// generate the html footer
+			_htmlDisplayFooter = "</body></html>";
 
 		}
 
@@ -164,6 +178,23 @@ namespace Enivate.ResponseHub.MessageGenerator
 
 			// Submit the job messages
 
+			// Display the generated messages
+			DisplayGeneratedMessages(jobMessages);
+
+
+		}
+
+		private void DisplayGeneratedMessages(IDictionary<string, JobMessage> jobMessages)
+		{
+
+			// Loop through each of the job messages
+			foreach (JobMessage message in jobMessages.Select(i => i.Value))
+			{
+
+				
+
+			}
+
 
 		}
 
@@ -219,9 +250,36 @@ namespace Enivate.ResponseHub.MessageGenerator
 		/// <returns></returns>
 		private string GetRandomMapReference()
 		{
-			
+
 			// Get the map pages
 			IList<string> mapPages = GetMapPages();
+
+			// If there are no map pages, return empty string
+			if (mapPages == null || mapPages.Count == 0)
+			{
+				return "";
+			}
+
+			// Generate the random number
+			Random random = new Random(GetRandomSeed());
+
+			// Generate the random index for the map page, letter and number grid references
+			int randomMapPageIndex = random.Next(0, mapPages.Count);
+			int randomGridLetterIndex = random.Next(0, _mapReferenceLetters.Length);
+			int randomGridNumber = random.Next(0, 11);
+
+			// Get the random page
+			string page = mapPages[randomMapPageIndex];
+
+			// return the random map reference
+			return String.Format("{0} {1} {2}{3}",
+				(page.Length == 4 ? "SVVB C" : "M"),
+				page,
+				_mapReferenceLetters[randomGridLetterIndex],
+				randomGridNumber
+				);
+
+
 		}
 
 		/// <summary>
