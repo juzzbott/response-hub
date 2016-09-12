@@ -72,7 +72,7 @@
 			this.groupBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.groupBox1.Location = new System.Drawing.Point(12, 13);
 			this.groupBox1.Name = "groupBox1";
-			this.groupBox1.Size = new System.Drawing.Size(940, 220);
+			this.groupBox1.Size = new System.Drawing.Size(1218, 160);
 			this.groupBox1.TabIndex = 0;
 			this.groupBox1.TabStop = false;
 			this.groupBox1.Text = "Generation options";
@@ -81,7 +81,7 @@
 			// 
 			this.lblMapPagesToolTip.AutoSize = true;
 			this.lblMapPagesToolTip.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.lblMapPagesToolTip.Location = new System.Drawing.Point(87, 89);
+			this.lblMapPagesToolTip.Location = new System.Drawing.Point(842, 31);
 			this.lblMapPagesToolTip.Name = "lblMapPagesToolTip";
 			this.lblMapPagesToolTip.Size = new System.Drawing.Size(17, 17);
 			this.lblMapPagesToolTip.TabIndex = 13;
@@ -89,7 +89,7 @@
 			// 
 			// txtMapPages
 			// 
-			this.txtMapPages.Location = new System.Drawing.Point(10, 110);
+			this.txtMapPages.Location = new System.Drawing.Point(765, 52);
 			this.txtMapPages.Name = "txtMapPages";
 			this.txtMapPages.Size = new System.Drawing.Size(317, 21);
 			this.txtMapPages.TabIndex = 12;
@@ -98,7 +98,7 @@
 			// label5
 			// 
 			this.label5.AutoSize = true;
-			this.label5.Location = new System.Drawing.Point(7, 91);
+			this.label5.Location = new System.Drawing.Point(762, 33);
 			this.label5.Name = "label5";
 			this.label5.Size = new System.Drawing.Size(80, 15);
 			this.label5.TabIndex = 11;
@@ -131,7 +131,7 @@
 			// label3
 			// 
 			this.label3.AutoSize = true;
-			this.label3.Location = new System.Drawing.Point(514, 36);
+			this.label3.Location = new System.Drawing.Point(514, 35);
 			this.label3.Name = "label3";
 			this.label3.Size = new System.Drawing.Size(92, 15);
 			this.label3.TabIndex = 8;
@@ -139,7 +139,7 @@
 			// 
 			// btnGenerate
 			// 
-			this.btnGenerate.Location = new System.Drawing.Point(10, 151);
+			this.btnGenerate.Location = new System.Drawing.Point(10, 94);
 			this.btnGenerate.Name = "btnGenerate";
 			this.btnGenerate.Size = new System.Drawing.Size(75, 23);
 			this.btnGenerate.TabIndex = 7;
@@ -149,7 +149,7 @@
 			// 
 			// prgGenerating
 			// 
-			this.prgGenerating.Location = new System.Drawing.Point(10, 180);
+			this.prgGenerating.Location = new System.Drawing.Point(10, 123);
 			this.prgGenerating.Name = "prgGenerating";
 			this.prgGenerating.Size = new System.Drawing.Size(317, 23);
 			this.prgGenerating.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
@@ -219,7 +219,7 @@
 			// 
 			this.label4.AutoSize = true;
 			this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.label4.Location = new System.Drawing.Point(12, 241);
+			this.label4.Location = new System.Drawing.Point(12, 187);
 			this.label4.Name = "label4";
 			this.label4.Size = new System.Drawing.Size(128, 15);
 			this.label4.TabIndex = 2;
@@ -227,7 +227,7 @@
 			// 
 			// generatorTimer
 			// 
-			this.generatorTimer.Interval = 3000;
+			this.generatorTimer.Interval = 30000;
 			this.generatorTimer.Tick += new System.EventHandler(this.generatorTimer_Tick);
 			// 
 			// brsMessages
@@ -238,10 +238,10 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.brsMessages.IsWebBrowserContextMenuEnabled = false;
-			this.brsMessages.Location = new System.Drawing.Point(12, 260);
+			this.brsMessages.Location = new System.Drawing.Point(12, 208);
 			this.brsMessages.MinimumSize = new System.Drawing.Size(20, 20);
 			this.brsMessages.Name = "brsMessages";
-			this.brsMessages.Size = new System.Drawing.Size(940, 256);
+			this.brsMessages.Size = new System.Drawing.Size(1218, 308);
 			this.brsMessages.TabIndex = 3;
 			this.brsMessages.WebBrowserShortcutsEnabled = false;
 			// 
@@ -249,12 +249,13 @@
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(964, 528);
+			this.ClientSize = new System.Drawing.Size(1242, 528);
 			this.Controls.Add(this.brsMessages);
 			this.Controls.Add(this.label4);
 			this.Controls.Add(this.groupBox1);
 			this.Name = "frmMain";
 			this.Text = "Message generator";
+			this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
 			this.Load += new System.EventHandler(this.frmMain_Load);
 			this.groupBox1.ResumeLayout(false);
 			this.groupBox1.PerformLayout();

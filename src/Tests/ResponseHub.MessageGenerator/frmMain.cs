@@ -18,6 +18,7 @@ using Enivate.ResponseHub.Model.Messages;
 using Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers;
 using Enivate.ResponseHub.MessageGenerator.Configuration;
 using System.IO;
+using Enivate.ResponseHub.PagerDecoder.ApplicationServices;
 
 namespace Enivate.ResponseHub.MessageGenerator
 {
@@ -46,6 +47,8 @@ namespace Enivate.ResponseHub.MessageGenerator
 
 		string _htmlDisplayHeader;
 		string _htmlDisplayFooter;
+
+		StringBuilder _htmlContent;
 
 		protected ILogger Log
 		{
@@ -79,10 +82,21 @@ namespace Enivate.ResponseHub.MessageGenerator
 			_jobMessageParser = new JobMessageParser(MapIndexRepository, Log);
 
 			// Generate the html header
-			_htmlDisplayHeader = "<html><head><style type=\"text/css\"></style></head><body>";
+			_htmlDisplayHeader = "<html><head><style type=\"text/css\">body { font-size: 13px; font-family: Arial, sans-serif; } ul.message-list { margin-bottom: 20px; margin-top: 0; padding-left: 0px; } li.emerg { color: #C7201D; } li.non-emerg { color: #C7A216; } p {margin-bottom: 5px; }</style></head><body>";
 
 			// generate the html footer
 			_htmlDisplayFooter = "</body></html>";
+
+			// Instantiate the HTML string builder container
+			_htmlContent = new StringBuilder();
+
+			// Set default message count option
+			ddlGenerationAmount.SelectedIndex = 0;
+
+			// Set the tooltips
+			toolTip.SetToolTip(lblCapcodeToolTip, "The capcode address for the messages to be generated.");
+			toolTip.SetToolTip(lblGenerationAmountToolTip, "The random amount of messages to be generated within 30 seconds.");
+			toolTip.SetToolTip(lblMapPagesToolTip, "The map pages to generate the grid references in the messages for. Comma separate multiple pages.");
 
 		}
 
@@ -108,6 +122,10 @@ namespace Enivate.ResponseHub.MessageGenerator
 				// Set the progress bar
 				prgGenerating.Style = ProgressBarStyle.Marquee;
 				prgGenerating.MarqueeAnimationSpeed = 30;
+
+
+				// Generate the messages
+				GenerateMessages();
 
 				// Start the timer
 				generatorTimer.Enabled = true;
@@ -154,14 +172,14 @@ namespace Enivate.ResponseHub.MessageGenerator
 			// Get the min and max messages
 			string[] minMaxMessages = ddlGenerationAmount.Items[ddlGenerationAmount.SelectedIndex].ToString().Split(new char[] { '-' });
 			int minMessages = Int32.Parse(minMaxMessages[0]);
-			int maxMessages = Int32.Parse(minMaxMessages[0]);
+			int maxMessages = Int32.Parse(minMaxMessages[1]);
 
 			// Generate the number of messages
 			Random random = new Random(GetRandomSeed());
 			int messageCount = random.Next(minMessages, (maxMessages + 1));
 
 			// Create the pager messages dictionary
-			IDictionary<string, JobMessage> jobMessages = new Dictionary<string, JobMessage>();
+			Dictionary<string, JobMessage> jobMessages = new Dictionary<string, JobMessage>();
 
 			// Loop through the message count
 			for(int i = 0; i < messageCount; i++)
@@ -177,6 +195,7 @@ namespace Enivate.ResponseHub.MessageGenerator
 			}
 
 			// Submit the job messages
+			SubmitJobMessages(jobMessages);
 
 			// Display the generated messages
 			DisplayGeneratedMessages(jobMessages);
@@ -184,17 +203,52 @@ namespace Enivate.ResponseHub.MessageGenerator
 
 		}
 
+		private void SubmitJobMessages(Dictionary<string, JobMessage> jobMessages)
+		{
+			try
+			{
+				// Submit the job messages to the web service
+				JobMessageSubmitter.PostJobMessagesToWebService(jobMessages);
+			}
+			catch (Exception ex)
+			{
+				// Show the messagebox error message
+				MessageBox.Show(ex.Message, "Error submitting job messages.", MessageBoxButtons.OK, MessageBoxIcon.Error);
+			}
+		}
+
 		private void DisplayGeneratedMessages(IDictionary<string, JobMessage> jobMessages)
 		{
+
+			// Create the string builder to store the generated message markup
+			StringBuilder generatedMessagesMarkup = new StringBuilder();
+
+			// Add the summary
+			generatedMessagesMarkup.AppendLine(String.Format("<p><strong>{0} messages generated: {1} emergency, {2} non-emergency</strong></p>",
+				jobMessages.Count,
+				jobMessages.Count(i => i.Value.Priority == MessagePriority.Emergency),
+				jobMessages.Count(i => i.Value.Priority == MessagePriority.NonEmergency)));
+
+			// Create the list of messages
+			generatedMessagesMarkup.AppendLine("<ul class=\"message-list\">");
 
 			// Loop through each of the job messages
 			foreach (JobMessage message in jobMessages.Select(i => i.Value))
 			{
-
-				
-
+				generatedMessagesMarkup.AppendLine(String.Format("<li class=\"{0}\">{1}</li>", (message.Priority == MessagePriority.Emergency ? "emerg" : "non-emerg"), message.MessageContent));
 			}
 
+			// Close the list
+			generatedMessagesMarkup.AppendLine("</ul>");
+
+			// Add the generated markup to the html content string builder
+			_htmlContent.Insert(0, generatedMessagesMarkup.ToString());
+
+			// Set the web browser content
+			brsMessages.DocumentText = "0";
+			brsMessages.Document.OpenNew(true);
+			brsMessages.Document.Write(String.Format("{0}{1}{2}", _htmlDisplayHeader, _htmlContent.ToString(), _htmlDisplayFooter));
+			brsMessages.Refresh();
 
 		}
 
@@ -346,6 +400,7 @@ namespace Enivate.ResponseHub.MessageGenerator
 				return BitConverter.ToInt32(randomBytes, 0);
 			}
 		}
+		
 	}
 }
 
