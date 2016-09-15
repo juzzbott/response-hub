@@ -309,6 +309,16 @@ responseHub.maps = (function () {
 		for (var i = 0; i < mapMarkers.length; i++) {
 			map.removeLayer(mapMarkers[i]);
 		}
+
+		// Clear the markers
+		if ($('.leaflet-marker-pane').length > 0) {
+			$('.leaflet-marker-pane').empty();
+		}
+
+		// Clear the shadows
+		if ($('.leaflet-shadow-pane').length > 0) {
+			$('.leaflet-shadow-pane').empty();
+		}
 	};
 
 	/**

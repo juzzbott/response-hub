@@ -30,6 +30,8 @@
 		{
 			this.components = new System.ComponentModel.Container();
 			this.groupBox1 = new System.Windows.Forms.GroupBox();
+			this.lblSubmitToolTip = new System.Windows.Forms.Label();
+			this.chkSubmitToResponseHub = new System.Windows.Forms.CheckBox();
 			this.lblMapPagesToolTip = new System.Windows.Forms.Label();
 			this.txtMapPages = new System.Windows.Forms.TextBox();
 			this.label5 = new System.Windows.Forms.Label();
@@ -55,6 +57,8 @@
 			// 
 			this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+			this.groupBox1.Controls.Add(this.lblSubmitToolTip);
+			this.groupBox1.Controls.Add(this.chkSubmitToResponseHub);
 			this.groupBox1.Controls.Add(this.lblMapPagesToolTip);
 			this.groupBox1.Controls.Add(this.txtMapPages);
 			this.groupBox1.Controls.Add(this.label5);
@@ -77,6 +81,28 @@
 			this.groupBox1.TabStop = false;
 			this.groupBox1.Text = "Generation options";
 			// 
+			// lblSubmitToolTip
+			// 
+			this.lblSubmitToolTip.AutoSize = true;
+			this.lblSubmitToolTip.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.lblSubmitToolTip.Location = new System.Drawing.Point(308, 96);
+			this.lblSubmitToolTip.Name = "lblSubmitToolTip";
+			this.lblSubmitToolTip.Size = new System.Drawing.Size(17, 17);
+			this.lblSubmitToolTip.TabIndex = 15;
+			this.lblSubmitToolTip.Text = "?";
+			// 
+			// chkSubmitToResponseHub
+			// 
+			this.chkSubmitToResponseHub.AutoSize = true;
+			this.chkSubmitToResponseHub.Checked = true;
+			this.chkSubmitToResponseHub.CheckState = System.Windows.Forms.CheckState.Checked;
+			this.chkSubmitToResponseHub.Location = new System.Drawing.Point(151, 96);
+			this.chkSubmitToResponseHub.Name = "chkSubmitToResponseHub";
+			this.chkSubmitToResponseHub.Size = new System.Drawing.Size(160, 19);
+			this.chkSubmitToResponseHub.TabIndex = 14;
+			this.chkSubmitToResponseHub.Text = "Submit to ResponseHub";
+			this.chkSubmitToResponseHub.UseVisualStyleBackColor = true;
+			// 
 			// lblMapPagesToolTip
 			// 
 			this.lblMapPagesToolTip.AutoSize = true;
@@ -93,7 +119,7 @@
 			this.txtMapPages.Name = "txtMapPages";
 			this.txtMapPages.Size = new System.Drawing.Size(317, 21);
 			this.txtMapPages.TabIndex = 12;
-			this.txtMapPages.Text = "333, 339, 6442, 6421";
+			this.txtMapPages.Text = "6442, 6440";
 			// 
 			// label5
 			// 
@@ -285,6 +311,8 @@
 		private System.Windows.Forms.Label label4;
 		private System.Windows.Forms.Timer generatorTimer;
 		private System.Windows.Forms.WebBrowser brsMessages;
+		private System.Windows.Forms.Label lblSubmitToolTip;
+		private System.Windows.Forms.CheckBox chkSubmitToResponseHub;
 	}
 }
 
