@@ -11,6 +11,7 @@ using Enivate.ResponseHub.Common.Extensions;
 using System.Security.Claims;
 using Enivate.ResponseHub.Model.Identity;
 using System.Web.Routing;
+using Enivate.ResponseHub.Common.Constants;
 
 namespace Enivate.ResponseHub.UI.Helpers
 {
@@ -73,6 +74,35 @@ namespace Enivate.ResponseHub.UI.Helpers
 
 			return identity.Claims.Any(i => i.Type.Equals(ClaimTypes.Role, StringComparison.CurrentCultureIgnoreCase) && i.Value.Equals(RoleTypes.SystemAdministrator, StringComparison.CurrentCultureIgnoreCase));
 
+		}
+
+
+		/// <summary>
+		/// Gets the full name of the currently logged in user
+		/// </summary>
+		/// <param name="helper"></param>
+		/// <returns></returns>
+		public static string UserDisplayName(this HtmlHelper helper)
+		{
+			// If the user is null or not authenticated, then just return false
+			if (HttpContext.Current == null)
+			{
+				return "";
+			}
+
+			if (HttpContext.Current.User == null || !HttpContext.Current.User.Identity.IsAuthenticated)
+			{
+				return "";
+			}
+
+			// Get the identity as a claims identity
+			ClaimsIdentity identity = (ClaimsIdentity)HttpContext.Current.User.Identity;
+
+			// Get the user display name claim
+			Claim userDisplayName = identity.Claims.FirstOrDefault(i => i.Type == CustomClaimTypes.UserDisplayName);
+
+			return (userDisplayName != null ? userDisplayName.Value : "");
+			
 		}
 
 		public static MvcHtmlString SuccessFromQueryString(this HtmlHelper helper, string queryStringKey, string queryStringValue, string message)

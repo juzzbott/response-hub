@@ -643,7 +643,8 @@ fieldset[disabled] .form-control {
   color: #999;
   display: block;
 }
-#job-notes ul li .wordback-icon {
+#job-notes ul li .wordback-icon,
+#job-notes ul li .user-icon {
   padding-left: 10px;
 }
 .job-list h3 i {
@@ -679,8 +680,12 @@ i.p-message-admin {
 /**
 	Wallboard styles
 */
+.wallboard-layout .navbar-header {
+  width: 200px !important;
+  float: left;
+}
 .wallboard-layout .page-navbar .navbar-right {
-  margin-right: 0;
+  margin: 0;
 }
 .wallboard-layout .wallboard-sidebar {
   background-color: #fff;
@@ -797,9 +802,43 @@ i.p-message-admin {
   width: 512px;
   height: 512px;
 }
+.wallboard-layout .job-notes-container {
+  height: 250px;
+}
+.wallboard-layout ul.job-notes li {
+  border-left: 3px solid #D6E3E0;
+  border-top: 1px solid #e5edeb;
+  border-right: 1px solid #e5edeb;
+  border-bottom: 1px solid #e5edeb;
+  background-color: #fff;
+  padding-left: 8px;
+  padding-top: 4px;
+  padding-bottom: 2px;
+  margin-bottom: 10px;
+}
+.wallboard-layout ul.job-notes li.no-notes-msg {
+  border-width: 0;
+  padding: 0;
+  background-color: #fafafa;
+}
+.wallboard-layout ul.job-notes li small {
+  padding-bottom: 4px;
+  color: #999;
+  display: block;
+}
+.wallboard-layout ul.job-notes li small .wordback-icon,
+.wallboard-layout ul.job-notes li small .user-icon {
+  padding-left: 10px;
+}
 @media (max-width: 768px) {
   .wallboard-layout .navbar-nav {
-    display: none;
+    float: right !important;
+  }
+  .wallboard-layout .navbar-nav li {
+    float: left;
+  }
+  .wallboard-layout .page-navbar .navbar-right {
+    margin: 5px 0 0 0;
   }
 }
 @media (max-width: 992px) {

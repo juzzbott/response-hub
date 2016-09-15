@@ -478,6 +478,7 @@ responseHub.jobLog = (function () {
 
 		var jobNote = $('#txtJobNote').val();
 		var isWordback = $('#chkWordBack').is(':checked');
+		var userDisplayName = $('#note-form').data('user-display-name');
 
 		var postData = {
 			Body: jobNote,
@@ -508,7 +509,7 @@ responseHub.jobLog = (function () {
 		
 				var noteDate = moment(data.Date);
 
-				var noteMarkup = buildJobNoteMarkup(data.Id, data.Body, noteDate.format('YYYY-MM-DD HH:mm:ss'), data.IsWordBack);
+				var noteMarkup = buildJobNoteMarkup(data.Id, data.Body, noteDate.format('YYYY-MM-DD HH:mm:ss'), data.IsWordBack, userDisplayName);
 		
 				$('#job-notes ul').prepend(noteMarkup);
 				$('#job-notes').removeClass('hidden');
@@ -534,7 +535,7 @@ responseHub.jobLog = (function () {
 	/**
 	 * Builds the markup for the job note to be added to the page.
 	 */
-	function buildJobNoteMarkup(noteId, body, date, isWordback) {
+	function buildJobNoteMarkup(noteId, body, date, isWordback, userDisplayName) {
 
 		// Create the note list item
 		var noteListItem = $('<li data-job-note-id="' + noteId + '"></li>');
@@ -542,8 +543,10 @@ responseHub.jobLog = (function () {
 		// Generate wordback markup if required
 		var wordbackMarkup = isWordback ? ' <i class="fa fa-commenting-o wordback-icon"></i> wordback' : '';
 
+		var userDisplayNameMarkup = ' <i class="fa fa-user user-icon"></i> ' + userDisplayName;
+
 		// Append the meta and note information to the list item
-		noteListItem.append('<small class="text-muted"><i class="fa fa-clock-o"></i> ' + date + wordbackMarkup + '</small>');
+		noteListItem.append('<small class="text-muted"><i class="fa fa-clock-o"></i> ' + date + wordbackMarkup + userDisplayNameMarkup + '</small>');
 		noteListItem.append('<p class="text-info">' + body + '</p>');
 
 		// return the node list item
@@ -899,6 +902,9 @@ responseHub.wallboard = (function () {
 			return;
 		}
 
+		// Get the job id
+		var jobId = $(elem).data('id');
+
 		// Get the progress information from the data attribute. It's a JSON object.
 		var latestProgress = null;
 		$(".wallboard-main .job-status").html('');
@@ -954,7 +960,7 @@ responseHub.wallboard = (function () {
 		if (lat != 0 && lon != 0) {
 
 			// Set the height of the map canvas
-			$('#map-canvas').css('height', '550px');
+			$('#map-canvas').css('height', '300px');
 
 			if (!responseHub.maps.mapExists()) 
 			{
@@ -981,9 +987,75 @@ responseHub.wallboard = (function () {
 			$('#map-canvas').css('height', '0px');
 		}
 
+		// Load the notes
+		loadJobNotes(jobId);
+
 		// Set the active class on the list item
 		$('.wallboard-layout .message-list li').removeClass('selected');
 		$(elem).addClass('selected');
+
+	}
+
+	/**
+	 * Load job notes
+	 */
+	function loadJobNotes(jobId) {
+
+		// Show the loading notes
+		$(".notes-loading").removeClass("hidden");
+
+		// Clear the loading notes
+		$("ul.job-notes").empty();
+
+		// Hide the loading
+		$(".notes-loading").addClass("hidden");
+
+		$.ajax({
+			url: responseHub.apiPrefix + '/job-messages/' + jobId + '/notes',
+			dataType: 'json',
+			success: function (data) {
+				
+				if (data == null || data.length == 0) {
+
+					$("ul.job-notes").append('<li class="no-notes-msg"><p>No notes available.</p></li>');
+
+				} else {
+
+					for (var i = 0; i < data.length; i++) {
+
+						// Add the notes to the list
+						var listItem = $("<li></li>");
+
+						// Create the note details
+						var noteInfo = $('<small class="text-muted"></small>');
+
+						// Add the note time
+						var noteDate = moment(data[i].Timestamp);
+						var localDateString = noteDate.format('YYYY-MM-DD HH:mm:ss');
+						noteInfo.append('<i class="fa fa-clock-o"></i> ' + localDateString);
+
+						// Add the wordback details
+						if (data[i].IsWordBack) {
+							noteInfo.append('<i class="fa fa-commenting-o wordback-icon"></i> wordback');
+						}
+
+						// Add the user
+						noteInfo.append('<i class="fa fa-user user-icon"></i> ' + data[i].UserDisplayName);
+
+						// append the note details
+						listItem.append(noteInfo);
+
+						// Add the message body
+						listItem.append('<p class="text-info">' + data[i].Body + '</p>');
+						
+						// Add the item to the start of the list, so newest notes are first
+						$("ul.job-notes").prepend(listItem);
+
+					}
+				}
+
+			}
+		});
 
 	}
 
@@ -1010,6 +1082,9 @@ responseHub.wallboard = (function () {
 		$('.wallboard-layout .message-details').append(messageHeader);
 		$('.wallboard-layout .message-details').append($('<p class="lead job-message-body"></p>'));
 		$('.wallboard-layout .message-details').append(location);
+		$('.wallboard-layout .message-details').append($('<h3>Notes</h3><p class="notes-loading">Loading notes... <i class="fa fa-spinner fa-pulse fa-fw"></i></p><div class="job-notes-container"><ul class="job-notes list-unstyled"></ul></div>'))
+
+		$('.job-notes-container').scrollator();
 	}
 
 	/**
