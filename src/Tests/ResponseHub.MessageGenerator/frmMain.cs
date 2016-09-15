@@ -97,6 +97,7 @@ namespace Enivate.ResponseHub.MessageGenerator
 			toolTip.SetToolTip(lblCapcodeToolTip, "The capcode address for the messages to be generated.");
 			toolTip.SetToolTip(lblGenerationAmountToolTip, "The random amount of messages to be generated within 30 seconds.");
 			toolTip.SetToolTip(lblMapPagesToolTip, "The map pages to generate the grid references in the messages for. Comma separate multiple pages.");
+			toolTip.SetToolTip(lblSubmitToolTip, "Determines if the generated messages should be submitted to the test ResponseHub website.");
 
 		}
 
@@ -115,6 +116,7 @@ namespace Enivate.ResponseHub.MessageGenerator
 				ddlGenerationAmount.Enabled = false;
 				chkEmergency.Enabled = false;
 				chkNonEmergency.Enabled = false;
+				chkSubmitToResponseHub.Enabled = false;
 
 				// Set the button text
 				btnGenerate.Text = "Stop generating...";
@@ -141,6 +143,7 @@ namespace Enivate.ResponseHub.MessageGenerator
 				ddlGenerationAmount.Enabled = true;
 				chkEmergency.Enabled = true;
 				chkNonEmergency.Enabled = true;
+				chkSubmitToResponseHub.Enabled = true;
 
 				// Set the button text
 				btnGenerate.Text = "Generate";
@@ -194,8 +197,11 @@ namespace Enivate.ResponseHub.MessageGenerator
 				jobMessages.Add(pagerMessage.ShaHash, jobMessage);
 			}
 
-			// Submit the job messages
-			SubmitJobMessages(jobMessages);
+			// Submit the job messages, if the option to submit is checked.
+			if (chkSubmitToResponseHub.Checked)
+			{
+				SubmitJobMessages(jobMessages);
+			}
 
 			// Display the generated messages
 			DisplayGeneratedMessages(jobMessages);
@@ -400,7 +406,6 @@ namespace Enivate.ResponseHub.MessageGenerator
 				return BitConverter.ToInt32(randomBytes, 0);
 			}
 		}
-		
 	}
 }
 
