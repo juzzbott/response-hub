@@ -531,5 +531,20 @@ namespace Enivate.ResponseHub.ApplicationServices
 
 		#endregion
 
+		#region Create Claims Identity
+
+		public override async Task<ClaimsIdentity> CreateIdentityAsync(IdentityUser user, string authenticationType)
+		{
+			// Create the claims identity
+			ClaimsIdentity claimsIdentity = await base.CreateIdentityAsync(user, authenticationType);
+
+			// Add the Display name
+			claimsIdentity.AddClaim(new Claim(CustomClaimTypes.UserDisplayName, user.FullName));
+
+			return claimsIdentity;
+		}
+
+		#endregion
+
 	}
 }

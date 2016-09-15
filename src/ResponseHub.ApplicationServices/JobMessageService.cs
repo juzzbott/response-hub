@@ -137,6 +137,16 @@ namespace Enivate.ResponseHub.ApplicationServices
 		}
 
 		/// <summary>
+		/// Gets the notes for specific job.
+		/// </summary>
+		/// <param name="jobMessageId">The ID of the job to get the notes for.</param>
+		/// <returns>The job notes collection.</returns>
+		public async Task<IList<JobNote>> GetNotesForJob(Guid jobMessageId)
+		{
+			return await _repository.GetNotesForJob(jobMessageId);
+		}
+
+		/// <summary>
 		/// Adds the job progress to the job with the specified id.
 		/// </summary>
 		/// <param name="jobMessageId">The id of the job message to add the progress to.</param>

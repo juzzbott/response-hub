@@ -24,16 +24,6 @@ namespace Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers
 		private string _lastMessageFileKey = "LastMessageFile";
 
 		/// <summary>
-		/// The configuration key for the web service url.
-		/// </summary>
-		private string _webServiceUrlKey = "ResponseHubService.Url";
-
-		/// <summary>
-		/// The configuration key for the web service api key.
-		/// </summary>
-		private string _webServiceUrlApiKeyKey = "ResponseHubService.ApiKey";
-
-		/// <summary>
 		/// The last inserted message hash.
 		/// </summary>
 		private string _lastInsertedMessageSha = "";
@@ -111,7 +101,7 @@ namespace Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers
 			ParsePagerMessagesToJobMessages();
 
 			// Submit the messages
-			bool result = PostJobMessagesToWebService();
+			bool result = JobMessageSubmitter.PostJobMessagesToWebService(JobMessagesToSubmit);
 
 			if (result && PagerMessagesToSubmit.Count > 0)
 			{
@@ -252,63 +242,6 @@ namespace Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers
 			}
 		}
 
-		#region Submit messages
-		
-		/// <summary>
-		/// Posts the messages to the webservice
-		/// </summary>
-		/// <returns></returns>
-		private bool PostJobMessagesToWebService()
-		{
-			// Get the json string for the list of pager messages
-			string jsonData = JsonConvert.SerializeObject(JobMessagesToSubmit.Select(i => i.Value).ToArray());
-			byte[] jsonBytes = Encoding.ASCII.GetBytes(jsonData);
-
-			// Get the service url and api key
-			string serviceUrl = ConfigurationManager.AppSettings[_webServiceUrlKey];
-			string serviceApiKey = ConfigurationManager.AppSettings[_webServiceUrlApiKeyKey];
-
-			// If the service url is null or empty, throw exception
-			if (String.IsNullOrEmpty(serviceUrl))
-			{
-				throw new ApplicationException("The web service url configuration is missing or empty.");
-			}
-
-			// Create the post request
-			HttpWebRequest request = WebRequest.CreateHttp(serviceUrl);
-			request.Method = "POST";
-			request.ContentType = "application/json";
-			request.ContentLength = jsonBytes.Length;
-			request.Headers.Add(HttpRequestHeader.Authorization, String.Format("APIKEY {0}", serviceApiKey));
-			using (Stream stream = request.GetRequestStream())
-			{
-				stream.Write(jsonBytes, 0, jsonBytes.Length);
-			}
-
-			// Create the message sha variable
-			string responseText = "";
-
-			// Get the response
-			//Task.Run(async () =>
-			//{
-			HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-
-				// If all went well, set the last message sha to the last in the list of jbo messages
-			if (response.StatusCode == HttpStatusCode.OK)
-			{
-				using (StreamReader reader = new StreamReader(response.GetResponseStream()))
-				{
-					responseText = reader.ReadToEnd();
-				}
-			}
-
-			//}).Wait();
-
-			// return the message sha
-			return (responseText.ToLower() == "true");
-
-		}
-
 		/// <summary>
 		/// Parse the pager messages into JobMessages.
 		/// </summary>
@@ -337,8 +270,6 @@ namespace Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers
 
 			}
 		}
-
-		#endregion
 
 		/// <summary>
 		/// Gets the list of pager messages from the log file. The messages are reversed in order, so that the most recent log entries are at the top of the list, so to minimise iterations.

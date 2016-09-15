@@ -1,4 +1,4 @@
-﻿@model List<Enivate.ResponseHub.Model.Messages.JobNote>
+﻿@model List<Enivate.ResponseHub.UI.Models.Messages.JobNoteViewModel>
 
 <h3>Notes</h3>
 
@@ -23,6 +23,7 @@
 							{
 								@Html.Raw("<i class=\"fa fa-commenting-o wordback-icon\"></i> wordback")
 							}
+							<i class="fa fa-user user-icon"></i> @note.UserDisplayName
 						</small>
 						<p class="text-info">@note.Body</p>
 					</li>
@@ -35,7 +36,7 @@
 
 <div class="row">
 	<div class="col-md-8">
-		<div class="form-group">
+		<div class="form-group" id="note-form" data-user-display-name="@Html.UserDisplayName()">
 			<label>Job note</label>
 			<textarea class="form-control" id="txtJobNote" name="JobNote" placeholder="Add a note for this job..."></textarea>
 		</div>

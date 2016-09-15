@@ -46,7 +46,7 @@ namespace Enivate.ResponseHub.UI.Models.Messages
 
 		public MessageProgressViewModel Cancelled { get; set; }
 
-		public IList<JobNote> Notes { get; set; }
+		public IList<JobNoteViewModel> Notes { get; set; }
 
 		public IList<Attachment> Attachments { get; set; }
 
@@ -55,7 +55,7 @@ namespace Enivate.ResponseHub.UI.Models.Messages
 		public JobMessageViewModel()
 		{
 			Location = new LocationInfo();
-			Notes = new List<JobNote>();
+			Notes = new List<JobNoteViewModel>();
 			Attachments = new List<Attachment>();
 			ImageAttachments = new List<Attachment>();
 		}

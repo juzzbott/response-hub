@@ -81,7 +81,7 @@ namespace Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers
 			string messageContent = match.Groups[7].Value;
 
 			// calculate the message hash
-			string messageHash = HashGenerator.GetSha1HashString(String.Format("{0}_{1}_{2}_{3}", address, match.Groups[3].Value, match.Groups[2].Value, messageContent), 1);
+			string messageHash = PagerMessage.GenerateHash(address, timestamp, messageContent);
 
 			// Create the pager message object
 			PagerMessage pagerMessage = new PagerMessage()

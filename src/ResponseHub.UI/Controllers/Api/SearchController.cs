@@ -20,6 +20,7 @@ using Enivate.ResponseHub.UI.Models.Messages;
 using Enivate.ResponseHub.Model;
 using Enivate.ResponseHub.Model.Identity;
 using Enivate.ResponseHub.Model.Identity.Interface;
+using Enivate.ResponseHub.UI.Helpers;
 
 namespace Enivate.ResponseHub.UI.Controllers.Api
 {
@@ -112,7 +113,7 @@ namespace Enivate.ResponseHub.UI.Controllers.Api
 		/// <param name="capcodes"></param>
 		/// <param name="jobMessages"></param>
 		/// <returns></returns>
-		public static async Task<JobMessageListViewModel> CreateJobMessageListModel(IList<Capcode> capcodes, IList<JobMessage> jobMessages)
+		public async Task<JobMessageListViewModel> CreateJobMessageListModel(IList<Capcode> capcodes, IList<JobMessage> jobMessages)
 		{
 			// Create the list of job message view models
 			IList<JobMessageViewModel> jobMessageViewModels = new List<JobMessageViewModel>();
@@ -136,8 +137,13 @@ namespace Enivate.ResponseHub.UI.Controllers.Api
 			return model;
 		}
 
-		public static async Task<JobMessageViewModel> MapJobMessageToViewModel(JobMessage job, string capcodeGroupName)
+		public async Task<JobMessageViewModel> MapJobMessageToViewModel(JobMessage job, string capcodeGroupName)
 		{
+
+
+			// Map the job notes to the list of job notes view models
+			IList<JobNoteViewModel> jobNotesModels = await JobMessageModelHelper.MapJobNotesToViewModel(job.Notes, UserService);
+
 			JobMessageViewModel model = new JobMessageViewModel()
 			{
 				Capcode = job.Capcode,
@@ -146,7 +152,7 @@ namespace Enivate.ResponseHub.UI.Controllers.Api
 				JobNumber = job.JobNumber,
 				Location = job.Location,
 				MessageBody = job.MessageContent,
-				Notes = job.Notes,
+				Notes = jobNotesModels,
 				Priority = job.Priority,
 				Timestamp = job.Timestamp.ToLocalTime()
 			};

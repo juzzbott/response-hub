@@ -16,6 +16,7 @@ using System.Threading.Tasks;
 using Enivate.ResponseHub.Model.Attachments;
 using System.IO;
 using Enivate.ResponseHub.Common.Constants;
+using Enivate.ResponseHub.UI.Helpers;
 
 namespace Enivate.ResponseHub.UI.Controllers
 {
@@ -59,6 +60,12 @@ namespace Enivate.ResponseHub.UI.Controllers
 
 		public static async Task<JobMessageViewModel> MapJobMessageToViewModel(JobMessage job, string capcodeGroupName)
 		{
+
+			IUserService userService = ServiceLocator.Get<IUserService>();
+
+			// Map the job notes to the list of job notes view models
+			IList<JobNoteViewModel> jobNotesModels = await JobMessageModelHelper.MapJobNotesToViewModel(job.Notes, userService);
+
 			JobMessageViewModel model = new JobMessageViewModel()
 			{
 				Capcode = job.Capcode,
@@ -67,7 +74,7 @@ namespace Enivate.ResponseHub.UI.Controllers
 				JobNumber = job.JobNumber,
 				Location = job.Location,
 				MessageBody = job.MessageContent,
-				Notes = job.Notes,
+				Notes = jobNotesModels,
 				Priority = job.Priority,
 				Timestamp = job.Timestamp.ToLocalTime()
 			};

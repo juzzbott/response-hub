@@ -207,6 +207,7 @@
     <Compile Include="Controllers\MessagesController.cs" />
     <Compile Include="Controllers\SearchController.cs" />
     <Compile Include="Filters\SystemAdminUserRedirectAttribute.cs" />
+    <Compile Include="Helpers\JobMessageModelHelper.cs" />
     <Compile Include="Models\Api\Events\AddResourcePostModel.cs" />
     <Compile Include="Models\Api\Events\AddResourceResponseModel.cs" />
     <Compile Include="Models\Api\Messages\PostGetLatestFromLastModel.cs" />
@@ -220,6 +221,7 @@
     <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Models\Events\CreateEventViewModel.cs" />
     <Compile Include="Models\Messages\JobMessageListViewModel.cs" />
+    <Compile Include="Models\Messages\JobNoteViewModel.cs" />
     <Compile Include="Models\MyAccount\AccountDetailsViewModel.cs" />
     <Compile Include="Models\MyAccount\ForgottenPasswordViewModel.cs" />
     <Compile Include="Models\MyAccount\ResetPasswordViewModel.cs" />
