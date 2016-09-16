@@ -73,6 +73,41 @@ var responseHub = (function () {
 		//	};
 		//});
 
+		$('.toggle-header a').click(function () {
+
+			// Get the toggle id
+			var controlId = $(this).data('toggle-id');
+
+			// If the control has hidden, remove it, otherwise add hidden class
+			if ($('#' + controlId).hasClass('hidden'))
+			{
+				$('#' + controlId).removeClass('hidden');
+			}
+			else
+			{
+				$('#' + controlId).addClass('hidden');
+			}
+
+			return false;
+
+		});
+
+		$('.btn-search-toggle').click(function () {
+
+			// If the control has hidden, remove it, otherwise add hidden class
+			if ($('#navbar-search').css('display') == "none") {
+				$('#navbar-search').css('display', 'block');
+				$('body').addClass('search-bar-visible');
+			}
+			else {
+				$('#navbar-search').css('display', 'none');
+				$('body').removeClass('search-bar-visible');
+			}
+
+			return false;
+
+		});
+
 	}
 
 	// Bind the modal
@@ -287,6 +322,16 @@ responseHub.maps = (function () {
 		for (var i = 0; i < mapMarkers.length; i++) {
 			map.removeLayer(mapMarkers[i]);
 		}
+
+		// Clear the markers
+		if ($('.leaflet-marker-pane').length > 0) {
+			$('.leaflet-marker-pane').empty();
+		}
+
+		// Clear the shadows
+		if ($('.leaflet-shadow-pane').length > 0) {
+			$('.leaflet-shadow-pane').empty();
+		}
 	};
 
 	/**
@@ -456,6 +501,7 @@ responseHub.jobLog = (function () {
 
 		var jobNote = $('#txtJobNote').val();
 		var isWordback = $('#chkWordBack').is(':checked');
+		var userDisplayName = $('#note-form').data('user-display-name');
 
 		var postData = {
 			Body: jobNote,
@@ -486,7 +532,7 @@ responseHub.jobLog = (function () {
 		
 				var noteDate = moment(data.Date);
 
-				var noteMarkup = buildJobNoteMarkup(data.Id, data.Body, noteDate.format('YYYY-MM-DD HH:mm:ss'), data.IsWordBack);
+				var noteMarkup = buildJobNoteMarkup(data.Id, data.Body, noteDate.format('YYYY-MM-DD HH:mm:ss'), data.IsWordBack, userDisplayName);
 		
 				$('#job-notes ul').prepend(noteMarkup);
 				$('#job-notes').removeClass('hidden');
@@ -512,7 +558,7 @@ responseHub.jobLog = (function () {
 	/**
 	 * Builds the markup for the job note to be added to the page.
 	 */
-	function buildJobNoteMarkup(noteId, body, date, isWordback) {
+	function buildJobNoteMarkup(noteId, body, date, isWordback, userDisplayName) {
 
 		// Create the note list item
 		var noteListItem = $('<li data-job-note-id="' + noteId + '"></li>');
@@ -520,8 +566,10 @@ responseHub.jobLog = (function () {
 		// Generate wordback markup if required
 		var wordbackMarkup = isWordback ? ' <i class="fa fa-commenting-o wordback-icon"></i> wordback' : '';
 
+		var userDisplayNameMarkup = ' <i class="fa fa-user user-icon"></i> ' + userDisplayName;
+
 		// Append the meta and note information to the list item
-		noteListItem.append('<small class="text-muted"><i class="fa fa-clock-o"></i> ' + date + wordbackMarkup + '</small>');
+		noteListItem.append('<small class="text-muted"><i class="fa fa-clock-o"></i> ' + date + wordbackMarkup + userDisplayNameMarkup + '</small>');
 		noteListItem.append('<p class="text-info">' + body + '</p>');
 
 		// return the node list item
@@ -665,6 +713,137 @@ responseHub.jobLog = (function () {
 
 })();
 
+responseHub.pagerMessages = (function () {
+
+	/**
+	 * Gets the next set of pager messages to display.
+	 */
+	function getNextPages() {
+
+		// Get the skip count
+		var skipCount = $("#all-pages-list li").length;
+
+		// Create the ajax request
+		$.ajax({
+			url: responseHub.apiPrefix + '/job-messages/pager-messages?skip=' + skipCount,
+			dataType: 'json',
+			success: function (data) {
+
+				for (var i = 0; i < data.length; i++) {
+
+					addMessageToList(data[i], true);
+
+				}
+
+				// If there is zero results, hide the show more button
+				if (data.length == 0) {
+					$("#all-pages-load-more").remove();
+				}
+
+			}
+		});
+
+	}
+
+	function getLatestPages() {
+
+		// Get the latest message id
+		var last_id = $("#all-pages-list li:first-child").data("message-id");
+
+		// Create the ajax request
+		$.ajax({
+			url: responseHub.apiPrefix + '/job-messages/latest-pager-messages/' + last_id,
+			dataType: 'json',
+			success: function (data) {
+
+				// Because we are pre-pending these results, we need to reverse them.
+				data.reverse();
+
+				for (var i = 0; i < data.length; i++) {
+					addMessageToList(data[i], false);
+				}
+
+			}
+		});
+
+	}
+
+	function addMessageToList(pagerMessage, append) {
+
+		var listItem = $('<li data-message-id="' + pagerMessage.Id + '"></li>');
+
+		var topRow = $('<p class="bottom-0"></p>');
+
+		// Create the icon and name
+		var topMarkup = "<strong>";
+
+		// Set the priority
+		// Add the priority icon
+		switch (pagerMessage.Priority) {
+			case 1:
+				topMarkup += '<i class="fa fa-exclamation-triangle p-message-emergency"></i> ';
+				break;
+
+			case 2:
+				topMarkup += '<i class="fa fa-exclamation-circle p-message-non-emergency"></i> ';
+				break;
+
+			default:
+				topMarkup += '<i class="fa fa-info-circle p-message-admin"></i> ';
+				break;
+		}
+
+		// If there is job number, then show it here
+		if (pagerMessage.JobNumber != "") {
+			topMarkup += pagerMessage.JobNumber + " - "
+		}
+
+		// Close the job and icon section
+		topMarkup += "</strong>";
+
+		// Get the job date
+		var jobDate = moment(pagerMessage.Timestamp);
+		var localDateString = jobDate.format('HH:mm:ss D MMMM YYYY');
+		topMarkup += '<span class="text-info">' + localDateString + '</span> - <span class="text-muted">(' + pagerMessage.Capcode + ')</span>';
+		// Append the top row
+		topRow.append($(topMarkup));
+
+		// Append the top row to the list item
+		listItem.append(topRow);
+		listItem.append($('<p class="message-content">' + pagerMessage.MessageContent + '</p>'));
+
+		// Append the list item to list of jobs
+		if (append) {
+			$("#all-pages-list").append(listItem);
+		} else {
+			$("#all-pages-list").prepend(listItem);
+		}
+
+	}
+
+	function bindUI() {
+
+		if ($("#all-pages-list").length > 0) {
+
+			setInterval(function () {
+				getLatestPages();
+			}, 30000);
+
+		}
+
+	}
+
+	bindUI();
+
+	return {
+		getNextPages: getNextPages,
+		getLatestPages: getLatestPages
+	}
+
+
+
+})();
+
 responseHub.wallboard = (function () {
 
 	var currentRadarImageIndex = 0;
@@ -673,8 +852,13 @@ responseHub.wallboard = (function () {
 
 	var jobListPollingEnabled = true;
 
-	var jobListInterval = null;
+	var jobListIntervalId = null;
 
+	var selectedJobIndex = 0;
+
+	/**
+	 * Determines if the specific warnings should be displayed on the screen.
+	 */
 	function showHideWarnings(warningsContainer) {
 
 		// If the container has the hidden class, remove it, otherwise add it
@@ -688,7 +872,10 @@ responseHub.wallboard = (function () {
 
 	}
 
-	function setContainerHeights(width) {
+	/**
+	 * Gets the height of the containers for the screen size.
+	 */
+	function getContainerHeight(width) {
 
 		// If the width is < 768 then just set the heights to auto
 		if (width < 768) {
@@ -700,15 +887,66 @@ responseHub.wallboard = (function () {
 		var headerHeight = $('.page-navbar').height();
 		var containerHeight = ($(window).height() - headerHeight);
 
+		// return the height
+		return containerHeight;
+
+	}
+
+	/**
+	 * Sets the container height for the columns. Only for devices above mobile.
+	 */
+	function setContainerHeights(width) {
+
+		var containerHeight = getContainerHeight(width);
+
+		// Set the height of the columns.
 		$('.wallboard-sidebar, .wallboard-main, .wallboard-warnings').height(containerHeight);
 
 	}
 
-	function selectMessage(elem) {
+	/**
+	 * Method that is called when a job is selected from the left list for the deatils to be displayed in the center column.
+	 */
+	function selectMessage(elemIndex) {
 
-		// If the current element is already selected, just return
-		if (elem.hasClass('selected')) {
+		// Set the index
+		selectedJobIndex = elemIndex;
+
+		// Get the element at the index
+		var elem = $('.wallboard-layout .message-list li').get(elemIndex);
+
+		var isFirstSelected = $('.wallboard-layout .message-list').first().hasClass('selected');
+
+		// If the message details markup does not exist, we need to build it
+		if ($('.wallboard-layout .message-details h2').length == 0) {
+			buildMessageDetailsMarkup();
+		} else if (isFirstSelected) {
+			// If the current element is already selected, just return
 			return;
+		}
+
+		// Get the job id
+		var jobId = $(elem).data('id');
+
+		// Get the progress information from the data attribute. It's a JSON object.
+		var latestProgress = null;
+		$(".wallboard-main .job-status").html('');
+		if ($(elem).data('progress') != "") {
+			var progressData = $(elem).data('progress');
+
+			// Format the progress dae
+			var progressTimestamp = moment(progressData.Timestamp).format('DD-MM-YYYY HH:mm');
+
+			if (progressData.ProgressType == 4) {
+				$(".wallboard-main .job-status").html('<span class="job-cancelled"><i class="fa fa-fw fa-ban"></i>Job cancelled by ' + progressData.UserFullName + ' on ' + progressTimestamp + '</span>');
+			} else if (progressData.ProgressType == 3) {
+				$(".wallboard-main .job-status").html('<span class="job-clear"><i class="fa fa-fw fa-check-circle-o"></i>Job cleared by ' + progressData.UserFullName + ' on ' + progressTimestamp + '</span>');
+			} else if (progressData.ProgressType == 2) {
+				$(".wallboard-main .job-status").html('<span class="on-scene"><i class="fa fa-fw fa-hourglass-half"></i>On scene by ' + progressData.UserFullName + ' on ' + progressTimestamp + '</span>');
+			} else if (progressData.ProgressType == 1) {
+				$(".wallboard-main .job-status").html('<span class="on-route"><i class="fa fa-fw fa-arrow-circle-o-right"></i>On route by ' + progressData.UserFullName + ' on ' + progressTimestamp + '</span>');
+			}
+
 		}
 
 		// Set the message text, date and job number
@@ -721,9 +959,9 @@ responseHub.wallboard = (function () {
 		$('.wallboard-main .job-date').text($(elem).data('date'));
 
 		$('#message-type').attr('class', '');
-		if ($(elem).data('priority').toLowerCase() == 'emergency') {
+		if ($(elem).data('priority') == '1') {
 			$('#message-type').attr('class', 'fa fa-exclamation-triangle p-message-emergency');
-		} else if ($(elem).data('priority').toLowerCase() == 'nonemergency') {
+		} else if ($(elem).data('priority') == '2') {
 			$('#message-type').attr('class', 'fa fa-exclamation-circle p-message-non-emergency');
 		} else {
 			$('#message-type').attr('class', 'fa fa-info-circle p-message-admin');
@@ -745,7 +983,7 @@ responseHub.wallboard = (function () {
 		if (lat != 0 && lon != 0) {
 
 			// Set the height of the map canvas
-			$('#map-canvas').css('height', '550px');
+			$('#map-canvas').css('height', '300px');
 
 			if (!responseHub.maps.mapExists()) 
 			{
@@ -772,21 +1010,144 @@ responseHub.wallboard = (function () {
 			$('#map-canvas').css('height', '0px');
 		}
 
+		// Load the notes
+		loadJobNotes(jobId);
+
 		// Set the active class on the list item
-		$('.message-list li').removeClass('selected');
+		$('.wallboard-layout .message-list li').removeClass('selected');
 		$(elem).addClass('selected');
 
 	}
 
-	function bindUI() {
+	/**
+	 * Load job notes
+	 */
+	function loadJobNotes(jobId) {
 
-		// If the window is resize, reset container heights (i.e. moving to fullscreen).
-		$(window).resize(function (e) {
-			setContainerHeights(e.target.innerWidth);
+		// Show the loading notes
+		$(".notes-loading").removeClass("hidden");
+
+		// Clear the loading notes
+		$("ul.job-notes").empty();
+
+		// Hide the loading
+		$(".notes-loading").addClass("hidden");
+
+		$.ajax({
+			url: responseHub.apiPrefix + '/job-messages/' + jobId + '/notes',
+			dataType: 'json',
+			success: function (data) {
+				
+				if (data == null || data.length == 0) {
+
+					$("ul.job-notes").append('<li class="no-notes-msg"><p>No notes available.</p></li>');
+
+				} else {
+
+					for (var i = 0; i < data.length; i++) {
+
+						// Add the notes to the list
+						var listItem = $("<li></li>");
+
+						// Create the note details
+						var noteInfo = $('<small class="text-muted"></small>');
+
+						// Add the note time
+						var noteDate = moment(data[i].Timestamp);
+						var localDateString = noteDate.format('YYYY-MM-DD HH:mm:ss');
+						noteInfo.append('<i class="fa fa-clock-o"></i> ' + localDateString);
+
+						// Add the wordback details
+						if (data[i].IsWordBack) {
+							noteInfo.append('<i class="fa fa-commenting-o wordback-icon"></i> wordback');
+						}
+
+						// Add the user
+						noteInfo.append('<i class="fa fa-user user-icon"></i> ' + data[i].UserDisplayName);
+
+						// append the note details
+						listItem.append(noteInfo);
+
+						// Add the message body
+						listItem.append('<p class="text-info">' + data[i].Body + '</p>');
+						
+						// Add the item to the start of the list, so newest notes are first
+						$("ul.job-notes").prepend(listItem);
+
+					}
+				}
+
+			}
 		});
 
 	}
 
+	/**
+	 * Builds the markup required for the message details to be displayed.
+	 */
+	function buildMessageDetailsMarkup() {
+
+		// Build the header row
+		var messageHeader = $('<div class="row"></div></div>')
+
+		// Build the h2 elements
+		var h2 = $('<div class="col-sm-5"><h2><i id="message-type"></i><span class="job-number"></span></h2></div>');
+		var h2Date = $('<div class="col-sm-7"><p class="text-right job-date"></p><p class="job-status text-right"></p></div>');
+
+		messageHeader.append(h2);
+		messageHeader.append(h2Date);
+
+		// Build the location element
+		var location = $('<div class="job-location"><h3>Location</h3><p class="lead map-reference"></p><div id="map-canvas" style="height: 0px;"></div></div>');
+
+		// Clear the message detail of any other elements
+		$('.wallboard-layout .message-details').empty();
+		$('.wallboard-layout .message-details').append(messageHeader);
+		$('.wallboard-layout .message-details').append($('<p class="lead job-message-body"></p>'));
+		$('.wallboard-layout .message-details').append(location);
+		$('.wallboard-layout .message-details').append($('<h3>Notes</h3><p class="notes-loading">Loading notes... <i class="fa fa-spinner fa-pulse fa-fw"></i></p><div class="job-notes-container"><ul class="job-notes list-unstyled"></ul></div>'))
+
+		$('.job-notes-container').scrollator();
+	}
+
+	/**
+	 * Binds the UI events
+	 */
+	function bindUI() {
+
+		// Get the container height
+		$('.wallboard-sidebar').scrollator();
+
+		// If the window is resize, reset container heights (i.e. moving to fullscreen).
+		$(window).resize(function (e) {
+			setContainerHeights(e.target.innerWidth);
+			$('.wallboard-sidebar').scrollator();
+		});
+
+		$('.wallboard-layout .message-list-options input').click(function () {
+
+			// The is in this case is 'being check' not 'is checked'. So for 'is being checked' we load the job list, not 'is not being checked' we clear the interval.
+			if ($(this).is(":checked")) {
+				loadJobList();
+				setJobListPolling();
+			} else {
+				clearInterval(jobListIntervalId);
+			}
+		});
+
+		$('.wallboard-layout .message-list-options select').on('change', function () {
+			// reset the interval to the new time
+			clearInterval(jobListIntervalId);
+			var delay = parseInt($(this).val()) * 1000;
+			jobListPollingInterval = delay;
+			setJobListPolling();
+		});
+
+	}
+
+	/**
+	 * Loads the UI of the wallboard. Sets the column heights dynamically and loads the jobs and radar images.
+	 */
 	function loadUI() {
 
 		// If the body class does not contain the 'wallboard-layout' class, exit as we aren't in wallboard view.
@@ -795,22 +1156,20 @@ responseHub.wallboard = (function () {
 			return;
 		}
 
-		// Set the job list update interval to poll for new jobs
-		setJobListPolling();
-
 		// Initially set the container heights
 		setContainerHeights($(window).width());
 
-		// Set the list item click event for message list
-		$('.message-list li').click(function () {
-			selectMessage($(this));
-		});
+		// Load the jobs list
+		loadJobList();
 
 		// Get the radar image urls
 		loopRadarImageUrls();
 
 	}
 
+	/**
+	 * Creates the loop for iterating through the list of radar images.
+	 */
 	function loopRadarImageUrls() {
 
 		// If there are no radar images, then show error message
@@ -846,11 +1205,216 @@ responseHub.wallboard = (function () {
 
 	}
 
+	/**
+	 * Calls the jobs api to load the list of most recent jobs. 
+	 */
+	function loadJobList() {
+
+		$.ajax({
+			url: responseHub.apiPrefix + '/job-messages',
+			dataType: 'json',
+			success: function (data) {
+
+				// Populate the list of jobs
+				$('.wallboard-layout .message-list').empty();
+				$('.wallboard-layout .message-list-options .checkbox i').remove();
+
+				// If there is no elements, show the no jobs messages
+				if (data == null || data.length == 0) {
+
+					$('.wallboard-layout .message-list').append($('<li><p class="lead no-jobs">No jobs are currently available.</p></li>'));
+					$('.wallboard-layout .message-details').empty();
+					$('.wallboard-layout .message-details').append($('<p class="lead top-20">No jobs are currently available.</p>'));
+
+				} else {
+
+					// loop through each job message and add to the list
+					for (var i = 0; i < data.length; i++) {
+						var jobMessage = data[i];
+						buildJobListItem(jobMessage, i);
+					}
+
+					// Select the first list item.
+					selectMessage(selectedJobIndex);
+				}
+
+			},
+			error: function () {
+
+				$('.wallboard-layout .message-list').empty();
+				$('.wallboard-layout .message-list').append($('<li><p class="lead no-jobs text-danger">Error loading jobs.</p></li>'));
+				$('.wallboard-layout .message-details').empty();
+				$('.wallboard-layout .message-details').append($('<div class="alert alert-danger top-20" role="alert"><p>Error loading jobs.</p></div>'));
+
+			},
+			complete: function () {
+
+				// Set the job list update interval to poll for new jobs only if it's not already set.
+				// This is used to ensure once page has loaded and the inital call is called, then we do so at the interval, 
+				// but only create a single interval object
+				if (jobListIntervalId == null)
+				{
+					setJobListPolling();
+				}
+
+				// Set the list item click event for message list
+				$('.wallboard-layout .message-list li').each(function (index) {
+					$(this).click(function () {
+						selectMessage(index);
+					});
+				});
+
+				$('.wallboard-layout .message-list-options .checkbox i').remove();
+			}
+		});
+
+	}
+
+	/**
+	 * Builds the markup to display the job message in the list of messages left in the left column.
+	 */
+	function buildJobListItem(jobMessage, index) {
+
+		// Get the job date
+		var jobDate = moment(jobMessage.Timestamp);
+		var localDateString = jobDate.format('DD-MM-YYYY HH:mm:ss');
+
+		var mapReference = "";
+		var lat = 0;
+		var lon = 0;
+
+		if (jobMessage.Location != null)
+		{
+			mapReference = jobMessage.Location.MapReference;
+
+			if (jobMessage.Location.Coordinates != null)
+			{
+				lat = jobMessage.Location.Coordinates.Latitude;
+				lon = jobMessage.Location.Coordinates.Longitude;
+			}
+		}
+
+		// Get the latest priority json
+		var latestProgress = "";
+
+		if (jobMessage.Cancelled != null) {
+			latestProgress = getJobProgressJson(jobMessage.Cancelled);
+		} else if (jobMessage.JobClear != null) {
+			latestProgress = getJobProgressJson(jobMessage.JobClear);
+		} else if (jobMessage.OnScene != null) {
+			latestProgress = getJobProgressJson(jobMessage.OnScene);
+		} else if (jobMessage.OnRoute != null) {
+			latestProgress = getJobProgressJson(jobMessage.OnRoute);
+		}
+
+		// Determine if the job has notes
+		var hasNotes = (jobMessage.Notes != null && jobMessage.Notes.length > 0);
+
+		// Creat the list item
+		var listItem = $('<li class="' + (selectedJobIndex == index ? "selected" : "") + '" data-message="' + jobMessage.MessageBody + '" data-job-number="' + jobMessage.JobNumber +
+			'" data-date="' + localDateString + '" data-priority="' + jobMessage.Priority + '" data-map-ref="' + mapReference + '" data-lat="' + lat + '" data-lon="' + lon +
+			'" data-id="' + jobMessage.Id + '" data-progress="' + latestProgress + '" data-has-notes="' + (hasNotes ? 'true' : 'false') + '">');
+
+		// Add the job name and date
+		listItem.append('<div class="message-meta"><h4 class="group-heading">' + jobMessage.CapcodeGroupName + '</h4><p class="text-info message-date">' + localDateString + '</p></div>');
+
+		// Build the h3 tag
+		var h3 = $('<h3></h3>');
+
+		// Add the priority icon
+		switch (jobMessage.Priority) {
+			case 1:
+				h3.append('<i class="fa fa-exclamation-triangle p-message-emergency"></i>');
+				break;
+
+			case 2:
+				h3.append('<i class="fa fa-exclamation-circle p-message-non-emergency"></i>');
+				break;
+
+			default:
+				h3.append('<i class="fa fa-info-circle p-message-admin"></i>');
+				break;
+		}
+
+		// Add the job number
+		h3.append('<span class="job-number">' + (jobMessage.JobNumber == "" ? "No job number" : jobMessage.JobNumber) + '</span>');
+
+		// Add the progress indicator
+		if (jobMessage.Cancelled != null) {
+			h3.append('<span class="job-status job-cancelled"><i class="fa fa-ban"></i></span>');
+		} else if (jobMessage.JobClear != null) {
+			h3.append('<span class="job-status job-clear"><i class="fa fa-check-circle-o"></i></span>');
+		} else if (jobMessage.OnScene != null) {
+			h3.append('<span class="job-status on-scene"><i class="fa fa-hourglass-half"></i></span>');
+		} else if (jobMessage.OnRoute != null) {
+			h3.append('<span class="job-status on-route"><i class="fa fa-arrow-circle-o-right"></i></span>');
+		} else {
+			h3.append('<span class="job-status"><i class="fa fa-dot-circle-o"></i></span>');
+		}
+
+		// Add the comments indication
+		if (hasNotes) {
+			h3.append('<span class="has-notes text-info"><i class="fa fa-fw fa-comments"></i></span>');
+		} else {
+			h3.append('<span class="has-notes text-muted"><i class="fa fa-fw fa-comments-o"></i></span>');
+		}
+
+		// Create the message element
+		var messageElem = $('<div class="message"></div>');
+		messageElem.append(h3);
+		messageElem.append('<small class="text-muted">' + jobMessage.MessageBodyTruncated + '</small>');
+		
+		listItem.append(messageElem);
+
+		// Add the list item to the list object
+		$('.wallboard-layout .message-list').append(listItem);
+
+	}
+
+	/**
+	 * Gets the Json for passing the job progress details through to the display message method.
+	 */
+	function getJobProgressJson(jobProgress) {
+		return '{ &quot;ProgressType&quot;: ' + jobProgress.ProgressType + ', &quot;Timestamp&quot;: &quot;' + jobProgress.Timestamp + '&quot;, &quot;UserFullName&quot;: &quot;' + jobProgress.UserFullName + '&quot;, &quot;UserId&quot;: &quot;' + jobProgress.UserId + '&quot; }';
+	}
+
+	/**
+	 * Enables the polling for new jobs by setting the interval for the jobs api to be called.
+	 */
 	function setJobListPolling()
 	{
 
 		// Set the interval
+		jobListIntervalId = setInterval(function () {
 
+			// Display the loading animation
+			$('.wallboard-layout .message-list-options .checkbox').append('<i class="fa fa-spinner fa-pulse fa-fw"></i>');
+
+			// Call the jobs list
+			loadJobList();
+
+		}, jobListPollingInterval);
+
+
+	}
+
+	/**
+	 * Toggles the display of the weather panel in the wallboard view.
+	 */
+	function toggleWeatherDisplay() {
+
+		if ($('.wallboard-warnings').hasClass('hidden')) {
+
+			// Show the wallboard panel
+			$('.wallboard-main').removeClass('col-sm-9').removeClass('col-md-9').addClass('col-sm-8').addClass('col-md-5');
+			$('.wallboard-warnings').removeClass('hidden');
+
+		} else {
+
+			// Hide the wallboard panel
+			$('.wallboard-main').removeClass('col-sm-8').removeClass('col-md-5').addClass('col-sm-9').addClass('col-md-9');
+			$('.wallboard-warnings').addClass('hidden');
+		}
 
 	}
 
@@ -859,7 +1423,8 @@ responseHub.wallboard = (function () {
 	loadUI();
 	
 	return {
-		showHideWarnings: showHideWarnings
+		showHideWarnings: showHideWarnings,
+		toggleWeatherDisplay: toggleWeatherDisplay
 	}
 
 })();
@@ -1142,5 +1707,377 @@ responseHub.resources = (function () {
 	return {
 		addResource: addResource
 	}
+
+})();
+
+responseHub.logs = (function () {
+
+	function bindUI() {
+
+		if ($('.log-file-select').length > 0) {
+
+			$('.log-file-select').on('change', function () {
+
+				// Get the current location without querystrings
+				var url = window.location.href.split('?')[0];
+
+				// Get the log file
+				var logFile = $(this).val();
+
+				// redirect to the selected log file
+				window.location.href = url + "?file=" + logFile;
+
+			});
+
+		}
+
+	}
+
+	// Bind the UI
+	bindUI();
+
+})();
+
+responseHub.search = (function () {
+
+	function getNextResults() {
+
+		// Get how many items to skip
+		var skip = $('.job-list li').length;
+
+		// Build the filter data
+		var filterData = buildFilter(skip);
+
+		// Show the loader
+		$('.form-loader').removeClass('hidden');
+
+		// Make the ajax call to get the next results
+		$.ajax({
+			url: responseHub.apiPrefix + '/search/',
+			type: 'POST',
+			dataType: 'json',
+			data: filterData,
+			success: function (data) {
+
+				// Ensure there is results and iterate through them to add to the list of results
+				if (data != null && data.Results != null) {
+					for (var i = 0; i < data.Results.length; i++) {
+
+						// Add result to the list
+						addResultToList(data.Results[i]);
+
+					}
+
+					// if the total count <= what is in the list, hide the more button
+					if (data.TotalResults <= $('.job-list li').length) {
+						$('#load-more-results').addClass('hidden');
+					}
+
+				}
+
+			},
+			complete: function () {
+				// hide the loader
+				$('.form-loader').addClass('hidden');
+			}
+		});
+
+
+	}
+
+	function addResultToList(result) {
+
+		// Build the list item
+		var li = $('<li data-message-id="' + result.Id + '"></li>');
+
+		// Create the header
+		var header = $('<h3></h3>');
+		header.append(getPriorityMarkup(result));
+		header.append($(getTitleMarkup(result)));
+
+		// Append the header
+		li.append(header);
+
+		// Create the message meta
+		var messageMeta = $('<p class="job-message-meta text-muted"></p>');
+		messageMeta.append(getProgessMarkup(result));
+		messageMeta.append($('<span class="capcode-group-name">' + result.CapcodeGroupName + '</span>'));
+		li.append(messageMeta);
+
+		// Add the message text
+		li.append('<p>' + result.MessageBody + '</p>');
+
+		// Add the list item to the ul list
+		$('.job-list').append(li);
+
+	}
+
+	/**
+	 * Gets the priority markup used to render the list item
+	 */
+	function getPriorityMarkup(result) {
+
+		var cssClass = "";
+		switch (result.Priority)
+		{
+			case 1:
+				cssClass = "fa-exclamation-triangle p-message-emergency";
+				break;
+
+			case 2:
+				cssClass = "fa-exclamation-circle p-message-non-emergency";
+				break;
+
+			default:
+				cssClass = "fa-info-circle p-message-admin";
+				break;
+		}
+
+		return $('<i class="fa fa-fw ' + cssClass + '"></li>');
+
+	}
+
+	/**
+	 * Gets the markup for the title of the job in the result list.
+	 */
+	function getTitleMarkup(result) {
+
+		// Get the date of the note
+		var jobDate = moment(result.Timestamp).local();
+
+		var controller = (result.Priority == 3 ? "messages" : "jobs");
+
+		if (result.JobNumber == null || result.JobNumber.length == 0) {
+			return '<a href="/' + controller + '/' + result.Id + '">' + jobDate.format('YYYY-MM-DD HH:mm') + '</a>';
+		} else {
+			return '<a href="/' + controller + '/' + result.Id + '">' + result.JobNumber + '</a> <span class="text-muted message-date btn-icon">' + jobDate.format('YYYY-MM-DD HH:mm') + '</span>';
+		}
+
+	}
+
+	/**
+	 * Gets the progress markup for the search result list item
+	 */
+	function getProgessMarkup(result) {
+
+		if (result.Cancelled != null)
+		{
+			return $('<i class="fa fa-ban"></i>');
+		}
+		else if (result.JobClear != null)
+		{
+			return $('<i class="fa fa-check-circle-o"></i>');
+		}
+		else if (result.OnScene != null)
+		{
+			return $('<i class="fa fa-hourglass-half"></i>');
+		}
+		else if (result.OnRoute != null)
+		{
+			return $('<i class="fa fa-arrow-circle-o-right"></i>');
+		}
+		else
+		{
+			return $('<i class="fa fa-dot-circle-o"></i>');
+		}
+
+	}
+
+	/*
+	 * Builds the search filter object to supply to the post data
+	 */
+	function buildFilter(skip) {
+
+		// Get the keywords
+		var keywords = $('#keywords').val();
+
+		// Get the message types
+		var messageTypes = Array();
+		if ($('#messagetype-job').is(':checked'))
+		{
+			messageTypes.push(1);
+		}
+		if ($('#messagetype-message').is(':checked'))
+		{
+			messageTypes.push(2);
+		}
+
+		// Get the dates
+		var dateFrom = $('#date-from').val();
+		var dateTo = $('#date-to').val();
+
+		return {
+			Skip: skip,
+			Keywords: keywords,
+			MessageTypes: messageTypes,
+			DateFrom: dateFrom,
+			DateTo: dateTo
+		};
+
+	}
+
+	return {
+		getNextResults: getNextResults
+	}
+
+})();
+
+responseHub.attachments = (function () {
+
+	function bindUI() {
+
+		Dropzone.options.dropzoneAttachments = {
+			maxFilesize: 100,
+			previewsContainer: false,
+			init: function () {
+				this.on("success", function (file, response) {
+					
+					// Create the file in the list of attachments
+					addAttachment(file, response);
+
+					// Get the extension
+					var match = file.name.match(/^.*(\.[a-zA-Z0-9_]+)$/);
+
+					// If there is an ext match
+					if (match != null && match.length > 1) {
+						var ext = match[1].toLowerCase();
+
+						// If the extension is an img extension, then also add to the gallery
+						if (ext == ".jpg" || ext == ".jpeg" || ext == ".bmp" || ext == ".png" || ext == ".gif")
+						{
+							addGalleryImage(file, response);
+						}
+
+					}
+
+					// Update the attachment count
+					$('#tab-header-attachments span').text($('.attachment-list li').length);
+
+				});
+
+				this.on("addedfile", function (file) {
+
+					// Clear the error list
+					$('#upload-messages').empty();
+
+					// Show the 'uploading' message
+					$('.dz-message').empty();
+					$('.dz-message').append('<span class="btn-icon"><i class="fa fa-spinner fa-pulse fa-fw"></i>Uploading files...</span>');
+
+
+				});
+
+				this.on("complete", function () {
+
+					// Reset the 'drop files here' message
+					$('.dz-message').empty();
+					$('.dz-message').append('<span>Drop files here to upload</span>');
+
+				});
+			}
+		};
+
+	}
+
+	/**
+	 * Adds the uploaded attachment to the list of attachments.
+	 */
+	function addAttachment(file, response) {
+
+		// Create the list item
+		var listItem = $('<li></li>');
+
+		// If the responseObj is null or the success is false, then exit showing error message
+		if (response == null || !response.success)
+		{
+			var errorMessage = (response != null ? response.message : "Unable to upload file.");
+			$('#upload-messages').append('<div class="alert alert-danger">Error uploading your file: ' + errorMessage + '</div>');
+			return;
+		}
+
+		// get the current datetime
+		var date = moment().local().format('DD/MM/YYYY HH:mm');
+
+		// add the link span
+		listItem.append('<span class="btn-icon"><i class="fa fa-fw fa-download"></i><a href="/media/attachment/' + response.id + '">' + file.name + '</a></span>');
+		listItem.append('<span class="attachment-meta"> ' + date + ' <em>(' + file.type + '</em> ' + getFileSizeDisplay(file.size) + ')</span>');
+
+		$('.attachment-list').prepend(listItem);
+
+	}
+
+	/**
+	 * Adds the image to the image gallery to be used within the attachment image gallery
+	 * 
+	 */
+	function addGalleryImage(file, response)
+	{
+
+		// Create the image item
+		var imgDiv = $('<div class="col-sm-4 col-md-3 col-lg-2"><a href="/media/attachment/' + response.id + '" title="' + file.name + '" data-gallery=""><img src="/media/attachment-thumb/' + response.id + '"></a></div>');
+
+		// prepend to the links list to be included in the gallery
+		$('#links').prepend(imgDiv);
+
+	}
+
+	function getFileSizeDisplay(size) {
+
+		if (size < 1)
+		{
+			return "0 kb";
+		}
+		else if (size < 1000000)
+		{
+			var kb = parseFloat(size / 1000).toFixed(2);
+			return kb + " kb";
+		}
+		else
+		{
+			var mb = parseFloat(size / 1000000).toFixed(2);
+			return mb + " mb";
+		}
+
+	}
+
+	$(document).ready(function () {
+		if ($('#dropzone-attachments').length > 0) {
+			bindUI();
+		}
+	});
+
+	function preloadAttachments() {
+
+		// If we already have the preload container, then just exit as we don't want to re-add the images
+		if ($('#attachment-preload').length > 0) {
+			return;
+		}
+
+		// Create the attachments container
+		var attachments = $('<div id="attachment-preload"></div>');
+
+		// Loop through each image attachment
+		$('#links a').each(function () {
+
+			// Get the url to the img
+			var imgUrl = $(this).attr('href');
+			
+			// Add the image to the preload list so that it's preloaded
+			attachments.append('<img src="' + imgUrl + '" />');
+
+		});
+
+		$('body').append(attachments);
+
+	}
+
+	return {
+		preloadAttachments: preloadAttachments
+	}
+
+
+})();
+
+responseHub.gallery = (function () {
 
 })();

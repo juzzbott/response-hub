@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 using Enivate.ResponseHub.DataAccess.Interface;
+using Enivate.ResponseHub.Model;
 using Enivate.ResponseHub.Model.Groups;
 
 using MongoDB.Driver;

@@ -17,7 +17,10 @@ namespace Enivate.ResponseHub.Model.Messages
 		OnScene = 2,
 
 		[Description("Job clear")]
-		JobClear = 3
+		JobClear = 3,
+
+		[Description("Cancelled")]
+		Cancelled = 4
 
 	}
 }

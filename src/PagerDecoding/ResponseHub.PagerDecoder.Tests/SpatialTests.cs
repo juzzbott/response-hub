@@ -1,12 +1,13 @@
-﻿using Enivate.ResponseHub.Model.Spatial;
-using Enivate.ResponseHub.PagerDecoder.ApplicationServices;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 using Xunit;
+
+using Enivate.ResponseHub.Model.Spatial;
+using Enivate.ResponseHub.PagerDecoder.ApplicationServices;
 
 namespace Enivate.ResponseHub.PagerDecoder.Tests
 {

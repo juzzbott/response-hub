@@ -25,6 +25,7 @@
 
 		var jobNote = $('#txtJobNote').val();
 		var isWordback = $('#chkWordBack').is(':checked');
+		var userDisplayName = $('#note-form').data('user-display-name');
 
 		var postData = {
 			Body: jobNote,
@@ -55,7 +56,7 @@
 		
 				var noteDate = moment(data.Date);
 
-				var noteMarkup = buildJobNoteMarkup(data.Id, data.Body, noteDate.format('YYYY-MM-DD HH:mm:ss'), data.IsWordBack);
+				var noteMarkup = buildJobNoteMarkup(data.Id, data.Body, noteDate.format('YYYY-MM-DD HH:mm:ss'), data.IsWordBack, userDisplayName);
 		
 				$('#job-notes ul').prepend(noteMarkup);
 				$('#job-notes').removeClass('hidden');
@@ -81,7 +82,7 @@
 	/**
 	 * Builds the markup for the job note to be added to the page.
 	 */
-	function buildJobNoteMarkup(noteId, body, date, isWordback) {
+	function buildJobNoteMarkup(noteId, body, date, isWordback, userDisplayName) {
 
 		// Create the note list item
 		var noteListItem = $('<li data-job-note-id="' + noteId + '"></li>');
@@ -89,8 +90,10 @@
 		// Generate wordback markup if required
 		var wordbackMarkup = isWordback ? ' <i class="fa fa-commenting-o wordback-icon"></i> wordback' : '';
 
+		var userDisplayNameMarkup = ' <i class="fa fa-user user-icon"></i> ' + userDisplayName;
+
 		// Append the meta and note information to the list item
-		noteListItem.append('<small class="text-muted"><i class="fa fa-clock-o"></i> ' + date + wordbackMarkup + '</small>');
+		noteListItem.append('<small class="text-muted"><i class="fa fa-clock-o"></i> ' + date + wordbackMarkup + userDisplayNameMarkup + '</small>');
 		noteListItem.append('<p class="text-info">' + body + '</p>');
 
 		// return the node list item

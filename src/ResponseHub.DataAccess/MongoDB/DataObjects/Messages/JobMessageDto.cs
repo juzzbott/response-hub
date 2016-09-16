@@ -30,6 +30,8 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB.DataObjects.Messages
 
 		public IList<MessageProgress> ProgressUpdates { get; set; }
 
+		public IList<Guid> AttachmentIds { get; set; }
+
 		public JobMessageDto()
 		{
 
@@ -41,6 +43,8 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB.DataObjects.Messages
 
 			Notes = new List<JobNote>();
 			ProgressUpdates = new List<MessageProgress>();
+
+			AttachmentIds = new List<Guid>();
 		}
 
 	}

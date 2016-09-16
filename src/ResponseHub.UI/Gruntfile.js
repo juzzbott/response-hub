@@ -27,7 +27,11 @@ module.exports = function(grunt) {
 					'assets/js/lib/bootstrap-datepicker.min.js',
 					'assets/js/lib/bootstrap-tabcollapse.js',
 					'assets/js/lib/bootstrap-typeahead.min.js',
-					'assets/js/lib/leaflet.js'
+					'assets/js/lib/leaflet.js',
+					'assets/js/lib/fm.scrollator.jquery.js',
+					'bower_components/dropzone/dist/min/dropzone.min.js',
+					'bower_components/blueimp-gallery/js/jquery.blueimp-gallery.min.js',
+					'bower_components/blueimp-bootstrap-image-gallery/js/bootstrap-image-gallery.min.js'
 				],
 				dest: 'assets/js/framework.js'
 			},
@@ -38,11 +42,16 @@ module.exports = function(grunt) {
 					'assets/js/modules/_core.js',
 					'assets/js/modules/maps.js',
 					'assets/js/modules/joblog.js',
+					'assets/js/modules/pager-messages.js',
 					'assets/js/modules/wallboard.js',
 					'assets/js/modules/groups.js',
 					'assets/js/modules/password-strength.js',
 					'assets/js/modules/capcodes.js',
-					'assets/js/modules/resources.js'
+					'assets/js/modules/resources.js',
+					'assets/js/modules/logviewer.js',
+					'assets/js/modules/search.js',
+					'assets/js/modules/attachments.js',
+					'assets/js/modules/gallery.js'
 				],
 				dest: 'assets/js/script.js'
 			},
@@ -53,7 +62,11 @@ module.exports = function(grunt) {
 					'bower_components/fontawesome/css/font-awesome.min.css',
 					'bower_components/bootstrap-select/dist/css/bootstrap-select.min.css',
 					'assets/css/lib/bootstrap-datepicker3.min.css',
-					'assets/css/lib/leaflet.css'
+					'assets/css/lib/leaflet.css',
+					'assets/css/lib/fm.scrollator.jquery.css',
+					'bower_components/dropzone/dist/min/dropzone.min.css',
+					'bower_components/blueimp-gallery/css/blueimp-gallery.min.css',
+					'bower_components/blueimp-bootstrap-image-gallery/css/bootstrap-image-gallery.min.css'
 				],
 				dest: 'assets/css/framework.css',
 			}

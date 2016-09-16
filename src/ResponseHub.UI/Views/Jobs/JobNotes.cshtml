@@ -1,36 +1,9 @@
-﻿@model List<Enivate.ResponseHub.Model.Messages.JobNote>
+﻿@model List<Enivate.ResponseHub.UI.Models.Messages.JobNoteViewModel>
 
 <h3>Notes</h3>
 
 <div class="row">
 	<div class="col-lg-8 job-note-messages"></div>
-</div>
-
-<div class="row">
-	<div class="col-md-8">
-		<div class="form-group">
-			<label>Job note</label>
-			<textarea class="form-control" id="txtJobNote" name="JobNote" placeholder="Add a note for this job..."></textarea>
-		</div>
-	</div>
-</div>
-
-<div class="row">
-	<div class="col-xs-12">
-		<button class="btn btn-primary btn-icon" id="btnAddNote" type="button" disabled="disabled"><i class="fa fa-fw fa-comment-o"></i>Add note</button>
-		@if (ViewContext.RouteData.Values["Controller"].ToString() == "Jobs")
-		{
-		<div class="checkbox">
-			<label>
-				<input type="checkbox" name="WordBack" id="chkWordBack"> Wordback
-			</label>
-		</div>
-		}
-		else
-		{
-			<br /><br />
-		}
-	</div>
 </div>
 
 <div class="row @(Model != null && Model.Any() ? "" : "hidden")" id="job-notes">
@@ -50,6 +23,7 @@
 							{
 								@Html.Raw("<i class=\"fa fa-commenting-o wordback-icon\"></i> wordback")
 							}
+							<i class="fa fa-user user-icon"></i> @note.UserDisplayName
 						</small>
 						<p class="text-info">@note.Body</p>
 					</li>
@@ -57,5 +31,32 @@
 			}
 		</ul>
 
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-md-8">
+		<div class="form-group" id="note-form" data-user-display-name="@Html.UserDisplayName()">
+			<label>Job note</label>
+			<textarea class="form-control" id="txtJobNote" name="JobNote" placeholder="Add a note for this job..."></textarea>
+		</div>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-xs-12">
+		<button class="btn btn-primary btn-icon" id="btnAddNote" type="button" disabled="disabled"><i class="fa fa-fw fa-comment-o"></i>Add note</button>
+		@if (ViewContext.RouteData.Values["Controller"].ToString() == "Jobs")
+		{
+			<div class="checkbox">
+				<label>
+					<input type="checkbox" name="WordBack" id="chkWordBack"> Wordback
+				</label>
+			</div>
+		}
+		else
+		{
+			<br /><br />
+		}
 	</div>
 </div>

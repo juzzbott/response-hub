@@ -80,6 +80,8 @@
     <Compile Include="Configuration\WarningsConfigurationSection.cs" />
     <Compile Include="Configuration\WarningSourceElement.cs" />
     <Compile Include="Constants\ConfigurationKeys.cs" />
+    <Compile Include="Constants\CustomClaimTypes.cs" />
+    <Compile Include="Constants\GeneralConstants.cs" />
     <Compile Include="Constants\MailTemplates.cs" />
     <Compile Include="Constants\SessionConstants.cs" />
     <Compile Include="Extensions\EnumExtensions.cs" />

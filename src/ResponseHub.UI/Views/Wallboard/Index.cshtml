@@ -8,62 +8,9 @@
 
 }
 
-@if (@message == null)
-{
-	<p class="lead top-20">No jobs are currently available to display.</p>
-}
-else
-{
-
-	<h2>
-		@if (message.Priority == Enivate.ResponseHub.Model.Messages.MessagePriority.Emergency)
-		{
-			<i id="message-type" class="fa fa-exclamation-triangle p-message-emergency"></i>
-		}
-		else if (message.Priority == Enivate.ResponseHub.Model.Messages.MessagePriority.NonEmergency)
-		{
-			<i id="message-type" class="fa fa-exclamation-circle p-message-non-emergency"></i>
-		}
-		else
-		{
-			<i id="message-type" class="fa fa-info-circle p-message-admin"></i>
-		}	
-		<span class="job-number">@message.JobNumber</span>
-		<small class="job-date pull-right">@message.Timestamp.ToLocalTime().ToString("dd-MM-yyyy HH:mm:ss")</small>
-	</h2>
-
-	<p class="lead job-message-body">@message.MessageBody</p>
-
-	<div class="job-location @(message.Location == null ? "hidden" : "")">
-		
-		<h3>Location</h3>
-		<p class="lead map-reference">@(message.Location != null ? message.Location.MapReference : "")</p>
-
-		@if (message.Location != null && message.Location.Coordinates != null)
-		{
-
-			<div id="map-canvas" style="height: 550px;"></div>
-			<script type="text/javascript">
-				var mapConfig = {
-					lat: @message.Location.Coordinates.Latitude,
-					lon: @message.Location.Coordinates.Longitude,
-					zoom: 15,
-					minZoom: 4,
-					scrollWheel: true,
-					mapContainer: 'map-canvas',
-					loadCallback: function () {
-
-						//// Add the map marker for the place.
-						responseHub.maps.addMarkerToMap(Number(@message.Location.Coordinates.Latitude), Number(@message.Location.Coordinates.Longitude));
-
-					}
-				};
-			</script>
-		}
-		else
-		{
-			<div id="map-canvas" style="height: 0px;"></div>
-		}
-
-	</div>
-}
+<div class="message-details">
+	<p class="text-center top-20">
+		<i class="fa fa-spinner fa-pulse fa-2x fa-fw margin-bottom"></i>
+		<span class="sr-only">Loading...</span>
+	</p>
+</div>

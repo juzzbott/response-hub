@@ -29,6 +29,8 @@ namespace Enivate.ResponseHub.Model.Messages
 
 		public IList<MessageProgress> ProgressUpdates { get; set; }
 
+		public IList<Guid> AttachmentIds { get; set; }
+
 		public JobMessage()
 		{
 
@@ -40,6 +42,7 @@ namespace Enivate.ResponseHub.Model.Messages
 
 			Notes = new List<JobNote>();
 			ProgressUpdates = new List<MessageProgress>();
+			AttachmentIds = new List<Guid>();
 		}
 
 	}
