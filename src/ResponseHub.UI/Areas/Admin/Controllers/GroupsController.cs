@@ -262,7 +262,7 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 		[HttpGet]
 		public async Task<ActionResult> ViewGroup(Guid id)
 		{
-			return await GetViewGroupViewResult(id);		
+			return await GetViewGroupViewResult(id, "~/Areas/Admin/Views/Groups/ViewGroup.cshtml");		
 		}
 
 		#endregion

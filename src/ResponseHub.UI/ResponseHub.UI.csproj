@@ -342,7 +342,6 @@
   <ItemGroup>
     <Folder Include="Areas\Admin\Views\BaseAdmin\" />
     <Folder Include="Areas\ControlPanel\Views\BaseControlPanel\" />
-    <Folder Include="Areas\ControlPanel\Views\Groups\" />
     <Folder Include="Areas\ControlPanel\Views\Home\" />
     <Folder Include="Views\Base\" />
     <Folder Include="Views\Media\" />
@@ -534,6 +533,8 @@
     <Content Include="Areas\ControlPanel\Views\DataExport\Index.cshtml" />
     <Content Include="Areas\ControlPanel\Views\DataExport\GeneratePdfExport.cshtml" />
     <Content Include="Areas\ControlPanel\Views\Shared\PdfExportLayout.cshtml" />
+    <Content Include="Areas\ControlPanel\Views\Groups\CreateEdit.cshtml" />
+    <Content Include="Areas\ControlPanel\Views\Groups\ViewGroup.cshtml" />
     <None Include="Web.Staging.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

@@ -91,7 +91,7 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 		/// </summary>
 		/// <param name="id"></param>
 		/// <returns></returns>
-		public async Task<ActionResult> GetViewGroupViewResult(Guid id)
+		public async Task<ActionResult> GetViewGroupViewResult(Guid id, string viewPath)
 		{
 			// Get the group
 			Group group = await GroupService.GetById(id);
@@ -152,7 +152,7 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 				HeadquartersCoordinates = group.HeadquartersCoordinates
 			};
 
-			return View("~/Areas/Admin/Views/Groups/ViewGroup.cshtml", model);
+			return View(viewPath, model);
 		}
 
 		#endregion

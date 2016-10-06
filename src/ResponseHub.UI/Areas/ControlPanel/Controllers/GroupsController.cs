@@ -52,7 +52,7 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 				throw new HttpException(403, "The user does not have access to this url.");
 			}
 
-			return await GetViewGroupViewResult(id);
+			return await GetViewGroupViewResult(id, "~/Areas/ControlPanel/Views/Groups/ViewGroup.cshtml");
 		}
 
 		#endregion
