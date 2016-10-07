@@ -185,6 +185,10 @@ namespace Enivate.ResponseHub.ApplicationServices
 			};
 
 			await _repository.AddUserToGroup(mapping, groupId);
+
+			// Clear the group from the cache
+			CacheManager.RemoveItem(RecentlyAddedGroupsCacheKey);
+			CacheManager.RemoveItem(CacheUtility.GetEntityCacheKey(typeof(Group), groupId.ToString()));
 		}
 
 		/// <summary>
