@@ -13,10 +13,13 @@
 	</div>
 </div>
 
+@Html.ErrorFromQueryString("remove_user_error", "1", "There was an error removing the user from this group.")
 
 @Html.SuccessFromQueryString("saved", "1", "The group detals have been successfully saved.")
 
 @Html.SuccessFromQueryString("role_changed", "1", "The user role has been successfully updated.")
+
+@Html.SuccessFromQueryString("user_removed", "1", "The user has been successfully removed from the group.")
 
 <div class="row">
 	<div class="col-md-6">
@@ -92,7 +95,7 @@
 					<td>@user.GroupRole</td>
 					<td>
 						<a href="@Request.Url.LocalPath/change-role/@user.Id" class="btn-icon btn-action-icon" title="Change user role"><i class="fa fa-shield"></i></a>
-						<a data-href="/admin/users/@user.Id/delete" data-toggle="modal" data-target="#confirm-delete" class="cursor-pointer btn-icon btn-action-icon" title="Remove user from group"><i class="fa fa-user-times"></i></a>
+						<a data-href="/control-panel/groups/@Model.Id/remove-user/@user.Id" data-toggle="modal" data-target="#confirm-delete" class="cursor-pointer btn-icon btn-action-icon" title="Remove user from group"><i class="fa fa-user-times"></i></a>
 					</td>
 				</tr>
 			}

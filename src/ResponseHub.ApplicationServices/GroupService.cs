@@ -187,6 +187,11 @@ namespace Enivate.ResponseHub.ApplicationServices
 			await _repository.AddUserToGroup(mapping, groupId);
 		}
 
+		public async Task RemoveUserFromGroup(Guid userId, Guid groupId)
+		{
+			await _repository.RemoveUserFromGroup(userId, groupId);
+		}
+
 		/// <summary>
 		/// Gets the groups a user is a member of.
 		/// </summary>

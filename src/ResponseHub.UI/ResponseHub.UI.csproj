@@ -535,6 +535,7 @@
     <Content Include="Areas\ControlPanel\Views\Shared\PdfExportLayout.cshtml" />
     <Content Include="Areas\ControlPanel\Views\Groups\CreateEdit.cshtml" />
     <Content Include="Areas\ControlPanel\Views\Groups\ViewGroup.cshtml" />
+    <Content Include="Areas\ControlPanel\Views\Groups\ChangeUserRole.cshtml" />
     <None Include="Web.Staging.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

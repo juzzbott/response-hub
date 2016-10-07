@@ -146,6 +146,25 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 		}
 
 		/// <summary>
+		/// Removes the specified user mapping from the group for the specific user.
+		/// </summary>
+		/// <param name="userId">The ID of the user to remove from the group.</param>
+		/// <param name="groupId">The ID of the group to remove the user from.</param>
+		/// <returns></returns>
+		public async Task RemoveUserFromGroup(Guid userId, Guid groupId)
+		{
+
+			// Create the filter to match the group
+			FilterDefinition<GroupDto> filter = Builders<GroupDto>.Filter.Eq(i => i.Id, groupId);
+
+			// Create the update to pull the user mapping where the user id exists.
+			UpdateDefinition<GroupDto> update = Builders<GroupDto>.Update.PullFilter(i => i.Users, f => f.UserId == userId);
+
+			// Perform fthe update
+			await Collection.FindOneAndUpdateAsync(filter, update);
+		}
+
+		/// <summary>
 		/// Gets the groups a user is a member of.
 		/// </summary>
 		/// <param name="userId">The id of the user to get the groups for.</param>

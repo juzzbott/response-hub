@@ -13,10 +13,13 @@
 	</div>
 </div>
 
+@Html.ErrorFromQueryString("remove_user_error", "1", "There was an error removing the user from this group.")
 
 @Html.SuccessFromQueryString("saved", "1", "The group detals have been successfully saved.")
 
 @Html.SuccessFromQueryString("role_changed", "1", "The user role has been successfully updated.")
+
+@Html.SuccessFromQueryString("user_removed", "1", "The user has been successfully removed from the group.")
 
 <div class="row">
 	<div class="col-md-6">

@@ -111,5 +111,34 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 
 		#endregion
 
+		#region Remove User From Group
+
+		[Route("{groupId:guid}/remove-user/{userId:guid}")]
+		public async Task<ActionResult> RemoveUserFromGroup(Guid groupId, Guid userId)
+		{
+			return await GetRemoveUserFromGroup(groupId, userId, "control-panel");
+		}
+
+		#endregion
+
+		#region Change User Role
+
+		[Route("{groupId:guid}/change-role/{userId:guid}")]
+		[HttpGet]
+		public ActionResult ChangeUserRole(Guid groupId, Guid userId)
+		{
+			return GetChangeUserRoleViewResult(groupId, userId, "~/Areas/ControlPanel/Views/Groups/ChangeUserRole.cshtml");
+		}
+
+		[Route("{groupId:guid}/change-role/{userId:guid}")]
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public async Task<ActionResult> ChangeUserRole(Guid groupId, Guid userId, ChangeUserRoleViewModel model)
+		{
+			return await ViewChangeUserRoleViewResult(groupId, userId, model, "~/Areas/ControlPanel/Views/Groups/ChangeUserRole.cshtml", "control-panel");
+		}
+
+		#endregion
+
 	}
 }

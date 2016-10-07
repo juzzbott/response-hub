@@ -25,6 +25,8 @@ namespace Enivate.ResponseHub.Model.Groups.Interface
 
 		Task AddUserToGroup(Guid userId, string role, Guid groupId);
 
+		Task RemoveUserFromGroup(Guid userId, Guid groupId);
+
 		Task<IList<Group>> GetGroupsForUser(Guid userId);
 
 		Task<IList<IdentityUser>> GetUsersForGroup(Guid groupId);

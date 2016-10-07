@@ -446,6 +446,97 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 
 		#endregion
 
+		#region Change User Role 
+
+		public ActionResult GetChangeUserRoleViewResult(Guid groupId, Guid userId, string viewPath)
+		{
+			// Create the model
+			ChangeUserRoleViewModel model = new ChangeUserRoleViewModel();
+			model.AvailableRoles = GetAvailableRoles();
+			model.GroupId = groupId;
+
+			// return the view
+			return View(viewPath, model);
+		}
+
+		public async Task<ActionResult> ViewChangeUserRoleViewResult(Guid groupId, Guid userId, ChangeUserRoleViewModel model, string viewPath, string urlPart)
+		{
+
+			// Create the model
+			model.AvailableRoles = GetAvailableRoles();
+			model.GroupId = groupId;
+
+			// If the model has errors, return
+			if (!ModelState.IsValid)
+			{
+				return View(viewPath, model);
+			}
+
+			try
+			{
+
+				// Get the group so that we can validate the group not getting < 1 group administrator
+				Group group = await GroupService.GetById(groupId);
+
+				if (group == null)
+				{
+					await Log.Error("Unable to change user role for group. Group cannot be found.  ");
+					ModelState.AddModelError("", "Unable to change role for user. The group cannot be found.");
+					return View(viewPath, model);
+				}
+
+				// If there is only 1 group administrator, and it's the current user, and the new role is general user, hen show error message stating you must hace one administrator account
+				if (group.Users.Count(i => i.Role.ToUpper() == RoleTypes.GroupAdministrator.ToUpper()) == 1 &&
+					group.Users.First(i => i.Role.ToUpper() == RoleTypes.GroupAdministrator.ToUpper()).UserId == userId &&
+					model.Role.ToUpper() == RoleTypes.GeneralUser.ToUpper())
+				{
+					ModelState.AddModelError("", "You cannot change the role for this user to General User. Your group must always have at least one Group Administrator.");
+					return View(viewPath, model);
+				}
+
+
+				// Update the role for the user
+				await GroupService.ChangeUserRoleInGroup(groupId, userId, model.Role);
+
+				// return the view
+				return new RedirectResult(String.Format("/{0}/groups/{1}?role_changed=1", urlPart.ToLower(), groupId));
+
+			}
+			catch (Exception ex)
+			{
+				await Log.Error(String.Format("Unable to change role for user in group. Message: {0}", ex.Message), ex);
+				ModelState.AddModelError("", "Sorry, there was an error changing the role for the user.");
+				return View(viewPath, model);
+			}
+
+		}
+
+		#endregion
+
+		#region Remove User From Group
+
+		public async Task<ActionResult> GetRemoveUserFromGroup(Guid groupId, Guid userId, string urlPart)
+		{
+			try
+			{
+				// Remover the user
+				await GroupService.RemoveUserFromGroup(userId, groupId);
+
+				// return to the view group screen
+				return new RedirectResult(String.Format("/{0}/groups/{1}?user_removed=1", urlPart, groupId));
+			} 
+			catch (Exception ex)
+			{
+				// Log the error and redirect with error query string
+				await Log.Error(String.Format("Unable to remove user '{0}' from group '{1}'.", userId, groupId), ex);
+
+				// return to the view group screen
+				return new RedirectResult(String.Format("/{0}/groups/{1}?remove_user_error=1", urlPart, groupId));
+			}
+		}
+
+		#endregion
+
 		#region Helpers
 
 
