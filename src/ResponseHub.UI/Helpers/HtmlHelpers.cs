@@ -11,6 +11,7 @@ using Enivate.ResponseHub.Common.Extensions;
 using System.Security.Claims;
 using Enivate.ResponseHub.Model.Identity;
 using System.Web.Routing;
+using Enivate.ResponseHub.Common.Constants;
 
 namespace Enivate.ResponseHub.UI.Helpers
 {
@@ -75,6 +76,35 @@ namespace Enivate.ResponseHub.UI.Helpers
 
 		}
 
+
+		/// <summary>
+		/// Gets the full name of the currently logged in user
+		/// </summary>
+		/// <param name="helper"></param>
+		/// <returns></returns>
+		public static string UserDisplayName(this HtmlHelper helper)
+		{
+			// If the user is null or not authenticated, then just return false
+			if (HttpContext.Current == null)
+			{
+				return "";
+			}
+
+			if (HttpContext.Current.User == null || !HttpContext.Current.User.Identity.IsAuthenticated)
+			{
+				return "";
+			}
+
+			// Get the identity as a claims identity
+			ClaimsIdentity identity = (ClaimsIdentity)HttpContext.Current.User.Identity;
+
+			// Get the user display name claim
+			Claim userDisplayName = identity.Claims.FirstOrDefault(i => i.Type == CustomClaimTypes.UserDisplayName);
+
+			return (userDisplayName != null ? userDisplayName.Value : "");
+			
+		}
+
 		/// <summary>
 		/// Determines if the currenly logged in user an group administrator user.
 		/// </summary>
@@ -100,7 +130,49 @@ namespace Enivate.ResponseHub.UI.Helpers
 
 		}
 
+		/// <summary>
+		/// Displays a success message based on the result from a query string
+		/// </summary>
+		/// <param name="helper"></param>
+		/// <param name="queryStringKey"></param>
+		/// <param name="queryStringValue"></param>
+		/// <param name="message"></param>
+		/// <returns></returns>
 		public static MvcHtmlString SuccessFromQueryString(this HtmlHelper helper, string queryStringKey, string queryStringValue, string message)
+		{
+			// return the message
+			return MessageFromQueryString(queryStringKey, queryStringValue, message, "alert-success");
+		}
+
+		/// <summary>
+		/// Displays a error message based on the result from a query string
+		/// </summary>
+		/// <param name="helper"></param>
+		/// <param name="queryStringKey"></param>
+		/// <param name="queryStringValue"></param>
+		/// <param name="message"></param>
+		/// <returns></returns>
+		public static MvcHtmlString ErrorFromQueryString(this HtmlHelper helper, string queryStringKey, string queryStringValue, string message)
+		{
+			// return the message
+			return MessageFromQueryString(queryStringKey, queryStringValue, message, "alert-danger");
+		}
+
+		/// <summary>
+		/// Displays a warning message based on the result from a query string
+		/// </summary>
+		/// <param name="helper"></param>
+		/// <param name="queryStringKey"></param>
+		/// <param name="queryStringValue"></param>
+		/// <param name="message"></param>
+		/// <returns></returns>
+		public static MvcHtmlString WarningFromQueryString(this HtmlHelper helper, string queryStringKey, string queryStringValue, string message)
+		{
+			// return the message
+			return MessageFromQueryString(queryStringKey, queryStringValue, message, "alert-warning");
+		}
+
+		private static MvcHtmlString MessageFromQueryString(string queryStringKey, string queryStringValue, string message, string className)
 		{
 
 			// Get the current request
@@ -114,7 +186,7 @@ namespace Enivate.ResponseHub.UI.Helpers
 				StringBuilder sbMarkup = new StringBuilder();
 				sbMarkup.AppendLine("<div class=\"row\">");
 				sbMarkup.AppendLine("<div class=\"col-sm-12\">");
-				sbMarkup.AppendLine("<p class=\"alert alert-success alert-dismissable\" role=\"alert\">");
+				sbMarkup.AppendLine(String.Format("<p class=\"alert {0} alert-dismissable\" role=\"alert\">", className));
 				sbMarkup.AppendLine("<button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button>");
 				sbMarkup.AppendLine(message);
 				sbMarkup.AppendLine("</p>");
@@ -180,6 +252,24 @@ namespace Enivate.ResponseHub.UI.Helpers
 			return new MvcHtmlString(String.Format("<a href=\"/{0}\">{1}</a>",
 				areaUrl,
 				SpaceBeforeCapital(helper.ViewContext.RouteData.DataTokens["area"].ToString(), true)));
+		}
+
+		public static MvcHtmlString GetFileSizeDisplayForBytes(this HtmlHelper helper, long bytes)
+		{
+			if (bytes < 1)
+			{
+				return new MvcHtmlString("0 kb");
+			}
+			else if (bytes < 1000000)
+			{
+				decimal kb = (bytes / 1000M);
+				return new MvcHtmlString(String.Format("{0} kb", Math.Round(kb, 2)));
+			}
+			else
+			{
+				decimal mb = (bytes / 1000000M);
+				return new MvcHtmlString(String.Format("{0} mb", Math.Round(mb, 2)));
+			}
 		}
 
 		/// <summary>

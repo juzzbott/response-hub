@@ -191,6 +191,11 @@ namespace Enivate.ResponseHub.ApplicationServices
 			CacheManager.RemoveItem(CacheUtility.GetEntityCacheKey(typeof(Group), groupId.ToString()));
 		}
 
+		public async Task RemoveUserFromGroup(Guid userId, Guid groupId)
+		{
+			await _repository.RemoveUserFromGroup(userId, groupId);
+		}
+
 		/// <summary>
 		/// Gets the groups a user is a member of.
 		/// </summary>

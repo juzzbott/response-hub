@@ -48,6 +48,10 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="ICSharpCode.SharpZipLib, Version=0.86.0.518, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
+      <HintPath>..\packages\SharpZipLib.0.86.0\lib\20\ICSharpCode.SharpZipLib.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="evohtmltopdf, Version=6.16.0.0, Culture=neutral, PublicKeyToken=e1fcbb86597de299, processorArchitecture=MSIL">
       <HintPath>..\packages\evopdf.6.16\lib\net40\evohtmltopdf.dll</HintPath>
       <Private>True</Private>
@@ -83,6 +87,7 @@
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
@@ -94,6 +99,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AgencyService.cs" />
+    <Compile Include="AttachmentService.cs" />
     <Compile Include="AuthorisationService.cs" />
     <Compile Include="CapcodeService.cs" />
     <Compile Include="DataExportService.cs" />

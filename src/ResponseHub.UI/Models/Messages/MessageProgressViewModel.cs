@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Enivate.ResponseHub.Model.Messages;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -13,6 +14,8 @@ namespace Enivate.ResponseHub.UI.Models.Messages
 		public Guid UserId { get; set; }
 
 		public string UserFullName { get; set; }
+
+		public MessageProgressType ProgressType { get; set; }
 
 	}
 }

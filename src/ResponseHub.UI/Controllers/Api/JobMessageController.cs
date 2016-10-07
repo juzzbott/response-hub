@@ -19,6 +19,7 @@ using Enivate.ResponseHub.Model.Messages.Interface;
 using Enivate.ResponseHub.Model.Messages;
 using Enivate.ResponseHub.UI.Models.Api.Messages;
 using Enivate.ResponseHub.UI.Models.Messages;
+using Enivate.ResponseHub.UI.Helpers;
 
 namespace Enivate.ResponseHub.UI.Controllers.Api
 {
@@ -40,6 +41,59 @@ namespace Enivate.ResponseHub.UI.Controllers.Api
 			{
 				return ServiceLocator.Get<ICapcodeService>();
 			}
+		}
+
+		[Route]
+		[HttpGet]
+		public async Task<IList<JobMessageViewModel>> Get()
+		{
+
+			// Get the capcodes for the user.
+			IList<Capcode> capcodes = await CapcodeService.GetCapcodesForUser(UserId);
+
+			// Get the job messages
+			IList<JobMessage> jobMessages = await JobMessageService.GetMostRecent(capcodes, MessageType.Job, 50);
+
+			// return the mapped view models
+			IList<JobMessageViewModel> models = new List<JobMessageViewModel>();
+			foreach(JobMessage message in jobMessages)
+			{
+
+				// Get the capcode
+				string capcodeGroupName = capcodes.FirstOrDefault(i => i.CapcodeAddress == message.Capcode).FormattedName();
+
+				// Add the mapped job message view model
+				models.Add(await BaseJobsMessagesController.MapJobMessageToViewModel(message, capcodeGroupName));
+			}
+
+			// return the mapped models
+			return models;
+
+		}
+
+		[Route("pager-messages")]
+		[HttpGet]
+		public async Task<IList<JobMessage>> PagerMessages()
+		{
+			int count = 50;
+			int skip = 0;
+
+			// Get the skip query string
+			var queryString = Request.GetQueryNameValuePairs().Where(i => i.Key.ToLower() == "skip");
+			if (queryString.Any())
+			{
+				Int32.TryParse(queryString.First().Value, out skip);
+			}
+			
+			// return the list of messages
+			return await JobMessageService.GetMostRecent(count, skip);
+		}
+
+		[Route("latest-pager-messages/{lastId}")]
+		[HttpGet]
+		public async Task<IList<JobMessage>> LatestPagerMessages(Guid lastId)
+		{
+			return await JobMessageService.GetMostRecent(lastId);
 		}
 
 		[Route]
@@ -104,22 +158,47 @@ namespace Enivate.ResponseHub.UI.Controllers.Api
 
 		}
 
-		[Route("{id:guid}/progress")]
-		[HttpPost]
-		public async Task<MessageProgressResponseModel> PostProgress(Guid id, [FromBody] MessageProgressType progressType)
+		[Route("{id:guid}/notes")]
+		[HttpGet]
+		public async Task<IList<JobNoteViewModel>> GetNotes(Guid id)
 		{
 
 			try
 			{
-				
-				// Get the identity user for the current user
-				IdentityUser user = await GetCurrentUser();
 
-				// If the user cannot be found, return null
-				if (user == null)
-				{
-					return null;
-				}
+				// Create the job note and return it
+				IList<JobNote> notes = await JobMessageService.GetNotesForJob(id);
+
+				// Map the job notes to the list of job notes view models
+				IList<JobNoteViewModel> jobNotesModels = await JobMessageModelHelper.MapJobNotesToViewModel(notes, UserService);
+				
+				return jobNotesModels;
+
+			}
+			catch (Exception ex)
+			{
+				await Log.Error(String.Format("Error getting notes for the job message. Message: {0}", ex.Message), ex);
+				throw new HttpResponseException(new HttpResponseMessage(HttpStatusCode.InternalServerError));
+			}
+
+		}
+
+		[Route("{id:guid}/progress")]
+		[HttpPost]
+		public async Task<MessageProgressResponseModel> PostProgress(Guid id, [FromBody] MessageProgressType progressType)
+		{
+			
+			// Get the identity user for the current user
+			IdentityUser user = await GetCurrentUser();
+
+			// If the user cannot be found, return null
+			if (user == null)
+			{
+				return null;
+			}
+
+			try
+			{
 
 				// Create the progress object and return it
 				MessageProgress progress = await JobMessageService.AddProgress(id, UserId, progressType);
@@ -138,6 +217,15 @@ namespace Enivate.ResponseHub.UI.Controllers.Api
 				if (ex.Message.StartsWith("The job message already contains a progress update", StringComparison.CurrentCultureIgnoreCase))
 				{
 					await Log.Warn(String.Format("Error adding progress to job message. Message: {0}", ex.Message));
+					return new MessageProgressResponseModel()
+					{
+						Success = false,
+						ErrorMessage = ex.Message
+					};
+				}
+				else if (ex.Message.StartsWith("Cannot add progress to cancelled job", StringComparison.CurrentCultureIgnoreCase))
+				{
+					await Log.Warn(String.Format("Cannot update progress on cancelled job.", ex.Message));
 					return new MessageProgressResponseModel()
 					{
 						Success = false,
@@ -191,7 +279,7 @@ namespace Enivate.ResponseHub.UI.Controllers.Api
 						}
 
 						// Map to the JobMessageViewModel
-						latestMessagesModels.Add(BaseJobsMessagesController.MapJobMessageToViewModel(message, capcodeGroupName));
+						latestMessagesModels.Add(await BaseJobsMessagesController.MapJobMessageToViewModel(message, capcodeGroupName));
 					}
 
 				}

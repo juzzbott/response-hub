@@ -1,0 +1,3 @@
+﻿responseHub.gallery = (function () {
+
+})();

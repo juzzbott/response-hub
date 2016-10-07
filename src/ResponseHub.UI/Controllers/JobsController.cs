@@ -40,10 +40,10 @@ namespace Enivate.ResponseHub.UI.Controllers
 			IList<Capcode> capcodes = await CapcodeService.GetCapcodesForUser(userId);
 
 			// Get the messages for the capcodes
-			IList<JobMessage> jobMessages = await JobMessageService.GetMostRecent(capcodes.Select(i => i.CapcodeAddress), MessageType.Job, 50);
+			IList<JobMessage> jobMessages = await JobMessageService.GetMostRecent(capcodes, MessageType.Job, 50);
 
 			// Create the jobs list view model.
-			JobMessageListViewModel model = CreateJobMessageListModel(capcodes, jobMessages);
+			JobMessageListViewModel model = await CreateJobMessageListModel(capcodes, jobMessages);
 
 			return View(model);
 		}
@@ -52,31 +52,25 @@ namespace Enivate.ResponseHub.UI.Controllers
 		public async Task<ActionResult> ViewJob(Guid id)
 		{
 
-			try
+			
+			// Get the job message from the database
+			JobMessage job = await JobMessageService.GetById(id);
+
+			
+			// If the job is null, return 404
+			if (job == null)
 			{
+				throw new HttpException((int)HttpStatusCode.NotFound, "The requested page cannot be found.");
+			}
 
-				// Get the job message from the database
-				JobMessage job = await JobMessageService.GetById(id);
-
-				// If the job is null, return 404
-				if (job == null)
-				{
-					throw new HttpException((int)HttpStatusCode.NotFound, "The requested page cannot be found.");
-				}
+			try
+			{ 
 
 				// Get the capcode for the message
 				Capcode capcode = await CapcodeService.GetByCapcodeAddress(job.Capcode);
 
 				// Create the model object.
-				JobMessageViewModel model = MapJobMessageToViewModel(job, capcode.FormattedName());
-
-				// Set the progress updates.
-				model.OnRoute = await GetProgressModel(job, MessageProgressType.OnRoute);
-				model.OnScene = await GetProgressModel(job, MessageProgressType.OnScene);
-				model.JobClear = await GetProgressModel(job, MessageProgressType.JobClear);
-
-				//model.Location.Coordinates.Latitude = -37.546467;
-				//model.Location.Coordinates.Longitude = 144.674656;
+				JobMessageViewModel model = await MapJobMessageToViewModel(job, capcode.FormattedName());
 
 				// return the job view
 				return View(model);
@@ -90,6 +84,38 @@ namespace Enivate.ResponseHub.UI.Controllers
 
 			}
 
+		}
+
+		[Route("{id:guid}/cancel-job")]
+		public async Task<ActionResult> CancelJob(Guid id)
+		{
+			
+			// Get the job message from the database
+			JobMessage job = await JobMessageService.GetById(id);
+
+			// If the job is null, return 404
+			if (job == null)
+			{
+				throw new HttpException((int)HttpStatusCode.NotFound, "The requested page cannot be found.");
+			}
+
+			try
+			{
+
+				// Cancel the job
+				await JobMessageService.AddProgress(id, UserId, MessageProgressType.Cancelled);
+
+				// Redirect back to the job.
+				return new RedirectResult(String.Format("/jobs/{0}", id));
+
+			}
+			catch (Exception ex)
+			{
+				// Log the error
+				await Log.Error(String.Format("Unable to cancel the job. Message: {0}", ex.Message, ex));
+				return View(new object());
+
+			}
 		}
 	}
 }

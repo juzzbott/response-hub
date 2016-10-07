@@ -19,6 +19,8 @@ namespace Enivate.ResponseHub.DataAccess.Interface
 
 		Task AddUserToGroup(UserMapping userMapping, Guid groupId);
 
+		Task RemoveUserFromGroup(Guid userId, Guid groupId);
+
 		Task<IList<Group>> GetGroupsForUser(Guid userId, IList<Region> regions);
 
 		Task<IList<Group>> GetAll(IList<Region> regions);
