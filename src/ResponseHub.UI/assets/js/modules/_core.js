@@ -61,17 +61,28 @@
 		}
 
 		// Fix date validation bug in jQuery
-		//$(document).ready(function () {
-		//	jQuery.validator.methods.date = function (value, element) {
-		//		var isChrome = /Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor);
-		//		if (isChrome) {
-		//			var d = new Date();
-		//			return this.optional(element) || !/Invalid|NaN/.test(new Date(d.toLocaleDateString(value)));
-		//		} else {
-		//			return this.optional(element) || !/Invalid|NaN/.test(new Date(value));
-		//		}
-		//	};
-		//});
+		$(document).ready(function () {
+			jQuery.validator.methods.date = function (value, element) {
+
+				// Create the regex and return if the value is valid or not
+				var dateRegex = /^\d{2}\/\d{2}\/\d{4}$/;
+				var validFormat = dateRegex.test(value);
+
+				// If the format is invalid, then return false.
+				if (!validFormat) {
+					return false;
+				}
+
+				// Split the value into days, months, years
+				var dateParts = value.split('/');
+
+				// Create the moment object
+				var dateObj = moment(dateParts[2] + "-" + dateParts[1] + "-" + dateParts[0] + "T00:00:00.000Z");
+
+				// Determine if the date is valid
+				return dateObj.isValid();
+			};
+		});
 
 		$('.toggle-header a').click(function () {
 

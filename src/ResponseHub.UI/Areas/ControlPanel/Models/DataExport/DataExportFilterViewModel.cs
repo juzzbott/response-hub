@@ -16,9 +16,11 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Models.DataExport
 		public Guid GroupId { get; set; }
 
 		[Required(ErrorMessage = "You must enter a start date for the export.")]
+		[DataType(DataType.Date, ErrorMessage = "Please enter a valid date (dd/mm/yyyy).")]
 		public DateTime DateFrom { get; set; }
 
 		[Required(ErrorMessage = "You must enter a finish date for the export.")]
+		[DataType(DataType.Date, ErrorMessage = "Please enter a valid date (dd/mm/yyyy).")]
 		public DateTime DateTo { get; set; }
 
 		public string ExportType { get; set; }
