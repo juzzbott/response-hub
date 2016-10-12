@@ -1,0 +1,18 @@
+﻿@model Enivate.ResponseHub.UI.Models.WeatherCentre.RadarLoopViewModel
+
+<div class="radar-container" data-radar-code="@Model.RadarCode">
+
+	<div class="radar-image-preload">
+		@foreach (string radarImage in Model.RadarImageFiles)
+		{
+			<img src="ftp://ftp2.bom.gov.au/anon/gen/radar/@radarImage" />
+		}
+	</div>
+	
+	<div class="radar-image" style="background: url('http://ws.cdn.bom.gov.au/products/radar_transparencies/@(Model.RadarBaseCode).background.png')"></div>
+	<div class="radar-image" style="background: url('http://ws.cdn.bom.gov.au/products/radar_transparencies/@(Model.RadarBaseCode).topography.png')"></div>
+	<div class="radar-image radar-loop" style="display: none;"></div>
+	<div class="radar-image" style="background: url('http://ws.cdn.bom.gov.au/products/radar_transparencies/@(Model.RadarBaseCode).range.png')"></div>
+	<div class="radar-image" style="background: url('http://ws.cdn.bom.gov.au/products/radar_transparencies/@(Model.RadarBaseCode).locations.png')"></div>
+</div>
+<p class="radar-loading text-info"><i class="fa fa-fw fa-spin fa-refresh"></i> Loading radar images...</p>
