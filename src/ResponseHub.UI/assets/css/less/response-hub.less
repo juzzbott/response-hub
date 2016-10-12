@@ -898,7 +898,8 @@ i.p-message-admin {
 	Wallboard styles
 */
 
-.wallboard-layout {
+.wallboard-layout, 
+.weather-centre-layout {
 
 	.navbar-header {
 		width:  200px !important;
@@ -914,6 +915,28 @@ i.p-message-admin {
 		border-right: 1px solid #ccc;
 		overflow-y: scroll;
 	}
+
+	.wallboard-main h2 i {
+		padding-right: 10px;
+	}
+}
+
+@media (max-width: 768px) {
+	.wallboard-layout .navbar-nav,
+	.weather-centre-layout .navbar-nav {
+		float: right !important;
+		li {
+			float: left;
+		}
+	}
+
+	.wallboard-layout .page-navbar .navbar-right,
+	.weather-centre-layout .page-navbar .navbar-right {
+		margin: 5px 0 0 0;
+	}
+}
+
+.wallboard-layout {
 
 	.message-list-options {
 		padding-top: 5px;
@@ -999,10 +1022,6 @@ i.p-message-admin {
 
 	}
 
-	.wallboard-main h2 i {
-		padding-right: 10px;
-	}
-
 	.wallboard-main .job-date {
 		margin-top: 15px;
 		margin-bottom: 0;
@@ -1036,30 +1055,8 @@ i.p-message-admin {
 
 	}
 
-	.wallboard-warnings {
-		background-color: #fff;
-		border-left: 1px solid #ccc;
-	}
-
 	#map {
 		height: 600px;
-	}
-
-	.warning-types {
-		margin-bottom: 10px;
-	}
-
-	.radar-container {
-		position: relative;
-
-		.radar-image {
-			position: absolute;
-			left: 0;
-			top: 0;
-			width: 512px;
-			height: 512px;
-		}
-
 	}
 
 	.job-notes-container {
@@ -1097,23 +1094,40 @@ i.p-message-admin {
 
 }
 
-@media (max-width: 768px) {
-	.wallboard-layout .navbar-nav {
-		float: right !important;
-		li {
-			float: left;
+.weather-centre-layout {
+
+	.wallboard-warnings {
+		background-color: #fff;
+		border-left: 1px solid #ccc;
+	}
+
+	.warning-types {
+		margin-bottom: 10px;
+	}
+
+	.radar-container {
+		position: relative;
+		width: 512px;
+		height: 512px;
+
+		.radar-image {
+			position: absolute;
+			left: 0;
+			top: 0;
+			width: 512px;
+			height: 512px;
 		}
+
 	}
 
-	.wallboard-layout .page-navbar .navbar-right {
-		margin: 5px 0 0 0;
-	}
-}
-
-@media (max-width: 992px) {
-	.wallboard-layout .toggle-weather {
+	.radar-image-preload {
 		display: none;
 	}
+
+	.radar-loading {
+		margin-top: 10px;
+	}
+
 }
 
 /***

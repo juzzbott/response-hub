@@ -1,4 +1,4 @@
-﻿@model Enivate.ResponseHub.UI.Models.Wallboard.WallboardViewModel
+﻿@model Enivate.ResponseHub.UI.Models.WeatherCentre.WeatherCentreViewModel
 
 <!DOCTYPE html>
 <html>
@@ -13,7 +13,7 @@
 	<link href='https://fonts.googleapis.com/css?family=Ubuntu:400,300,300italic,700,700italic' rel='stylesheet' type='text/css'>
 
 </head>
-<body class="wallboard-layout">
+<body class="weather-centre-layout">
 
 	<div class="navbar navbar-default navbar-fixed-top page-navbar">
 		<div class="container-fluid">
@@ -22,7 +22,6 @@
 			</div>
 			<div class="">
 				<ul class="nav navbar-nav navbar-right">
-					<li><a href="/wallboard" title="Auto-reload messages"><i class="fa fa-fw fa-refresh"></i></a></li>
 					<li><a href="/" title="Exit wallboard view"><i class="fa fa-fw fa-sign-out"></i></a></li>
 				</ul>
 			</div>
@@ -30,25 +29,7 @@
 	</div>
 
 	<div class="container-fluid body-content">
-
-		<div class="row">
-
-			<!-- Left column -->
-			<div class="col-sm-4 wallboard-sidebar">
-
-				@Html.Partial("~/Views/Wallboard/MessageList.cshtml", Model)
-
-			</div>
-			<!-- END Main Body -->
-
-			<!-- Main Body -->
-			<div class="col-sm-8 wallboard-main">
-				@RenderBody()
-			</div>
-			<!-- END Main Body -->
-
-		</div>
-
+		@RenderBody()
 	</div>
 
 	<script language="javascript" src="~/assets/js/framework.js"></script>

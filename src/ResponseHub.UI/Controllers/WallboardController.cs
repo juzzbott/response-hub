@@ -9,9 +9,6 @@ using Enivate.ResponseHub.Common;
 using Enivate.ResponseHub.Model.Groups;
 using Enivate.ResponseHub.Model.Groups.Interface;
 using Enivate.ResponseHub.Model.Messages;
-using Enivate.ResponseHub.Model.RadarImages.Interface;
-using Enivate.ResponseHub.Model.Warnings;
-using Enivate.ResponseHub.Model.Warnings.Interface;
 using Enivate.ResponseHub.UI.Models.Messages;
 using Enivate.ResponseHub.UI.Models.Wallboard;
 using Enivate.ResponseHub.Model.Messages.Interface;
@@ -21,22 +18,6 @@ namespace Enivate.ResponseHub.UI.Controllers
 	[RoutePrefix("wallboard")]
     public class WallboardController : BaseController
 	{
-
-		protected IWarningService WarningService
-		{
-			get
-			{
-				return ServiceLocator.Get<IWarningService>();
-			}
-		}
-		
-		protected IRadarImageService RadarImageService
-		{
-			get
-			{
-				return ServiceLocator.Get<IRadarImageService>();
-			}
-		}
 
 		protected ICapcodeService CapcodeService
 		{
@@ -69,20 +50,7 @@ namespace Enivate.ResponseHub.UI.Controllers
 			// Create the jobs list view model.
 			JobMessageListViewModel jobListModel = await BaseJobsMessagesController.CreateJobMessageListModel(capcodes, jobMessages);
 			model.Messages = jobListModel.Messages;
-
-			// Get the warnings
-			try
-			{
-				IList<IWarning> warnings = WarningService.GetWarnings(WarningSource.CountryFireAuthority | WarningSource.StateEmergencyService);
-			}
-			catch (Exception ex)
-			{
-				await Log.Error(String.Format("Error loading warnings. Message: {0}", ex.Message), ex);
-				ViewBag.LoadWarningsError = true;
-			}
-
-			model.RadarImageFiles = RadarImageService.GetRadarImagesForProduct("IDR022");
-
+			
 			return View(model);
         }
     }
