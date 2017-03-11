@@ -536,6 +536,7 @@
     <Content Include="Areas\ControlPanel\Views\Groups\CreateEdit.cshtml" />
     <Content Include="Areas\ControlPanel\Views\Groups\ViewGroup.cshtml" />
     <Content Include="Areas\ControlPanel\Views\Groups\ChangeUserRole.cshtml" />
+    <Content Include="Areas\ControlPanel\Views\Groups\ConfirmUser.cshtml" />
     <None Include="Web.Staging.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

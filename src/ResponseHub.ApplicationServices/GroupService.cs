@@ -194,6 +194,10 @@ namespace Enivate.ResponseHub.ApplicationServices
 		public async Task RemoveUserFromGroup(Guid userId, Guid groupId)
 		{
 			await _repository.RemoveUserFromGroup(userId, groupId);
+
+			// Clear the group from the cache
+			CacheManager.RemoveItem(RecentlyAddedGroupsCacheKey);
+			CacheManager.RemoveItem(CacheUtility.GetEntityCacheKey(typeof(Group), groupId.ToString()));
 		}
 
 		/// <summary>

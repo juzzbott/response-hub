@@ -1,9 +1,9 @@
 ﻿@model Enivate.ResponseHub.UI.Areas.Admin.Models.Groups.ConfirmUserViewModel
 
 @{
-	ViewBag.Title = "Assign group administrators";
-	ViewBag.SubmitButtonTitle = "Create user";
-	Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+	ViewBag.Title = Model.UserExists ? "Confirm user" : "Enter user details";
+	ViewBag.SubmitButtonTitle = "Create member";
+	Layout = "~/Areas/ControlPanel/Views/Shared/_Layout.cshtml";
 }
 
 <h2>@ViewBag.Title</h2>
@@ -73,6 +73,6 @@
 	}
 
 	<button type="submit" class="btn btn-default">@ViewBag.SubmitButtonTitle</button>
-	<a href="@Request.Url.LocalPath.ToLower().Replace("/confirm-user", "")" class="btn btn-link">Cancel</a>
+	<a href="@Request.Url.LocalPath.ToLower().Replace("/confirm-member", "")" class="btn btn-link">Cancel</a>
 
 </form>

@@ -289,7 +289,7 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 		[HttpGet]
 		public async Task<ActionResult> ConfirmMember(Guid groupId)
 		{
-			return await GetConfirmMemberViewResult(groupId);
+			return await GetConfirmMemberViewResult(groupId, "~/Areas/Admin/Views/Groups/ConfirmUser.cshtml");
 		}
 
 		[Route("{groupId:guid}/confirm-member")]
@@ -297,7 +297,7 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 		[ValidateAntiForgeryToken]
 		public async Task<ActionResult> ConfirmMember(Guid groupId, ConfirmUserViewModel model)
 		{
-			return await PostConfirmMemberViewResult(groupId, model);		
+			return await PostConfirmMemberViewResult(groupId, model, "~/Areas/Admin/Views/Groups/ConfirmUser.cshtml");		
 		}
 
 		#endregion

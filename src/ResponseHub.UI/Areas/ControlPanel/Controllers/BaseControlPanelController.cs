@@ -333,7 +333,7 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 			return new RedirectResult(String.Format("/{0}/groups/{1}/confirm-member", AreaPrefix, groupId));
 		}
 
-		public async Task<ActionResult> GetConfirmMemberViewResult(Guid groupId)
+		public async Task<ActionResult> GetConfirmMemberViewResult(Guid groupId, string viewPath)
 		{
 			// Get the group
 			Group group = await GroupService.GetById(groupId);
@@ -371,10 +371,10 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 				model.Surname = newUser.Surname;
 			}
 
-			return View("~/Areas/Admin/Views/Groups/ConfirmUser.cshtml", model);
+			return View(viewPath, model);
 		}
 
-		public async Task<ActionResult> PostConfirmMemberViewResult(Guid groupId, ConfirmUserViewModel model)
+		public async Task<ActionResult> PostConfirmMemberViewResult(Guid groupId, ConfirmUserViewModel model, string viewPath)
 		{
 			try
 			{
@@ -391,14 +391,14 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 				// If the model is not valid, return view.
 				if (!ModelState.IsValid)
 				{
-					return View("~/Areas/Admin/Views/Groups/ConfirmUser.cshtml", model);
+					return View(viewPath, model);
 				}
 
 				// If there is "System Administrator" in the role list, show error message
 				if (model.Role.Equals(RoleTypes.SystemAdministrator, StringComparison.CurrentCultureIgnoreCase))
 				{
 					ModelState.AddModelError("", "There was an error setting the role for the user.");
-					return View("~/Areas/Admin/Views/Groups/ConfirmUser.cshtml", model);
+					return View(viewPath, model);
 				}
 
 				// Get the identity user related to the specified group admin
@@ -408,7 +408,7 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 				if (newUser != null && group.Users.Any(i => i.UserId == newUser.Id))
 				{
 					ModelState.AddModelError("", "The email address you have entered is already a member of this group.");
-					return View("~/Areas/Admin/Views/Groups/ConfirmUser.cshtml", model);
+					return View(viewPath, model);
 				}
 				else if (newUser != null)
 				{
@@ -440,7 +440,7 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 			{
 				await Log.Error("Error adding new user to group. Message: " + ex.Message, ex);
 				ModelState.AddModelError("", "There was a system error adding the user to the group.");
-				return View("~/Areas/Admin/Views/Groups/ConfirmUser.cshtml", model);
+				return View(viewPath, model);
 			}
 		}
 
