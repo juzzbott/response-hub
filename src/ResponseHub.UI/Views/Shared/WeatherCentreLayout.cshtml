@@ -1,0 +1,39 @@
+﻿@model Enivate.ResponseHub.UI.Models.WeatherCentre.WeatherCentreViewModel
+
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>@ViewBag.Title - ResponseHub</title>
+
+	<link rel="stylesheet" href="~/assets/css/framework.css" />
+	<link rel="stylesheet" href="~/assets/css/response-hub.css" />
+
+	<link href='https://fonts.googleapis.com/css?family=Ubuntu:400,300,300italic,700,700italic' rel='stylesheet' type='text/css'>
+
+</head>
+<body class="weather-centre-layout">
+
+	<div class="navbar navbar-default navbar-fixed-top page-navbar">
+		<div class="container-fluid">
+			<div class="navbar-header">
+				<a href="/" class="navbar-brand">ResponseHub</a>
+			</div>
+			<div class="">
+				<ul class="nav navbar-nav navbar-right">
+					<li><a href="/" title="Exit wallboard view"><i class="fa fa-fw fa-sign-out"></i></a></li>
+				</ul>
+			</div>
+		</div>
+	</div>
+
+	<div class="container-fluid body-content">
+		@RenderBody()
+	</div>
+
+	<script language="javascript" src="~/assets/js/framework.js"></script>
+	<script language="javascript" src="~/assets/js/script.js"></script>
+
+</body>
+</html>

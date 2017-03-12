@@ -348,9 +348,11 @@ namespace Enivate.ResponseHub.ApplicationServices
 
 					// Reset the orientation flag value
 					orientationProp.Value = new byte[] { 1, 0 };
+
+					// Set the image property
+					image.SetPropertyItem(orientationProp);
 				}
 
-				image.SetPropertyItem(orientationProp);
 
 				using (MemoryStream msOutput = new MemoryStream())
 				{

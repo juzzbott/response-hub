@@ -19,6 +19,7 @@ using Enivate.ResponseHub.Model.Messages.Interface;
 using Enivate.ResponseHub.Model.Messages;
 using Enivate.ResponseHub.UI.Models.Api.Messages;
 using Enivate.ResponseHub.UI.Models.Messages;
+using Enivate.ResponseHub.UI.Helpers;
 
 namespace Enivate.ResponseHub.UI.Controllers.Api
 {
@@ -152,6 +153,31 @@ namespace Enivate.ResponseHub.UI.Controllers.Api
 			catch (Exception ex)
 			{
 				await Log.Error(String.Format("Error adding job note to job message. Message: {0}", ex.Message), ex);
+				throw new HttpResponseException(new HttpResponseMessage(HttpStatusCode.InternalServerError));
+			}
+
+		}
+
+		[Route("{id:guid}/notes")]
+		[HttpGet]
+		public async Task<IList<JobNoteViewModel>> GetNotes(Guid id)
+		{
+
+			try
+			{
+
+				// Create the job note and return it
+				IList<JobNote> notes = await JobMessageService.GetNotesForJob(id);
+
+				// Map the job notes to the list of job notes view models
+				IList<JobNoteViewModel> jobNotesModels = await JobMessageModelHelper.MapJobNotesToViewModel(notes, UserService);
+				
+				return jobNotesModels;
+
+			}
+			catch (Exception ex)
+			{
+				await Log.Error(String.Format("Error getting notes for the job message. Message: {0}", ex.Message), ex);
 				throw new HttpResponseException(new HttpResponseMessage(HttpStatusCode.InternalServerError));
 			}
 

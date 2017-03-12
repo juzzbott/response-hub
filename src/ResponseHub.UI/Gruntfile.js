@@ -51,7 +51,8 @@ module.exports = function(grunt) {
 					'assets/js/modules/logviewer.js',
 					'assets/js/modules/search.js',
 					'assets/js/modules/attachments.js',
-					'assets/js/modules/gallery.js'
+					'assets/js/modules/gallery.js',
+					'assets/js/modules/weather-centre.js'
 				],
 				dest: 'assets/js/script.js'
 			},

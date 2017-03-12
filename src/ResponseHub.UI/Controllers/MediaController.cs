@@ -115,6 +115,13 @@ namespace Enivate.ResponseHub.UI.Controllers
 					throw new HttpException(404, "The file could not be found.");
 				}
 
+				// If it's an image file type, add the cache control header to public
+				string ext = Path.GetExtension(attachment.Filename).ToLower();
+				if (GeneralConstants.ImageExtensions.Contains(ext))
+				{
+					Response.Cache.SetCacheability(HttpCacheability.Public);
+					Response.Cache.SetExpires(DateTime.Now.AddDays(7));
+				}
 				// return the file as a download
 				return File(attachment.FileData, attachment.MimeType, attachment.Filename);
 

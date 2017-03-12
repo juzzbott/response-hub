@@ -16,7 +16,7 @@
 			@if (Model.OnRoute != null)
 			{
 				<h4>On route</h4>
-				<div class="btn-icon"><i class="fa fa-fw fa-clock-o"></i>@Model.OnRoute.Timestamp.ToString("yyyy-MM-dd HH:mm")</div>
+				<div class="btn-icon"><i class="fa fa-fw fa-clock-o"></i>@Model.OnRoute.Timestamp.ToString("yyyy-MM-dd HH:mm:ss")</div>
 				<div class="text-muted btn-icon"><i class="fa fa-fw fa-user"></i>@Model.OnRoute.UserFullName</div>
 			}
 		</div>
@@ -30,7 +30,7 @@
 			@if (Model.OnScene != null)
 			{
 				<h4>On scene</h4>
-				<div class="btn-icon"><i class="fa fa-fw fa-clock-o"></i>@Model.OnScene.Timestamp.ToString("yyyy-MM-dd HH:mm")</div>
+				<div class="btn-icon"><i class="fa fa-fw fa-clock-o"></i>@Model.OnScene.Timestamp.ToString("yyyy-MM-dd HH:mm:ss")</div>
 				<div class="text-muted btn-icon"><i class="fa fa-fw fa-user"></i>@Model.OnScene.UserFullName</div>
 			}
 		</div>
@@ -44,7 +44,7 @@
 			@if (Model.JobClear != null)
 			{
 				<h4>Job clear</h4>
-				<div class="btn-icon"><i class="fa fa-fw fa-clock-o"></i>@Model.JobClear.Timestamp.ToString("yyyy-MM-dd HH:mm")</div>
+				<div class="btn-icon"><i class="fa fa-fw fa-clock-o"></i>@Model.JobClear.Timestamp.ToString("yyyy-MM-dd HH:mm:ss")</div>
 				<div class="text-muted btn-icon"><i class="fa fa-fw fa-user"></i>@Model.JobClear.UserFullName</div>
 			}
 		</div>
@@ -59,7 +59,7 @@
 		}
 		else if (Model.Cancelled != null)
 		{
-			<p class="text-danger top-10">Job cancelled on @Model.Cancelled.Timestamp.ToString("dd/MM/yyyy HH:mm") by @Model.Cancelled.UserFullName.</p>
+			<p class="text-danger top-10">Job cancelled on @Model.Cancelled.Timestamp.ToString("dd/MM/yyyy HH:mm:ss") by @Model.Cancelled.UserFullName.</p>
 		}
 	</div>
 </div>

@@ -15,6 +15,7 @@ using Enivate.ResponseHub.DataAccess.MongoDB.DataObjects.Spatial;
 using Enivate.ResponseHub.Model;
 using Enivate.ResponseHub.Model.Messages;
 using Enivate.ResponseHub.Model.Spatial;
+using MongoDB.Bson.Serialization;
 
 namespace Enivate.ResponseHub.DataAccess.MongoDB
 {
@@ -247,6 +248,38 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 
 			// Send to mongo
 			await Collection.UpdateOneAsync(filter, update);
+
+		}
+
+		/// <summary>
+		/// Gets the notes for specific job.
+		/// </summary>
+		/// <param name="jobMessageId">The ID of the job to get the notes for.</param>
+		/// <returns>The job notes collection.</returns>
+		public async Task<IList<JobNote>> GetNotesForJob(Guid jobMessageId)
+		{
+
+			// Create the filter
+			FilterDefinition<JobMessageDto> filter = Builders<JobMessageDto>.Filter.Eq(i => i.Id, jobMessageId);
+
+			// Create the projection
+			ProjectionDefinition<JobMessageDto> projection = Builders<JobMessageDto>.Projection.Include(i => i.Notes);
+
+			// Get the list of job notes from the results
+			BsonDocument results = await Collection.Find(filter).Project(projection).FirstOrDefaultAsync();
+			BsonArray notes = results["Notes"].AsBsonArray;
+
+			// Create the list of notes
+			IList<JobNote> notesList = new List<JobNote>();
+
+			// Deserialise the note
+			foreach(BsonValue note in notes)
+			{
+				notesList.Add(BsonSerializer.Deserialize<JobNote>(note.AsBsonDocument));
+			}
+
+			return notesList;
+
 
 		}
 

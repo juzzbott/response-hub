@@ -23,7 +23,6 @@
 			<div class="">
 				<ul class="nav navbar-nav navbar-right">
 					<li><a href="/wallboard" title="Auto-reload messages"><i class="fa fa-fw fa-refresh"></i></a></li>
-					<li class="toggle-weather"><a href="#" onclick="responseHub.wallboard.toggleWeatherDisplay(); return false;" title="Display weather"><i class="fa fa-fw fa-bolt"></i></a></li>
 					<li><a href="/" title="Exit wallboard view"><i class="fa fa-fw fa-sign-out"></i></a></li>
 				</ul>
 			</div>
@@ -35,7 +34,7 @@
 		<div class="row">
 
 			<!-- Left column -->
-			<div class="col-sm-4 col-md-3 wallboard-sidebar">
+			<div class="col-sm-4 wallboard-sidebar">
 
 				@Html.Partial("~/Views/Wallboard/MessageList.cshtml", Model)
 
@@ -43,16 +42,10 @@
 			<!-- END Main Body -->
 
 			<!-- Main Body -->
-			<div class="col-sm-8 col-md-5 wallboard-main">
+			<div class="col-sm-8 wallboard-main">
 				@RenderBody()
 			</div>
 			<!-- END Main Body -->
-
-			<!-- Warnings Panel -->
-			<div class="hidden-xs hidden-sm col-md-4 wallboard-warnings">
-				@Html.Partial("~/Views/Wallboard/Warnings.cshtml", Model)
-			</div>
-			<!-- END Warnings Panel -->
 
 		</div>
 

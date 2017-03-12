@@ -843,7 +843,8 @@ h4.legend {
 				display: block;
 			}
 
-			.wordback-icon {
+			.wordback-icon,
+			.user-icon {
 				padding-left: 10px;
 			}
 
@@ -897,10 +898,16 @@ i.p-message-admin {
 	Wallboard styles
 */
 
-.wallboard-layout {
+.wallboard-layout, 
+.weather-centre-layout {
+
+	.navbar-header {
+		width:  200px !important;
+		float: left;
+	}
 
 	.page-navbar .navbar-right {
-		margin-right: 0;
+		margin: 0;
 	}
 
 	.wallboard-sidebar {
@@ -908,6 +915,28 @@ i.p-message-admin {
 		border-right: 1px solid #ccc;
 		overflow-y: scroll;
 	}
+
+	.wallboard-main h2 i {
+		padding-right: 10px;
+	}
+}
+
+@media (max-width: 768px) {
+	.wallboard-layout .navbar-nav,
+	.weather-centre-layout .navbar-nav {
+		float: right !important;
+		li {
+			float: left;
+		}
+	}
+
+	.wallboard-layout .page-navbar .navbar-right,
+	.weather-centre-layout .page-navbar .navbar-right {
+		margin: 5px 0 0 0;
+	}
+}
+
+.wallboard-layout {
 
 	.message-list-options {
 		padding-top: 5px;
@@ -993,10 +1022,6 @@ i.p-message-admin {
 
 	}
 
-	.wallboard-main h2 i {
-		padding-right: 10px;
-	}
-
 	.wallboard-main .job-date {
 		margin-top: 15px;
 		margin-bottom: 0;
@@ -1030,13 +1055,50 @@ i.p-message-admin {
 
 	}
 
+	#map {
+		height: 600px;
+	}
+
+	.job-notes-container {
+		height: 250px;
+	}
+
+	ul.job-notes li {
+			border-left: 3px solid #D6E3E0;
+			border-top: 1px solid lighten(#d6e3e0, 5%);
+			border-right: 1px solid lighten(#d6e3e0, 5%);
+			border-bottom: 1px solid lighten(#d6e3e0, 5%);
+			background-color: #fff;
+			padding-left: 8px;
+			padding-top: 4px;
+			padding-bottom: 2px;
+			.bottom-10;
+
+			&.no-notes-msg {
+				border-width: 0;
+				padding: 0;
+				background-color: #fafafa;
+			}
+			
+			small {
+				padding-bottom: 4px;
+				color: #999;
+				display: block;
+
+				.wordback-icon,
+				.user-icon {
+					padding-left: 10px;
+				}
+			}
+	}
+
+}
+
+.weather-centre-layout {
+
 	.wallboard-warnings {
 		background-color: #fff;
 		border-left: 1px solid #ccc;
-	}
-
-	#map {
-		height: 600px;
 	}
 
 	.warning-types {
@@ -1045,6 +1107,8 @@ i.p-message-admin {
 
 	.radar-container {
 		position: relative;
+		width: 512px;
+		height: 512px;
 
 		.radar-image {
 			position: absolute;
@@ -1056,18 +1120,14 @@ i.p-message-admin {
 
 	}
 
-}
-
-@media (max-width: 768px) {
-	.wallboard-layout .navbar-nav {
+	.radar-image-preload {
 		display: none;
 	}
-}
 
-@media (max-width: 992px) {
-	.wallboard-layout .toggle-weather {
-		display: none;
+	.radar-loading {
+		margin-top: 10px;
 	}
+
 }
 
 /***
@@ -1307,7 +1367,12 @@ i.p-message-admin {
 	}
 }
 
-
+#attachment-preload, #attachment-preload img {
+	display: none;
+	position: absolute; 
+	left: -99999px;
+	top: -99999px;
+}
 
 /**
  * Mixins

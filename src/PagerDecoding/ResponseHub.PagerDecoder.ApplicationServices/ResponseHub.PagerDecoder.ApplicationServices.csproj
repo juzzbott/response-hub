@@ -90,6 +90,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="JobMessageSubmitter.cs" />
     <Compile Include="MapReferenceCache.cs" />
     <Compile Include="Parsers\JobMessageParser.cs" />
     <Compile Include="Parsers\PagerMessageParser.cs" />
