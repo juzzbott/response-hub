@@ -194,6 +194,13 @@ namespace Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers
 						continue;
 					}
 
+					// If it's a SEGMENT messge, skip it
+					if (message.ToUpper().Contains("SEGMENT01SEGMENT02SEGMENT03"))
+					{
+						_log.Debug("Skipping segments message.");
+						continue;
+					}
+
 					try
 					{
 
