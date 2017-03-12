@@ -32,6 +32,7 @@
 							<i class="fa fa-fw fa-calendar"></i>
 						</div>
 					</div>
+					@Html.ValidationMessageFor(model => model.DateFrom)
 					<div class="text-muted"><em>Date format should be dd/mm/yyyy.</em></div>
 				</div>
 			</div>
@@ -47,6 +48,7 @@
 							<i class="fa fa-fw fa-calendar"></i>
 						</div>
 					</div>
+					@Html.ValidationMessageFor(model => model.DateTo)
 					<div class="text-muted"><em>Date format should be dd/MM/yyyy.</em></div>
 				</div>
 			</div>
