@@ -67,7 +67,16 @@
     <Compile Include="MailProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\ResponseHub.Common\ResponseHub.Common.csproj">
+      <Project>{64b4f6f9-8e0e-4475-8895-d7d4b0c1da4b}</Project>
+      <Name>ResponseHub.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ResponseHub.Logging\ResponseHub.Logging.csproj">
+      <Project>{38015057-6ff4-4ee7-b101-550a99578671}</Project>
+      <Name>ResponseHub.Logging</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -183,12 +183,14 @@ namespace Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers
 					// If we should skip the message, then do so here.
                     if (ShouldSkipMessage(message))
                     {
-                        continue;
+						_log.Debug("Skipping internal system message.");
+						continue;
                     }
 
 					// If the message appears invalid, flag it to be checked...
 					if (MessageAppearsInvalid(message))
 					{
+						_log.Warn(String.Format("Invalid message detected. Invalid message: {0}", message));
 						Task.Run(async () => await _decoderStatusRepository.AddInvalidMessage(DateTime.UtcNow, message));
 					}
 
@@ -245,7 +247,7 @@ namespace Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers
 		/// </summary>
 		/// <param name="message">The message to check.</param>
 		/// <returns>True if the message appears to be invaid</returns>
-		private bool MessageAppearsInvalid(string message)
+		public bool MessageAppearsInvalid(string message)
 		{
 
 			// If the message does not start with one of the message qualifiers, then flag as invalid

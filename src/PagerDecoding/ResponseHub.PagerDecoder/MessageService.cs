@@ -189,7 +189,7 @@ namespace Enivate.ResponseHub.PagerDecoder
 			sbStartLog.AppendLine("==================================================");
 			sbStartLog.AppendLine(String.Format("  Message Timer Interval: {0}", ConfigurationManager.AppSettings[_serviceIntervalKey]));
             sbStartLog.AppendLine(String.Format("  Cleanup Timer Interval: {0}", ConfigurationManager.AppSettings[_cleanupIntervalKey]));
-			sbStartLog.AppendLine(String.Format("  Invalid Message Timer Interval: {0}", ConfigurationManager.AppSettings[_cleanupIntervalKey]));
+			sbStartLog.AppendLine(String.Format("  Invalid Message Timer Interval: {0}", ConfigurationManager.AppSettings[_invalidMessagesIntervalKey]));
 			sbStartLog.AppendLine(String.Format("  Log Level: {0}", LoggingConfiguration.Current.LogLevel));
 			sbStartLog.AppendLine(String.Format("  Log Directory: {0}", LoggingConfiguration.Current.LogDirectory));
 			sbStartLog.AppendLine(String.Format("  Last Message File: {0}", ConfigurationManager.AppSettings[_lastMessageFileKey]));
