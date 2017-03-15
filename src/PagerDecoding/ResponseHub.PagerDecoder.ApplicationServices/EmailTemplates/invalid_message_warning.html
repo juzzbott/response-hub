@@ -1,3 +1,15 @@
 ﻿<h1>Invalid messages detected</h1>
 <p>The ResponseHub service has detected #MessageCount# messages in the last hour, which exceeds the threshold of #ThresholdAmount#.</p>
 <p>Check the PDW application to ensure correct message decoding.</p>
+<h3>Invalid messages detected:</h3>
+<table>
+	<thead>
+		<tr>
+			<td width="140"><strong>Timestamp</strong></td>
+			<td><strong>Message</strong></td>
+		</tr>
+	</thead>
+	<tbody>
+		#InvalidMessageDetails#
+	</tbody>
+</table>

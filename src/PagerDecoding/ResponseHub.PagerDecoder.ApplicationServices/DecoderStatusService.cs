@@ -65,7 +65,7 @@ namespace Enivate.ResponseHub.PagerDecoder.ApplicationServices
 			if (lastHourCount >= threshold)
 			{
 				// Send the warning email
-				await SendInvalidMessageWarningEmail(lastHourCount, threshold);
+				await SendInvalidMessageWarningEmail(lastHourCount, threshold, decoderStatus.InvalidMessages);
 
 				// Clear the messages from the decoder status and update the last email warning timestamp
 				await DecoderStatusRepository.ClearInvalidMessages();
@@ -77,13 +77,21 @@ namespace Enivate.ResponseHub.PagerDecoder.ApplicationServices
 		/// Send the email for the invalid message warning.
 		/// </summary>
 		/// <returns></returns>
-		private async Task SendInvalidMessageWarningEmail(int invalidMessageCount, int threshold)
+		private async Task SendInvalidMessageWarningEmail(int invalidMessageCount, int threshold, IList<KeyValuePair<DateTime, string>> invalidMessages)
 		{
 
 			// Create the replacements
 			IDictionary<string, string> replacements = new Dictionary<string, string>();
 			replacements.Add(new KeyValuePair<string, string>("#MessageCount#", invalidMessageCount.ToString()));
 			replacements.Add(new KeyValuePair<string, string>("#ThresholdAmount#", threshold.ToString()));
+
+			// Add the details of the invalid messages.
+			StringBuilder sbInvalidMessages = new StringBuilder();
+			foreach(KeyValuePair<DateTime, string> invalidMessage in invalidMessages)
+			{
+				sbInvalidMessages.AppendLine(String.Format("<tr><td>{0}</td><td>{1}</td></tr>", invalidMessage.Key.ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss"), invalidMessage.Value));
+			}
+			replacements.Add(new KeyValuePair<string, string>("#InvalidMessageDetails#", sbInvalidMessages.ToString()));
 
 			// Create the mail provider and send the message
 			MailProvider mailProvider = new MailProvider();
