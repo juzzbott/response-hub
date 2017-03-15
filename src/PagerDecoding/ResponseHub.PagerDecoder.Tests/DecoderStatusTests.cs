@@ -32,7 +32,7 @@ namespace Enivate.ResponseHub.PagerDecoder.Tests
 			}
 
 			DecoderStatusService decoderService = new DecoderStatusService();
-		await decoderService.CheckInvalidMessages();
+			await decoderService.CheckInvalidMessages();
 
 		}
 

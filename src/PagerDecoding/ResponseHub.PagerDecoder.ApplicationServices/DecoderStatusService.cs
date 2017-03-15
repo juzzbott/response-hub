@@ -50,11 +50,11 @@ namespace Enivate.ResponseHub.PagerDecoder.ApplicationServices
 			}
 
 			// If there was an email warning sent in the last 24 hours, just exit
-			//if (decoderStatus.LastEmailWarning < DateTime.UtcNow.AddHours(24))
-			//{
-			//	await Log.Debug("Invalid message warning email already sent in the previous 24 hours.");
-			//	return;
-			//}
+			if (DateTime.UtcNow.AddHours(-24) < decoderStatus.LastEmailWarning)
+			{
+				await Log.Debug("Invalid message warning email already sent in the previous 24 hours.");
+				return;
+			}
 
 			// Default the threshold to 10
 			int threshold = 10;
@@ -87,7 +87,7 @@ namespace Enivate.ResponseHub.PagerDecoder.ApplicationServices
 
 			// Create the mail provider and send the message
 			MailProvider mailProvider = new MailProvider();
-			await mailProvider.SendMailMessage(MailTemplates.InvalidMessageWarning, replacements, null, null);
+			await mailProvider.SendMailMessage(MailTemplates.InvalidMessageWarning, replacements, null, null, true);
 
 		}
 
