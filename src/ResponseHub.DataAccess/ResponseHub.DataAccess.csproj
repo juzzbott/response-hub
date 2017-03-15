@@ -82,6 +82,7 @@
     <Compile Include="Interface\IAgencyRepository.cs" />
     <Compile Include="Interface\IAttachmentRepository.cs" />
     <Compile Include="Interface\ICapcodeRepository.cs" />
+    <Compile Include="Interface\IDecoderStatusRepository.cs" />
     <Compile Include="Interface\IEventRepository.cs" />
     <Compile Include="Interface\IGroupRepository.cs" />
     <Compile Include="Interface\IJobMessageRepository.cs" />
@@ -102,6 +103,7 @@
     <Compile Include="MongoDB\DataObjects\Spatial\MapIndexDto.cs" />
     <Compile Include="MongoDB\DataObjects\Users\ClaimDto.cs" />
     <Compile Include="MongoDB\DataObjects\Users\IdentityUserDto.cs" />
+    <Compile Include="MongoDB\DecoderStatusRepository.cs" />
     <Compile Include="MongoDB\EventRepository.cs" />
     <Compile Include="MongoDB\GroupRepository.cs" />
     <Compile Include="MongoCollectionNameAttribute.cs" />
