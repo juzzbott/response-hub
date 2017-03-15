@@ -21,5 +21,7 @@ namespace Enivate.ResponseHub.DataAccess.Interface
 
 		Task ClearInvalidMessages();
 
+		Task ResetDecoderStatus();
+
 	}
 }

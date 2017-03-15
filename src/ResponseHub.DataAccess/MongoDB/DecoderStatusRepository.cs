@@ -123,5 +123,20 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 			await _collection.UpdateOneAsync(new BsonDocument(), update);
 
 		}
+
+		/// <summary>
+		/// Clears the existing decoder status values and resets it to default values.
+		/// </summary>
+		/// <returns></returns>
+		public async Task ResetDecoderStatus()
+		{
+
+			// Clear any existing records
+			await _collection.DeleteManyAsync(new BsonDocument());
+
+			// Insert a blank new document
+			await _collection.InsertOneAsync(new DecoderStatus());
+
+		}
 	}
 }

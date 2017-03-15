@@ -6,8 +6,10 @@ using System.Threading.Tasks;
 
 namespace Enivate.ResponseHub.Model.Decoding
 {
-	public class DecoderStatus
+	public class DecoderStatus : IEntity
 	{
+
+		public Guid Id { get; set; }
 
 		public DateTime LastCleanOperation { get; set; }
 
@@ -20,6 +22,9 @@ namespace Enivate.ResponseHub.Model.Decoding
 		/// </summary>
 		public DecoderStatus()
 		{
+
+			// Set a new Id
+			Id = Guid.NewGuid();
 
 			// Set the initial timestamps
 			LastCleanOperation = DateTime.MinValue.ToUniversalTime();
