@@ -183,7 +183,7 @@ namespace Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers
 					// If we should skip the message, then do so here.
                     if (ShouldSkipMessage(message))
                     {
-						_log.Debug(String.Format("Skipping internal system message: {0}"));
+						_log.Debug(String.Format("Skipping internal system message: {0}", message));
 						continue;
                     }
 
