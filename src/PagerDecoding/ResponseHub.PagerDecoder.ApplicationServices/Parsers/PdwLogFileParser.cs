@@ -202,7 +202,7 @@ namespace Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers
 						// If the message appears invalid, flag it to be checked...
 						if (MessageAppearsInvalid(pagerMessage.MessageContent))
 						{
-							_log.Warn(String.Format("Invalid message detected. Invalid message: {0}", pagerMessage.MessageContent)));
+							_log.Warn(String.Format("Invalid message detected. Invalid message: {0}", pagerMessage.MessageContent));
 							Task.Run(async () => await _decoderStatusRepository.AddInvalidMessage(DateTime.UtcNow, message));
 						}
 
