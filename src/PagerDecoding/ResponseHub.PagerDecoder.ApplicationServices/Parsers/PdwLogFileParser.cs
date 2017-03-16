@@ -199,18 +199,18 @@ namespace Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers
 							continue;
 						}
 
-						// If the message appears invalid, flag it to be checked...
-						if (MessageAppearsInvalid(pagerMessage.MessageContent))
-						{
-							_log.Warn(String.Format("Invalid message detected. Invalid message: {0}", pagerMessage.MessageContent));
-							Task.Run(async () => await _decoderStatusRepository.AddInvalidMessage(DateTime.UtcNow, message));
-						}
-
 						// If the pager message is numeric, skip it
 						if (pagerMessage.Type.ToUpper() != "ALPHA")
 						{
 							_log.Debug("Skipping non-alpha message.");
 							continue;
+						}
+
+						// If the message appears invalid, flag it to be checked...
+						if (MessageAppearsInvalid(pagerMessage.MessageContent))
+						{
+							_log.Warn(String.Format("Invalid message detected. Invalid message: {0}", pagerMessage.MessageContent));
+							Task.Run(async () => await _decoderStatusRepository.AddInvalidMessage(DateTime.UtcNow, message));
 						}
 
 						// If the pager sha matches the last inserted sha, then exit the loop, as no need to process any further messages.

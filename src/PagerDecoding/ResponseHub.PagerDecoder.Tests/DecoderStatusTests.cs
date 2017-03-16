@@ -15,8 +15,8 @@ namespace Enivate.ResponseHub.PagerDecoder.Tests
 	public class DecoderStatusTests : IClassFixture<UnityCollectionFixture>
 	{
 
-		[Trait("Category", "Decoder status tests")]
-		[Fact(DisplayName = "Can send invalid message warning email.")]
+		//[Trait("Category", "Decoder status tests")]
+		//[Fact(DisplayName = "Can send invalid message warning email.")]
 		public async Task CanSendInvalidMessageWarningEmail()
 		{
 
