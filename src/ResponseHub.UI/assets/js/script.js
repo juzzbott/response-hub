@@ -710,23 +710,29 @@ responseHub.pagerMessages = (function () {
 		// Get the skip count
 		var skipCount = $("#all-pages-list li").length;
 
+		$('#all-pages-load-more .loading').removeClass('hidden');
+		$('#all-pages-load-more button').addClass('hidden');
+
 		// Create the ajax request
 		$.ajax({
 			url: responseHub.apiPrefix + '/job-messages/pager-messages?skip=' + skipCount,
 			dataType: 'json',
 			success: function (data) {
-
+		
 				for (var i = 0; i < data.length; i++) {
-
+		
 					addMessageToList(data[i], true);
-
+		
 				}
-
+		
 				// If there is zero results, hide the show more button
 				if (data.length == 0) {
 					$("#all-pages-load-more").remove();
+				} else {
+					$('#all-pages-load-more .loading').addClass('hidden');
+					$('#all-pages-load-more button').removeClass('hidden');
 				}
-
+		
 			}
 		});
 
