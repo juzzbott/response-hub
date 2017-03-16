@@ -105,7 +105,7 @@ namespace Enivate.ResponseHub.UI.Controllers.Api
 
 		public async Task<IList<Crew>> GetCrews(Guid eventId)
 		{
-
+			throw new NotImplementedException();
 		}
 
 		#endregion

@@ -122,5 +122,9 @@ namespace Enivate.ResponseHub.ApplicationServices
 			return await _repository.CreateCrew(eventId, name);
 		}
 
+		public Task<IList<Crew>> GetCrewsForEvent(Guid eventId)
+		{
+			throw new NotImplementedException();
+		}
 	}
 }
