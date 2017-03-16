@@ -65,6 +65,9 @@
     <Compile Include="Agencies\Agency.cs" />
     <Compile Include="Agencies\Interface\IAgencyService.cs" />
     <Compile Include="Crews\Crew.cs" />
+    <Compile Include="Attachments\Attachment.cs" />
+    <Compile Include="Attachments\Interface\IAttachmentService.cs" />
+    <Compile Include="Decoding\DecoderStatus.cs" />
     <Compile Include="Events\Event.cs" />
     <Compile Include="Events\EventResource.cs" />
     <Compile Include="Events\Interface\IEventService.cs" />
@@ -88,6 +91,7 @@
     <Compile Include="Messages\MessageProgress.cs" />
     <Compile Include="Messages\MessageProgressType.cs" />
     <Compile Include="Messages\MessageType.cs" />
+    <Compile Include="PagedResultSet.cs" />
     <Compile Include="Spatial\LocationInfo.cs" />
     <Compile Include="Messages\JobMessage.cs" />
     <Compile Include="Messages\MessagePriority.cs" />

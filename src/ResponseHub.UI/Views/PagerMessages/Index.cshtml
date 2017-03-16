@@ -1,0 +1,50 @@
+﻿@model System.Collections.Generic.List<Enivate.ResponseHub.Model.Messages.JobMessage>
+
+@{
+    ViewBag.Title = "Pager messages";
+}
+
+<h1>@ViewBag.Title</h1>
+
+@if (Model == null || Model.Count == 0)
+{
+	<p class="text-danger"><i class="fa fa-fw fa-times-circle"></i>&nbsp;&nbsp;There are no pager messages to show.</p>
+}
+
+<ul class="list-unstyled" id="all-pages-list">
+
+	@foreach(var message in Model)
+	{
+		<li data-message-id="@message.Id">
+			<p class="bottom-0">
+			<strong>
+				@if (message.Priority == Enivate.ResponseHub.Model.Messages.MessagePriority.Emergency)
+				{
+					<i class="fa fa-exclamation-triangle p-message-emergency"></i>
+				}
+				else if (message.Priority == Enivate.ResponseHub.Model.Messages.MessagePriority.NonEmergency)
+				{
+					<i class="fa fa-exclamation-circle p-message-non-emergency"></i>
+				}
+				else
+				{
+					<i class="fa fa-info-circle p-message-admin"></i>
+				}
+				@if (!String.IsNullOrEmpty(message.JobNumber))
+				{
+					@Html.Raw(message.JobNumber) 
+					@Html.Raw(" - ")
+				}
+			</strong><span class="text-info">@message.Timestamp.ToLocalTime().ToString("HH:mm:ss d MMMM yyyy")</span> - <span class="text-muted">(@message.Capcode)</span></p>
+			<p class="message-content">@message.MessageContent</p>
+		</li>
+	}
+
+</ul>
+
+<div class="row bottom-20 top-20" id="all-pages-load-more">
+	<div class="col-sm-12 text-center">
+		<p class="text-primary btn-icon loading hidden"><i class="fa fa-spinner fa-spin"></i>Loading...</p>
+		<button class="btn btn-primary" onclick="responseHub.pagerMessages.getNextPages();">Load more</button>
+	</div>
+</div>

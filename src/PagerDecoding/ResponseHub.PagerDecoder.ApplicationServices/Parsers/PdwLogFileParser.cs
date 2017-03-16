@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 using Newtonsoft.Json;
@@ -12,6 +13,7 @@ using Newtonsoft.Json;
 using Enivate.ResponseHub.Logging;
 using Enivate.ResponseHub.Model.Messages;
 using Enivate.ResponseHub.DataAccess.Interface;
+using Enivate.ResponseHub.Common;
 
 namespace Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers
 {
@@ -22,16 +24,6 @@ namespace Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers
 		/// The configuration key for the last message file.
 		/// </summary>
 		private string _lastMessageFileKey = "LastMessageFile";
-
-		/// <summary>
-		/// The configuration key for the web service url.
-		/// </summary>
-		private string _webServiceUrlKey = "ResponseHubService.Url";
-
-		/// <summary>
-		/// The configuration key for the web service api key.
-		/// </summary>
-		private string _webServiceUrlApiKeyKey = "ResponseHubService.ApiKey";
 
 		/// <summary>
 		/// The last inserted message hash.
@@ -69,6 +61,11 @@ namespace Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers
 		private IMapIndexRepository _mapIndexRepository;
 
 		/// <summary>
+		/// The decoder status repository
+		/// </summary>
+		private IDecoderStatusRepository _decoderStatusRepository;
+
+		/// <summary>
 		/// The number of log file read attempts.
 		/// </summary>
 		private int _logFileAttempts = 0;
@@ -93,6 +90,9 @@ namespace Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers
 			_pagerMessageParser = new PagerMessageParser(_log);
 			_jobMessageParser = new JobMessageParser(_mapIndexRepository, _log);
 
+			// Get the decoder status repo
+			_decoderStatusRepository = ServiceLocator.Get<IDecoderStatusRepository>();
+
 		}
 
 		public void ProcessLogFiles()
@@ -111,7 +111,7 @@ namespace Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers
 			ParsePagerMessagesToJobMessages();
 
 			// Submit the messages
-			bool result = PostJobMessagesToWebService();
+			bool result = JobMessageSubmitter.PostJobMessagesToWebService(JobMessagesToSubmit);
 
 			if (result && PagerMessagesToSubmit.Count > 0)
 			{
@@ -178,25 +178,14 @@ namespace Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers
 
 				// Loop through the messages
 				foreach (string message in rawMessages)
-				{
-					// If the message is null or empty, continue
-					if (String.IsNullOrEmpty(message))
-					{
-						continue;
-					}
+                { 
 
-					// Skip non-required messages.
-					if (message.ToUpper().Contains(")E51TIMEUPDATE"))
-					{
-						_log.Debug("Skipping E51TIMEUPDATE time update message.");
+					// If we should skip the message, then do so here.
+                    if (ShouldSkipMessage(message))
+                    {
+						_log.Debug(String.Format("Skipping internal system message: {0}", message));
 						continue;
-					}
-
-					if (message.ToUpper().Contains(")&)E51ASN"))
-					{
-						_log.Debug("Skipping E51ASN message.");
-						continue;
-					}
+                    }
 
 					try
 					{
@@ -215,6 +204,13 @@ namespace Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers
 						{
 							_log.Debug("Skipping non-alpha message.");
 							continue;
+						}
+
+						// If the message appears invalid, flag it to be checked...
+						if (MessageAppearsInvalid(pagerMessage.MessageContent))
+						{
+							_log.Warn(String.Format("Invalid message detected. Invalid message: {0}", pagerMessage.MessageContent));
+							Task.Run(async () => await _decoderStatusRepository.AddInvalidMessage(DateTime.UtcNow, message));
 						}
 
 						// If the pager sha matches the last inserted sha, then exit the loop, as no need to process any further messages.
@@ -246,67 +242,77 @@ namespace Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers
 			}
 		}
 
-		#region Submit messages
-		
 		/// <summary>
-		/// Posts the messages to the webservice
+		/// Determines if the message appears to be invalid or not.
 		/// </summary>
-		/// <returns></returns>
-		private bool PostJobMessagesToWebService()
+		/// <param name="message">The message to check.</param>
+		/// <returns>True if the message appears to be invaid</returns>
+		public bool MessageAppearsInvalid(string message)
 		{
-			// Get the json string for the list of pager messages
-			string jsonData = JsonConvert.SerializeObject(JobMessagesToSubmit.Select(i => i.Value).ToArray());
-			byte[] jsonBytes = Encoding.ASCII.GetBytes(jsonData);
 
-			// Get the service url and api key
-			string serviceUrl = ConfigurationManager.AppSettings[_webServiceUrlKey];
-			string serviceApiKey = ConfigurationManager.AppSettings[_webServiceUrlApiKeyKey];
-
-			// If the service url is null or empty, throw exception
-			if (String.IsNullOrEmpty(serviceUrl))
+			// If the message does not start with one of the message qualifiers, then flag as invalid
+			if (!message.StartsWith("@@") && !message.StartsWith("QD") && !message.StartsWith("Hb"))
 			{
-				throw new ApplicationException("The web service url configuration is missing or empty.");
+				return true;
 			}
 
-			// Create the post request
-			HttpWebRequest request = WebRequest.CreateHttp(serviceUrl);
-			request.Method = "POST";
-			request.ContentType = "application/json";
-			request.ContentLength = jsonBytes.Length;
-			request.Headers.Add(HttpRequestHeader.Authorization, String.Format("APIKEY {0}", serviceApiKey));
-			using (Stream stream = request.GetRequestStream())
+			// If the message contains some funky character sequences, then flag as invalid
+			if (Regex.IsMatch(message, ".*(?:\\?{3,})|(?:\\w\\*\\w\\*\\w\\*)|(?:\\?\\)|(?:\\)\\?)).*"))
 			{
-				stream.Write(jsonBytes, 0, jsonBytes.Length);
+				return true;
 			}
 
-			// Create the message sha variable
-			string responseText = "";
-
-			// Get the response
-			//Task.Run(async () =>
-			//{
-			HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-
-				// If all went well, set the last message sha to the last in the list of jbo messages
-			if (response.StatusCode == HttpStatusCode.OK)
-			{
-				using (StreamReader reader = new StreamReader(response.GetResponseStream()))
-				{
-					responseText = reader.ReadToEnd();
-				}
-			}
-
-			//}).Wait();
-
-			// return the message sha
-			return (responseText.ToLower() == "true");
-
+			return false;
 		}
 
 		/// <summary>
-		/// Parse the pager messages into JobMessages.
+		/// Determines if the message should be skipped based on it's contents.
 		/// </summary>
-		private void ParsePagerMessagesToJobMessages()
+		/// <param name="message">The message to check.</param>
+		/// <returns>True if the message should be skipped (it's an internal system message and not a pager message).</returns>
+		private bool ShouldSkipMessage(string message)
+        {
+            // If the message is null or empty, continue
+            if (String.IsNullOrEmpty(message))
+            {
+                return true;
+            }
+
+            // Skip non-required messages.
+            if (message.ToUpper().Contains(")E51TIMEUPDATE"))
+            {
+                _log.Debug("Skipping E51TIMEUPDATE time update message.");
+                return true;
+            }
+
+            if (message.ToUpper().Contains(")&)E51ASN"))
+            {
+                _log.Debug("Skipping E51ASN message.");
+                return true;
+            }
+
+            if (message.ToLower().Contains("12 minute network heartbeat"))
+            {
+                _log.Debug("Skipping 12 minute heartbeat message");
+                return true;
+            }
+
+            // If it's a SEGMENT messge, skip it
+            string segmentsRegex = ".*(segment\\s?\\d{2}?\\s?segment\\s?\\d{2}?).*";
+            if (Regex.IsMatch(message, segmentsRegex, RegexOptions.IgnoreCase))
+            {
+                _log.Debug("Skipping segments message.");
+                return true;
+            }
+
+            // No need to skip the message, so return false
+            return false;
+        }
+
+        /// <summary>
+        /// Parse the pager messages into JobMessages.
+        /// </summary>
+        private void ParsePagerMessagesToJobMessages()
 		{
 			// Loop through the pager messages
 			foreach (PagerMessage pagerMessage in PagerMessagesToSubmit)
@@ -331,8 +337,6 @@ namespace Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers
 
 			}
 		}
-
-		#endregion
 
 		/// <summary>
 		/// Gets the list of pager messages from the log file. The messages are reversed in order, so that the most recent log entries are at the top of the list, so to minimise iterations.

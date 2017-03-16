@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\Microsoft.Net.Compilers.1.3.2\build\Microsoft.Net.Compilers.props" Condition="Exists('..\packages\Microsoft.Net.Compilers.1.3.2\build\Microsoft.Net.Compilers.props')" />
   <Import Project="..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.1\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props" Condition="Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.1\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" />
-  <Import Project="..\packages\Microsoft.Net.Compilers.1.1.1\build\Microsoft.Net.Compilers.props" Condition="Exists('..\packages\Microsoft.Net.Compilers.1.1.1\build\Microsoft.Net.Compilers.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -45,6 +45,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="ICSharpCode.SharpZipLib, Version=0.86.0.518, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
+      <HintPath>..\packages\SharpZipLib.0.86.0\lib\20\ICSharpCode.SharpZipLib.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Microsoft.AspNet.Identity.Core, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNet.Identity.Core.2.2.1\lib\net45\Microsoft.AspNet.Identity.Core.dll</HintPath>
       <Private>True</Private>
@@ -94,20 +98,24 @@
       <HintPath>..\packages\Unity.4.0.1\lib\net45\Microsoft.Practices.Unity.RegistrationByConvention.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="MongoDB.Bson, Version=2.2.3.3, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\MongoDB.Bson.2.2.3\lib\net45\MongoDB.Bson.dll</HintPath>
+    <Reference Include="MongoDB.Bson, Version=2.2.4.26, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MongoDB.Bson.2.2.4\lib\net45\MongoDB.Bson.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="MongoDB.Driver, Version=2.2.3.3, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\MongoDB.Driver.2.2.3\lib\net45\MongoDB.Driver.dll</HintPath>
+    <Reference Include="MongoDB.Driver, Version=2.2.4.26, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MongoDB.Driver.2.2.4\lib\net45\MongoDB.Driver.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="MongoDB.Driver.Core, Version=2.2.3.3, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\MongoDB.Driver.Core.2.2.3\lib\net45\MongoDB.Driver.Core.dll</HintPath>
+    <Reference Include="MongoDB.Driver.Core, Version=2.2.4.26, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MongoDB.Driver.Core.2.2.4\lib\net45\MongoDB.Driver.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.8.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="MongoDB.Driver.GridFS, Version=2.2.4.26, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MongoDB.Driver.GridFS.2.2.4\lib\net45\MongoDB.Driver.GridFS.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Owin, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f0ebd12fd5e55cc5, processorArchitecture=MSIL">
@@ -184,19 +192,27 @@
     <Compile Include="Areas\Admin\Controllers\CapcodesController.cs" />
     <Compile Include="Areas\Admin\Controllers\GroupsController.cs" />
     <Compile Include="Areas\Admin\Controllers\HomeController.cs" />
+    <Compile Include="Areas\Admin\Controllers\LogViewerController.cs" />
     <Compile Include="Areas\Admin\Controllers\ReportsController.cs" />
     <Compile Include="Areas\Admin\Controllers\SystemSettingsController.cs" />
     <Compile Include="Areas\Admin\Controllers\UsersController.cs" />
     <Compile Include="Areas\Admin\Models\Capcodes\CreateCapcodeViewModel.cs" />
+    <Compile Include="Areas\Admin\Models\LogViewer\LogViewModel.cs" />
     <Compile Include="Areas\Admin\Models\SystemSettings\CacheDetails.cs" />
     <Compile Include="Areas\Admin\Models\SystemSettings\SystemSettingsViewModel.cs" />
+    <Compile Include="Controllers\Api\SearchController.cs" />
+    <Compile Include="Controllers\PagerMessagesController.cs" />
     <Compile Include="Controllers\Api\EventsController.cs" />
     <Compile Include="Controllers\BaseJobsMessagesController.cs" />
     <Compile Include="Controllers\MessagesController.cs" />
+    <Compile Include="Controllers\SearchController.cs" />
+    <Compile Include="Controllers\WeatherCentreController.cs" />
     <Compile Include="Filters\SystemAdminUserRedirectAttribute.cs" />
+    <Compile Include="Helpers\JobMessageModelHelper.cs" />
     <Compile Include="Models\Api\Events\AddResourcePostModel.cs" />
     <Compile Include="Models\Api\Events\AddResourceResponseModel.cs" />
     <Compile Include="Models\Api\Messages\PostGetLatestFromLastModel.cs" />
+    <Compile Include="Models\Api\Search\SearchPostModel.cs" />
     <Compile Include="Models\Events\AdditionalResourceViewModel.cs" />
     <Compile Include="Models\Events\EventListItemViewModel.cs" />
     <Compile Include="Models\Events\EventViewModel.cs" />
@@ -206,6 +222,7 @@
     <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Models\Events\CreateEventViewModel.cs" />
     <Compile Include="Models\Messages\JobMessageListViewModel.cs" />
+    <Compile Include="Models\Messages\JobNoteViewModel.cs" />
     <Compile Include="Models\MyAccount\AccountDetailsViewModel.cs" />
     <Compile Include="Models\MyAccount\ForgottenPasswordViewModel.cs" />
     <Compile Include="Models\MyAccount\ResetPasswordViewModel.cs" />
@@ -239,8 +256,11 @@
     <Compile Include="Models\MyAccount\ChangePasswordViewModel.cs" />
     <Compile Include="Models\MyAccount\CreatePasswordViewModel.cs" />
     <Compile Include="Models\MyAccount\LoginViewModel.cs" />
+    <Compile Include="Models\Search\SearchViewModel.cs" />
     <Compile Include="Models\Users\GroupUserViewModel.cs" />
     <Compile Include="Models\Wallboard\WallboardViewModel.cs" />
+    <Compile Include="Models\WeatherCentre\RadarLoopViewModel.cs" />
+    <Compile Include="Models\WeatherCentre\WeatherCentreViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>
@@ -270,19 +290,26 @@
     <Content Include="assets\js\lib\bootstrap-typeahead.min.js" />
     <Content Include="assets\js\lib\fm.scrollator.jquery.js" />
     <Content Include="assets\js\lib\leaflet.js" />
+    <Content Include="assets\js\modules\attachments.js" />
+    <Content Include="assets\js\modules\gallery.js" />
+    <Content Include="assets\js\modules\pager-messages.js" />
     <Content Include="assets\js\modules\capcodes.js" />
     <Content Include="assets\js\modules\events.js" />
     <Content Include="assets\js\modules\groups.js" />
     <Content Include="assets\js\modules\joblog.js" />
+    <Content Include="assets\js\modules\logviewer.js" />
     <Content Include="assets\js\modules\maps.js" />
     <Content Include="assets\js\modules\password-strength.js" />
     <Content Include="assets\js\modules\resources.js" />
+    <Content Include="assets\js\modules\search.js" />
     <Content Include="assets\js\modules\wallboard.js" />
+    <Content Include="assets\js\modules\weather-centre.js" />
     <Content Include="assets\js\modules\_core.js" />
     <Content Include="assets\js\script.js" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Gruntfile.js" />
+    <Content Include="robots.txt" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -401,7 +428,7 @@
     <Content Include="Views\Wallboard\MessageList.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Views\Wallboard\Warnings.cshtml" />
+    <Content Include="Views\WeatherCentre\Warnings.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\MyAccount\ChangePassword.cshtml" />
@@ -475,6 +502,14 @@
     <Content Include="Views\Shared\Breadcrumbs.cshtml" />
     <Content Include="Areas\Admin\Views\SystemSettings\Index.cshtml" />
     <Content Include="Views\Events\Crews.cshtml" />
+    <Content Include="Areas\Admin\Views\LogViewer\Index.cshtml" />
+    <Content Include="Views\PagerMessages\Index.cshtml" />
+    <Content Include="Views\Search\Index.cshtml" />
+    <Content Include="Views\Jobs\JobListItem.cshtml" />
+    <Content Include="Views\Jobs\JobAttachments.cshtml" />
+    <Content Include="Views\WeatherCentre\Index.cshtml" />
+    <Content Include="Views\Shared\WeatherCentreLayout.cshtml" />
+    <Content Include="Views\WeatherCentre\RadarLoop.cshtml" />
     <None Include="Web.Staging.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -532,8 +567,8 @@
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('..\packages\Microsoft.Net.Compilers.1.1.1\build\Microsoft.Net.Compilers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Net.Compilers.1.1.1\build\Microsoft.Net.Compilers.props'))" />
     <Error Condition="!Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.1\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.1\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props'))" />
+    <Error Condition="!Exists('..\packages\Microsoft.Net.Compilers.1.3.2\build\Microsoft.Net.Compilers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Net.Compilers.1.3.2\build\Microsoft.Net.Compilers.props'))" />
   </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.

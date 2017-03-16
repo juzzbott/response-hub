@@ -3,43 +3,29 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-using Microsoft.AspNet.Identity;
-using Microsoft.Practices.Unity;
-
 using Enivate.ResponseHub.Common;
+using Enivate.ResponseHub.Model.Attachments.Interface;
 using Enivate.ResponseHub.Model.Groups.Interface;
 using Enivate.ResponseHub.Model.Groups;
 using Enivate.ResponseHub.Model.Messages.Interface;
 using Enivate.ResponseHub.Model.Messages;
-using Enivate.ResponseHub.Logging;
 using Enivate.ResponseHub.UI.Models.Messages;
 using Enivate.ResponseHub.Model.Identity;
 using Enivate.ResponseHub.Model.Identity.Interface;
 using System.Threading.Tasks;
+using Enivate.ResponseHub.Model.Attachments;
+using System.IO;
+using Enivate.ResponseHub.Common.Constants;
+using Enivate.ResponseHub.UI.Helpers;
 
 namespace Enivate.ResponseHub.UI.Controllers
 {
 	public abstract class BaseJobsMessagesController : BaseController
 	{
 
-		private ICapcodeService _capcodeService;
-		protected ICapcodeService CapcodeService
-		{
-			get
-			{
-				return _capcodeService ?? (_capcodeService = UnityConfiguration.Container.Resolve<ICapcodeService>());
-			}
-		}
-
-		private IJobMessageService _jobMessageService;
-		protected IJobMessageService JobMessageService
-		{
-			get
-			{
-				return _jobMessageService ?? (_jobMessageService = UnityConfiguration.Container.Resolve<IJobMessageService>());
-			}
-		}
-
+		protected readonly ICapcodeService CapcodeService = ServiceLocator.Get<ICapcodeService>();
+		protected readonly IJobMessageService JobMessageService = ServiceLocator.Get<IJobMessageService>();
+		
 		#region Helpers
 
 		/// <summary>
@@ -74,6 +60,12 @@ namespace Enivate.ResponseHub.UI.Controllers
 
 		public static async Task<JobMessageViewModel> MapJobMessageToViewModel(JobMessage job, string capcodeGroupName)
 		{
+
+			IUserService userService = ServiceLocator.Get<IUserService>();
+
+			// Map the job notes to the list of job notes view models
+			IList<JobNoteViewModel> jobNotesModels = await JobMessageModelHelper.MapJobNotesToViewModel(job.Notes, userService);
+
 			JobMessageViewModel model = new JobMessageViewModel()
 			{
 				Capcode = job.Capcode,
@@ -82,7 +74,7 @@ namespace Enivate.ResponseHub.UI.Controllers
 				JobNumber = job.JobNumber,
 				Location = job.Location,
 				MessageBody = job.MessageContent,
-				Notes = job.Notes,
+				Notes = jobNotesModels,
 				Priority = job.Priority,
 				Timestamp = job.Timestamp.ToLocalTime()
 			};
@@ -92,6 +84,30 @@ namespace Enivate.ResponseHub.UI.Controllers
 			model.OnScene = await GetProgressModel(job, MessageProgressType.OnScene);
 			model.JobClear = await GetProgressModel(job, MessageProgressType.JobClear);
 			model.Cancelled = await GetProgressModel(job, MessageProgressType.Cancelled);
+
+			// Get the attachments for the jobs
+			IAttachmentService attachmentService = ServiceLocator.Get<IAttachmentService>();
+
+			IList<Attachment> attachments = await attachmentService.GetAttachmentsById(job.AttachmentIds);
+			IList<Attachment> imageAttachments = new List<Attachment>();
+
+			// loop through each attachment. Any that are images, add to the image list
+			foreach(Attachment attachment in attachments)
+			{
+				// Get the extension
+				string ext = Path.GetExtension(attachment.Filename);
+
+				// If the extension is in the list of image extensions, add the attachment to the imageAttachments list
+				if (GeneralConstants.ImageExtensions.Contains(ext.ToLower()))
+				{
+					imageAttachments.Add(attachment);
+				}
+			}
+			
+
+			// Add all the attachments
+			model.Attachments = attachments;
+			model.ImageAttachments = imageAttachments;
 
 			// return the mapped job view model
 			return model;

@@ -1,0 +1,1 @@
+This 'img' directory is only used for BlueImp gallery. Please use ../images directory for all website assets.

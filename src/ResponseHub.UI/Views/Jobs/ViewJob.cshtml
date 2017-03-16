@@ -27,7 +27,7 @@
 
 	</div>
 	<div class="col-sm-5">
-		<h3 class="text-right text-xs-left text-info">@Model.Timestamp.ToString("yyyy-MM-dd HH:mm")</h3>
+		<h3 class="text-right text-xs-left text-info">@Model.Timestamp.ToString("yyyy-MM-dd HH:mm:ss")</h3>
 	</div>
 </div>
 
@@ -39,9 +39,30 @@
 
 <p class="lead">@Model.MessageBody</p>
 
-@Html.Partial("JobProgress", Model)
+<div>
 
-@Html.Partial("JobLocation", Model)
+	<!-- Nav tabs -->
+	<ul class="nav nav-tabs" role="tablist">
+		<li role="presentation" class="active"><a href="#tab-overview" aria-controls="tab-overview" role="tab" data-toggle="tab" class="btn-icon"><i class="fa fa-fw fa-bar-chart"></i>Overview</a></li>
+		<li role="presentation"><a href="#tab-attachments" aria-controls="tab-attachments" role="tab" data-toggle="tab" class="btn-icon" id="tab-header-attachments" onclick="responseHub.attachments.preloadAttachments();"><i class="fa fa-fw fa-paperclip"></i>Attachments (<span>@Model.Attachments.Count</span>)</a></li>
+	</ul>
 
-@Html.Partial("JobNotes", Model.Notes)
+	<!-- Tab panes -->
+	<div class="tab-content">
+		<div role="tabpanel" class="tab-pane active" id="tab-overview">
 
+			@Html.Partial("JobProgress", Model)
+
+			@Html.Partial("JobLocation", Model)
+
+			@Html.Partial("JobNotes", Model.Notes)
+
+		</div>
+
+		<div role="tabpanel" class="tab-pane" id="tab-attachments">
+
+			@Html.Partial("JobAttachments", Model)
+
+		</div>
+	</div>
+</div>

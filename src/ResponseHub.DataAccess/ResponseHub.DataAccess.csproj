@@ -52,16 +52,20 @@
       <HintPath>..\packages\Microsoft.AspNet.Identity.Core.2.2.1\lib\net45\Microsoft.AspNet.Identity.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="MongoDB.Bson, Version=2.2.3.3, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\MongoDB.Bson.2.2.3\lib\net45\MongoDB.Bson.dll</HintPath>
+    <Reference Include="MongoDB.Bson, Version=2.2.4.26, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MongoDB.Bson.2.2.4\lib\net45\MongoDB.Bson.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="MongoDB.Driver, Version=2.2.3.3, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\MongoDB.Driver.2.2.3\lib\net45\MongoDB.Driver.dll</HintPath>
+    <Reference Include="MongoDB.Driver, Version=2.2.4.26, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MongoDB.Driver.2.2.4\lib\net45\MongoDB.Driver.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="MongoDB.Driver.Core, Version=2.2.3.3, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\MongoDB.Driver.Core.2.2.3\lib\net45\MongoDB.Driver.Core.dll</HintPath>
+    <Reference Include="MongoDB.Driver.Core, Version=2.2.4.26, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MongoDB.Driver.Core.2.2.4\lib\net45\MongoDB.Driver.Core.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="MongoDB.Driver.GridFS, Version=2.2.4.26, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MongoDB.Driver.GridFS.2.2.4\lib\net45\MongoDB.Driver.GridFS.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -76,7 +80,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Interface\IAgencyRepository.cs" />
+    <Compile Include="Interface\IAttachmentRepository.cs" />
     <Compile Include="Interface\ICapcodeRepository.cs" />
+    <Compile Include="Interface\IDecoderStatusRepository.cs" />
     <Compile Include="Interface\IEventRepository.cs" />
     <Compile Include="Interface\IGroupRepository.cs" />
     <Compile Include="Interface\IJobMessageRepository.cs" />
@@ -86,7 +92,9 @@
     <Compile Include="Interface\IRepository.cs" />
     <Compile Include="Interface\IUserRepository.cs" />
     <Compile Include="MongoDB\AgencyRepository.cs" />
+    <Compile Include="MongoDB\AttachmentRepository.cs" />
     <Compile Include="MongoDB\CapcodeRepository.cs" />
+    <Compile Include="MongoDB\DataObjects\Attachments\AttachmentDto.cs" />
     <Compile Include="MongoDB\DataObjects\Events\EventDto.cs" />
     <Compile Include="MongoDB\DataObjects\Groups\GroupDto.cs" />
     <Compile Include="MongoDB\DataObjects\Messages\JobMessageDto.cs" />
@@ -95,6 +103,7 @@
     <Compile Include="MongoDB\DataObjects\Spatial\MapIndexDto.cs" />
     <Compile Include="MongoDB\DataObjects\Users\ClaimDto.cs" />
     <Compile Include="MongoDB\DataObjects\Users\IdentityUserDto.cs" />
+    <Compile Include="MongoDB\DecoderStatusRepository.cs" />
     <Compile Include="MongoDB\EventRepository.cs" />
     <Compile Include="MongoDB\GroupRepository.cs" />
     <Compile Include="MongoCollectionNameAttribute.cs" />
@@ -104,7 +113,6 @@
     <Compile Include="MongoDB\RegionRepository.cs" />
     <Compile Include="MongoDB\UserRepository.cs" />
     <Compile Include="MongoRepository.cs" />
-    <Compile Include="PagedResultSet.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

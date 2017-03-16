@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 using Enivate.ResponseHub.Logging;
+using Enivate.ResponseHub.Model;
 using Enivate.ResponseHub.Model.Messages;
 using Enivate.ResponseHub.Model.Messages.Interface;
 using Enivate.ResponseHub.DataAccess.Interface;
@@ -50,6 +51,28 @@ namespace Enivate.ResponseHub.ApplicationServices
 			// Save the messages to the repository
 			await _repository.AddMessages(messages);
 			
+		}
+
+		/// <summary>
+		/// Gets the most recent job messages, limited by count and skip.
+		/// </summary>
+		/// <param name="count"></param>
+		/// <param name="skip"></param>
+		/// <returns></returns>
+		public async Task<IList<JobMessage>> GetMostRecent(int count, int skip)
+		{
+			return await _repository.GetMostRecent(count, skip);
+		}
+
+		/// <summary>
+		/// Gets the most recent job messages, up to the last message id.
+		/// </summary>
+		/// <param name="count"></param>
+		/// <param name="skip"></param>
+		/// <returns></returns>
+		public async Task<IList<JobMessage>> GetMostRecent(Guid lastId)
+		{
+			return await _repository.GetMostRecent(lastId);
 		}
 
 		/// <summary>
@@ -114,6 +137,16 @@ namespace Enivate.ResponseHub.ApplicationServices
 		}
 
 		/// <summary>
+		/// Gets the notes for specific job.
+		/// </summary>
+		/// <param name="jobMessageId">The ID of the job to get the notes for.</param>
+		/// <returns>The job notes collection.</returns>
+		public async Task<IList<JobNote>> GetNotesForJob(Guid jobMessageId)
+		{
+			return await _repository.GetNotesForJob(jobMessageId);
+		}
+
+		/// <summary>
 		/// Adds the job progress to the job with the specified id.
 		/// </summary>
 		/// <param name="jobMessageId">The id of the job message to add the progress to.</param>
@@ -146,6 +179,16 @@ namespace Enivate.ResponseHub.ApplicationServices
 			// return the progress.
 			return progress;
 
+		}
+
+		public async Task<PagedResultSet<JobMessage>> FindByKeyword(string keyword, IEnumerable<string> capcodes, MessageType messageTypes, DateTime dateFrom, DateTime dateTo, int limit, int skip, bool countTotal)
+		{
+			return await _repository.FindByKeyword(keyword, capcodes, messageTypes, dateFrom, dateTo, limit, skip, countTotal);
+		}
+
+		public async Task AddAttachmentToJob(Guid jobMessageId, Guid attachmentId)
+		{
+			await _repository.AddAttachmentToJob(jobMessageId, attachmentId);
 		}
 
 	}

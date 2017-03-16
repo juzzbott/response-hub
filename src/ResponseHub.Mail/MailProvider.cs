@@ -8,6 +8,8 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web;
 
+using Enivate.ResponseHub.Common;
+using Enivate.ResponseHub.Logging;
 using Enivate.ResponseHub.Mail.Configuration;
 
 namespace Enivate.ResponseHub.Mail
@@ -20,8 +22,11 @@ namespace Enivate.ResponseHub.Mail
 		/// </summary>
 		/// <param name="mailConfig">The mail configuration object.</param>
 		/// <param name="replacements">The dictionary of replacement strings used to replace parameters in the message body.</param>
-		public async Task SendMailMessage(string mailTemplateName, IDictionary<string, string> replacements, Tuple<string, string> toOverride, Tuple<string, string> fromOverride)
+		public async Task SendMailMessage(string mailTemplateName, IDictionary<string, string> replacements, Tuple<string, string> toOverride, Tuple<string, string> fromOverride, bool highImportance = false)
 		{
+
+			// Create the logger
+			ILogger log = ServiceLocator.Get<ILogger>();
 
 			// If the mail configuration null, then throw exception
 			if (String.IsNullOrEmpty(mailTemplateName))
@@ -40,7 +45,7 @@ namespace Enivate.ResponseHub.Mail
 
 			// If the mailConfig from address is null or empty, revert back to the default
 			string rawFromAddress = (!String.IsNullOrEmpty(mailConfig.From) ? mailConfig.From : MailTemplateConfiguration.Current.DefaultFrom);
-			string rawToAddress = (!String.IsNullOrEmpty(mailConfig.To) ? mailConfig.From : MailTemplateConfiguration.Current.DefaultTo);
+			string rawToAddress = (!String.IsNullOrEmpty(mailConfig.To) ? mailConfig.To : MailTemplateConfiguration.Current.DefaultTo);
 
 			// Create the from and to MailAddress objects
 			MailAddress from = GetMailAddress(rawFromAddress);
@@ -70,6 +75,12 @@ namespace Enivate.ResponseHub.Mail
 			msg.Subject = mailConfig.Subject;
 			msg.IsBodyHtml = true;
 
+			// If high importance, set the priority
+			if (highImportance)
+			{
+				msg.Priority = MailPriority.High;
+			}
+
 			// Get the templates directory
 			string baseTemplateDir = MailTemplateConfiguration.Current.TemplatesDirectory;
 
@@ -78,7 +89,9 @@ namespace Enivate.ResponseHub.Mail
 
 			// Create the mail client and send the message
 			SmtpClient client = new SmtpClient();
+			await log.Debug(String.Format("Sending email: {0}", mailTemplateName));
 			await client.SendMailAsync(msg);
+			await log.Debug(String.Format("Email send: {0}", mailTemplateName));
 
 		}
 

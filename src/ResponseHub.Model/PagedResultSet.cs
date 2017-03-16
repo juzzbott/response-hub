@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Enivate.ResponseHub.DataAccess
+namespace Enivate.ResponseHub.Model
 {
 	public class PagedResultSet<T>
 	{

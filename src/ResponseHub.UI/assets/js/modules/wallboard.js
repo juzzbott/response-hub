@@ -1,7 +1,5 @@
 ﻿responseHub.wallboard = (function () {
 
-	var currentRadarImageIndex = 0;
-
 	var jobListPollingInterval = 30000;
 
 	var jobListPollingEnabled = true;
@@ -9,22 +7,6 @@
 	var jobListIntervalId = null;
 
 	var selectedJobIndex = 0;
-
-	/**
-	 * Determines if the specific warnings should be displayed on the screen.
-	 */
-	function showHideWarnings(warningsContainer) {
-
-		// If the container has the hidden class, remove it, otherwise add it
-		if ($('.' + warningsContainer).hasClass('hidden')) {
-			$('.' + warningsContainer).removeClass('hidden')
-		}
-		else
-		{
-			$('.' + warningsContainer).addClass('hidden')
-		}
-
-	}
 
 	/**
 	 * Gets the height of the containers for the screen size.
@@ -79,6 +61,9 @@
 			return;
 		}
 
+		// Get the job id
+		var jobId = $(elem).data('id');
+
 		// Get the progress information from the data attribute. It's a JSON object.
 		var latestProgress = null;
 		$(".wallboard-main .job-status").html('');
@@ -86,7 +71,7 @@
 			var progressData = $(elem).data('progress');
 
 			// Format the progress dae
-			var progressTimestamp = moment(progressData.Timestamp).format('DD-MM-YYYY HH:mm');
+			var progressTimestamp = moment(progressData.Timestamp).format('DD-MM-YYYY HH:mm:ss');
 
 			if (progressData.ProgressType == 4) {
 				$(".wallboard-main .job-status").html('<span class="job-cancelled"><i class="fa fa-fw fa-ban"></i>Job cancelled by ' + progressData.UserFullName + ' on ' + progressTimestamp + '</span>');
@@ -134,7 +119,7 @@
 		if (lat != 0 && lon != 0) {
 
 			// Set the height of the map canvas
-			$('#map-canvas').css('height', '550px');
+			$('#map-canvas').css('height', '300px');
 
 			if (!responseHub.maps.mapExists()) 
 			{
@@ -161,9 +146,75 @@
 			$('#map-canvas').css('height', '0px');
 		}
 
+		// Load the notes
+		loadJobNotes(jobId);
+
 		// Set the active class on the list item
 		$('.wallboard-layout .message-list li').removeClass('selected');
 		$(elem).addClass('selected');
+
+	}
+
+	/**
+	 * Load job notes
+	 */
+	function loadJobNotes(jobId) {
+
+		// Show the loading notes
+		$(".notes-loading").removeClass("hidden");
+
+		// Clear the loading notes
+		$("ul.job-notes").empty();
+
+		// Hide the loading
+		$(".notes-loading").addClass("hidden");
+
+		$.ajax({
+			url: responseHub.apiPrefix + '/job-messages/' + jobId + '/notes',
+			dataType: 'json',
+			success: function (data) {
+				
+				if (data == null || data.length == 0) {
+
+					$("ul.job-notes").append('<li class="no-notes-msg"><p>No notes available.</p></li>');
+
+				} else {
+
+					for (var i = 0; i < data.length; i++) {
+
+						// Add the notes to the list
+						var listItem = $("<li></li>");
+
+						// Create the note details
+						var noteInfo = $('<small class="text-muted"></small>');
+
+						// Add the note time
+						var noteDate = moment(data[i].Timestamp);
+						var localDateString = noteDate.format('YYYY-MM-DD HH:mm:ss');
+						noteInfo.append('<i class="fa fa-clock-o"></i> ' + localDateString);
+
+						// Add the wordback details
+						if (data[i].IsWordBack) {
+							noteInfo.append('<i class="fa fa-commenting-o wordback-icon"></i> wordback');
+						}
+
+						// Add the user
+						noteInfo.append('<i class="fa fa-user user-icon"></i> ' + data[i].UserDisplayName);
+
+						// append the note details
+						listItem.append(noteInfo);
+
+						// Add the message body
+						listItem.append('<p class="text-info">' + data[i].Body + '</p>');
+						
+						// Add the item to the start of the list, so newest notes are first
+						$("ul.job-notes").prepend(listItem);
+
+					}
+				}
+
+			}
+		});
 
 	}
 
@@ -190,6 +241,9 @@
 		$('.wallboard-layout .message-details').append(messageHeader);
 		$('.wallboard-layout .message-details').append($('<p class="lead job-message-body"></p>'));
 		$('.wallboard-layout .message-details').append(location);
+		$('.wallboard-layout .message-details').append($('<h3>Notes</h3><p class="notes-loading">Loading notes... <i class="fa fa-spinner fa-pulse fa-fw"></i></p><div class="job-notes-container"><ul class="job-notes list-unstyled"></ul></div>'))
+
+		$('.job-notes-container').scrollator();
 	}
 
 	/**
@@ -243,47 +297,6 @@
 
 		// Load the jobs list
 		loadJobList();
-
-		// Get the radar image urls
-		loopRadarImageUrls();
-
-	}
-
-	/**
-	 * Creates the loop for iterating through the list of radar images.
-	 */
-	function loopRadarImageUrls() {
-
-		// If there are no radar images, then show error message
-		if (radarImages == null || radarImages.length == 0) {
-			$('.radar-container').empty();
-			$('.radar-container').append('<div class="error-summary ">Unable to load radar information.</div>');
-			return;
-		}
-
-		// Iterate through the radar images and set the prefix
-		for (var i = 0; i < radarImages.length; i++) {
-			radarImages[i] = 'http://ws.cdn.bom.gov.au/radar/' + radarImages[i];
-		}
-
-		// Create the div to store the initial image
-		$('.radar-container').append('<div class="radar-image radar-loop" style="background: url(\'' + radarImages[0] + '\')"></div>');
-
-		setInterval(function () {
-		
-			// Get the next radar image. If the index exceeds the length, reset back to index 0
-			nextIndex = currentRadarImageIndex + 1;
-			if (nextIndex >= radarImages.length) {
-				nextIndex = 0;
-			}
-
-			// Get the radar image div and update the background property
-			$('.radar-loop').css('background', 'url(\'' + radarImages[nextIndex] + '\')');
-		
-			// Reset the current index
-			currentRadarImageIndex = nextIndex;
-		
-		}, 250);
 
 	}
 
@@ -479,34 +492,9 @@
 
 
 	}
-
-	/**
-	 * Toggles the display of the weather panel in the wallboard view.
-	 */
-	function toggleWeatherDisplay() {
-
-		if ($('.wallboard-warnings').hasClass('hidden')) {
-
-			// Show the wallboard panel
-			$('.wallboard-main').removeClass('col-sm-9').removeClass('col-md-9').addClass('col-sm-8').addClass('col-md-5');
-			$('.wallboard-warnings').removeClass('hidden');
-
-		} else {
-
-			// Hide the wallboard panel
-			$('.wallboard-main').removeClass('col-sm-8').removeClass('col-md-5').addClass('col-sm-9').addClass('col-md-9');
-			$('.wallboard-warnings').addClass('hidden');
-		}
-
-	}
-
+	
 	// Bind and load the UI
 	bindUI();
 	loadUI();
-	
-	return {
-		showHideWarnings: showHideWarnings,
-		toggleWeatherDisplay: toggleWeatherDisplay
-	}
 
 })();

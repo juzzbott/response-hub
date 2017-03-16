@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Enivate.ResponseHub.Common;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -44,6 +45,11 @@ namespace Enivate.ResponseHub.Model.Messages
 		public PagerMessage()
 		{
 			Id = Guid.NewGuid();
+		}
+
+		public static string GenerateHash(string address, DateTime timestamp, string messageContent)
+		{
+			return HashGenerator.GetSha1HashString(String.Format("{0}_{1}_{2}", address, timestamp.ToString("HH:mm:ss dd-MM-yy"), messageContent), 1);
 		}
 
 	}

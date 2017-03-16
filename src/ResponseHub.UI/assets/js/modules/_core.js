@@ -60,6 +60,41 @@
 			$('.tab-collapse').tabCollapse();
 		}
 
+		$('.toggle-header a').click(function () {
+
+			// Get the toggle id
+			var controlId = $(this).data('toggle-id');
+
+			// If the control has hidden, remove it, otherwise add hidden class
+			if ($('#' + controlId).hasClass('hidden'))
+			{
+				$('#' + controlId).removeClass('hidden');
+			}
+			else
+			{
+				$('#' + controlId).addClass('hidden');
+			}
+
+			return false;
+
+		});
+
+		$('.btn-search-toggle').click(function () {
+
+			// If the control has hidden, remove it, otherwise add hidden class
+			if ($('#navbar-search').css('display') == "none") {
+				$('#navbar-search').css('display', 'block');
+				$('body').addClass('search-bar-visible');
+			}
+			else {
+				$('#navbar-search').css('display', 'none');
+				$('body').removeClass('search-bar-visible');
+			}
+
+			return false;
+
+		});
+
 	}
 
 	// Bind the modal

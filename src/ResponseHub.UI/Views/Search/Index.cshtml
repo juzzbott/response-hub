@@ -1,0 +1,124 @@
+﻿@model Enivate.ResponseHub.UI.Models.Search.SearchViewModel
+
+@{
+    ViewBag.Title = "Search results";
+}
+
+<h1>@ViewBag.Title</h1>
+
+@if (Model == null)
+{
+	<div class="alert alert-danger">
+		You did not specify any keywords to search for.
+	</div>
+}
+else
+{
+	<p class="lead">Your search for '<strong>@Model.SearchKeywords</strong>' returned <strong>@Model.TotalResults</strong> result@(Model.TotalResults != 1 ? "s" : "")</p>
+	
+	<div class="filter-container">
+
+		<h3 class="bottom-20 toggle-header">Filter results <a href="#" class="pull-right" data-toggle-id="filter-controls">+</a></h3>
+
+		<div id="filter-controls" class="hidden">
+			<form action="/search" method="get">
+
+				<div class="form-group">
+					<label for="Name">Keywords *</label>
+					<div class="row">
+						<div class="col-sm-8 col-md-6 col-lg-4">
+							<input type="text" name="q" id="keywords" class="form-control" value="@Model.SearchKeywords" />
+						</div>
+					</div>
+				</div>
+
+				<div class="form-group">
+					Message types:
+					<div class="row">
+						<div class="col-sm-8 col-md-6 col-lg-4">
+							<label class="checkbox-inline">
+								<input type="checkbox" name="messagetype_job" id="messagetype-job" value="1" @(Model.MessageTypes.HasFlag(Enivate.ResponseHub.Model.Messages.MessageType.Job) ? "checked=\"checked\"" : "")> Job
+							</label>
+							<label class="checkbox-inline">
+								<input type="checkbox" name="messagetype_message" id="messagetype-message" value="1" @(Model.MessageTypes.HasFlag(Enivate.ResponseHub.Model.Messages.MessageType.Message) ? "checked=\"checked\"" : "")> Message
+							</label>
+						</div>
+					</div>
+				</div>
+
+				<div class="row">
+					<div class="col-sm-6">
+
+
+						<div class="form-group">
+							<label for="DateStarted">Date from *</label>
+							<div class="row">
+								<div class="col-sm-6">
+									<div class="input-group date datepicker-control" data-provide="datepicker" data-date-format="dd/mm/yyyy" data-date-autoclose="true" data-date-show-on-focus="false">
+										<input type="text" class="form-control" name="date_from" id="date-from" value="@(Model.DateFrom.HasValue ? Model.DateFrom.Value.ToString("dd/MM/yyyy") : "")" />
+										<div class="input-group-addon">
+											<i class="fa fa-fw fa-calendar"></i>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="text-muted"><em>Date format should be dd/mm/yyyy.</em></div>
+						</div>
+
+					</div>
+					<div class="col-sm-6">
+
+						<div class="form-group">
+							<label for="DateStarted">Date to *</label>
+							<div class="row">
+								<div class="col-sm-6">
+									<div class="input-group date datepicker-control" data-provide="datepicker" data-date-format="dd/mm/yyyy" data-date-autoclose="true" data-date-show-on-focus="false">
+										<input type="text" class="form-control" name="date_to" id="date-to" value="@(Model.DateTo.HasValue ? Model.DateTo.Value.ToString("dd/MM/yyyy") : "")" />
+										<div class="input-group-addon">
+											<i class="fa fa-fw fa-calendar"></i>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="text-muted"><em>Date format should be dd/MM/yyyy.</em></div>
+						</div>
+
+
+					</div>
+				</div>
+
+				<button type="submit" class="btn btn-primary btn-icon"><i class="fa fa-fw fa-filter"></i>Apply filter</button>
+
+			</form>
+		</div>
+
+		@if (Model.FilterApplied)
+		{
+			<p class="text-info">These results are filtered. <a href="/search?q=@Model.SearchKeywords" class="btn btn-link btn-icon"><i class="fa fa-fw fa-times"></i>Clear filter</a></p>
+		}
+
+	</div>
+
+	if (Model.Results == null || Model.Results.Count == 0)
+	{
+		<p class="lead">No results found matching the query.</p>
+	}
+	else
+	{
+		<ul class="job-list list-unstyled">
+			@foreach (var message in Model.Results)
+			{
+				@Html.Partial("~/Views/Jobs/JobListItem.cshtml", message);
+			}
+		</ul>
+
+		if (Model.TotalResults > Model.Results.Count)
+		{
+			<div class="top-20 bottom-20" id="load-more-results">
+				<button class="btn btn-primary btn-lg btn-icon" onclick="responseHub.search.getNextResults();"><i class="fa fa-fw fa fa-plus"></i>Load more results</button>
+				<span class="form-loader hidden"><i class="fa fa-spin fa-spinner"></i></span>
+			</div>
+		}
+
+	}
+}

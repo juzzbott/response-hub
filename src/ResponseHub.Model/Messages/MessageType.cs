@@ -9,7 +9,7 @@ namespace Enivate.ResponseHub.Model.Messages
 	[Flags]
 	public enum MessageType
 	{
-
+		
 		Job = 1,
 
 		Message = 2
