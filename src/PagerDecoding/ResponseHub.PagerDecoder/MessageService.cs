@@ -127,12 +127,12 @@ namespace Enivate.ResponseHub.PagerDecoder
 			_msgServiceTimer.Elapsed += _msgServiceTimer_Elapsed;
 
             // Initialise the cleanup timer
-            _cleanupTimer = new Timer(timerInterval);
+            _cleanupTimer = new Timer(cleanupInterval);
             _cleanupTimer.AutoReset = true;
             _cleanupTimer.Elapsed += _cleanupTimer_Elapsed;
 
 			// Initialise the cleanup timer
-			_invalidMessageTimer = new Timer(timerInterval);
+			_invalidMessageTimer = new Timer(invalidMessagesInterval);
 			_invalidMessageTimer.AutoReset = true;
 			_invalidMessageTimer.Elapsed += _invalidMessageTimer_Elapsed;
 
