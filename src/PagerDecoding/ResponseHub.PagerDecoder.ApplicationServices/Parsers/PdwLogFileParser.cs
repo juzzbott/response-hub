@@ -183,16 +183,9 @@ namespace Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers
 					// If we should skip the message, then do so here.
                     if (ShouldSkipMessage(message))
                     {
-						_log.Debug("Skipping internal system message.");
+						_log.Debug(String.Format("Skipping internal system message: {0}"));
 						continue;
                     }
-
-					// If the message appears invalid, flag it to be checked...
-					if (MessageAppearsInvalid(message))
-					{
-						_log.Warn(String.Format("Invalid message detected. Invalid message: {0}", message));
-						Task.Run(async () => await _decoderStatusRepository.AddInvalidMessage(DateTime.UtcNow, message));
-					}
 
 					try
 					{
@@ -204,6 +197,13 @@ namespace Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers
 						if (pagerMessage == null)
 						{
 							continue;
+						}
+
+						// If the message appears invalid, flag it to be checked...
+						if (MessageAppearsInvalid(pagerMessage.MessageContent))
+						{
+							_log.Warn(String.Format("Invalid message detected. Invalid message: {0}", pagerMessage.MessageContent)));
+							Task.Run(async () => await _decoderStatusRepository.AddInvalidMessage(DateTime.UtcNow, message));
 						}
 
 						// If the pager message is numeric, skip it
