@@ -33,7 +33,7 @@ namespace Enivate.ResponseHub.UI.Filters
 					// Find out if we are in the admin area
 					bool isAdminArea = (filterContext.RouteData.DataTokens["area"] != null && filterContext.RouteData.DataTokens["area"].ToString().ToLower() == "admin");
 
-					string[] allowedControllerNames = { "myaccount" };
+					string[] allowedControllerNames = { "myaccount", "media", "pagermessages" };
 					bool isAllowedController = allowedControllerNames.Contains(filterContext.RouteData.Values["Controller"].ToString().ToLower());
 
 					// If the user is a system admin, but they are not in the "Admin" area, redirect now
