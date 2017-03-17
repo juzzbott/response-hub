@@ -533,7 +533,7 @@
     <Content Include="Areas\ControlPanel\Views\DataExport\Index.cshtml" />
     <Content Include="Areas\ControlPanel\Views\DataExport\GeneratePdfExport.cshtml" />
     <Content Include="Areas\ControlPanel\Views\Shared\PdfExportLayout.cshtml" />
-    <Content Include="Areas\ControlPanel\Views\Groups\CreateEdit.cshtml" />
+    <Content Include="Areas\ControlPanel\Views\Groups\Edit.cshtml" />
     <Content Include="Areas\ControlPanel\Views\Groups\ViewGroup.cshtml" />
     <Content Include="Areas\ControlPanel\Views\Groups\ChangeUserRole.cshtml" />
     <Content Include="Areas\ControlPanel\Views\Groups\ConfirmUser.cshtml" />

@@ -23,16 +23,6 @@
 	</div>
 
 	<div class="form-group">
-		<label for="Service">Service *</label>
-		<div class="row">
-			<div class="col-sm-8 col-md-6 col-lg-4">
-				@Html.DropDownListFor(model => model.Service, Model.AvailableServices, new { @class = "form-control" })
-			</div>
-		</div>
-		@Html.ValidationMessageFor(model => model.Service)
-	</div>
-
-	<div class="form-group">
 		<label for="Service">Region *</label>
 		<div class="row">
 			<div class="col-sm-8 col-md-6 col-lg-4">
@@ -47,10 +37,9 @@
 		<label for="Name">Capcode *</label>
 		<div class="row">
 			<div class="col-sm-8 col-md-6 col-lg-4">
-				@Html.TextBoxFor(model => model.Capcode, new { @class = "form-control", placeholder = "00000xxx", maxlength = "9", data_capcode_autocomplete="true", autocomplete="off" })
+				<input type="text" readonly="readonly" class="form-control" value="@Model.Capcode" />
 			</div>
 		</div>
-		@Html.ValidationMessageFor(model => model.Capcode)
 	</div>
 
 	<script language="javascript">
@@ -70,19 +59,6 @@
 	<div class="form-group">
 		<label>Additional capcodes</label>
 		<div class="row">
-			<div class="col-sm-8 col-md-6 col-lg-4">
-				<select id="AvailableCapcodes" class="form-control capcode-selection selectpicker" data-live-search="true" />
-					<option value="">Select capcode...</option>
-				@foreach(var capcode in Model.AvailableAdditionalCapcodes)
-				{
-					<option value="@capcode.Id" data-tokens="@capcode.Name @capcode.ShortName" data-name="@capcode.Name" data-capcode-address="@capcode.CapcodeAddress">@capcode.Name (@capcode.CapcodeAddress)</option>
-				}
-				</select>
-				@Html.HiddenFor(i => i.AdditionalCapcodes)
-
-			</div>
-		</div>
-		<div class="row">
 			<div class="col-lg-10">
 				@if (String.IsNullOrEmpty(Model.AdditionalCapcodes) || Model.AdditionalCapcodes == ",")
 				{
@@ -97,18 +73,11 @@
 							var capcode = Model.AvailableAdditionalCapcodes.FirstOrDefault(i => i.Id.ToString().ToLower() == capcodeId.ToLower());
 							if (capcode != null)
 							{
-								<span class="label label-primary" data-capcode-id="@capcode.Id">@capcode.Name (@capcode.CapcodeAddress)<a><i class="fa fa-times-circle-o"></i></a></span>
+								<span class="label label-primary" data-capcode-id="@capcode.Id">@capcode.Name (@capcode.CapcodeAddress)<a></a></span>
 							}
 						}
 					</div>
 				}
-			</div>
-		</div>
-
-
-		<div class="row">
-			<div class="col-lg-10 col-xl-6">
-				<p class="section-help">Selecting relevant capcodes for the group will ensure group members will be displayed all relevant message on ResponseHub. This has no effect on the capcodes assigned to the user/groups within the EAS paging system.</p>
 			</div>
 		</div>
 

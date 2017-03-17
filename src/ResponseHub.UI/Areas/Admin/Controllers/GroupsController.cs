@@ -308,7 +308,7 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 		[HttpGet]
 		public async Task<ActionResult> Edit(Guid id)
 		{
-			return await GetEditGroupViewResult(id);			
+			return await GetEditGroupViewResult(id, "~/Areas/Admin/Views/Groups/CreateEdit.cshtml");			
 		}
 
 		[Route("{id:guid}/edit")]
@@ -316,7 +316,7 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 		[HttpPost]
 		public async Task<ActionResult> Edit(Guid id, CreateGroupModel model)
 		{
-			return await PostEditGroupViewResult(id, model);
+			return await PostEditGroupViewResult(id, model, "~/Areas/Admin/Views/Groups/CreateEdit.cshtml", true);
 		}
 		
 		#endregion

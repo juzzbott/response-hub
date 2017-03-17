@@ -164,7 +164,7 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 		/// </summary>
 		/// <param name="id"></param>
 		/// <returns></returns>
-		public async Task<ActionResult> GetEditGroupViewResult(Guid id)
+		public async Task<ActionResult> GetEditGroupViewResult(Guid id, string viewPath)
 		{
 
 			// Get the group based on the id
@@ -193,11 +193,11 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 			// Set the page title.
 			ViewBag.Title = "Edit group";
 
-			return View("~/Areas/Admin/Views/Groups/CreateEdit.cshtml", model);
+			return View(viewPath, model);
 
 		}
 
-		public async Task<ActionResult> PostEditGroupViewResult(Guid id, CreateGroupModel model)
+		public async Task<ActionResult> PostEditGroupViewResult(Guid id, CreateGroupModel model, string viewPath, bool adminEdit)
 		{
 			// Set the form action and the page title.
 			ViewBag.Title = "Edit group";
@@ -230,7 +230,7 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 			{
 				await Log.Error(String.Format("Unable to update group. Region '{0}' does not exist.", model.Region));
 				ModelState.AddModelError("", "There was a system error updating the group.");
-				return View("~/Areas/Admin/Views/Groups/CreateEdit.cshtml", model);
+				return View(viewPath, model);
 			}
 
 			// Create the headquarters coords
@@ -243,13 +243,17 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 
 				// Update the values of the group
 				group.Name = model.Name;
-				group.Capcode = model.Capcode;
-				group.AdditionalCapcodes = GetCapcodeIdsFromHiddenValue(model.AdditionalCapcodes);
 				group.Description = model.Description;
 				group.Updated = DateTime.UtcNow;
 				group.HeadquartersCoordinates = coords;
 				group.Region = region;
-				group.Service = service;
+
+				if (adminEdit)
+				{
+					group.Capcode = model.Capcode;
+					group.AdditionalCapcodes = GetCapcodeIdsFromHiddenValue(model.AdditionalCapcodes);
+					group.Service = service;
+				}
 
 				// Create the capcode if it doesn't exist.
 				await CheckAndCreateCapcode(model.Capcode, model.Name, service);
@@ -264,7 +268,7 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 			{
 				await Log.Error(String.Format("Unable to update group. System exception: {0}", ex.Message), ex);
 				ModelState.AddModelError("", "There was a system error updating the group.");
-				return View("~/Areas/Admin/Views/Groups/CreateEdit.cshtml", model);
+				return View(viewPath, model);
 			}
 		}
 
