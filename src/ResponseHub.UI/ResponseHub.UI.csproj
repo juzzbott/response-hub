@@ -221,7 +221,7 @@
     <Compile Include="Areas\ControlPanel\Controllers\HomeController.cs" />
     <Compile Include="Areas\ControlPanel\ControlPanelAreaRegistration.cs" />
     <Compile Include="Areas\ControlPanel\Models\DataExport\DataExportFilterViewModel.cs" />
-    <Compile Include="Areas\ControlPanel\Models\DataExport\PdfDataExportViewModel.cs" />
+    <Compile Include="Areas\ControlPanel\Models\DataExport\HtmlDataExportViewModel.cs" />
     <Compile Include="Controllers\Api\EventsController.cs" />
     <Compile Include="Controllers\BaseJobsMessagesController.cs" />
     <Compile Include="Controllers\MessagesController.cs" />
@@ -531,8 +531,8 @@
     <Content Include="Areas\ControlPanel\Views\Shared\_Layout.cshtml" />
     <Content Include="Areas\ControlPanel\Views\Shared\ControlPanelSidebarMenu.cshtml" />
     <Content Include="Areas\ControlPanel\Views\DataExport\Index.cshtml" />
-    <Content Include="Areas\ControlPanel\Views\DataExport\GeneratePdfExport.cshtml" />
-    <Content Include="Areas\ControlPanel\Views\Shared\PdfExportLayout.cshtml" />
+    <Content Include="Areas\ControlPanel\Views\DataExport\GenerateHtmlExport.cshtml" />
+    <Content Include="Areas\ControlPanel\Views\Shared\HtmlExportLayout.cshtml" />
     <Content Include="Areas\ControlPanel\Views\Groups\Edit.cshtml" />
     <Content Include="Areas\ControlPanel\Views\Groups\ViewGroup.cshtml" />
     <Content Include="Areas\ControlPanel\Views\Groups\ChangeUserRole.cshtml" />

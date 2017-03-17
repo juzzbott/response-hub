@@ -7,11 +7,14 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
+using Enivate.ResponseHub.Common;
 using Enivate.ResponseHub.Common.Constants;
+using Enivate.ResponseHub.Model.DataExport.Interface;
 using Enivate.ResponseHub.Model.Groups;
 using Enivate.ResponseHub.Model.Messages;
-using Enivate.ResponseHub.Model.DataExport.Interface;
+using Enivate.ResponseHub.Model.Messages.Interface;
 using Enivate.ResponseHub.Model.Spatial;
+using Enivate.ResponseHub.Model.Groups.Interface;
 
 using EvoPdf;
 
@@ -28,6 +31,26 @@ namespace Enivate.ResponseHub.ApplicationServices
 {
 	public class DataExportService : IDataExportService
 	{
+
+
+
+		protected IJobMessageService JobMessageService
+		{
+			get
+			{
+				return ServiceLocator.Get<IJobMessageService>();
+			}
+		}
+
+
+
+		protected IGroupService GroupService
+		{
+			get
+			{
+				return ServiceLocator.Get<IGroupService>();
+			}
+		}
 
 		private const string OverviewTemplateFilename = "DataExportOverview.html";
 
@@ -83,15 +106,15 @@ namespace Enivate.ResponseHub.ApplicationServices
 			// compress the images in PDF with JPEG to reduce the PDF document size
 			converter.PdfDocumentOptions.JpegCompressionEnabled = false;
 
-			return converter.ConvertHtml(await GetReportHtml(groupId, dateFrom, dateTo), ConfigurationManager.AppSettings["BaseWebsiteUrl"]);
+			return converter.ConvertHtml(await BuildHtmlExportFile(groupId, dateFrom, dateTo), ConfigurationManager.AppSettings["BaseWebsiteUrl"]);
 			
 		}
 
-		private async Task<string> GetReportHtml(Guid groupId, DateTime dateFrom, DateTime dateTo)
+		public async Task<string> BuildHtmlExportFile(Guid groupId, DateTime dateFrom, DateTime dateTo)
 		{
 			// Get the web response for the report
 			// To force a page break: style="page-break-before: always"
-			HttpWebRequest request = HttpWebRequest.CreateHttp(String.Format("{0}/control-panel/data-export/generate-pdf-export?group_id={1}&date_from={2}&date_to={3}",
+			HttpWebRequest request = HttpWebRequest.CreateHttp(String.Format("{0}/control-panel/data-export/generate-html-export?group_id={1}&date_from={2}&date_to={3}",
 				ConfigurationManager.AppSettings[ConfigurationKeys.BaseWebsiteUrl],
 				groupId,
 				dateFrom.ToString("yyyyMMddHHmmss"),
@@ -112,8 +135,19 @@ namespace Enivate.ResponseHub.ApplicationServices
 			}
 		}
 		
-		public string BuildCsvExportFile(IList<JobMessage> messages)
+		public async Task<string> BuildCsvExportFile(Guid groupId, DateTime dateFrom, DateTime dateTo)
 		{
+
+			// Get the group by the id
+			Group group = await GroupService.GetById(groupId);
+
+			// Get the list of messages for the capcode
+			IList<JobMessage> messages = await JobMessageService.GetJobMessagesBetweenDates(
+				new List<string> { group.Capcode },
+				MessageType.Job & MessageType.Message,
+				dateFrom,
+				dateTo);
+
 			// Create the string builder to store the data in
 			StringBuilder sb = new StringBuilder();
 

@@ -11,9 +11,11 @@ namespace Enivate.ResponseHub.Model.DataExport.Interface
 	public interface IDataExportService
 	{
 
-		string BuildCsvExportFile(IList<JobMessage> messages);
+		Task<string> BuildCsvExportFile(Guid groupId, DateTime dateFrom, DateTime dateTo);
 
 		Task<byte[]> BuildPdfExportFile(Guid groupId, DateTime dateFrom, DateTime dateTo);
+
+		Task<string> BuildHtmlExportFile(Guid groupId, DateTime dateFrom, DateTime dateTo);
 
 	}
 }

@@ -58,13 +58,14 @@
 		@Html.HiddenFor(model => model.ExportType, new { @Value = "csv" })
 
 		<div class="btn-group">
-			<button type="submit" class="btn btn-primary btn-icon"><i class="fa fa-fw fa-download"></i> Export to CSV</button>
+			<button type="submit" class="btn btn-primary btn-icon" onclick="$('#ExportType').val('csv'); $('#export-form').submit(); return false;"><i class="fa fa-fw fa-download"></i> Export to CSV</button>
 			<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 				<span class="caret"></span>
 				<span class="sr-only">Toggle Dropdown</span>
 			</button>
 			<ul class="dropdown-menu">
 				<li><a href="#" onclick="$('#ExportType').val('pdf'); $('#export-form').submit(); return false;">Export to PDF</a></li>
+				<li><a href="#" onclick="$('#ExportType').val('html'); $('#export-form').submit(); return false;">Export to HTML</a></li>
 			</ul>
 		</div>
 

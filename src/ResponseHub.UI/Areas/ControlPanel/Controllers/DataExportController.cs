@@ -74,32 +74,22 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 		public async Task<ActionResult> Index(DataExportFilterViewModel model)
 		{
 
-			// Get the group by the id
-			Group group = await GroupService.GetById(model.GroupId);
-
 			// Get the list of jobs between the start and end dates
 			DateTime dateFrom = model.DateFrom.Date;
 			DateTime dateTo = new DateTime(model.DateTo.Year, model.DateTo.Month, model.DateTo.Day, 23, 59, 59);
 
 			// Now that we have the messages, get the export type from the model, and return
-			if (model.ExportType == "csv")
+			if (model.ExportType.ToLower() == "csv")
 			{
 				
-				// Get the list of messages for the capcode
-				IList<JobMessage> messages = await JobMessageService.GetJobMessagesBetweenDates(
-					new List<string> { group.Capcode },
-					MessageType.Job & MessageType.Message,
-					dateFrom,
-					dateTo);
-
-				string export = DataExportService.BuildCsvExportFile(messages);
+				string export = await DataExportService.BuildCsvExportFile(model.GroupId, dateFrom, dateTo);
 
 				// return the file as a download
 				FileContentResult result = new FileContentResult(Encoding.UTF8.GetBytes(export), "text/csv");
 				result.FileDownloadName = String.Format("data-export-{0}.csv", DateTime.Now.ToString("yyyy-MM-dd-HHmmss"));
 				return result;
 			}
-			else
+			else if (model.ExportType.ToLower() == "pdf")
 			{
 
 				// Get the PDF bytes
@@ -109,13 +99,26 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 				result.FileDownloadName = String.Format("data-export-{0}.pdf", DateTime.Now.ToString("yyyy-MM-dd-HHmmss"));
 				return result;
 			}
+			else if (model.ExportType.ToLower() == "html")
+			{
+
+				// Get the PDF bytes
+				string htmlContent = await DataExportService.BuildHtmlExportFile(model.GroupId, dateFrom, dateTo);
+
+				FileContentResult result = new FileContentResult(Encoding.UTF8.GetBytes(htmlContent), "text/html");
+				result.FileDownloadName = String.Format("data-export-{0}.html", DateTime.Now.ToString("yyyy-MM-dd-HHmmss"));
+				return result;
+
+			}
+
+			throw new HttpException(400, "Bad request.");
 
 		}
 
-		[Route("generate-pdf-export")]
+		[Route("generate-html-export")]
 		[HttpGet]
 		[AllowAnonymous]
-		public async Task<ActionResult> GeneratePdfExport()
+		public async Task<ActionResult> GenerateHtmlExport()
 		{
 
 			// Get the parameters from the query string
@@ -134,7 +137,7 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 				dateTo);
 
 			// Create the model
-			PdfDataExportViewModel model = new PdfDataExportViewModel
+			HtmlDataExportViewModel model = new HtmlDataExportViewModel
 			{
 				Messages = messages
 			};

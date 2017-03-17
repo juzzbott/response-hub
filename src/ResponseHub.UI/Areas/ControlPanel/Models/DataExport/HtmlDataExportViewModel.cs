@@ -6,12 +6,12 @@ using System.Web;
 
 namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Models.DataExport
 {
-	public class PdfDataExportViewModel
+	public class HtmlDataExportViewModel
 	{
 
 		public IList<JobMessage> Messages { get; set; }
 
-		public PdfDataExportViewModel()
+		public HtmlDataExportViewModel()
 		{
 			Messages = new List<JobMessage>();
 		}
