@@ -1,7 +1,5 @@
 ﻿responseHub.wallboard = (function () {
 
-	var currentRadarImageIndex = 0;
-
 	var jobListPollingInterval = 30000;
 
 	var jobListPollingEnabled = true;
@@ -9,22 +7,6 @@
 	var jobListIntervalId = null;
 
 	var selectedJobIndex = 0;
-
-	/**
-	 * Determines if the specific warnings should be displayed on the screen.
-	 */
-	function showHideWarnings(warningsContainer) {
-
-		// If the container has the hidden class, remove it, otherwise add it
-		if ($('.' + warningsContainer).hasClass('hidden')) {
-			$('.' + warningsContainer).removeClass('hidden')
-		}
-		else
-		{
-			$('.' + warningsContainer).addClass('hidden')
-		}
-
-	}
 
 	/**
 	 * Gets the height of the containers for the screen size.
@@ -89,7 +71,7 @@
 			var progressData = $(elem).data('progress');
 
 			// Format the progress dae
-			var progressTimestamp = moment(progressData.Timestamp).format('DD-MM-YYYY HH:mm');
+			var progressTimestamp = moment(progressData.Timestamp).format('DD-MM-YYYY HH:mm:ss');
 
 			if (progressData.ProgressType == 4) {
 				$(".wallboard-main .job-status").html('<span class="job-cancelled"><i class="fa fa-fw fa-ban"></i>Job cancelled by ' + progressData.UserFullName + ' on ' + progressTimestamp + '</span>');
@@ -316,47 +298,6 @@
 		// Load the jobs list
 		loadJobList();
 
-		// Get the radar image urls
-		loopRadarImageUrls();
-
-	}
-
-	/**
-	 * Creates the loop for iterating through the list of radar images.
-	 */
-	function loopRadarImageUrls() {
-
-		// If there are no radar images, then show error message
-		if (radarImages == null || radarImages.length == 0) {
-			$('.radar-container').empty();
-			$('.radar-container').append('<div class="error-summary ">Unable to load radar information.</div>');
-			return;
-		}
-
-		// Iterate through the radar images and set the prefix
-		for (var i = 0; i < radarImages.length; i++) {
-			radarImages[i] = 'http://ws.cdn.bom.gov.au/radar/' + radarImages[i];
-		}
-
-		// Create the div to store the initial image
-		$('.radar-container').append('<div class="radar-image radar-loop" style="background: url(\'' + radarImages[0] + '\')"></div>');
-
-		setInterval(function () {
-		
-			// Get the next radar image. If the index exceeds the length, reset back to index 0
-			nextIndex = currentRadarImageIndex + 1;
-			if (nextIndex >= radarImages.length) {
-				nextIndex = 0;
-			}
-
-			// Get the radar image div and update the background property
-			$('.radar-loop').css('background', 'url(\'' + radarImages[nextIndex] + '\')');
-		
-			// Reset the current index
-			currentRadarImageIndex = nextIndex;
-		
-		}, 250);
-
 	}
 
 	/**
@@ -551,34 +492,9 @@
 
 
 	}
-
-	/**
-	 * Toggles the display of the weather panel in the wallboard view.
-	 */
-	function toggleWeatherDisplay() {
-
-		if ($('.wallboard-warnings').hasClass('hidden')) {
-
-			// Show the wallboard panel
-			$('.wallboard-main').removeClass('col-sm-9').removeClass('col-md-9').addClass('col-sm-8').addClass('col-md-5');
-			$('.wallboard-warnings').removeClass('hidden');
-
-		} else {
-
-			// Hide the wallboard panel
-			$('.wallboard-main').removeClass('col-sm-8').removeClass('col-md-5').addClass('col-sm-9').addClass('col-md-9');
-			$('.wallboard-warnings').addClass('hidden');
-		}
-
-	}
-
+	
 	// Bind and load the UI
 	bindUI();
 	loadUI();
-	
-	return {
-		showHideWarnings: showHideWarnings,
-		toggleWeatherDisplay: toggleWeatherDisplay
-	}
 
 })();

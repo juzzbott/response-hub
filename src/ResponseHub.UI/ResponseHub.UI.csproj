@@ -226,6 +226,7 @@
     <Compile Include="Controllers\BaseJobsMessagesController.cs" />
     <Compile Include="Controllers\MessagesController.cs" />
     <Compile Include="Controllers\SearchController.cs" />
+    <Compile Include="Controllers\WeatherCentreController.cs" />
     <Compile Include="Filters\SystemAdminUserRedirectAttribute.cs" />
     <Compile Include="Helpers\JobMessageModelHelper.cs" />
     <Compile Include="Models\Api\Events\AddResourcePostModel.cs" />
@@ -278,6 +279,8 @@
     <Compile Include="Models\Search\SearchViewModel.cs" />
     <Compile Include="Models\Users\GroupUserViewModel.cs" />
     <Compile Include="Models\Wallboard\WallboardViewModel.cs" />
+    <Compile Include="Models\WeatherCentre\RadarLoopViewModel.cs" />
+    <Compile Include="Models\WeatherCentre\WeatherCentreViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>
@@ -320,6 +323,7 @@
     <Content Include="assets\js\modules\resources.js" />
     <Content Include="assets\js\modules\search.js" />
     <Content Include="assets\js\modules\wallboard.js" />
+    <Content Include="assets\js\modules\weather-centre.js" />
     <Content Include="assets\js\modules\_core.js" />
     <Content Include="assets\js\script.js" />
     <Content Include="favicon.ico" />
@@ -449,7 +453,7 @@
     <Content Include="Views\Wallboard\MessageList.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Views\Wallboard\Warnings.cshtml" />
+    <Content Include="Views\WeatherCentre\Warnings.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\MyAccount\ChangePassword.cshtml" />
@@ -527,6 +531,9 @@
     <Content Include="Views\Search\Index.cshtml" />
     <Content Include="Views\Jobs\JobListItem.cshtml" />
     <Content Include="Views\Jobs\JobAttachments.cshtml" />
+    <Content Include="Views\WeatherCentre\Index.cshtml" />
+    <Content Include="Views\Shared\WeatherCentreLayout.cshtml" />
+    <Content Include="Views\WeatherCentre\RadarLoop.cshtml" />
     <Content Include="Areas\ControlPanel\Views\web.config" />
     <Content Include="Areas\ControlPanel\Views\Shared\_Layout.cshtml" />
     <Content Include="Areas\ControlPanel\Views\Shared\ControlPanelSidebarMenu.cshtml" />

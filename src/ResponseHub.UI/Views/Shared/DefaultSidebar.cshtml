@@ -13,6 +13,9 @@
 	<li>
 		<a href="/wallboard"><i class="fa fa-fw fa-desktop"></i>Wallboard view</a>
 	</li>
+	<li>
+		<a href="/weather-centre"><i class="fa fa-fw fa-bolt"></i>Weather centre</a>
+	</li>
 	<li class="@(ViewContext.RouteData.Values["Controller"].ToString() == "MyAccount" ? "active" : "")">
 		<a href="/my-account"><i class="fa fa-fw fa-user"></i>My account</a>
 		@if (ViewContext.RouteData.Values["Controller"].ToString() == "MyAccount")

@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 using Newtonsoft.Json;
@@ -12,6 +13,7 @@ using Newtonsoft.Json;
 using Enivate.ResponseHub.Logging;
 using Enivate.ResponseHub.Model.Messages;
 using Enivate.ResponseHub.DataAccess.Interface;
+using Enivate.ResponseHub.Common;
 
 namespace Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers
 {
@@ -59,6 +61,11 @@ namespace Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers
 		private IMapIndexRepository _mapIndexRepository;
 
 		/// <summary>
+		/// The decoder status repository
+		/// </summary>
+		private IDecoderStatusRepository _decoderStatusRepository;
+
+		/// <summary>
 		/// The number of log file read attempts.
 		/// </summary>
 		private int _logFileAttempts = 0;
@@ -82,6 +89,9 @@ namespace Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers
 			// Instantiate the message parsers
 			_pagerMessageParser = new PagerMessageParser(_log);
 			_jobMessageParser = new JobMessageParser(_mapIndexRepository, _log);
+
+			// Get the decoder status repo
+			_decoderStatusRepository = ServiceLocator.Get<IDecoderStatusRepository>();
 
 		}
 
@@ -168,31 +178,14 @@ namespace Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers
 
 				// Loop through the messages
 				foreach (string message in rawMessages)
-				{
-					// If the message is null or empty, continue
-					if (String.IsNullOrEmpty(message))
-					{
-						continue;
-					}
+                { 
 
-					// Skip non-required messages.
-					if (message.ToUpper().Contains(")E51TIMEUPDATE"))
-					{
-						_log.Debug("Skipping E51TIMEUPDATE time update message.");
+					// If we should skip the message, then do so here.
+                    if (ShouldSkipMessage(message))
+                    {
+						_log.Debug(String.Format("Skipping internal system message: {0}", message));
 						continue;
-					}
-
-					if (message.ToUpper().Contains(")&)E51ASN"))
-					{
-						_log.Debug("Skipping E51ASN message.");
-						continue;
-					}
-
-					if (message.ToLower().Contains("12 minute network heartbeat"))
-					{
-						_log.Debug("Skipping 12 minute heartbeat message");
-						continue;
-					}
+                    }
 
 					try
 					{
@@ -211,6 +204,13 @@ namespace Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers
 						{
 							_log.Debug("Skipping non-alpha message.");
 							continue;
+						}
+
+						// If the message appears invalid, flag it to be checked...
+						if (MessageAppearsInvalid(pagerMessage.MessageContent))
+						{
+							_log.Warn(String.Format("Invalid message detected. Invalid message: {0}", pagerMessage.MessageContent));
+							Task.Run(async () => await _decoderStatusRepository.AddInvalidMessage(DateTime.UtcNow, message));
 						}
 
 						// If the pager sha matches the last inserted sha, then exit the loop, as no need to process any further messages.
@@ -243,9 +243,76 @@ namespace Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers
 		}
 
 		/// <summary>
-		/// Parse the pager messages into JobMessages.
+		/// Determines if the message appears to be invalid or not.
 		/// </summary>
-		private void ParsePagerMessagesToJobMessages()
+		/// <param name="message">The message to check.</param>
+		/// <returns>True if the message appears to be invaid</returns>
+		public bool MessageAppearsInvalid(string message)
+		{
+
+			// If the message does not start with one of the message qualifiers, then flag as invalid
+			if (!message.StartsWith("@@") && !message.StartsWith("QD") && !message.StartsWith("Hb"))
+			{
+				return true;
+			}
+
+			// If the message contains some funky character sequences, then flag as invalid
+			if (Regex.IsMatch(message, ".*(?:\\?{3,})|(?:\\w\\*\\w\\*\\w\\*)|(?:\\?\\)|(?:\\)\\?)).*"))
+			{
+				return true;
+			}
+
+			return false;
+		}
+
+		/// <summary>
+		/// Determines if the message should be skipped based on it's contents.
+		/// </summary>
+		/// <param name="message">The message to check.</param>
+		/// <returns>True if the message should be skipped (it's an internal system message and not a pager message).</returns>
+		private bool ShouldSkipMessage(string message)
+        {
+            // If the message is null or empty, continue
+            if (String.IsNullOrEmpty(message))
+            {
+                return true;
+            }
+
+            // Skip non-required messages.
+            if (message.ToUpper().Contains(")E51TIMEUPDATE"))
+            {
+                _log.Debug("Skipping E51TIMEUPDATE time update message.");
+                return true;
+            }
+
+            if (message.ToUpper().Contains(")&)E51ASN"))
+            {
+                _log.Debug("Skipping E51ASN message.");
+                return true;
+            }
+
+            if (message.ToLower().Contains("12 minute network heartbeat"))
+            {
+                _log.Debug("Skipping 12 minute heartbeat message");
+                return true;
+            }
+
+            // If it's a SEGMENT messge, skip it
+            string segmentsRegex = ".*(segment\\s?\\d{2}?\\s?segment\\s?\\d{2}?).*";
+            if (Regex.IsMatch(message, segmentsRegex, RegexOptions.IgnoreCase))
+            {
+                _log.Debug("Skipping segments message.");
+                return true;
+            }
+
+            // No need to skip the message, so return false
+            return false;
+        }
+
+        /// <summary>
+        /// Parse the pager messages into JobMessages.
+        /// </summary>
+        private void ParsePagerMessagesToJobMessages()
 		{
 			// Loop through the pager messages
 			foreach (PagerMessage pagerMessage in PagerMessagesToSubmit)

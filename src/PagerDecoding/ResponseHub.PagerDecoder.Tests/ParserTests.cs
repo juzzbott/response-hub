@@ -131,6 +131,26 @@ namespace Enivate.ResponseHub.WindowsService.Tests
 			
 		}
 
+		[Trait("Category", "Parser tests - PDW logs")]
+		[Theory(DisplayName = "Can determine invalid messages")]
+		[InlineData("@@ALERT F160207784 ALARC1 CADW1 HINDU SOCIETY OF VICTORIA INC ASE - PUMP HOUSE, - INPUT - PUMP HOUSE 52 BOUNDARY RD CARRUM DOWNS /BOUNDARY LANE //OPTIC WAY M 98 F10 (400832) CCADW CFTONS CPATRS [CADW]", false)]
+		[InlineData("HbCORO15 G&SC3 SMOKE ISSUING FROM GRASS BRODERICK-GEELONG RING IN RAMP ON CORIO M 432 G3 (703844) F160207780 CCOROS", false)]
+		[InlineData("QDAnyone helping with the Twilight Night at the Toolern Vale Primary Schoo4?z7w434???(vrhse advise your availability between 4 & 8 pm. Contact Joanne on 0409568603 Thanks Jo [TOOL]", true)]
+		[InlineData("5-*0*163[92-U2868] 2]5580", true)]
+		[InlineData("G&SC3 SMOKE ISSUING FROM GRASS BRODERICK-GEELONG RING IN RAMP ON CORIO M 432 G3 (703844) F160207780 CCOROS", true)]
+		[InlineData("_?hF?()U*U*U*U*U*U*)", true)]
+		public void CanDetermineInvalidMessages(string message, bool invalid)
+		{
+
+			// Create the parser
+			PdwLogFileParser parser = new PdwLogFileParser(new Mock<ILogger>().Object, new Mock<IMapIndexRepository>().Object);
+			bool isInvalid = parser.MessageAppearsInvalid(message);
+
+			Assert.True(invalid == isInvalid, "The message does not match the expected invalid value.");
+			
+		}
+
+
 		#region Helpers
 
 		/// <summary>

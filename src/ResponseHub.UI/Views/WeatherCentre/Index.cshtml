@@ -1,0 +1,31 @@
+﻿@model Enivate.ResponseHub.UI.Models.WeatherCentre.WeatherCentreViewModel
+@{
+    ViewBag.Title = "Weather centre";
+    Layout = "~/Views/Shared/WeatherCentreLayout.cshtml";
+}
+
+
+<div class="row">
+
+	<!-- Left column -->
+	<div class="col-sm-4">
+
+		<h2>Rain</h2>
+		@Html.Partial("~/Views/WeatherCentre/RadarLoop.cshtml", Model.RainRadar)
+
+	</div>
+	<!-- END Main Body -->
+	<!-- Main Body -->
+	<div class="col-sm-4">
+		<h2>Wind</h2>
+		@Html.Partial("~/Views/WeatherCentre/RadarLoop.cshtml", Model.WindRadar)
+	</div>
+	<!-- END Main Body -->
+	<!-- Warnings Panel -->
+	<div class="col-sm-4">
+		@Html.Partial("~/Views/WeatherCentre/Warnings.cshtml", Model)
+	</div>
+	<!-- END Warnings Panel -->
+
+</div>
+

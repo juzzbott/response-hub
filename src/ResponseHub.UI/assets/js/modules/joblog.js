@@ -197,7 +197,7 @@
 	function addProgressMarkup(elem, progressType, date, userFullName) {
 
 		$(elem).append("<h4>" + progressType + "</h4>");
-		$(elem).append('<span class="btn-icon"><i class="fa fa-fw fa-clock-o"></i>' + date.format('YYYY-MM-DD HH:mm') + '</span><br />');
+		$(elem).append('<span class="btn-icon"><i class="fa fa-fw fa-clock-o"></i>' + date.format('YYYY-MM-DD HH:mm:ss') + '</span><br />');
 		$(elem).append('<span class="text-muted btn-icon"><i class="fa fa-fw fa-user"></i>' + userFullName + '</span>');
 
 	}

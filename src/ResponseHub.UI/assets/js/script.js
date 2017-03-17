@@ -684,7 +684,7 @@ responseHub.jobLog = (function () {
 	function addProgressMarkup(elem, progressType, date, userFullName) {
 
 		$(elem).append("<h4>" + progressType + "</h4>");
-		$(elem).append('<span class="btn-icon"><i class="fa fa-fw fa-clock-o"></i>' + date.format('YYYY-MM-DD HH:mm') + '</span><br />');
+		$(elem).append('<span class="btn-icon"><i class="fa fa-fw fa-clock-o"></i>' + date.format('YYYY-MM-DD HH:mm:ss') + '</span><br />');
 		$(elem).append('<span class="text-muted btn-icon"><i class="fa fa-fw fa-user"></i>' + userFullName + '</span>');
 
 	}
@@ -734,23 +734,29 @@ responseHub.pagerMessages = (function () {
 		// Get the skip count
 		var skipCount = $("#all-pages-list li").length;
 
+		$('#all-pages-load-more .loading').removeClass('hidden');
+		$('#all-pages-load-more button').addClass('hidden');
+
 		// Create the ajax request
 		$.ajax({
 			url: responseHub.apiPrefix + '/job-messages/pager-messages?skip=' + skipCount,
 			dataType: 'json',
 			success: function (data) {
-
+		
 				for (var i = 0; i < data.length; i++) {
-
+		
 					addMessageToList(data[i], true);
-
+		
 				}
-
+		
 				// If there is zero results, hide the show more button
 				if (data.length == 0) {
 					$("#all-pages-load-more").remove();
+				} else {
+					$('#all-pages-load-more .loading').addClass('hidden');
+					$('#all-pages-load-more button').removeClass('hidden');
 				}
-
+		
 			}
 		});
 
@@ -857,8 +863,6 @@ responseHub.pagerMessages = (function () {
 
 responseHub.wallboard = (function () {
 
-	var currentRadarImageIndex = 0;
-
 	var jobListPollingInterval = 30000;
 
 	var jobListPollingEnabled = true;
@@ -866,22 +870,6 @@ responseHub.wallboard = (function () {
 	var jobListIntervalId = null;
 
 	var selectedJobIndex = 0;
-
-	/**
-	 * Determines if the specific warnings should be displayed on the screen.
-	 */
-	function showHideWarnings(warningsContainer) {
-
-		// If the container has the hidden class, remove it, otherwise add it
-		if ($('.' + warningsContainer).hasClass('hidden')) {
-			$('.' + warningsContainer).removeClass('hidden')
-		}
-		else
-		{
-			$('.' + warningsContainer).addClass('hidden')
-		}
-
-	}
 
 	/**
 	 * Gets the height of the containers for the screen size.
@@ -946,7 +934,7 @@ responseHub.wallboard = (function () {
 			var progressData = $(elem).data('progress');
 
 			// Format the progress dae
-			var progressTimestamp = moment(progressData.Timestamp).format('DD-MM-YYYY HH:mm');
+			var progressTimestamp = moment(progressData.Timestamp).format('DD-MM-YYYY HH:mm:ss');
 
 			if (progressData.ProgressType == 4) {
 				$(".wallboard-main .job-status").html('<span class="job-cancelled"><i class="fa fa-fw fa-ban"></i>Job cancelled by ' + progressData.UserFullName + ' on ' + progressTimestamp + '</span>');
@@ -1173,47 +1161,6 @@ responseHub.wallboard = (function () {
 		// Load the jobs list
 		loadJobList();
 
-		// Get the radar image urls
-		loopRadarImageUrls();
-
-	}
-
-	/**
-	 * Creates the loop for iterating through the list of radar images.
-	 */
-	function loopRadarImageUrls() {
-
-		// If there are no radar images, then show error message
-		if (radarImages == null || radarImages.length == 0) {
-			$('.radar-container').empty();
-			$('.radar-container').append('<div class="error-summary ">Unable to load radar information.</div>');
-			return;
-		}
-
-		// Iterate through the radar images and set the prefix
-		for (var i = 0; i < radarImages.length; i++) {
-			radarImages[i] = 'http://ws.cdn.bom.gov.au/radar/' + radarImages[i];
-		}
-
-		// Create the div to store the initial image
-		$('.radar-container').append('<div class="radar-image radar-loop" style="background: url(\'' + radarImages[0] + '\')"></div>');
-
-		setInterval(function () {
-		
-			// Get the next radar image. If the index exceeds the length, reset back to index 0
-			nextIndex = currentRadarImageIndex + 1;
-			if (nextIndex >= radarImages.length) {
-				nextIndex = 0;
-			}
-
-			// Get the radar image div and update the background property
-			$('.radar-loop').css('background', 'url(\'' + radarImages[nextIndex] + '\')');
-		
-			// Reset the current index
-			currentRadarImageIndex = nextIndex;
-		
-		}, 250);
-
 	}
 
 	/**
@@ -1408,35 +1355,10 @@ responseHub.wallboard = (function () {
 
 
 	}
-
-	/**
-	 * Toggles the display of the weather panel in the wallboard view.
-	 */
-	function toggleWeatherDisplay() {
-
-		if ($('.wallboard-warnings').hasClass('hidden')) {
-
-			// Show the wallboard panel
-			$('.wallboard-main').removeClass('col-sm-9').removeClass('col-md-9').addClass('col-sm-8').addClass('col-md-5');
-			$('.wallboard-warnings').removeClass('hidden');
-
-		} else {
-
-			// Hide the wallboard panel
-			$('.wallboard-main').removeClass('col-sm-8').removeClass('col-md-5').addClass('col-sm-9').addClass('col-md-9');
-			$('.wallboard-warnings').addClass('hidden');
-		}
-
-	}
-
+	
 	// Bind and load the UI
 	bindUI();
 	loadUI();
-	
-	return {
-		showHideWarnings: showHideWarnings,
-		toggleWeatherDisplay: toggleWeatherDisplay
-	}
 
 })();
 
@@ -2102,5 +2024,95 @@ responseHub.attachments = (function () {
 })();
 
 responseHub.gallery = (function () {
+
+})();
+
+responseHub.wallboard = (function () {
+
+	var currentRadarImageIndex = { };
+
+
+
+	/**
+	 * Determines if the specific warnings should be displayed on the screen.
+	 */
+	function showHideWarnings(warningsContainer) {
+
+		// If the container has the hidden class, remove it, otherwise add it
+		if ($('.' + warningsContainer).hasClass('hidden')) {
+			$('.' + warningsContainer).removeClass('hidden')
+		}
+		else {
+			$('.' + warningsContainer).addClass('hidden')
+		}
+
+	}
+
+	/**
+	 * Loads the UI of the weather centre
+	 */
+	function loadUI() {
+
+		// Get the radar image urls
+		loopRadarImageUrls();
+	}
+
+	/**
+	 * Creates the loop for iterating through the list of radar images.
+	 */
+	function loopRadarImageUrls() {
+
+		$('.radar-container').each(function (index, elem) {
+
+
+			// If there are no radar images, then show error message
+			if ($(elem).find('.radar-image-preload').length == 0 || $(elem).find('.radar-image-preload img').length == 0) {
+				$(elem).empty();
+				$(elem).append('<div class="error-summary ">Unable to load radar information.</div>');
+				return;
+			}
+
+			// Get the radar code
+			var radarCode = $(elem).data('radar-code');
+			currentRadarImageIndex[radarCode] = 0;
+
+			// Get the initial image and image count
+			var initialImage = $(elem).find('.radar-image-preload img:first');
+			var imageCount = $(elem).find('.radar-image-preload img').length;
+
+			setInterval(function () {
+			
+				// Get the next radar image. If the index exceeds the length, reset back to index 0
+				nextIndex = currentRadarImageIndex[radarCode] + 1;
+				if (nextIndex >= imageCount) {
+					nextIndex = 0;
+				}
+			
+				var indexImage = $(elem).find('.radar-image-preload img:eq(' + nextIndex + ')');
+						
+				// Get the radar image div and update the background property
+				$(elem).find('.radar-loop').css('background', 'url(\'' + indexImage.attr('src') + '\')');
+			
+				// Reset the current index
+				currentRadarImageIndex[radarCode] = nextIndex;
+			
+			}, 250);
+
+		});
+
+		setTimeout(function () {
+			$('.radar-image.radar-loop').css('display', 'block');
+			$('p.radar-loading').remove();
+		}, 2000);
+
+	}
+
+	// Load the UI
+	loadUI();
+
+	// return object
+	return {
+		showHideWarnings: showHideWarnings
+	}
 
 })();
