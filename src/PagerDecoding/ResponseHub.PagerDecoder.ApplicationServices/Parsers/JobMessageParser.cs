@@ -18,7 +18,7 @@ namespace Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers
 		/// <summary>
 		/// Spatial map reference vision regular expression pattern
 		/// </summary>
-		public const string SpatialVisionRegex = ".*\\s+((SVVB C|SVC|SVNE|SVSE|SVNW|SVSW)\\s+(\\d{1,4}[A-Z]?)\\s+([A-Z]\\d{1,2})\\s*(\\(\\d{6}\\))?)\\s+";
+		public const string SpatialVisionRegex = ".*\\s+((SV|SVVB C|SVC|SVNE|SVSE|SVNW|SVSW)\\s*(\\d{1,4}[A-Z]?)\\s+([A-Z]\\d{1,2})\\s*(\\(\\d{6}\\))?)\\s+";
 
 		/// <summary>
 		/// Melway map reference regular expression pattern.

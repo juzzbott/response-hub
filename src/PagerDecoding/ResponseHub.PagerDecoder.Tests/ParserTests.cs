@@ -14,6 +14,7 @@ using Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers;
 using Enivate.ResponseHub.PagerDecoder.Tests.Fixtures;
 using Enivate.ResponseHub.DataAccess.Interface;
 using Enivate.ResponseHub.Logging;
+using System.Diagnostics;
 
 namespace Enivate.ResponseHub.WindowsService.Tests
 {
@@ -150,6 +151,47 @@ namespace Enivate.ResponseHub.WindowsService.Tests
 			
 		}
 
+		[Trait("Category", "Parser tests - Addresses")]
+		[Theory(DisplayName = "Can get address from message")]
+		[InlineData("ALERT F170208772 COIM1 RESCC1 * CAR ACCIDENT - POSS PERSON TRAPPED 1979 GISBORNE-BACCHUS MARSH RD COIMADAI /NUGGETTY TRK //LEBREX RD SVC 6442 F13 (753375) BACC1 CBMSH CCOIM [BACC]", "")]
+		[InlineData("S170231491 BACC - TREE DOWN - TREE DOWN IN DRIVEWAY OF REHAB CENTRE - 515 CAMERONS RD COIMADAI /WHITE LANE //SEEREYS TRK SVC 6442 D14 (734361) SYLVANNA - STAFF 53674399 [BACC]", "")]
+		[InlineData("S170231278 BACC - BUILDING DAMAGE - BUILDING DAMAGE - 107 FLANAGANS DR MERRIMU M 334 J6 (780272) LOKI DEVEREAUX 0418738402 [BACC]", "")]
+		[InlineData("S170231184 BACC - FLOOD - BURST WATER MAIN - 1 / 12 INGLIS ST MADDINGLEY /GRIFFITH ST //LABILLIERE ST M 333 F9 (730259) BILL WADESON 0429646365 [BACC]", "")]
+		[InlineData("ALERT F170203470 BMSH2 RESCC1 * CAR ACCIDENT - POSS PERSON TRAPPED TOP OF PENTLAND HILLS WESTERN FWY BACCHUS MARSH M 333 H3 (735284) BACC1 CBMSH CMYRN [BACC]", "")]
+		[InlineData("S170230990 BACC - TREE DOWN / TRF HAZARD - TREE COVERING WHOLE ROAD - BALLAN-EGERTON RD MOUNT EGERTON SVC 8188 F6 (447311) LEE RYALL 0458956089 [BACC]", "")]
+		[InlineData("S170230973 BACC - INCIDENT - OTHER - PENTLAND PRIMARY SCHOOL - DARLEY 164 HALLETTS WAY DARLEY /WITTICK ST //DURHAM ST M 333 E1 (726292) KAREN BERTON 0353676080 [BACC]", "")]
+		[InlineData("S170230807 BACC - FLOOD - BURST WATER MAIN FLOODING YARD AND GARAGE - 4 / 36 INGLIS ST MADDINGLEY /LABILLIERE ST //BACCHUS ST M 333 F8 (729263) SHARON COOK 0419513112 [BACC]", "")]
+		[InlineData("S170330677 WTLS - FLOOD - ROADWAY FLOODING - WOOLWORTHS - SAFEWAY - BUNDOORA - PLENTY RD 69 PLENTY RD BUNDOORA /DALY PL //MCLEANS RD M 9 J12 (289262) MARGARET 0449908849 [WTLS]", "")]
+		[InlineData("CARO4 NOSTC1 CAR FIRE CNR WELLINGTON DR/BELLEVUE BVD HILLSIDE (GREATER MELBOURNE) M 354 F9 (002265) F170306440 CCARO FGD11 [CARO]", "")]
+		[InlineData("WARB1 STRUC1 HOUSE FIRE 8 ELLIS CT WARBURTON /YUONGA RD M 290 E3 (859212) F170306435 CWARB CWBRN", "")]
+		[InlineData("PKHM2 INCIC1 SMELL OF GAS 6 COLONIAL WAY PAKENHAM /HERITAGE BVD //MCGREGOR RD M 317 B9 (660840) F170306414 COFFI CPKHM", "")]
+		[InlineData("BELM10 STRUC1 HOUSE FIRE 38 REGENT ST BELMONT /CHURCH ST //THOMSON ST M 451 H10 (672717) F170306409 CBELM CGONGS CHIGH", "")]
+		[InlineData("S170330676 NBIK - TREE DOWN / TRF HAZARD - TREE DOWN OVER ROAD - CNR DIAMOND CREEK RD/PLENTY RIVER DR GREENSBOROUGH M 11 C8 (341276) BEN DARMANIM 0402826527 [NBIK]", "")]
+		[InlineData("ALERT F170306406 CONU2 G&SC1 GRASS FIRE TREGILGAS RD COLAC COLAC SVNE 268 D4 (763920) CCONU CCUWA CNARI [NARI]", "")]
+		[InlineData("ALERT F170306405 VTWN7 ALARC1 VIOLET TOWN BUSH NURSING CTRE INPUT - FRONT FOYER ENT RHS COWSLIP ST VIOLET TOWN /ROSE ST SV8407 D6 (849447) CBALM CEURO CVTWN [VTWN]", "")]
+		[InlineData("BEAC4 INCIC3 WASHAWAY RESULT OF ACCIDENT CNR OLD PRINCES HWY/PRINCES HWY BEACONSFIELD M 214 B2 (580868) F170306363 CBEAC", "")]
+		[InlineData("ALERT F170306396 REDC3 STRUC1 CREW TO STANDBY AT STATION. REDCT2 MAY BE REQUIRED FOR ACCESS FOR CAMPER FIRE DAWSONS TRK RED CLIFFS SVNW 4364 D12 (239986) CREDC [REDC]", "")]
+		[InlineData("\"ALERT F160712223 ALARC1 SHEP2C SHEPP VILLAGES - ACACIA LODGE ASE - INSIDE FIP FRONT FOYER ACACIA, INPUT - FRONT FOYER HAKEA LODGE 9 BATMAN AV SHEPPARTON / TARCOOLA DR //THE BOULEVARD - SV8385 E6 (557744) CMPNA CSEST CSHEP [SHEP]\"", "")]
+		public void CanGetAddressFromMessage(string message, string expectedAddressValue)
+		{
+
+			// Create the address parser and get the address string from it
+			AddressParser parser = new AddressParser();
+			string addressValue = parser.GetAddressFromString(message);
+
+			Debug.WriteLine(addressValue);
+
+		}
+
+		[Trait("Category", "Parser tests - Google Geocoding")]
+		[Theory(DisplayName = "Can decode Google Geocode result")]
+		[InlineData("{\"results\":[{\"address_components\":[{\"long_name\":\"208\",\"short_name\":\"208\",\"types\":[\"street_number\"]},{\"long_name\":\"Swifts Creek East Road\",\"short_name\":\"Swifts Creek E Rd\",\"types\":[\"route\"]},{\"long_name\":\"Swifts Creek\",\"short_name\":\"Swifts Creek\",\"types\":[\"locality\",\"political\"]},{\"long_name\":\"East Gippsland Shire\",\"short_name\":\"East Gippsland\",\"types\":[\"administrative_area_level_2\",\"political\"]},{\"long_name\":\"Victoria\",\"short_name\":\"VIC\",\"types\":[\"administrative_area_level_1\",\"political\"]},{\"long_name\":\"Australia\",\"short_name\":\"AU\",\"types\":[\"country\",\"political\"]},{\"long_name\":\"3896\",\"short_name\":\"3896\",\"types\":[\"postal_code\"]}],\"formatted_address\":\"208 Swifts Creek E Rd, Swifts Creek VIC 3896, Australia\",\"geometry\":{\"location\":{\"lat\":-37.2952032,\"lng\":147.7490779},\"location_type\":\"ROOFTOP\",\"viewport\":{\"northeast\":{\"lat\":-37.2938542197085,\"lng\":147.7504268802915},\"southwest\":{\"lat\":-37.2965521802915,\"lng\":147.7477289197085}}},\"place_id\":\"ChIJIaLL6Q4EJWsRBb5w2900-fQ\",\"types\":[\"street_address\"]}],\"status\":\"OK\"}")]
+		public void CanDecodeGoogleGeocodeResult(string jsonResult)
+		{
+			// Create the address parser and get the address object from it
+			AddressParser parser = new AddressParser();
+			bool result = parser.GetStructuredAddressFromGoogleGeocode(jsonResult);
+		}
 
 		#region Helpers
 

@@ -93,6 +93,7 @@
     <Compile Include="DecoderStatusService.cs" />
     <Compile Include="JobMessageSubmitter.cs" />
     <Compile Include="MapReferenceCache.cs" />
+    <Compile Include="Parsers\AddressParser.cs" />
     <Compile Include="Parsers\JobMessageParser.cs" />
     <Compile Include="Parsers\PagerMessageParser.cs" />
     <Compile Include="Parsers\PdwLogFileParser.cs" />
@@ -122,6 +123,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="address_parser.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <None Include="app.config">
       <SubType>Designer</SubType>
     </None>

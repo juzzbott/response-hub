@@ -91,6 +91,7 @@
     <Compile Include="Messages\MessageProgressType.cs" />
     <Compile Include="Messages\MessageType.cs" />
     <Compile Include="PagedResultSet.cs" />
+    <Compile Include="Parsers\AddressParserData.cs" />
     <Compile Include="Spatial\LocationInfo.cs" />
     <Compile Include="Messages\JobMessage.cs" />
     <Compile Include="Messages\MessagePriority.cs" />
@@ -102,6 +103,7 @@
     <Compile Include="Spatial\MapIndex.cs" />
     <Compile Include="Spatial\Coordinates.cs" />
     <Compile Include="Spatial\MapType.cs" />
+    <Compile Include="StructuredAddress.cs" />
     <Compile Include="Warnings\Interface\IWarningService.cs" />
     <Compile Include="Warnings\IWarning.cs" />
     <Compile Include="Warnings\WarningSource.cs" />
