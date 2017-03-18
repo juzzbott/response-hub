@@ -15,6 +15,7 @@ using Enivate.ResponseHub.PagerDecoder.Tests.Fixtures;
 using Enivate.ResponseHub.DataAccess.Interface;
 using Enivate.ResponseHub.Logging;
 using System.Diagnostics;
+using Enivate.ResponseHub.Model;
 
 namespace Enivate.ResponseHub.WindowsService.Tests
 {
@@ -190,7 +191,7 @@ namespace Enivate.ResponseHub.WindowsService.Tests
 		{
 			// Create the address parser and get the address object from it
 			AddressParser parser = new AddressParser();
-			bool result = parser.GetStructuredAddressFromGoogleGeocode(jsonResult);
+			StructuredAddress result = parser.GetStructuredAddressFromGoogleGeocode(jsonResult);
 		}
 
 		#region Helpers

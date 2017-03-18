@@ -1,6 +1,6 @@
-﻿using Enivate.ResponseHub.Model.Parsers;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -9,8 +9,10 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 using Newtonsoft.Json;
-using System.Configuration;
 using Newtonsoft.Json.Linq;
+
+using Enivate.ResponseHub.Model.Parsers;
+using Enivate.ResponseHub.Model;
 
 namespace Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers
 {
@@ -177,14 +179,24 @@ namespace Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers
 			return _addressParserData.StreetTypes.Any(i => str.Contains(i));
 		}
 
-		public bool GetStructuredAddressFromGoogleGeocode(string geocodeJson)
+		public StructuredAddress GetStructuredAddressFromGoogleGeocode(string geocodeJson)
 		{
 
+			// Load the geocode data into JObject for querying
 			JObject geocodeData = JObject.Parse(geocodeJson);
+
+			// If the status is not OK, return null address
+			if (geocodeData["status"].ToString() != "OK")
+			{ 
+				return null;
+			}
+
+			// Get the address components
+			JArray addressComponents = (JArray)geocodeData["results"][0]["address_components"][0];
 
 			int i = 0;
 
-			return false;
+			return null;
 
 		}
 
