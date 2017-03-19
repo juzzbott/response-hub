@@ -192,11 +192,70 @@ namespace Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers
 			}
 
 			// Get the address components
-			JArray addressComponents = (JArray)geocodeData["results"][0]["address_components"][0];
+			JArray addressComponents = (JArray)geocodeData["results"][0]["address_components"];
 
-			int i = 0;
+			// Create the Structred Address object
+			StructuredAddress address = new StructuredAddress();
 
-			return null;
+			// Set the address components.
+			foreach(JObject component in addressComponents)
+			{
+				MapAddressComponent(component, ref address);
+			}
+
+			// Set the latitude/longitude
+			address.Latitude = Double.Parse(geocodeData["results"][0]["geometry"]["location"]["lat"].ToString());
+			address.Longitude = Double.Parse(geocodeData["results"][0]["geometry"]["location"]["lng"].ToString());
+
+			// Set the google geocode id
+			address.GoogleGeocodeId = geocodeData["results"][0]["place_id"].ToString();
+			
+			// return the address
+			return address;
+
+		}
+
+		private void MapAddressComponent(JObject addressComponent, ref StructuredAddress address)
+		{
+			// Get the types of the address component
+			IList<string> types = addressComponent["types"].Select(i => (string)i).ToList();
+
+			// If types contains a "subpremise", set the unit number
+			if (types.Contains("subpremise"))
+			{
+				address.Unit = addressComponent["short_name"].ToString();
+			}
+
+			// If type contains a "street_number", set the street number
+			if (types.Contains("street_number"))
+			{
+				address.StreetNumber = addressComponent["short_name"].ToString();
+			}
+
+			// If type contains a "route", set the street
+			if (types.Contains("route"))
+			{
+				address.Street = addressComponent["short_name"].ToString();
+			}
+
+			// If type contains a "locality", set the suburb
+			if (types.Contains("locality"))
+			{
+				address.Suburb = addressComponent["long_name"].ToString();
+			}
+
+			// If it contains a "administrative_area_level_1", set the state
+			if (types.Contains("administrative_area_level_1"))
+			{
+				address.State = addressComponent["short_name"].ToString();
+			}
+
+			// If it contains a "postal_code", set the postcode
+			if (types.Contains("postal_code"))
+			{
+				address.Postcode = addressComponent["short_name"].ToString();
+			}
+
 
 		}
 

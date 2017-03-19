@@ -192,6 +192,8 @@ namespace Enivate.ResponseHub.WindowsService.Tests
 			// Create the address parser and get the address object from it
 			AddressParser parser = new AddressParser();
 			StructuredAddress result = parser.GetStructuredAddressFromGoogleGeocode(jsonResult);
+
+			Assert.NotNull(result);
 		}
 
 		#region Helpers
