@@ -71,6 +71,7 @@
     <Compile Include="Events\EventResource.cs" />
     <Compile Include="Events\Interface\IEventService.cs" />
     <Compile Include="Events\ResourceType.cs" />
+    <Compile Include="Addresses\Interface\IAddressService.cs" />
     <Compile Include="Groups\Capcode.cs" />
     <Compile Include="Groups\Interface\ICapcodeService.cs" />
     <Compile Include="Groups\Interface\IGroupService.cs" />
@@ -103,7 +104,7 @@
     <Compile Include="Spatial\MapIndex.cs" />
     <Compile Include="Spatial\Coordinates.cs" />
     <Compile Include="Spatial\MapType.cs" />
-    <Compile Include="StructuredAddress.cs" />
+    <Compile Include="Addresses\StructuredAddress.cs" />
     <Compile Include="Warnings\Interface\IWarningService.cs" />
     <Compile Include="Warnings\IWarning.cs" />
     <Compile Include="Warnings\WarningSource.cs" />

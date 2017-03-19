@@ -46,7 +46,7 @@ namespace Enivate.ResponseHub.Common
 		/// <returns>The byte array containing the hashed data.</returns>
 		public static byte[] GetSha1Hash(string inputString, int hashIterations)
 		{
-			return GetHash(SHA256.Create(), inputString, hashIterations);
+			return GetHash(SHA1.Create(), inputString, hashIterations);
 		}
 
 		/// <summary>
@@ -57,7 +57,7 @@ namespace Enivate.ResponseHub.Common
 		/// <returns>The string representation of the hashed data.</returns>
 		public static string GetSha1HashString(string inputString, int iterations)
 		{
-			return GetHashString(SHA256.Create(), inputString, iterations);
+			return GetHashString(SHA1.Create(), inputString, iterations);
 		}
 
 		#endregion
