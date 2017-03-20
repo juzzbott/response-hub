@@ -17,6 +17,7 @@ using Enivate.ResponseHub.Logging;
 using System.Diagnostics;
 using Enivate.ResponseHub.Model;
 using Enivate.ResponseHub.Model.Messages.Interface;
+using Enivate.ResponseHub.Model.Addresses.Interface;
 
 namespace Enivate.ResponseHub.WindowsService.Tests
 {
@@ -38,8 +39,8 @@ namespace Enivate.ResponseHub.WindowsService.Tests
 			PagerMessage pagerMessage = CreateTestPagerMessage(messageContent);
 
 			// Parse the pager message
-			JobMessageParser parser = new JobMessageParser(new Mock<IMapIndexRepository>().Object, new Mock<ILogger>().Object);
-			JobMessage parsedMessage = parser.ParseMessage(pagerMessage);
+			JobMessageParser parser = new JobMessageParser(new Mock<IAddressService>().Object, new Mock<IMapIndexRepository>().Object, new Mock<ILogger>().Object);
+			JobMessage parsedMessage = parser.ParseMessage(pagerMessage).Result;
 
 			// Ensure the job numbers match.
 			Assert.Equal(parsedMessage.JobNumber, actualJobNumber, true);
@@ -58,8 +59,8 @@ namespace Enivate.ResponseHub.WindowsService.Tests
 			PagerMessage pagerMessage = CreateTestPagerMessage(messageContent);
 
 			// Parse the pager message
-			JobMessageParser parser = new JobMessageParser(new Mock<IMapIndexRepository>().Object, new Mock<ILogger>().Object);
-			JobMessage parsedMessage = parser.ParseMessage(pagerMessage);
+			JobMessageParser parser = new JobMessageParser(new Mock<IAddressService>().Object, new Mock<IMapIndexRepository>().Object, new Mock<ILogger>().Object);
+			JobMessage parsedMessage = parser.ParseMessage(pagerMessage).Result;
 
 			// Ensure the message priority matches
 			Assert.Equal(parsedMessage.Priority, actualPriority);
@@ -76,8 +77,8 @@ namespace Enivate.ResponseHub.WindowsService.Tests
 			PagerMessage pagerMessage = CreateTestPagerMessage(messageContent);
 
 			// Parse the pager message
-			JobMessageParser parser = new JobMessageParser(new Mock<IMapIndexRepository>().Object, new Mock<ILogger>().Object);
-			JobMessage parsedMessage = parser.ParseMessage(pagerMessage);
+			JobMessageParser parser = new JobMessageParser(new Mock<IAddressService>().Object, new Mock<IMapIndexRepository>().Object, new Mock<ILogger>().Object);
+			JobMessage parsedMessage = parser.ParseMessage(pagerMessage).Result;
 
 			// Ensure the message parses a valid location object
 			Assert.NotNull(parsedMessage.Location);
@@ -97,8 +98,8 @@ namespace Enivate.ResponseHub.WindowsService.Tests
 			PagerMessage pagerMessage = CreateTestPagerMessage(messageContent);
 
 			// Parse the pager message
-			JobMessageParser parser = new JobMessageParser(new Mock<IMapIndexRepository>().Object, new Mock<ILogger>().Object);
-			JobMessage parsedMessage = parser.ParseMessage(pagerMessage);
+			JobMessageParser parser = new JobMessageParser(new Mock<IAddressService>().Object, new Mock<IMapIndexRepository>().Object, new Mock<ILogger>().Object);
+			JobMessage parsedMessage = parser.ParseMessage(pagerMessage).Result;
 
 			// Ensure the Location object is null as we don't have any location information
 			Assert.Null(parsedMessage.Location);
@@ -146,7 +147,7 @@ namespace Enivate.ResponseHub.WindowsService.Tests
 		{
 
 			// Create the parser
-			PdwLogFileParser parser = new PdwLogFileParser(new Mock<ILogger>().Object, new Mock<IMapIndexRepository>().Object, new Mock<IDecoderStatusRepository>().Object, new Mock<IJobMessageService>().Object);
+			PdwLogFileParser parser = new PdwLogFileParser(new Mock<ILogger>().Object, new Mock<IMapIndexRepository>().Object, new Mock<IDecoderStatusRepository>().Object, new Mock<IJobMessageService>().Object, new Mock<IAddressService>().Object);
 			bool isInvalid = parser.MessageAppearsInvalid(message);
 
 			Assert.True(invalid == isInvalid, "The message does not match the expected invalid value.");
@@ -179,7 +180,7 @@ namespace Enivate.ResponseHub.WindowsService.Tests
 
 			// Create the address parser and get the address string from it
 			AddressParser parser = new AddressParser();
-			string addressValue = parser.GetAddressFromString(message);
+			string addressValue = parser.GetAddressFromMessage(message);
 
 			Debug.WriteLine(addressValue);
 

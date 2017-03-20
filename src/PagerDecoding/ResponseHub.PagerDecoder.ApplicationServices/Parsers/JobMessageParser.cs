@@ -9,6 +9,8 @@ using Enivate.ResponseHub.Model.Messages;
 using Enivate.ResponseHub.Model.Spatial;
 using Enivate.ResponseHub.DataAccess.Interface;
 using Enivate.ResponseHub.Logging;
+using Enivate.ResponseHub.Model.Addresses;
+using Enivate.ResponseHub.Model.Addresses.Interface;
 
 namespace Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers
 {
@@ -51,21 +53,27 @@ namespace Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers
 		private ILogger _log;
 
 		/// <summary>
+		/// The log writer.
+		/// </summary>
+		private IAddressService _addressService;
+
+		/// <summary>
 		/// Creates a new instance of the JobMessageParser class.
 		/// </summary>
 		/// <param name="repository"></param>
-		public JobMessageParser(IMapIndexRepository repository, ILogger log)
+		public JobMessageParser(IAddressService addressService, IMapIndexRepository repository, ILogger log)
 		{
+			_addressService = addressService;
 			_repository = repository;
 			_log = log;
 		}
-
+		
 		/// <summary>
 		/// Parses the job message from the pager message.
 		/// </summary>
 		/// <param name="pagerMessage">The pager message to parse into a JobMessage object.</param>
 		/// <returns>The job message object.</returns>
-		public JobMessage ParseMessage(PagerMessage pagerMessage)
+		public async Task<JobMessage> ParseMessage(PagerMessage pagerMessage)
 		{
 			
 			// Create the message 
@@ -88,8 +96,49 @@ namespace Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers
 			// Get any map references from the message
 			msg.Location = GetLocation(msg.MessageContent);
 
+			// Try and get the address for the 
+			StructuredAddress address = await GetAddress(msg.Location, msg.MessageContent);
+			if (address != null)
+			{
+				msg.AddressId = address.Id;
+			}
+
 			// return the message
 			return msg;
+		}
+
+		/// <summary>
+		/// Tries to get the address from the address service based on the information in the pager message.
+		/// </summary>
+		/// <param name="location"></param>
+		/// <param name="messageContent"></param>
+		/// <returns></returns>
+		private async Task<StructuredAddress> GetAddress(LocationInfo location, string messageContent)
+		{
+			try
+			{
+				// Get the address value from the message content
+				AddressParser parser = new AddressParser();
+				string addressQuery = parser.GetAddressFromMessage(messageContent);
+
+				// If there is no addressQUery, just exit
+				if (String.IsNullOrEmpty(addressQuery))
+				{
+					return null;
+				}
+
+				// Try and find the address from the Address Service
+				StructuredAddress address = await _addressService.GetStructuredAddressByAddressQuery(addressQuery);
+
+				// return the address
+				return address;
+
+			}
+			catch (Exception ex)
+			{
+				await _log.Error(String.Format("Unable to get address from the pager message. Message: {0}", ex.Message), ex);
+				return null;
+			}
 		}
 
 		/// <summary>

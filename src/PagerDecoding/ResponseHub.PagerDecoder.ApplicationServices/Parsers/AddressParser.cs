@@ -53,11 +53,11 @@ namespace Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers
 			_addressParserData = JsonConvert.DeserializeObject<AddressParserData>(jsonData);
 		}
 
-		public string GetAddressFromString(string str)
+		public string GetAddressFromMessage(string message)
 		{
 
 			// If the string is null or emtpy, just return
-			if (String.IsNullOrEmpty(str))
+			if (String.IsNullOrEmpty(message))
 			{
 				return String.Empty;
 			}
@@ -66,8 +66,8 @@ namespace Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers
 			int mapRefRegexIndex;
 
 			// If there is no spatial or regex match, just return
-			Match spatialMapRefRegex = Regex.Match(str, JobMessageParser.SpatialVisionRegex);
-			Match melwayMapRefRegex = Regex.Match(str, JobMessageParser.MelwayRegex);
+			Match spatialMapRefRegex = Regex.Match(message, JobMessageParser.SpatialVisionRegex);
+			Match melwayMapRefRegex = Regex.Match(message, JobMessageParser.MelwayRegex);
 			if (spatialMapRefRegex.Success && spatialMapRefRegex.Groups.Count > 1)
 			{
 				// Get the index of regex to know where we can chop off our string initially.
@@ -84,7 +84,7 @@ namespace Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers
 			}
 
 			// Determine if there is a road type in the address string
-			if (!ContainsStreetType(str))
+			if (!ContainsStreetType(message))
 			{
 				// No street types found, exit
 				return String.Empty;
@@ -98,7 +98,7 @@ namespace Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers
 			// Get our initial address value
 			// This will be everything BEFORE the map reference.
 			// Make sure we are in upper case for all string comparisons further on.
-			string addressValue = str.Substring(0, mapRefRegexIndex).ToUpper();
+			string addressValue = message.Substring(0, mapRefRegexIndex).ToUpper();
 
 			// Now we want to get the last index of ' - ' which is used to separate parts of the message
 			// This will be everything AFTER the last ' - ' within the message.

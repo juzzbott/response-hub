@@ -37,6 +37,12 @@ namespace Enivate.ResponseHub.Model.Addresses
 		/// </summary>
 		public string AddressQueryHash { get; set; }
 
+		public StructuredAddress()
+		{
+			// Instantiate the id
+			Id = Guid.NewGuid();
+		}
+
 		/// <summary>
 		/// Gets the hash of the address query.
 		/// </summary>

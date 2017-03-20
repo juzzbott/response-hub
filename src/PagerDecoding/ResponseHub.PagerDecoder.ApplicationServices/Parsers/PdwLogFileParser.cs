@@ -12,6 +12,7 @@ using Enivate.ResponseHub.Logging;
 using Enivate.ResponseHub.Model.Messages;
 using Enivate.ResponseHub.DataAccess.Interface;
 using Enivate.ResponseHub.Model.Messages.Interface;
+using Enivate.ResponseHub.Model.Addresses.Interface;
 
 namespace Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers
 {
@@ -69,6 +70,11 @@ namespace Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers
 		private IJobMessageService _jobMessageService;
 
 		/// <summary>
+		/// The address message service interface.
+		/// </summary>
+		private IAddressService _addressService;
+
+		/// <summary>
 		/// The number of log file read attempts.
 		/// </summary>
 		private int _logFileAttempts = 0;
@@ -78,7 +84,7 @@ namespace Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers
 		/// </summary>
 		private int _maxLogFileAttempts = 5;
 
-		public PdwLogFileParser(ILogger log, IMapIndexRepository mapIndexRepository, IDecoderStatusRepository decoderStatusRepository, IJobMessageService jobMessageService)
+		public PdwLogFileParser(ILogger log, IMapIndexRepository mapIndexRepository, IDecoderStatusRepository decoderStatusRepository, IJobMessageService jobMessageService, IAddressService addressService)
 		{
 
 			// Instantiate the interfaces.
@@ -86,6 +92,7 @@ namespace Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers
 			_mapIndexRepository = mapIndexRepository;
 			_decoderStatusRepository = decoderStatusRepository;
 			_jobMessageService = jobMessageService;
+			_addressService = addressService;
 
 			// Initialise the list of pager messages to submit.
 			PagerMessagesToSubmit = new List<PagerMessage>();
@@ -93,7 +100,7 @@ namespace Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers
 
 			// Instantiate the message parsers
 			_pagerMessageParser = new PagerMessageParser(_log);
-			_jobMessageParser = new JobMessageParser(_mapIndexRepository, _log);
+			_jobMessageParser = new JobMessageParser(_addressService, _mapIndexRepository, _log);
 
 		}
 
@@ -323,11 +330,19 @@ namespace Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers
 				try
 				{
 
-					// Get the job message from the pager message
-					JobMessage jobMessage = _jobMessageParser.ParseMessage(pagerMessage);
+					Task t = Task.Run(async () =>
+					{
 
-					// Add the job to the list job messages to submit
-					JobMessagesToSubmit.Add(pagerMessage.ShaHash, jobMessage);
+						// Get the job message from the pager message
+						JobMessage jobMessage = await _jobMessageParser.ParseMessage(pagerMessage);
+
+						// Add the job to the list job messages to submit
+						JobMessagesToSubmit.Add(pagerMessage.ShaHash, jobMessage);
+
+					});
+
+					// wait on the task to complete.
+					t.Wait();
 
 				}
 				catch (Exception ex)

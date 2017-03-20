@@ -7,6 +7,7 @@ using System.Linq;
 using System.Net;
 using System.ServiceProcess;
 using System.Text;
+using System.Threading.Tasks;
 using System.Timers;
 
 using Microsoft.Practices.Unity;
@@ -16,13 +17,11 @@ using Enivate.ResponseHub.DataAccess.Interface;
 using Enivate.ResponseHub.Logging;
 using Enivate.ResponseHub.Logging.Configuration;
 using Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers;
-using Enivate.ResponseHub.Model.Decoding;
+using Enivate.ResponseHub.Model.Addresses.Interface;
+using Enivate.ResponseHub.Model.Messages.Interface;
+using Enivate.ResponseHub.PagerDecoder.ApplicationServices;
 
 using Newtonsoft.Json;
-using System.Threading.Tasks;
-using Enivate.ResponseHub.Model;
-using Enivate.ResponseHub.PagerDecoder.ApplicationServices;
-using Enivate.ResponseHub.Model.Messages.Interface;
 
 namespace Enivate.ResponseHub.PagerDecoder
 {
@@ -93,6 +92,14 @@ namespace Enivate.ResponseHub.PagerDecoder
 			get
 			{
 				return ServiceLocator.Get<IDecoderStatusRepository>();
+			}
+		}
+
+		protected IAddressService AddressService
+		{
+			get
+			{
+				return ServiceLocator.Get<IAddressService>();
 			}
 		}
 
@@ -222,7 +229,7 @@ namespace Enivate.ResponseHub.PagerDecoder
 			try {
 
 				// Create the PdwLogFileParser
-				PdwLogFileParser pdwParser = new PdwLogFileParser(Log, MapIndexRepository, DecoderStatusRepository, JobMessageService);
+				PdwLogFileParser pdwParser = new PdwLogFileParser(Log, MapIndexRepository, DecoderStatusRepository, JobMessageService, AddressService);
 				pdwParser.ProcessLogFiles();
 
 			}

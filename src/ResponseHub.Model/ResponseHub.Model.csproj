@@ -62,6 +62,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Addresses\Mock\MockAddressService.cs" />
     <Compile Include="Agencies\Agency.cs" />
     <Compile Include="Agencies\Interface\IAgencyService.cs" />
     <Compile Include="Attachments\Attachment.cs" />
