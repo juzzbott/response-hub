@@ -53,5 +53,64 @@ namespace Enivate.ResponseHub.Model.Addresses
 			return HashGenerator.GetSha1HashString(addressQuery.ToUpper(), 1);
 		}
 
+		/// <summary>
+		/// Returns a properly formatted address for the StructuredAddress.
+		/// </summary>
+		/// <returns></returns>
+		public override string ToString()
+		{
+			StringBuilder sb = new StringBuilder();
+
+			// If there is a unit number, add that
+			if (!String.IsNullOrEmpty(Unit))
+			{
+				sb.AppendFormat("{0}/", Unit);
+			}
+
+			// If there is a stret, add that
+			if (!String.IsNullOrEmpty(Street))
+			{
+				// If there is a street number, add that first
+				if (!String.IsNullOrEmpty(StreetNumber))
+				{
+					sb.AppendFormat("{0} ", StreetNumber);
+				}
+
+				sb.AppendFormat("{0}, ", Street);
+			}
+
+			// If there is a suburb, add it
+			if (!String.IsNullOrEmpty(Suburb))
+			{
+				sb.AppendFormat("{0} ", Suburb);
+			}
+
+			// If there is a State, add it
+			if (!String.IsNullOrEmpty(State))
+			{
+				sb.AppendFormat("{0} ", State);
+			}
+
+			// If there is a Postcode, add it
+			if (!String.IsNullOrEmpty(Postcode))
+			{
+				sb.AppendFormat("{0} ", Postcode);
+			}
+
+			// If there is already data in the sb, add ", Australia"
+			if (sb.Length > 0)
+			{
+				// If the last char is ' ', remove it
+				if (sb[sb.Length - 1] == ' ')
+				{
+					sb.Remove(sb.Length - 1, 1);
+				}
+				sb.Append(", Australia");
+			}
+
+			// return the stringbuilder
+			return sb.ToString().Trim();
+		}
+
 	}
 }
