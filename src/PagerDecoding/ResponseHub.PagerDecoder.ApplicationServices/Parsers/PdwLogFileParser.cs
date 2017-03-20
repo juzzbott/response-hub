@@ -219,7 +219,18 @@ namespace Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers
 						if (MessageAppearsInvalid(pagerMessage.MessageContent))
 						{
 							_log.Warn(String.Format("Invalid message detected. Invalid message: {0}", pagerMessage.MessageContent));
-							Task.Run(async () => await _decoderStatusRepository.AddInvalidMessage(DateTime.UtcNow, message));
+							Task t = Task.Run(async () => {
+
+								// Check to see if the message already exists
+								bool messageExists = await _decoderStatusRepository.InvalidMessageExists(pagerMessage.MessageContent);
+
+								// If it doesn't exist, add it
+								if (!messageExists)
+								{
+									await _decoderStatusRepository.AddInvalidMessage(DateTime.UtcNow, message);
+								}
+							});
+							t.Wait();
 						}
 
 						// If the pager sha matches the last inserted sha, then exit the loop, as no need to process any further messages.
