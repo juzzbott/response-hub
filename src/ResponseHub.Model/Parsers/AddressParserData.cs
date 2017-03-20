@@ -10,6 +10,8 @@ namespace Enivate.ResponseHub.Model.Parsers
 	public class AddressParserData
 	{
 
+		public string StreetAddressRegex { get; set; }
+
 		public string[] StreetTypes { get; set; }
 
 		public string[] JobTypes { get; set; }

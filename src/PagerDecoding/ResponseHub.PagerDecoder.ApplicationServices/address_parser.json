@@ -1,9 +1,12 @@
 ﻿{
+	"StreetAddressRegex": ".*(\\s(?:(?:\\d+[A-Za-z]?))\\s[A-Za-z-\\s]+(?:ALLY|ARC|AVE|AV|BVD|BLVD|BYPA|CCT|CL|CRN|CRT|CT|CRES|CR|CDS|DR|ESP|GRN|GR|FWY|HWY|JNC|LANE|LINK|MEWS|PDE|PL|RDGE|RD|SQ|ST|TCE|TRK|WAY)).*",
 	"StreetTypes": [
 		" ALLY ",
 		" ARC ",
 		" AVE ",
+		" AV ",
 		" BVD ",
+		" BLVD ",
 		" BYPA ",
 		" CCT ",
 		" CL ",
@@ -30,7 +33,8 @@
 		" SQ ",
 		" ST ",
 		" TCE ",
-		" TRK "
+		" TRK ",
+		" WAY "
 	],
 	"JobTypes": [
 		" RESCC1 ",
@@ -43,7 +47,7 @@
 		" G&SC1 ",
 		" G&SC3 ",
 		" INCIC1 ",
-		" INCIC3 " 
+		" INCIC3 "
 	],
 	"ExcludeWords": [
 		"HOUSE FIRE",
@@ -55,6 +59,22 @@
 		"WASHAWAY",
 		"POSS PERSON TRAPPED",
 		"ASSIST AMBULANCE",
-		"ASSIST POLICE"
+		"ASSIST POLICE",
+		"INSIDE HOUSE",
+		"UNDEFINED FIRE",
+		"SPREADING",
+		"NORTH BOUND",
+		"SOUTH BOUND",
+		"WEST BOUND",
+		"EAST BOUND",
+		"DIESEL SPILL",
+		"LANES",
+		"COLUMN OF SMOKE",
+		"BURNT OUT",
+		"VEH",
+		"VEHICLE",
+		"CAR",
+		"TRAILER",
+		"SMOULDERING"
 	]
 }

@@ -20,6 +20,13 @@ namespace Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers
 
 		private const string _addressParserJsonFileKey = "AddressParserJsonFile";
 
+
+
+		/// <summary>
+		/// Defines the cross street regex value
+		/// </summary>
+		private const string _crossStreetRegex = "(\\s\\/[A-Za-z\\s][A-Za-z\\s-]+){1}(\\/\\/[A-Za-z][A-Za-z\\s-]+)?";
+
 		/// <summary>
 		/// Contains the data loaded from the json data file.
 		/// </summary>
@@ -100,21 +107,60 @@ namespace Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers
 			// Make sure we are in upper case for all string comparisons further on.
 			string addressValue = message.Substring(0, mapRefRegexIndex).ToUpper();
 
-			// Now we want to get the last index of ' - ' which is used to separate parts of the message
-			// This will be everything AFTER the last ' - ' within the message.
-			int lastIndexHyphen = addressValue.LastIndexOf(" - ");
-
-			// If there is a last index of, then chop the string at that point (+3 chars so we don't include the ' - ')
-			if (lastIndexHyphen != -1)
+			// If the address now ends in ' - ' after the map ref removal, get rid of the last ' - ' so we don't mess up that check later on
+			if (addressValue.EndsWith(" - "))
 			{
-				addressValue = addressValue.Substring(lastIndexHyphen + 3);
+				addressValue = addressValue.Substring(0, (addressValue.Length - 3));
 			}
 
-			// Check to see if we have any of the job types, and if so, strip everything before and including that
-			addressValue = StripJobTypes(addressValue);
+			// If we have a "regular address type" then get that and use it
+			Match basicAddressMatch = Regex.Match(addressValue, _addressParserData.StreetAddressRegex);
+			if (basicAddressMatch.Success && basicAddressMatch.Groups.Count > 1)
+			{
+				addressValue = addressValue.Substring(basicAddressMatch.Groups[1].Index);
 
-			// Check to see if we have any common phrases, and if so, strip them out also
-			addressValue = StripCommonExcludeWords(addressValue);
+				// If we have any cross street information, get rid of that also
+				if (Regex.IsMatch(addressValue, _crossStreetRegex))
+				{
+					addressValue = Regex.Replace(addressValue, _crossStreetRegex, "");
+				}
+			}
+			else
+			{
+
+				// Now we want to get the last index of ' - ' which is used to separate parts of the message
+				// This will be everything AFTER the last ' - ' within the message.
+				int lastIndexHyphen = addressValue.LastIndexOf(" - ");
+
+				// If there is a last index of, then chop the string at that point (+3 chars so we don't include the ' - ')
+				if (lastIndexHyphen != -1)
+				{
+					addressValue = addressValue.Substring(lastIndexHyphen + 3);
+				}
+
+				// If we have any cross street information, get rid of that also
+				if (Regex.IsMatch(addressValue, _crossStreetRegex))
+				{
+					addressValue = Regex.Replace(addressValue, _crossStreetRegex, "");
+				}
+
+				// If there is a "CNR", get everything after it
+				int cnrLastIndex = addressValue.LastIndexOf("CNR");
+				if (cnrLastIndex != -1)
+				{
+					addressValue = addressValue.Substring(cnrLastIndex);
+				}
+
+				// Remove anything inside brackets
+				addressValue = Regex.Replace(addressValue, "\\(.*\\)", "");
+
+				// Check to see if we have any of the job types, and if so, strip everything before and including that
+				addressValue = StripJobTypes(addressValue);
+
+				// Check to see if we have any common phrases, and if so, strip them out also
+				addressValue = StripCommonExcludeWords(addressValue);
+
+			}
 
 			return addressValue.Trim();
 
@@ -129,9 +175,13 @@ namespace Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers
 		{
 			foreach(string excludeWord in _addressParserData.ExcludeWords)
 			{
-				if (addressValue.Contains(excludeWord))
+
+				// Add trailing space to make sure we don't strip chars from the middle of words
+				string excludeWordSpaces = String.Format("{0} ", excludeWord);
+
+				if (addressValue.Contains(excludeWordSpaces))
 				{
-					addressValue = addressValue.Replace(excludeWord, "");
+					addressValue = addressValue.Replace(excludeWordSpaces, " ");
 				}
 			}
 
