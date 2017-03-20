@@ -61,6 +61,10 @@
     <None Include="Unity.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\ResponseHub.ApplicationServices\ResponseHub.ApplicationServices.csproj">
+      <Project>{a77ef1a1-1492-41ac-b62e-d14f9c01014f}</Project>
+      <Name>ResponseHub.ApplicationServices</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\ResponseHub.Common\ResponseHub.Common.csproj">
       <Project>{64b4f6f9-8e0e-4475-8895-d7d4b0c1da4b}</Project>
       <Name>ResponseHub.Common</Name>

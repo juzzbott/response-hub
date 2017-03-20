@@ -91,7 +91,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DecoderStatusService.cs" />
-    <Compile Include="JobMessageSubmitter.cs" />
     <Compile Include="MapReferenceCache.cs" />
     <Compile Include="Parsers\AddressParser.cs" />
     <Compile Include="Parsers\JobMessageParser.cs" />
@@ -130,6 +129,7 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="packages.config" />
+    <None Include="Properties\packages.config" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="EmailTemplates\base_template.html">

@@ -19,6 +19,9 @@ using Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers;
 using Enivate.ResponseHub.MessageGenerator.Configuration;
 using System.IO;
 using Enivate.ResponseHub.PagerDecoder.ApplicationServices;
+using Enivate.ResponseHub.Model.Messages.Interface;
+using Enivate.ResponseHub.DataAccess.MongoDB;
+using Enivate.ResponseHub.ApplicationServices;
 
 namespace Enivate.ResponseHub.MessageGenerator
 {
@@ -213,13 +216,17 @@ namespace Enivate.ResponseHub.MessageGenerator
 		{
 			try
 			{
-				// Submit the job messages to the web service
-				JobMessageSubmitter.PostJobMessagesToWebService(jobMessages);
+				ILogger log = new FileLogger();
+				IJobMessageRepository jobMessageRepository = new JobMessageRepository();
+				IJobMessageService jobMessageService = new JobMessageService(jobMessageRepository, log);
+
+				// Submit the job messages to the database
+				jobMessageService.AddMessages(jobMessages.Select(i => i.Value).ToList());
 			}
 			catch (Exception ex)
 			{
 				// Show the messagebox error message
-				MessageBox.Show(ex.Message, "Error submitting job messages.", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				MessageBox.Show(ex.ToString(), "Error submitting job messages", MessageBoxButtons.OK, MessageBoxIcon.Error);
 			}
 		}
 

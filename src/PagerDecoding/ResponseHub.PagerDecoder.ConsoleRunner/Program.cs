@@ -4,13 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using Enivate.ResponseHub.DataAccess;
 using Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers;
 using Enivate.ResponseHub.DataAccess.MongoDB;
 using Enivate.ResponseHub.Logging;
 using Enivate.ResponseHub.DataAccess.Interface;
-using Enivate.ResponseHub.PagerDecoder.ApplicationServices;
 using System.IO;
+using Enivate.ResponseHub.Model.Messages.Interface;
+using Enivate.ResponseHub.ApplicationServices;
 
 namespace Enivate.ResponseHub.PagerDecoder.ConsoleRunner
 {
@@ -25,9 +25,12 @@ namespace Enivate.ResponseHub.PagerDecoder.ConsoleRunner
 
 				ILogger log = new FileLogger();
 				IMapIndexRepository mapIndexRepo = new MapIndexRepository(log);
+				IDecoderStatusRepository decoderStatusRepository = new DecoderStatusRepository();
+				IJobMessageRepository jobMessageRepository = new JobMessageRepository();
+				IJobMessageService jobMessageService = new JobMessageService(jobMessageRepository, log);
 
 				// Create the PdwLogFileParser
-				PdwLogFileParser pdwParser = new PdwLogFileParser(log, mapIndexRepo);
+				PdwLogFileParser pdwParser = new PdwLogFileParser(log, mapIndexRepo, decoderStatusRepository, jobMessageService);
 				pdwParser.ProcessLogFiles();
 
 				Console.WriteLine("Press any key to exit.");

@@ -16,6 +16,7 @@ using Enivate.ResponseHub.DataAccess.Interface;
 using Enivate.ResponseHub.Logging;
 using System.Diagnostics;
 using Enivate.ResponseHub.Model;
+using Enivate.ResponseHub.Model.Messages.Interface;
 
 namespace Enivate.ResponseHub.WindowsService.Tests
 {
@@ -145,7 +146,7 @@ namespace Enivate.ResponseHub.WindowsService.Tests
 		{
 
 			// Create the parser
-			PdwLogFileParser parser = new PdwLogFileParser(new Mock<ILogger>().Object, new Mock<IMapIndexRepository>().Object);
+			PdwLogFileParser parser = new PdwLogFileParser(new Mock<ILogger>().Object, new Mock<IMapIndexRepository>().Object, new Mock<IDecoderStatusRepository>().Object, new Mock<IJobMessageService>().Object);
 			bool isInvalid = parser.MessageAppearsInvalid(message);
 
 			Assert.True(invalid == isInvalid, "The message does not match the expected invalid value.");

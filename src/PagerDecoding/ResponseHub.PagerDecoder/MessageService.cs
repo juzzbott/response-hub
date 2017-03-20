@@ -22,6 +22,7 @@ using Newtonsoft.Json;
 using System.Threading.Tasks;
 using Enivate.ResponseHub.Model;
 using Enivate.ResponseHub.PagerDecoder.ApplicationServices;
+using Enivate.ResponseHub.Model.Messages.Interface;
 
 namespace Enivate.ResponseHub.PagerDecoder
 {
@@ -76,6 +77,22 @@ namespace Enivate.ResponseHub.PagerDecoder
 			get
 			{
 				return ServiceLocator.Get<IMapIndexRepository>();
+			}
+		}
+
+		protected IJobMessageService JobMessageService
+		{
+			get
+			{
+				return ServiceLocator.Get<IJobMessageService>();
+			}
+		}
+
+		protected IDecoderStatusRepository DecoderStatusRepository
+		{
+			get
+			{
+				return ServiceLocator.Get<IDecoderStatusRepository>();
 			}
 		}
 
@@ -205,7 +222,7 @@ namespace Enivate.ResponseHub.PagerDecoder
 			try {
 
 				// Create the PdwLogFileParser
-				PdwLogFileParser pdwParser = new PdwLogFileParser(Log, MapIndexRepository);
+				PdwLogFileParser pdwParser = new PdwLogFileParser(Log, MapIndexRepository, DecoderStatusRepository, JobMessageService);
 				pdwParser.ProcessLogFiles();
 
 			}

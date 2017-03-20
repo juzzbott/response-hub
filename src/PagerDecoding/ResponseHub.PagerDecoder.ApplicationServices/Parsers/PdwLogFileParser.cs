@@ -8,12 +8,10 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-using Newtonsoft.Json;
-
 using Enivate.ResponseHub.Logging;
 using Enivate.ResponseHub.Model.Messages;
 using Enivate.ResponseHub.DataAccess.Interface;
-using Enivate.ResponseHub.Common;
+using Enivate.ResponseHub.Model.Messages.Interface;
 
 namespace Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers
 {
@@ -66,6 +64,11 @@ namespace Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers
 		private IDecoderStatusRepository _decoderStatusRepository;
 
 		/// <summary>
+		/// The job message service interface.
+		/// </summary>
+		private IJobMessageService _jobMessageService;
+
+		/// <summary>
 		/// The number of log file read attempts.
 		/// </summary>
 		private int _logFileAttempts = 0;
@@ -75,12 +78,14 @@ namespace Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers
 		/// </summary>
 		private int _maxLogFileAttempts = 5;
 
-		public PdwLogFileParser(ILogger log, IMapIndexRepository mapIndexRepository)
+		public PdwLogFileParser(ILogger log, IMapIndexRepository mapIndexRepository, IDecoderStatusRepository decoderStatusRepository, IJobMessageService jobMessageService)
 		{
 
 			// Instantiate the interfaces.
 			_log = log;
 			_mapIndexRepository = mapIndexRepository;
+			_decoderStatusRepository = decoderStatusRepository;
+			_jobMessageService = jobMessageService;
 
 			// Initialise the list of pager messages to submit.
 			PagerMessagesToSubmit = new List<PagerMessage>();
@@ -89,9 +94,6 @@ namespace Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers
 			// Instantiate the message parsers
 			_pagerMessageParser = new PagerMessageParser(_log);
 			_jobMessageParser = new JobMessageParser(_mapIndexRepository, _log);
-
-			// Get the decoder status repo
-			_decoderStatusRepository = ServiceLocator.Get<IDecoderStatusRepository>();
 
 		}
 
@@ -111,9 +113,9 @@ namespace Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers
 			ParsePagerMessagesToJobMessages();
 
 			// Submit the messages
-			bool result = JobMessageSubmitter.PostJobMessagesToWebService(JobMessagesToSubmit);
+			_jobMessageService.AddMessages(JobMessagesToSubmit.Select(i => i.Value).ToList()).Wait();
 
-			if (result && PagerMessagesToSubmit.Count > 0)
+			if (PagerMessagesToSubmit.Count > 0)
 			{
 				// Get the last message sha
 				// However, we need to get the 'First' message in the list, because we reverse the entries in the file
