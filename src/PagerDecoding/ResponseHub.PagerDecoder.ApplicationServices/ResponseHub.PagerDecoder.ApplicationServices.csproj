@@ -91,6 +91,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DecoderStatusService.cs" />
+    <Compile Include="DistanceUnitType.cs" />
     <Compile Include="MapReferenceCache.cs" />
     <Compile Include="Parsers\AddressParser.cs" />
     <Compile Include="Parsers\JobMessageParser.cs" />

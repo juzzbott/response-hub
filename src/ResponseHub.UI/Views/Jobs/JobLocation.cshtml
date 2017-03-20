@@ -5,8 +5,15 @@
 
 	<h3>Location</h3>
 
-	<p class="lead">Map ref: @Html.EnumDescription(Model.Location.MapType) @Model.Location.MapReference</p>
-
+	if (Model.Location.Address != null && !String.IsNullOrEmpty(Model.Location.Address.FormattedAddress))
+	{
+		<p class="text-info lead bottom-5">@Model.Location.Address.FormattedAddress.Replace(", Australia", "")</p>
+		<p class="bottom-20 text-muted">Map ref: @Html.EnumDescription(Model.Location.MapType) @Model.Location.MapReference</p>
+	}
+	else
+	{
+		<p class="lead text-info">Map ref: @Html.EnumDescription(Model.Location.MapType) @Model.Location.MapReference</p>
+	}
 
 	if (Model.Location.Coordinates.Latitude != 0 && Model.Location.Coordinates.Longitude != 0)
 	{

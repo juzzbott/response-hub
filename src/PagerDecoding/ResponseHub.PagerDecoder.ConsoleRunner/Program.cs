@@ -73,7 +73,7 @@ namespace Enivate.ResponseHub.PagerDecoder.ConsoleRunner
 			IJobMessageService jobMessageService = ServiceLocator.Get<IJobMessageService>();
 			IAddressService addressService = ServiceLocator.Get<IAddressService>();
 
-			if (args.Length > 1 && args[0].ToLower() == "-pdw")
+			if (args.Length > 0 && args[0].ToLower() == "-pdw")
 			{ 
 				
 				// Create the PdwLogFileParser

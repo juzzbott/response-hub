@@ -100,11 +100,30 @@ namespace Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers
 			StructuredAddress address = await GetAddress(msg.Location, msg.MessageContent);
 			if (address != null)
 			{
-				msg.AddressId = address.Id;
+				msg.Location.Address.AddressId = address.Id;
+				msg.Location.Address.FormattedAddress = address.ToString();
+
+				// If the coordinates of the returned address is within 1km of the current points of the address, update the location of the job to the exact address
+				if (msg.Location != null)
+				{
+					double distance = SpatialUtility.DistanceBetweenPoints(address.Latitude, address.Longitude, msg.Location.Coordinates.Latitude, msg.Location.Coordinates.Longitude);
+
+					// If the distance is < 1000m, it's a valid address coordinate, so use the moer precise coordinate
+					if (distance <= 1)
+					{
+						msg.Location.Coordinates.Latitude = address.Latitude;
+						msg.Location.Coordinates.Longitude = address.Longitude;
+					}
+				}
 			}
 
 			// return the message
 			return msg;
+		}
+
+		private bool AddressCoordsValid(double addressLat, double addressLong, double jobMessageLat, double jobMessageLong)
+		{
+			return false;
 		}
 
 		/// <summary>

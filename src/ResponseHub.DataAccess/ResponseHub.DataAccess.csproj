@@ -102,6 +102,7 @@
     <Compile Include="MongoDB\DataObjects\Spatial\MapGridReferenceInfoDto.cs" />
     <Compile Include="MongoDB\DataObjects\Spatial\LocationInfoDto.cs" />
     <Compile Include="MongoDB\DataObjects\Spatial\MapIndexDto.cs" />
+    <Compile Include="MongoDB\DataObjects\Addresses\StructuredAddressDto.cs" />
     <Compile Include="MongoDB\DataObjects\Users\ClaimDto.cs" />
     <Compile Include="MongoDB\DataObjects\Users\IdentityUserDto.cs" />
     <Compile Include="MongoDB\DecoderStatusRepository.cs" />
@@ -137,6 +138,7 @@
   <ItemGroup>
     <Content Include="MongoDB\Scripts\AdminUser.js" />
     <Content Include="MongoDB\Scripts\CreateIndexes.js" />
+    <Content Include="MongoDB\Scripts\JavaScript1.js" />
     <Content Include="MongoDB\Scripts\ReferenceData.js" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

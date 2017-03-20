@@ -31,8 +31,6 @@ namespace Enivate.ResponseHub.Model.Messages
 
 		public IList<Guid> AttachmentIds { get; set; }
 
-		public Guid? AddressId { get; set; }
-
 		public JobMessage()
 		{
 

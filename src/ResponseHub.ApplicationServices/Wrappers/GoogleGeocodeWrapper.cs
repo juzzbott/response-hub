@@ -69,7 +69,7 @@ namespace Enivate.ResponseHub.ApplicationServices.Wrappers
 				addressQuery = addressQuery.Replace(" ", "+");
 
 				// Get the service url. If the API Key is available, then use that.
-				string serviceUrl = String.Format("https://maps.googleapis.com/maps/api/geocode/json?{0}&key={1}", addressQuery, _apiKey);
+				string serviceUrl = String.Format("https://maps.googleapis.com/maps/api/geocode/json?address={0}&key={1}", addressQuery, _apiKey);
 
 				// Create the client and request objects
 				HttpClient client = new HttpClient();
@@ -111,14 +111,14 @@ namespace Enivate.ResponseHub.ApplicationServices.Wrappers
 		/// </summary>
 		/// <param name="geocodeJson">The Google geocode data response.</param>
 		/// <returns>The structured address for the response data</returns>
-		public StructuredAddress GetStructuredAddressFromGoogleGeocode(string geocodeJson, string addressQueryHash)
+		public StructuredAddress GetStructuredAddressFromGoogleGeocode(string geocodeJson, string addressQuery)
 		{
 
 			// Load the geocode data into JObject for querying
 			JObject geocodeData = JObject.Parse(geocodeJson);
 
 			// If the status is not OK, return null address
-			if (geocodeData["status"].ToString() != "OK")
+			if (geocodeData["status"] != null && geocodeData["status"].ToString() != "OK")
 			{
 				return null;
 			}
@@ -143,7 +143,7 @@ namespace Enivate.ResponseHub.ApplicationServices.Wrappers
 			address.GoogleGeocodeId = geocodeData["results"][0]["place_id"].ToString();
 
 			// Set the address query hash
-			address.AddressQueryHash = addressQueryHash;
+			address.AddressQueryHash = StructuredAddress.GetAddressQueryHash(addressQuery);
 
 			// return the address
 			return address;

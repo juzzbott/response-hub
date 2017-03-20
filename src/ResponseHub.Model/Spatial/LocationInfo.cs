@@ -19,7 +19,7 @@ namespace Enivate.ResponseHub.Model.Spatial
 
 		public string GridSquare { get; set; }
 
-		public string AddressInfo { get; set; }
+		public AddressInfo Address { get; set; }
 
 		public Coordinates Coordinates { get; set; }
 
@@ -28,6 +28,7 @@ namespace Enivate.ResponseHub.Model.Spatial
 		public LocationInfo()
 		{
 			Coordinates = new Coordinates();
+			Address = new AddressInfo();
 		}
 
 		public override string ToString()
