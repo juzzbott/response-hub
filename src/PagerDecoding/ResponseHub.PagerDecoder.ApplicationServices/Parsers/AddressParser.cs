@@ -35,18 +35,18 @@ namespace Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers
 		public AddressParser()
 		{
 			// Get the filepath to the JSON file
-			string filePath;
+			string filePath = String.Format("{0}\\address_parser.json", Path.GetDirectoryName(Assembly.GetAssembly(GetType()).Location));
 
 			// If there is a configuration setting, use that
-			if (!String.IsNullOrEmpty(ConfigurationManager.AppSettings[_addressParserJsonFileKey]))
-			{
-				filePath = ConfigurationManager.AppSettings[_addressParserJsonFileKey];
-			}
-			else
-			{
-				// Load from the current execution path
-				filePath = String.Format("{0}\\address_parser.json", Path.GetDirectoryName(Assembly.GetAssembly(GetType()).Location));
-			}
+			//if (!String.IsNullOrEmpty(ConfigurationManager.AppSettings[_addressParserJsonFileKey]))
+			//{
+			//	filePath = ConfigurationManager.AppSettings[_addressParserJsonFileKey];
+			//}
+			//else
+			//{
+			// Load from the current execution path
+			//filePath = String.Format("{0}\\address_parser.json", Path.GetDirectoryName(Assembly.GetAssembly(GetType()).Location));
+			//}
 
 			// If the file does not exist, throw an exception
 			if (!File.Exists(filePath))
