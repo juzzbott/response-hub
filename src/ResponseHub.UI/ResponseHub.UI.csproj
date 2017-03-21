@@ -223,6 +223,7 @@
     <Compile Include="Controllers\Api\EventsController.cs" />
     <Compile Include="Controllers\BaseJobsMessagesController.cs" />
     <Compile Include="Controllers\MessagesController.cs" />
+    <Compile Include="Controllers\ProfileController.cs" />
     <Compile Include="Controllers\SearchController.cs" />
     <Compile Include="Controllers\WeatherCentreController.cs" />
     <Compile Include="Filters\SystemAdminUserRedirectAttribute.cs" />
@@ -246,6 +247,7 @@
     <Compile Include="Models\MyAccount\ResetPasswordViewModel.cs" />
     <Compile Include="Models\MyAccount\UpdateAccountViewModel.cs" />
     <Compile Include="Models\MyAccount\UpdateEmailViewModel.cs" />
+    <Compile Include="Models\Profile\ProfileViewModel.cs" />
     <Compile Include="Models\SearchViewModel.cs" />
     <Compile Include="Areas\Admin\Models\Groups\ConfirmUserViewModel.cs" />
     <Compile Include="Areas\Admin\Models\Groups\NewUserViewModel.cs" />
@@ -542,6 +544,7 @@
     <Content Include="Areas\ControlPanel\Views\Groups\ViewGroup.cshtml" />
     <Content Include="Areas\ControlPanel\Views\Groups\ChangeUserRole.cshtml" />
     <Content Include="Areas\ControlPanel\Views\Groups\ConfirmUser.cshtml" />
+    <Content Include="Views\Profile\ViewProfile.cshtml" />
     <None Include="Web.Staging.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
