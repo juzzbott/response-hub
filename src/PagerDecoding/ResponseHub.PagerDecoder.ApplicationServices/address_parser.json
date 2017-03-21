@@ -1,5 +1,5 @@
 ﻿{
-	"StreetAddressRegex": ".*(\\s(?:(?:\\d+[A-Za-z]?))\\s[A-Za-z-\\s]+(?:ALLY|ARC|AVE|AV|BVD|BLVD|BYPA|CCT|CL|CRN|CRT|CT|CRES|CR|CDS|DR|ESP|GRN|GR|FWY|HWY|JNC|LANE|LINK|MEWS|PDE|PL|RDGE|RD|SQ|ST|TCE|TRK|WAY)).*",
+	"StreetAddressRegex": "(\\s+((\\d+\\s?[-\\/\\\\\\s]\\s?)?\\d+[A-Za-z]?(-\\d+[A-Za-z]?)?\\s[A-Za-z-\\s]+)(ALLY|ARC|AVE|AV|BVD|BLVD|BYPA|CCT|CL|CRN|CRT|CT|CRES|CR|CDS|DR|ESP|GRN|GR|FWY|HWY|JNC|LANE|LINK|MEWS|PDE|PL|RDGE|RD|SQ|ST|TCE|TRK|WAY))",
 	"StreetTypes": [
 		" ALLY ",
 		" ARC ",

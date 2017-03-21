@@ -123,9 +123,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="address_parser.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    <EmbeddedResource Include="address_parser.json" />
     <None Include="app.config">
       <SubType>Designer</SubType>
     </None>

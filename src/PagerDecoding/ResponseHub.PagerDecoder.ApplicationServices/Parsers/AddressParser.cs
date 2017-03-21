@@ -34,27 +34,14 @@ namespace Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers
 
 		public AddressParser()
 		{
-			// Get the filepath to the JSON file
-			string filePath = String.Format("{0}\\address_parser.json", Path.GetDirectoryName(Assembly.GetAssembly(GetType()).Location));
 
-			// If there is a configuration setting, use that
-			//if (!String.IsNullOrEmpty(ConfigurationManager.AppSettings[_addressParserJsonFileKey]))
-			//{
-			//	filePath = ConfigurationManager.AppSettings[_addressParserJsonFileKey];
-			//}
-			//else
-			//{
-			// Load from the current execution path
-			//filePath = String.Format("{0}\\address_parser.json", Path.GetDirectoryName(Assembly.GetAssembly(GetType()).Location));
-			//}
+			string jsonData;
 
-			// If the file does not exist, throw an exception
-			if (!File.Exists(filePath))
+			// Load the json data from the embedded resource file.
+			using (StreamReader reader = new StreamReader(Assembly.GetExecutingAssembly().GetManifestResourceStream("Enivate.ResponseHub.PagerDecoder.ApplicationServices.address_parser.json")))
 			{
-				throw new Exception(String.Format("The AddressParser JSON file does not exist at path: '{0}'.", filePath));
+				jsonData = reader.ReadToEnd();
 			}
-
-			string jsonData = File.ReadAllText(filePath);
 
 			// Load the json object
 			_addressParserData = JsonConvert.DeserializeObject<AddressParserData>(jsonData);
@@ -113,7 +100,8 @@ namespace Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers
 				addressValue = addressValue.Substring(0, (addressValue.Length - 3));
 			}
 
-			// If we have a "regular address type" then get that and use it
+			// If we have a "regular address type" then get that and use it. 
+			// This will a street number only, and not a unit. It will use the initial index of the regex.
 			Match basicAddressMatch = Regex.Match(addressValue, _addressParserData.StreetAddressRegex);
 			if (basicAddressMatch.Success && basicAddressMatch.Groups.Count > 1)
 			{
