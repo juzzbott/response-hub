@@ -1,0 +1,19 @@
+<Project ToolsVersion="4.0" DefaultTargets="Demo" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<UsingTask TaskName="TransformXml" AssemblyFile="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v14.0\Web\Microsoft.Web.Publishing.Tasks.dll"/>
+	<Target Name="Debug">
+		<!-- App.config - first pass -->
+		<TransformXml Source="App.config" Transform="App.Debug.config" Destination="App.config"/>
+	</Target>
+	<Target Name="Test">
+		<!-- App.config - first pass -->
+		<TransformXml Source="App.config" Transform="App.Test.config" Destination="App.config"/>
+	</Target>
+	<Target Name="Staging">
+		<!-- App.config - first pass -->
+		<TransformXml Source="App.config" Transform="App.Staging.config" Destination="App.config"/>
+	</Target>
+	<Target Name="Release">
+		<!-- App.config - first pass -->
+		<TransformXml Source="App.config" Transform="App.Release.config" Destination="App.config"/>
+	</Target>
+</Project>
