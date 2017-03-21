@@ -49,7 +49,7 @@ namespace Enivate.ResponseHub.Model.Messages
 
 		public static string GenerateHash(string address, DateTime timestamp, string messageContent)
 		{
-			return HashGenerator.GetSha1HashString(String.Format("{0}_{1}_{2}", address, timestamp.ToString("HH:mm:ss dd-MM-yy"), messageContent), 1);
+			return HashGenerator.GetSha256HashString(String.Format("{0}_{1}_{2}", address, timestamp.ToString("HH:mm:ss dd-MM-yy"), messageContent), 1);
 		}
 
 	}

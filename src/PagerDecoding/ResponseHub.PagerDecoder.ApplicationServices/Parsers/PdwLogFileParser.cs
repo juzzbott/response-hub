@@ -8,12 +8,11 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-using Newtonsoft.Json;
-
 using Enivate.ResponseHub.Logging;
 using Enivate.ResponseHub.Model.Messages;
 using Enivate.ResponseHub.DataAccess.Interface;
-using Enivate.ResponseHub.Common;
+using Enivate.ResponseHub.Model.Messages.Interface;
+using Enivate.ResponseHub.Model.Addresses.Interface;
 
 namespace Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers
 {
@@ -66,6 +65,16 @@ namespace Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers
 		private IDecoderStatusRepository _decoderStatusRepository;
 
 		/// <summary>
+		/// The job message service interface.
+		/// </summary>
+		private IJobMessageService _jobMessageService;
+
+		/// <summary>
+		/// The address message service interface.
+		/// </summary>
+		private IAddressService _addressService;
+
+		/// <summary>
 		/// The number of log file read attempts.
 		/// </summary>
 		private int _logFileAttempts = 0;
@@ -75,12 +84,15 @@ namespace Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers
 		/// </summary>
 		private int _maxLogFileAttempts = 5;
 
-		public PdwLogFileParser(ILogger log, IMapIndexRepository mapIndexRepository)
+		public PdwLogFileParser(ILogger log, IMapIndexRepository mapIndexRepository, IDecoderStatusRepository decoderStatusRepository, IJobMessageService jobMessageService, IAddressService addressService)
 		{
 
 			// Instantiate the interfaces.
 			_log = log;
 			_mapIndexRepository = mapIndexRepository;
+			_decoderStatusRepository = decoderStatusRepository;
+			_jobMessageService = jobMessageService;
+			_addressService = addressService;
 
 			// Initialise the list of pager messages to submit.
 			PagerMessagesToSubmit = new List<PagerMessage>();
@@ -88,10 +100,7 @@ namespace Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers
 
 			// Instantiate the message parsers
 			_pagerMessageParser = new PagerMessageParser(_log);
-			_jobMessageParser = new JobMessageParser(_mapIndexRepository, _log);
-
-			// Get the decoder status repo
-			_decoderStatusRepository = ServiceLocator.Get<IDecoderStatusRepository>();
+			_jobMessageParser = new JobMessageParser(_addressService, _mapIndexRepository, _log);
 
 		}
 
@@ -111,9 +120,9 @@ namespace Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers
 			ParsePagerMessagesToJobMessages();
 
 			// Submit the messages
-			bool result = JobMessageSubmitter.PostJobMessagesToWebService(JobMessagesToSubmit);
+			_jobMessageService.AddMessages(JobMessagesToSubmit.Select(i => i.Value).ToList()).Wait();
 
-			if (result && PagerMessagesToSubmit.Count > 0)
+			if (PagerMessagesToSubmit.Count > 0)
 			{
 				// Get the last message sha
 				// However, we need to get the 'First' message in the list, because we reverse the entries in the file
@@ -210,7 +219,18 @@ namespace Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers
 						if (MessageAppearsInvalid(pagerMessage.MessageContent))
 						{
 							_log.Warn(String.Format("Invalid message detected. Invalid message: {0}", pagerMessage.MessageContent));
-							Task.Run(async () => await _decoderStatusRepository.AddInvalidMessage(DateTime.UtcNow, message));
+							Task t = Task.Run(async () => {
+
+								// Check to see if the message already exists
+								bool messageExists = await _decoderStatusRepository.InvalidMessageExists(pagerMessage.MessageContent);
+
+								// If it doesn't exist, add it
+								if (!messageExists)
+								{
+									await _decoderStatusRepository.AddInvalidMessage(DateTime.UtcNow, message);
+								}
+							});
+							t.Wait();
 						}
 
 						// If the pager sha matches the last inserted sha, then exit the loop, as no need to process any further messages.
@@ -321,11 +341,19 @@ namespace Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers
 				try
 				{
 
-					// Get the job message from the pager message
-					JobMessage jobMessage = _jobMessageParser.ParseMessage(pagerMessage);
+					Task t = Task.Run(async () =>
+					{
 
-					// Add the job to the list job messages to submit
-					JobMessagesToSubmit.Add(pagerMessage.ShaHash, jobMessage);
+						// Get the job message from the pager message
+						JobMessage jobMessage = await _jobMessageParser.ParseMessage(pagerMessage);
+
+						// Add the job to the list job messages to submit
+						JobMessagesToSubmit.Add(pagerMessage.ShaHash, jobMessage);
+
+					});
+
+					// wait on the task to complete.
+					t.Wait();
 
 				}
 				catch (Exception ex)

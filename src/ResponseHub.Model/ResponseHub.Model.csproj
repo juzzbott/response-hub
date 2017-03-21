@@ -62,6 +62,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Addresses\Mock\MockAddressService.cs" />
     <Compile Include="Agencies\Agency.cs" />
     <Compile Include="Agencies\Interface\IAgencyService.cs" />
     <Compile Include="Attachments\Attachment.cs" />
@@ -72,6 +73,7 @@
     <Compile Include="Events\EventResource.cs" />
     <Compile Include="Events\Interface\IEventService.cs" />
     <Compile Include="Events\ResourceType.cs" />
+    <Compile Include="Addresses\Interface\IAddressService.cs" />
     <Compile Include="Groups\Capcode.cs" />
     <Compile Include="Groups\Interface\ICapcodeService.cs" />
     <Compile Include="Groups\Interface\IGroupService.cs" />
@@ -93,6 +95,8 @@
     <Compile Include="Messages\MessageProgressType.cs" />
     <Compile Include="Messages\MessageType.cs" />
     <Compile Include="PagedResultSet.cs" />
+    <Compile Include="Parsers\AddressParserData.cs" />
+    <Compile Include="Spatial\AddressInfo.cs" />
     <Compile Include="Spatial\LocationInfo.cs" />
     <Compile Include="Messages\JobMessage.cs" />
     <Compile Include="Messages\MessagePriority.cs" />
@@ -104,6 +108,7 @@
     <Compile Include="Spatial\MapIndex.cs" />
     <Compile Include="Spatial\Coordinates.cs" />
     <Compile Include="Spatial\MapType.cs" />
+    <Compile Include="Addresses\StructuredAddress.cs" />
     <Compile Include="Warnings\Interface\IWarningService.cs" />
     <Compile Include="Warnings\IWarning.cs" />
     <Compile Include="Warnings\WarningSource.cs" />
