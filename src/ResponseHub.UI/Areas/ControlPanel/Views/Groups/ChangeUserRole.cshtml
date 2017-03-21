@@ -1,0 +1,36 @@
+﻿@model Enivate.ResponseHub.UI.Areas.Admin.Models.Groups.ChangeUserRoleViewModel
+
+@{
+	ViewBag.Title = "Change security role for user";
+	Layout = "~/Areas/ControlPanel/Views/Shared/_Layout.cshtml";
+}
+
+<h1>@ViewBag.Title</h1>
+
+<p>Change the permissions within the group for this user. You can have unlimited group administrators in a group, but you must have a minimum of one group administrator.</p>
+
+<form action="@Request.Path" method="post">
+
+	@Html.AntiForgeryToken()
+
+	<div class="row">
+		<div class="col-lg-10 col-xl-6">
+			@Html.ValidationSummary(true)
+		</div>
+	</div>
+	
+	<div class="form-group">
+		<label for="Service">Role *</label>
+		<div class="row">
+			<div class="col-sm-8 col-md-6 col-lg-4">
+				@Html.DropDownListFor(model => model.Role, Model.AvailableRoles, new { @class = "form-control" })
+			</div>
+		</div>
+		@Html.ValidationMessageFor(model => model.Role)
+	</div>
+
+	<button type="submit" class="btn btn-default">Change role</button>
+	<a href="/control-panel/groups/@Model.GroupId" class="btn btn-link">Cancel</a>
+
+</form>
+

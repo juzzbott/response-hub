@@ -268,6 +268,14 @@ input[type="date"]::-webkit-input-placeholder {
 .sidebar .nav > li.active a:focus i {
   color: #e2c498;
 }
+.sidebar .nav > li.muted-nav {
+  background-color: #263339;
+  border-top: 1px solid #1c262a;
+  border-bottom: 1px solid #1c262a;
+}
+.sidebar .nav > li.muted-nav i {
+  color: #d7ad70;
+}
 .sidebar .nav > li > a {
   color: #c8c5ba;
 }
@@ -1046,6 +1054,85 @@ i.p-message-admin {
   position: absolute;
   left: -99999px;
   top: -99999px;
+}
+/**
+ * Filters
+ */
+.filter-container {
+  padding-top: 20px;
+  background-color: #fbfbfb;
+  border: 1px solid #eee;
+  margin-bottom: 20px;
+  margin-left: 0;
+  margin-right: 0;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+/**
+ * Data Export PDF
+ */
+body.data-export-pdf {
+  background-color: #fff;
+  font-size: 13px;
+  padding-top: 0;
+}
+body.data-export-pdf table {
+  font-size: 13px;
+}
+body.data-export-pdf table td {
+  padding: 6px 4px;
+  line-height: 1.1;
+}
+body.data-export-pdf table th {
+  padding: 6px 4px;
+}
+body.data-export-pdf table.results-overview .job-number {
+  width: 110px;
+}
+body.data-export-pdf table.results-overview .date-time {
+  width: 150px;
+}
+body.data-export-pdf .job-progress-table thead th {
+  border-bottom: 0px;
+}
+body.data-export-pdf .job-progress-table td {
+  border-top: 0px;
+}
+body.data-export-pdf .job-progress-table .on-route {
+  padding-left: 0;
+}
+body.data-export-pdf .job-progress-table h4 {
+  margin-bottom: 0;
+}
+body.data-export-pdf .message-map-image {
+  position: relative;
+  width: 900px;
+  height: 300px;
+}
+body.data-export-pdf .message-map-image img {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+body.data-export-pdf .message-map-image span {
+  display: block;
+  position: absolute;
+  left: 426px;
+  top: 102px;
+}
+body.data-export-pdf .notes li {
+  border-left: 3px solid #D6E3E0;
+  border-top: 1px solid #e5edeb;
+  border-right: 1px solid #e5edeb;
+  border-bottom: 1px solid #e5edeb;
+  background-color: #fafafa;
+  padding-left: 8px;
+  padding-top: 4px;
+  padding-bottom: 2px;
+  margin-bottom: 10px;
+}
+body.data-export-pdf .notes li .wordback-icon {
+  margin-left: 5px;
 }
 /**
  * Mixins

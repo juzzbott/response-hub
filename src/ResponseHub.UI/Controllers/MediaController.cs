@@ -28,6 +28,7 @@ namespace Enivate.ResponseHub.UI.Controllers
 		protected readonly IJobMessageService JobMessageService = ServiceLocator.Get<IJobMessageService>();
 		protected readonly IAttachmentService AttachmentService = ServiceLocator.Get<IAttachmentService>();
 
+		[AllowAnonymous]
 		[Route("mapbox-static/{lat:double},{lng:double},{zoom:int}/{size}")]
 		// GET: Media/mapbox-static
 		public async Task<ActionResult> MapBoxStatic(double lat, double lng, int zoom, string size)

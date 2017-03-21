@@ -1,8 +1,12 @@
 ﻿@model Enivate.ResponseHub.UI.Areas.Admin.Models.Groups.CreateGroupModel
 
+@{ 
+	Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
 <h2>@ViewBag.Title</h2>
 
-<form action="@ViewBag.FormAction" method="post">
+<form action="@Request.Url.LocalPath" method="post">
 
 	@Html.AntiForgeryToken()
 
@@ -206,7 +210,7 @@
 	{
 		<div class="top-20">
 			<button type="submit" class="btn btn-default">Save</button>
-			<a href="/admin/groups" class="btn btn-link">Cancel</a>
+			<a href="@Request.Url.LocalPath.ToLower().Replace("/edit", "")" class="btn btn-link">Cancel</a>
 		</div>
 	}
 

@@ -49,6 +49,18 @@
       <HintPath>..\packages\SharpZipLib.0.86.0\lib\20\ICSharpCode.SharpZipLib.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="evohtmltopdf, Version=6.16.0.0, Culture=neutral, PublicKeyToken=e1fcbb86597de299, processorArchitecture=MSIL">
+      <HintPath>..\packages\evopdf.6.16\lib\net40\evohtmltopdf.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="itextsharp, Version=5.5.9.0, Culture=neutral, PublicKeyToken=8354ae6d2174ddca, processorArchitecture=MSIL">
+      <HintPath>..\packages\iTextSharp.5.5.9\lib\itextsharp.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="itextsharp.xmlworker, Version=5.5.9.0, Culture=neutral, PublicKeyToken=8354ae6d2174ddca, processorArchitecture=MSIL">
+      <HintPath>..\packages\itextsharp.xmlworker.5.5.9\lib\itextsharp.xmlworker.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Microsoft.AspNet.Identity.Core, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNet.Identity.Core.2.2.1\lib\net45\Microsoft.AspNet.Identity.Core.dll</HintPath>
       <Private>True</Private>
@@ -187,6 +199,7 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Areas\Admin\AdminAreaRegistration.cs" />
+    <Compile Include="Areas\Admin\Controllers\BaseAdminController.cs" />
     <Compile Include="Areas\Admin\Controllers\CapcodesController.cs" />
     <Compile Include="Areas\Admin\Controllers\GroupsController.cs" />
     <Compile Include="Areas\Admin\Controllers\HomeController.cs" />
@@ -200,9 +213,17 @@
     <Compile Include="Areas\Admin\Models\SystemSettings\SystemSettingsViewModel.cs" />
     <Compile Include="Controllers\Api\SearchController.cs" />
     <Compile Include="Controllers\PagerMessagesController.cs" />
+    <Compile Include="Areas\ControlPanel\Controllers\BaseControlPanelController.cs" />
+    <Compile Include="Areas\ControlPanel\Controllers\DataExportController.cs" />
+    <Compile Include="Areas\ControlPanel\Controllers\GroupsController.cs" />
+    <Compile Include="Areas\ControlPanel\Controllers\HomeController.cs" />
+    <Compile Include="Areas\ControlPanel\ControlPanelAreaRegistration.cs" />
+    <Compile Include="Areas\ControlPanel\Models\DataExport\DataExportFilterViewModel.cs" />
+    <Compile Include="Areas\ControlPanel\Models\DataExport\HtmlDataExportViewModel.cs" />
     <Compile Include="Controllers\Api\EventsController.cs" />
     <Compile Include="Controllers\BaseJobsMessagesController.cs" />
     <Compile Include="Controllers\MessagesController.cs" />
+    <Compile Include="Controllers\ProfileController.cs" />
     <Compile Include="Controllers\SearchController.cs" />
     <Compile Include="Controllers\WeatherCentreController.cs" />
     <Compile Include="Filters\SystemAdminUserRedirectAttribute.cs" />
@@ -226,6 +247,7 @@
     <Compile Include="Models\MyAccount\ResetPasswordViewModel.cs" />
     <Compile Include="Models\MyAccount\UpdateAccountViewModel.cs" />
     <Compile Include="Models\MyAccount\UpdateEmailViewModel.cs" />
+    <Compile Include="Models\Profile\ProfileViewModel.cs" />
     <Compile Include="Models\SearchViewModel.cs" />
     <Compile Include="Areas\Admin\Models\Groups\ConfirmUserViewModel.cs" />
     <Compile Include="Areas\Admin\Models\Groups\NewUserViewModel.cs" />
@@ -282,6 +304,7 @@
     <Content Include="assets\images\leaflet\marker-icon-2x.png" />
     <Content Include="assets\images\leaflet\marker-icon.png" />
     <Content Include="assets\images\leaflet\marker-shadow.png" />
+    <Content Include="assets\images\map-marker.png" />
     <Content Include="assets\js\framework.js" />
     <Content Include="assets\js\lib\bootstrap-datepicker.min.js" />
     <Content Include="assets\js\lib\bootstrap-tabcollapse.js" />
@@ -307,7 +330,9 @@
     <Content Include="Global.asax" />
     <Content Include="Gruntfile.js" />
     <Content Include="robots.txt" />
-    <Content Include="Web.config" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </Content>
@@ -319,6 +344,9 @@
     <Content Include="Views\Shared\_Layout.cshtml" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Areas\Admin\Views\BaseAdmin\" />
+    <Folder Include="Areas\ControlPanel\Views\BaseControlPanel\" />
+    <Folder Include="Areas\ControlPanel\Views\Home\" />
     <Folder Include="Views\Base\" />
     <Folder Include="Views\Media\" />
   </ItemGroup>
@@ -506,6 +534,17 @@
     <Content Include="Views\WeatherCentre\Index.cshtml" />
     <Content Include="Views\Shared\WeatherCentreLayout.cshtml" />
     <Content Include="Views\WeatherCentre\RadarLoop.cshtml" />
+    <Content Include="Areas\ControlPanel\Views\web.config" />
+    <Content Include="Areas\ControlPanel\Views\Shared\_Layout.cshtml" />
+    <Content Include="Areas\ControlPanel\Views\Shared\ControlPanelSidebarMenu.cshtml" />
+    <Content Include="Areas\ControlPanel\Views\DataExport\Index.cshtml" />
+    <Content Include="Areas\ControlPanel\Views\DataExport\GenerateHtmlExport.cshtml" />
+    <Content Include="Areas\ControlPanel\Views\Shared\HtmlExportLayout.cshtml" />
+    <Content Include="Areas\ControlPanel\Views\Groups\Edit.cshtml" />
+    <Content Include="Areas\ControlPanel\Views\Groups\ViewGroup.cshtml" />
+    <Content Include="Areas\ControlPanel\Views\Groups\ChangeUserRole.cshtml" />
+    <Content Include="Areas\ControlPanel\Views\Groups\ConfirmUser.cshtml" />
+    <Content Include="Views\Profile\ViewProfile.cshtml" />
     <None Include="Web.Staging.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

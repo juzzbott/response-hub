@@ -191,5 +191,10 @@ namespace Enivate.ResponseHub.ApplicationServices
 			await _repository.AddAttachmentToJob(jobMessageId, attachmentId);
 		}
 
+		public async Task<IList<JobMessage>> GetJobMessagesBetweenDates(IEnumerable<string> capcodes, MessageType messageTypes, DateTime dateFrom, DateTime dateTo)
+		{
+			return await _repository.GetJobMessagesBetweenDates(capcodes, messageTypes, dateFrom, dateTo);
+		}
+
 	}
 }

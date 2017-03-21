@@ -1,12 +1,13 @@
 ﻿@model Enivate.ResponseHub.UI.Areas.Admin.Models.Groups.NewUserViewModel
 
 @{
-    ViewBag.Title = "Create new user";
+	ViewBag.Title = "Create new user";
+	Layout = Html.IsAdminUser() ? "~/Areas/Admin/Views/Shared/_Layout.cshtml" : "~/Areas/ControlPanel/Views/Shared/_Layout.cshtml";
 }
 
 <h2>@ViewBag.Title</h2>
 
-<form action="@ViewBag.FormAction" method="post">
+<form action="@Request.Url.LocalPath" method="post">
 
 	@Html.AntiForgeryToken()
 
@@ -43,6 +44,6 @@
 	</div>
 
 	<button type="submit" class="btn btn-default">Next</button>
-	<a href="@Html.BackUrlOrDefault("/admin")" class="btn btn-link">Cancel</a>
+	<a href="@Request.Url.LocalPath.ToLower().Replace("/add-member", "")" class="btn btn-link">Cancel</a>
 
 </form>

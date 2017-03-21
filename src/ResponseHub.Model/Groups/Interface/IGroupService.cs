@@ -19,9 +19,13 @@ namespace Enivate.ResponseHub.Model.Groups.Interface
 
 		Task<Group> GetById(Guid id);
 
+		Task<IList<Group>> GetByIds(IEnumerable<Guid> ids);
+
 		Task<bool> CheckIfGroupExists(string name, ServiceType service);
 
 		Task AddUserToGroup(Guid userId, string role, Guid groupId);
+
+		Task RemoveUserFromGroup(Guid userId, Guid groupId);
 
 		Task<IList<Group>> GetGroupsForUser(Guid userId);
 
@@ -34,6 +38,8 @@ namespace Enivate.ResponseHub.Model.Groups.Interface
 		Task UpdateGroup(Group group);
 
 		Task ChangeUserRoleInGroup(Guid groupId, Guid userId, string newRole);
+
+		Task<IDictionary<Guid, UserMapping>> GetUserMappingsForUser(Guid userId);
 
 	}
 

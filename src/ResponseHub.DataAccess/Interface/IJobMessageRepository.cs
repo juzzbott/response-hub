@@ -29,6 +29,8 @@ namespace Enivate.ResponseHub.DataAccess.Interface
 		Task<IList<JobNote>> GetNotesForJob(Guid jobMessageId);
 
 		Task AddProgress(Guid jobMessageId, MessageProgress progress);
+		
+		Task<IList<JobMessage>> GetJobMessagesBetweenDates(IEnumerable<string> capcodes, MessageType messageTypes, DateTime dateFrom, DateTime dateTo);
 
 		Task<PagedResultSet<JobMessage>> FindByKeyword(string keyword, IEnumerable<string> capcodes, MessageType messageTypes, DateTime dateFrom, DateTime dateTo, int limit, int skip, bool countTotal);
 

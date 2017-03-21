@@ -67,6 +67,7 @@
     <Compile Include="Agencies\Interface\IAgencyService.cs" />
     <Compile Include="Attachments\Attachment.cs" />
     <Compile Include="Attachments\Interface\IAttachmentService.cs" />
+    <Compile Include="DataExport\Interface\IDataExportService.cs" />
     <Compile Include="Decoding\DecoderStatus.cs" />
     <Compile Include="Events\Event.cs" />
     <Compile Include="Events\EventResource.cs" />
@@ -80,6 +81,7 @@
     <Compile Include="Groups\Region.cs" />
     <Compile Include="Groups\UserMapping.cs" />
     <Compile Include="IAuthorisationService.cs" />
+    <Compile Include="Identity\ClaimProperties.cs" />
     <Compile Include="Identity\IdentityUser.cs" />
     <Compile Include="Identity\Interface\IUserService.cs" />
     <Compile Include="Identity\PasswordResetToken.cs" />

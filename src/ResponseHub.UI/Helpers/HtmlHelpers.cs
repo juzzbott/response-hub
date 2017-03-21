@@ -105,7 +105,74 @@ namespace Enivate.ResponseHub.UI.Helpers
 			
 		}
 
+		/// <summary>
+		/// Determines if the currenly logged in user an group administrator user.
+		/// </summary>
+		/// <param name="helper"></param>
+		/// <returns></returns>
+		public static bool IsGroupAdminUser(this HtmlHelper helper)
+		{
+			// If the user is null or not authenticated, then just return false
+			if (HttpContext.Current == null)
+			{
+				return false;
+			}
+
+			if (HttpContext.Current.User == null || !HttpContext.Current.User.Identity.IsAuthenticated)
+			{
+				return false;
+			}
+
+			// Get the identity as a claims identity
+			ClaimsIdentity identity = (ClaimsIdentity)HttpContext.Current.User.Identity;
+
+			return identity.Claims.Any(i => i.Type.Equals(ClaimTypes.Role, StringComparison.CurrentCultureIgnoreCase) && i.Value.Equals(RoleTypes.GroupAdministrator, StringComparison.CurrentCultureIgnoreCase));
+
+		}
+
+		/// <summary>
+		/// Displays a success message based on the result from a query string
+		/// </summary>
+		/// <param name="helper"></param>
+		/// <param name="queryStringKey"></param>
+		/// <param name="queryStringValue"></param>
+		/// <param name="message"></param>
+		/// <returns></returns>
 		public static MvcHtmlString SuccessFromQueryString(this HtmlHelper helper, string queryStringKey, string queryStringValue, string message)
+		{
+			// return the message
+			return MessageFromQueryString(queryStringKey, queryStringValue, message, "alert-success");
+		}
+
+		/// <summary>
+		/// Displays a error message based on the result from a query string
+		/// </summary>
+		/// <param name="helper"></param>
+		/// <param name="queryStringKey"></param>
+		/// <param name="queryStringValue"></param>
+		/// <param name="message"></param>
+		/// <returns></returns>
+		public static MvcHtmlString ErrorFromQueryString(this HtmlHelper helper, string queryStringKey, string queryStringValue, string message)
+		{
+			// return the message
+			return MessageFromQueryString(queryStringKey, queryStringValue, message, "alert-danger");
+		}
+
+		/// <summary>
+		/// Displays a warning message based on the result from a query string
+		/// </summary>
+		/// <param name="helper"></param>
+		/// <param name="queryStringKey"></param>
+		/// <param name="queryStringValue"></param>
+		/// <param name="message"></param>
+		/// <returns></returns>
+		public static MvcHtmlString WarningFromQueryString(this HtmlHelper helper, string queryStringKey, string queryStringValue, string message)
+		{
+			// return the message
+			return MessageFromQueryString(queryStringKey, queryStringValue, message, "alert-warning");
+		}
+
+		private static MvcHtmlString MessageFromQueryString(string queryStringKey, string queryStringValue, string message, string className)
 		{
 
 			// Get the current request
@@ -119,7 +186,7 @@ namespace Enivate.ResponseHub.UI.Helpers
 				StringBuilder sbMarkup = new StringBuilder();
 				sbMarkup.AppendLine("<div class=\"row\">");
 				sbMarkup.AppendLine("<div class=\"col-sm-12\">");
-				sbMarkup.AppendLine("<p class=\"alert alert-success alert-dismissable\" role=\"alert\">");
+				sbMarkup.AppendLine(String.Format("<p class=\"alert {0} alert-dismissable\" role=\"alert\">", className));
 				sbMarkup.AppendLine("<button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button>");
 				sbMarkup.AppendLine(message);
 				sbMarkup.AppendLine("</p>");

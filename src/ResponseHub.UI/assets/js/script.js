@@ -60,6 +60,30 @@ var responseHub = (function () {
 			$('.tab-collapse').tabCollapse();
 		}
 
+		// Fix date validation bug in jQuery
+		$(document).ready(function () {
+			jQuery.validator.methods.date = function (value, element) {
+
+				// Create the regex and return if the value is valid or not
+				var dateRegex = /^\d{2}\/\d{2}\/\d{4}$/;
+				var validFormat = dateRegex.test(value);
+
+				// If the format is invalid, then return false.
+				if (!validFormat) {
+					return false;
+				}
+
+				// Split the value into days, months, years
+				var dateParts = value.split('/');
+
+				// Create the moment object
+				var dateObj = moment(dateParts[2] + "-" + dateParts[1] + "-" + dateParts[0] + "T00:00:00.000Z");
+
+				// Determine if the date is valid
+				return dateObj.isValid();
+			};
+		});
+
 		$('.toggle-header a').click(function () {
 
 			// Get the toggle id
@@ -1345,6 +1369,18 @@ responseHub.groups = (function () {
 		$('#btn-current-location').on('click', function () {
 			responseHub.maps.getCurrentLocation('#Latitude', '#Longitude');
 		});
+
+		$('#confirm-delete.delete-user').on('show.bs.modal', function (e) {
+			
+			// Generate the confirm message
+			var message = $(this).find('.modal-body p').text();
+			message = message.replace('#USER#', $(e.relatedTarget).data('user-name'));
+
+			// Set the confirm message
+			$(this).find('.modal-body p').text(message);
+
+		});
+
 	}
 
 	// Bind the ui

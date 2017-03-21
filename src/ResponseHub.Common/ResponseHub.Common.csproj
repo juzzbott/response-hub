@@ -83,6 +83,7 @@
     <Compile Include="Constants\CustomClaimTypes.cs" />
     <Compile Include="Constants\GeneralConstants.cs" />
     <Compile Include="Constants\MailTemplates.cs" />
+    <Compile Include="Constants\SessionConstants.cs" />
     <Compile Include="Extensions\EnumExtensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="HashGenerator.cs" />

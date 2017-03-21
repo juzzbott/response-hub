@@ -35,6 +35,7 @@ namespace Enivate.ResponseHub.ApplicationServices
 		{
 			_repository = repository;
 			_log = log;
+			UserValidator = new UserValidator<IdentityUser, Guid>(this) { AllowOnlyAlphanumericUserNames = false };
 		}
 		
 		#region Password Reset Token

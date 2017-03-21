@@ -365,6 +365,16 @@ input[type="date"]::-webkit-input-placeholder{
 		}
 	}
 
+	.nav > li.muted-nav {
+		background-color: lighten(@sidebar-backgroud, 3%);
+		border-top: 1px solid darken(@sidebar-backgroud, 2%);
+		border-bottom: 1px solid darken(@sidebar-backgroud, 2%);
+
+		i {
+			color: darken(@sidebar-highlight, 10%);
+		}
+	}
+
 	.nav > li > a {
 		color: @sidebar-foreground;
 		
@@ -1372,6 +1382,108 @@ i.p-message-admin {
 	position: absolute; 
 	left: -99999px;
 	top: -99999px;
+}
+
+/**
+ * Filters
+ */
+.filter-container {
+	padding-top: 20px;
+	background-color: #fbfbfb;
+	border: 1px solid #eee;
+	margin-bottom: 20px;
+	margin-left: 0;
+	margin-right: 0;
+	padding-left: 10px;
+	padding-right: 10px;
+}
+
+/**
+ * Data Export PDF
+ */
+
+body.data-export-pdf {
+	background-color: #fff;
+	font-size: 13px;
+	padding-top: 0;
+
+	table {
+		font-size: 13px;
+
+		td {
+			padding: 6px 4px;
+			line-height: 1.1;
+		}
+
+		th {
+			padding: 6px 4px;
+		}
+
+		&.results-overview {
+			.job-number {
+				width: 110px;
+			}
+			.date-time {
+				width: 150px;
+			}
+		}
+	}
+
+	.job-progress-table  {
+
+		thead th {
+			border-bottom: 0px;
+		}
+	
+		td {
+			border-top: 0px;
+		}
+
+		.on-route {
+			padding-left: 0;
+		}
+
+		h4 {
+			margin-bottom: 0;
+		}
+	}
+
+	.message-map-image {
+		position: relative;
+		width: 900px;
+		height: 300px;
+
+		img {
+			position: absolute;
+			top: 0;
+			left: 0;
+		}
+
+		span {
+			display: block;
+			position: absolute;
+			left: 426px;
+			top: 102px;
+		}
+
+	}
+
+	.notes li {
+		border-left: 3px solid #D6E3E0;
+		border-top: 1px solid #e5edeb;
+		border-right: 1px solid #e5edeb;
+		border-bottom: 1px solid #e5edeb;
+		background-color: #fafafa;
+		padding-left: 8px;
+		padding-top: 4px;
+		padding-bottom: 2px;
+		margin-bottom: 10px;
+
+		.wordback-icon {
+			margin-left: 5px;
+		}
+	}
+
 }
 
 /**
