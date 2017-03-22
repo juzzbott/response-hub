@@ -129,8 +129,10 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 			// Get the group by the id
 			Group group = await GroupService.GetById(groupId);
 
+			// Ensure the user is a group administrator of the specific group, otherwise 403 forbidden.
+
 			// Get the list of messages for the capcode
-			IList<JobMessage> messages = await JobMessageService.GetJobMessagesBetweenDates(
+			IList<JobMessage> jobMessages = await JobMessageService.GetJobMessagesBetweenDates(
 				new List<string> { group.Capcode },
 				MessageType.Job & MessageType.Message,
 				dateFrom,
@@ -139,7 +141,10 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 			// Create the model
 			HtmlDataExportViewModel model = new HtmlDataExportViewModel
 			{
-				Messages = messages
+				Messages = jobMessages.Where(i => i.Type == MessageType.Message).ToList(),
+				Jobs = jobMessages.Where(i => i.Type == MessageType.Job).OrderBy(i => i.Priority).ToList(),
+				StartDate = dateFrom,
+				FinishDate = dateTo
 			};
 
 			return View(model);
