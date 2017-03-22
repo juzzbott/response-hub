@@ -7,18 +7,21 @@
 
 <h1 class="text-primary">Job data report</h1>
 
-<p class="text-muted">Export contains @Model.Messages.Count job@(Model.Messages.Count != 1 ? "s" : "").</p>
+<p class="lead text-info">Export contains @Model.Jobs.Count job@(Model.Jobs.Count != 1 ? "s" : "") and @Model.Messages.Count message@(Model.Messages.Count != 1 ? "s" : "") 
+	between @Model.StartDate.ToLocalTime().ToString("yyyy-MM-dd") and @Model.FinishDate.ToLocalTime().ToString("yyyy-MM-dd").</p>
+
+<h2>Jobs</h2>
 
 <table class="table table-striped results-overview">
 	<thead>
 		<tr>
 			<th class="job-number">Job Number</th>
 			<th class="date-time">Date/Time</th>
-			<th class="message">Message</th>
+			<th class="message">Details</th>
 		</tr>
 	</thead>
 	<tbody>
-		@foreach(var message in Model.Messages)
+		@foreach(var message in Model.Jobs)
 		{
 			<tr>
 				<td>@message.JobNumber</td>
@@ -29,10 +32,10 @@
 	</tbody>
 </table>
 
-@foreach (var message in Model.Messages)
+@foreach (var message in Model.Jobs)
 {
 	<div class="job-message-detail" style="page-break-before: always">
-		<h2 class="text-primary">@(!String.IsNullOrEmpty(message.JobNumber) ? message.JobNumber : "No job number")</h2>
+		<h3 class="text-primary">@message.JobNumber</h3>
 		<p class="text-muted">Time: @message.Timestamp.ToLocalTime().ToString("dd/MM/yyyy HH:mm:ss") | Priority: @message.Priority.GetEnumDescription() | Capcode: @message.Capcode | Job id: @message.Id</p>
 		<p class="lead">@message.MessageContent</p>
 
@@ -144,3 +147,23 @@
 
 	</div>
 }
+
+<h2 style="page-break-before: always">Messages</h2>
+
+<table class="table table-striped results-overview">
+	<thead>
+		<tr>
+			<th class="date-time">Date/Time</th>
+			<th class="message">Message</th>
+		</tr>
+	</thead>
+	<tbody>
+		@foreach (var message in Model.Messages)
+		{
+			<tr>
+				<td>@message.Timestamp.ToLocalTime().ToString("dd/MM/yyyy HH:mm:ss")</td>
+				<td>@message.MessageContent</td>
+			</tr>
+		}
+	</tbody>
+</table>

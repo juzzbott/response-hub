@@ -465,7 +465,8 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 				Timestamp = dbObject.Timestamp,
 				Notes = dbObject.Notes,
 				ProgressUpdates = dbObject.ProgressUpdates,
-				AttachmentIds = dbObject.AttachmentIds
+				AttachmentIds = dbObject.AttachmentIds,
+				Type = dbObject.Type
 				
 			};
 
@@ -503,7 +504,8 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 				Timestamp = modelObject.Timestamp,
 				Notes = modelObject.Notes,
 				ProgressUpdates = modelObject.ProgressUpdates,
-				AttachmentIds = modelObject.AttachmentIds
+				AttachmentIds = modelObject.AttachmentIds,
+				Type = modelObject.Type
 			};
 
 			// Map the location property
