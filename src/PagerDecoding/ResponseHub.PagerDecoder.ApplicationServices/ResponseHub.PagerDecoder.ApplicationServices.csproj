@@ -91,8 +91,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DecoderStatusService.cs" />
-    <Compile Include="JobMessageSubmitter.cs" />
+    <Compile Include="DistanceUnitType.cs" />
     <Compile Include="MapReferenceCache.cs" />
+    <Compile Include="Parsers\AddressParser.cs" />
     <Compile Include="Parsers\JobMessageParser.cs" />
     <Compile Include="Parsers\PagerMessageParser.cs" />
     <Compile Include="Parsers\PdwLogFileParser.cs" />
@@ -122,10 +123,12 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="address_parser.json" />
     <None Include="app.config">
       <SubType>Designer</SubType>
     </None>
     <None Include="packages.config" />
+    <None Include="Properties\packages.config" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="EmailTemplates\base_template.html">

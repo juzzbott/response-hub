@@ -140,12 +140,28 @@
     <None Include="App.config">
       <SubType>Designer</SubType>
     </None>
+    <Content Include="App.Debug.config">
+      <DependentUpon>App.config</DependentUpon>
+    </Content>
+    <Content Include="App.Test.config">
+      <DependentUpon>App.config</DependentUpon>
+    </Content>
+    <Content Include="App.Staging.config">
+      <DependentUpon>App.config</DependentUpon>
+    </Content>
+    <Content Include="App.Release.config">
+      <DependentUpon>App.config</DependentUpon>
+    </Content>
     <None Include="packages.config" />
     <None Include="Unity.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\ResponseHub.ApplicationServices\ResponseHub.ApplicationServices.csproj">
+      <Project>{a77ef1a1-1492-41ac-b62e-d14f9c01014f}</Project>
+      <Name>ResponseHub.ApplicationServices</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\ResponseHub.Common\ResponseHub.Common.csproj">
       <Project>{64b4f6f9-8e0e-4475-8895-d7d4b0c1da4b}</Project>
       <Name>ResponseHub.Common</Name>

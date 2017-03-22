@@ -1,0 +1,9 @@
+﻿@model Enivate.ResponseHub.UI.Models.Profile.ProfileViewModel
+@{
+    ViewBag.Title = String.Format("{0} - Profile", Model.FullName);
+}
+
+<h1>@Model.FullName</h1>
+
+<p>Member since: @Model.DateCreated.ToLocalTime().ToString("d MMMM, yyyy")</p>
+

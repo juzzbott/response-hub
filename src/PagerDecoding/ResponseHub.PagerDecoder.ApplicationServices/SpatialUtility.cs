@@ -103,6 +103,63 @@ namespace Enivate.ResponseHub.PagerDecoder.ApplicationServices
 			// return the distance
 			return distToCorner;
 		}
+		/// <summary>
+		/// Converts the degree value into a radian value unit.
+		/// </summary>
+		/// <param name="degrees">The degree value to return as radian</param>
+		/// <returns></returns>
+		public static double DegreesToRadians(double degree)
+		{
+			return (degree * Math.PI / 180.0F);
+		}
+
+		/// <summary>
+		/// Converts the radian value into a degree value unit.
+		/// </summary>
+		/// <param name="degrees">The radian value to return as degree</param>
+		/// <returns></returns>
+		public static double RadiansToDegrees(double radian)
+		{
+			return (radian / Math.PI * 180.0F);
+		}
+
+		public static double DistanceBetweenPoints(double lat1, double long1, double lat2, double long2)
+		{
+			return DistanceBetweenPoints(lat1, long1, lat2, long2, DistanceUnitType.Kilometers);
+		}
+
+		public static double DistanceBetweenPoints(double lat1, double long1, double lat2, double long2, DistanceUnitType unitType)
+		{
+
+			// Calculate the theta
+			double theta = long1 - long2;
+
+			// Calculate the distance in radians
+			double dist = Math.Sin(DegreesToRadians(lat1)) * Math.Sin(DegreesToRadians(lat2)) + Math.Cos(DegreesToRadians(lat1)) * Math.Cos(DegreesToRadians(lat2)) * Math.Cos(DegreesToRadians(theta));
+			dist = Math.Acos(dist);
+
+			// Convert distance to degrees
+			dist = RadiansToDegrees(dist);
+
+			// Add earth diameter
+			dist = dist * 60 * 1.1515;
+
+			switch (unitType)
+			{
+
+				case DistanceUnitType.Kilometers:
+					return dist * 1.609344;
+
+				case DistanceUnitType.NauticalMiles:
+					return dist * 0.8684;
+
+				case DistanceUnitType.Miles:
+					return dist;
+					
+			}
+
+			return dist;
+		}
 
 	}
 }

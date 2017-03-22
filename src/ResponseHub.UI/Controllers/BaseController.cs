@@ -48,10 +48,8 @@ namespace Enivate.ResponseHub.UI.Controllers
 			}
 		}
 
-		public IdentityUser CurrentUser { get; set; }
-
 		public BaseController()
-		{
+		{ 
 		}
 
 		public async Task<IdentityUser> GetCurrentUser()

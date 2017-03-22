@@ -20,3 +20,7 @@ db.users.createIndex({ FirstName: "text", Surname: "text", EmailAddress: "text" 
 // Events
 db.events.createIndex({ "GroupId": 1 }, { background: true });
 db.events.createIndex({ Name: "text" }, { background: true, name: "events_text" });
+
+// Addresses
+db.addresses.createIndex({ "Coordinates": "2dsphere" }, { background: true, name: "Coords_2dsphere" });
+db.addresses.createIndex({ AddressQueryHash: 1 }, { background: true });

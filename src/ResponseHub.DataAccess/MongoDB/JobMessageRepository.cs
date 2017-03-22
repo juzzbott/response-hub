@@ -397,6 +397,48 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 
 		#endregion
 
+		/// <summary>
+		/// Gets the job messages between dates for the specified capcodes and message types.
+		/// </summary>
+		/// <param name="capcodes"></param>
+		/// <param name="messageTypes"></param>
+		/// <param name="dateFrom"></param>
+		/// <param name="dateTo"></param>
+		/// <returns></returns>
+		public async Task<IList<JobMessage>> GetJobMessagesBetweenDates(IEnumerable<string> capcodes, MessageType messageTypes, DateTime dateFrom, DateTime dateTo)
+		{
+			// Create the filter and sort
+			FilterDefinitionBuilder<JobMessageDto> builder = Builders<JobMessageDto>.Filter;
+			FilterDefinition<JobMessageDto> filter = builder.In(i => i.Capcode, capcodes);
+
+			// Add the message type to the filter.
+			if (messageTypes.HasFlag(MessageType.Job))
+			{
+				filter = filter & builder.Ne(i => i.Priority, MessagePriority.Administration);
+			}
+			else if (messageTypes.HasFlag(MessageType.Message))
+			{
+				filter = filter & builder.Eq(i => i.Priority, MessagePriority.Administration);
+			}
+
+			// Add the date filters
+			filter = filter & builder.Gte(i => i.Timestamp, dateFrom);
+			filter = filter & builder.Lte(i => i.Timestamp, dateTo);
+
+			// Create the sort filter
+			SortDefinition<JobMessageDto> sort = Builders<JobMessageDto>.Sort.Descending(i => i.Timestamp);
+
+			// Find the job messages by capcode
+			IList<JobMessageDto> results = await Collection.Find(filter).Sort(sort).Limit(99999).ToListAsync();
+
+			// Map the dto objects to model objects and return
+			List<JobMessage> messages = new List<JobMessage>();
+			messages.AddRange(results.Select(i => MapDbObjectToModel(i)));
+
+			// return the messages
+			return messages;
+		}
+
 		#region Mappers
 
 		/// <summary>
@@ -489,7 +531,7 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 
 			LocationInfo model = new LocationInfo()
 			{
-				AddressInfo = dbObject.AddressInfo,
+				Address = dbObject.Address,
 				GridSquare = dbObject.GridSqaure,
 				GridReference = dbObject.GridReference,
 				MapPage = dbObject.MapPage,
@@ -521,7 +563,7 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 
 			LocationInfoDto dbObject = new LocationInfoDto()
 			{
-				AddressInfo = modelObject.AddressInfo,
+				Address = modelObject.Address,
 				GridSqaure = modelObject.GridSquare,
 				GridReference = modelObject.GridReference,
 				MapPage = modelObject.MapPage,

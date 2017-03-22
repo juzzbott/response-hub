@@ -247,5 +247,6 @@ node_modules
 
 # ResponseHub specific
 tools/Configurations/ResponseHubConfigs
+tools/Configurations/ResponseHubService/ResponseHubServiceConfigs
 src/ResponseHub.UI/App_Data/Cache/
 src/ResponseHub.UI/App_Data/Logs/

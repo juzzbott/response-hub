@@ -110,6 +110,25 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 		}
 
 		/// <summary>
+		/// Determines if the invalid message already exists in the list.
+		/// </summary>
+		/// <param name="invalidMessage"></param>
+		/// <returns></returns>
+		public async Task<bool> InvalidMessageExists(string invalidMessage)
+		{
+
+			// Build the query
+			FilterDefinition<DecoderStatus> filter = Builders<DecoderStatus>.Filter.ElemMatch(i => i.InvalidMessages, p => p.Value.ToUpper() == invalidMessage.ToUpper());
+
+			// Count the results
+			long count = await _collection.CountAsync(filter);
+
+			// return true if there is a result.
+			return count > 0;
+
+		}
+
+		/// <summary>
 		/// Clears the list of invalid messages from the database.
 		/// </summary>
 		/// <returns></returns>
