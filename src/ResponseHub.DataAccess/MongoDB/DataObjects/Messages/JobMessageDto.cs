@@ -32,6 +32,8 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB.DataObjects.Messages
 
 		public IList<Guid> AttachmentIds { get; set; }
 
+		public MessageType Type { get; set; }
+
 		public JobMessageDto()
 		{
 

@@ -7,7 +7,7 @@
 
 <h1 class="text-primary">Job data report</h1>
 
-<p class="lead text-info">Export contains @Model.Jobs.Count job@(Model.Jobs.Count != 1 ? "s" : "") and @Model.Messages.Count job@(Model.Messages.Count != 1 ? "s" : "") 
+<p class="lead text-info">Export contains @Model.Jobs.Count job@(Model.Jobs.Count != 1 ? "s" : "") and @Model.Messages.Count message@(Model.Messages.Count != 1 ? "s" : "") 
 	between @Model.StartDate.ToLocalTime().ToString("yyyy-MM-dd") and @Model.FinishDate.ToLocalTime().ToString("yyyy-MM-dd").</p>
 
 <h2>Jobs</h2>
@@ -35,7 +35,7 @@
 @foreach (var message in Model.Jobs)
 {
 	<div class="job-message-detail" style="page-break-before: always">
-		<h3 class="text-primary">@(!String.IsNullOrEmpty(message.JobNumber) ? message.JobNumber : "No job number")</h3>
+		<h3 class="text-primary">@message.JobNumber</h3>
 		<p class="text-muted">Time: @message.Timestamp.ToLocalTime().ToString("dd/MM/yyyy HH:mm:ss") | Priority: @message.Priority.GetEnumDescription() | Capcode: @message.Capcode | Job id: @message.Id</p>
 		<p class="lead">@message.MessageContent</p>
 
