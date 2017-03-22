@@ -16,7 +16,7 @@ using Enivate.ResponseHub.Model.Messages.Interface;
 using Enivate.ResponseHub.Model.Spatial;
 using Enivate.ResponseHub.Model.Groups.Interface;
 
-//using EvoPdf;
+using EvoPdf;
 
 //using iTextSharp;
 //using iTextSharp.text;
@@ -27,15 +27,15 @@ using Enivate.ResponseHub.Model.Groups.Interface;
 //using iTextSharp.tool.xml.pipeline.end;
 //using iTextSharp.tool.xml.parser;
 
-using TheArtOfDev.HtmlRenderer.PdfSharp;
-using PdfSharp.Pdf;
+//using TheArtOfDev.HtmlRenderer.PdfSharp;
+//using PdfSharp.Pdf;
 
 namespace Enivate.ResponseHub.ApplicationServices
 {
 	public class DataExportService : IDataExportService
 	{
 
-
+		private const string EvoPdfLicenseKey = "SsTXxdDVxdbcxdDL1cXW1MvU18vc3Nzc";
 
 		protected IJobMessageService JobMessageService
 		{
@@ -95,35 +95,36 @@ namespace Enivate.ResponseHub.ApplicationServices
 			//	return ms.ToArray();
 			//}
 
-			//HtmlToPdfConverter converter = new HtmlToPdfConverter();
-			//
-			////set the PDF document margins
-			//converter.PdfDocumentOptions.LeftMargin = 30;
-			//converter.PdfDocumentOptions.RightMargin = 30;
-			//converter.PdfDocumentOptions.TopMargin = 30;
-			//converter.PdfDocumentOptions.BottomMargin = 30;
-			//
-			//// embed the true type fonts in the generated PDF document
-			//converter.PdfDocumentOptions.EmbedFonts = true;
-			//
-			//// compress the images in PDF with JPEG to reduce the PDF document size
-			//converter.PdfDocumentOptions.JpegCompressionEnabled = false;
-			//
-			//
-			//
-			//return converter.ConvertHtml(await BuildHtmlExportFile(groupId, dateFrom, dateTo), ConfigurationManager.AppSettings["BaseWebsiteUrl"]);
+			HtmlToPdfConverter converter = new HtmlToPdfConverter();
 
-			string htmlContent = await BuildHtmlExportFile(groupId, dateFrom, dateTo);
+			//set the PDF document margins
+			converter.LicenseKey = EvoPdfLicenseKey;
+			converter.PdfDocumentOptions.LeftMargin = 30;
+			converter.PdfDocumentOptions.RightMargin = 30;
+			converter.PdfDocumentOptions.TopMargin = 30;
+			converter.PdfDocumentOptions.BottomMargin = 30;
+			
+			// embed the true type fonts in the generated PDF document
+			converter.PdfDocumentOptions.EmbedFonts = true;
+			
+			// compress the images in PDF with JPEG to reduce the PDF document size
+			converter.PdfDocumentOptions.JpegCompressionEnabled = false;
+			
+			
+			
+			return converter.ConvertHtml(await BuildHtmlExportFile(groupId, dateFrom, dateTo), ConfigurationManager.AppSettings["BaseWebsiteUrl"]);
 
-			byte[] pdfBytes = null;
-			using (MemoryStream ms = new MemoryStream())
-			{
-				// Generate the pdf document
-				PdfDocument document = PdfGenerator.GeneratePdf(htmlContent, PdfSharp.PageSize.A4, 30);
-				document.Save(ms);
-				pdfBytes = ms.ToArray();
-			}
-			return pdfBytes;
+			//string htmlContent = await BuildHtmlExportFile(groupId, dateFrom, dateTo);
+			//
+			//byte[] pdfBytes = null;
+			//using (MemoryStream ms = new MemoryStream())
+			//{
+			//	// Generate the pdf document
+			//	PdfDocument document = PdfGenerator.GeneratePdf(htmlContent, PdfSharp.PageSize.A4, 30);
+			//	document.Save(ms);
+			//	pdfBytes = ms.ToArray();
+			//}
+			//return pdfBytes;
 			
 		}
 
