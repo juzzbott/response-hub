@@ -324,6 +324,7 @@
     <Content Include="assets\js\modules\password-strength.js" />
     <Content Include="assets\js\modules\resources.js" />
     <Content Include="assets\js\modules\search.js" />
+    <Content Include="assets\js\modules\sign-on.js" />
     <Content Include="assets\js\modules\wallboard.js" />
     <Content Include="assets\js\modules\weather-centre.js" />
     <Content Include="assets\js\modules\_core.js" />

@@ -1,6 +1,7 @@
 ﻿@model Enivate.ResponseHub.UI.Models.SignOn.SignOnViewModel
 @{
     ViewBag.Title = "Sign on";
+	ViewBag.BodyClass = "sign-on";
 }
 
 <h1>@ViewBag.Title</h1>
@@ -62,11 +63,12 @@
 				@Html.TextBoxFor(model => model.OperationDescription, new { @class = "form-control", placeholder = "Rescue, tree down, job number..." })
 			</div>
 		</div>
+		@Html.HiddenFor(model => model.OperationJobId)
 		<div class="sign-on-operation">
 			@foreach (Tuple<Guid, string, string> job in Model.AvailableOperations)
 			{
 				<div class="radio">
-					<label onclick="responseHub.signOn.setOperationJobNumber('@job.Item3');">
+					<label onclick="responseHub.signOn.setOperationJobNumber('@job.Item3', '@job.Item1');">
 						<input type="radio" name="OperationList" id="Operation_@job.Item1" value="@job.Item1">
 						@job.Item2
 					</label>
