@@ -14,7 +14,7 @@
 		"bootstrap": "3.3.6",
 		"bootstrap-select": "1.10.0",
 		"moment": "~2.11.1",
-		"fontawesome": "~4.6.3",
+		"fontawesome": "~4.7.0",
 		"jquery-validation": "~1.14.0",
 		"jquery-validation-unobtrusive": "~3.2.5",
 		"dropzone": "~4.3.0",
