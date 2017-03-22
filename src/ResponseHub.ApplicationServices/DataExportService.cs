@@ -18,18 +18,6 @@ using Enivate.ResponseHub.Model.Groups.Interface;
 
 using EvoPdf;
 
-//using iTextSharp;
-//using iTextSharp.text;
-//using iTextSharp.text.pdf;
-//using iTextSharp.tool.xml;
-//using iTextSharp.tool.xml.pipeline.html;
-//using iTextSharp.tool.xml.pipeline.css;
-//using iTextSharp.tool.xml.pipeline.end;
-//using iTextSharp.tool.xml.parser;
-
-//using TheArtOfDev.HtmlRenderer.PdfSharp;
-//using PdfSharp.Pdf;
-
 namespace Enivate.ResponseHub.ApplicationServices
 {
 	public class DataExportService : IDataExportService
@@ -59,42 +47,8 @@ namespace Enivate.ResponseHub.ApplicationServices
 
 		public async Task<byte[]> BuildPdfExportFile(Guid groupId, DateTime dateFrom, DateTime dateTo)
 		{
-			// Create the document
-			//Document doc = new Document(new Rectangle(PageSize.A4), 30, 30, 30, 30);
-			//using (MemoryStream ms = new MemoryStream())
-			//{
-			//
-			//	// Create the pdf writer
-			//	PdfWriter writer = PdfWriter.GetInstance(doc, ms);
-			//	writer.CloseStream = false;
-			//
-			//	// Create the HTML context
-			//	HtmlPipelineContext htmlContext = new HtmlPipelineContext(null);
-			//	htmlContext.SetTagFactory(iTextSharp.tool.xml.html.Tags.GetHtmlTagProcessorFactory());
-			//
-			//	// Generate the CSS resolvers
-			//	ICSSResolver cssResolver = XMLWorkerHelper.GetInstance().GetDefaultCssResolver(false);
-			//	cssResolver.AddCssFile(System.Web.HttpContext.Current.Server.MapPath("~/assets/css/framework.css"), true);
-			//	cssResolver.AddCssFile(System.Web.HttpContext.Current.Server.MapPath("~/assets/css/response-hub.css"), true);
-			//	CssResolverPipeline pipeline = new CssResolverPipeline(cssResolver, new HtmlPipeline(htmlContext, new PdfWriterPipeline(doc, writer)));
-			//
-			//	// Create the XML Worker and parser
-			//	XMLWorker worker = new XMLWorker(pipeline, true);
-			//	XMLParser parser = new XMLParser(worker);
-			//
-			//	// Open the document
-			//	doc.Open();
-			//
-			//	// Create the html writer
-			//	TextReader reader = new StringReader(await GetReportHtml(groupId, dateFrom, dateTo));
-			//	parser.Parse(reader);
-			//	
-			//	// Close the document
-			//	doc.Close();
-			//
-			//	return ms.ToArray();
-			//}
 
+			// Create the converter
 			HtmlToPdfConverter converter = new HtmlToPdfConverter();
 
 			//set the PDF document margins
@@ -110,21 +64,8 @@ namespace Enivate.ResponseHub.ApplicationServices
 			// compress the images in PDF with JPEG to reduce the PDF document size
 			converter.PdfDocumentOptions.JpegCompressionEnabled = false;
 			
-			
-			
+			// Return the pdf bytes
 			return converter.ConvertHtml(await BuildHtmlExportFile(groupId, dateFrom, dateTo), ConfigurationManager.AppSettings["BaseWebsiteUrl"]);
-
-			//string htmlContent = await BuildHtmlExportFile(groupId, dateFrom, dateTo);
-			//
-			//byte[] pdfBytes = null;
-			//using (MemoryStream ms = new MemoryStream())
-			//{
-			//	// Generate the pdf document
-			//	PdfDocument document = PdfGenerator.GeneratePdf(htmlContent, PdfSharp.PageSize.A4, 30);
-			//	document.Save(ms);
-			//	pdfBytes = ms.ToArray();
-			//}
-			//return pdfBytes;
 			
 		}
 
