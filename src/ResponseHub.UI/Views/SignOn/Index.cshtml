@@ -44,11 +44,11 @@
 		<div class="row">
 			<div class="col-sm-12">
 				<label class="radio-inline">
-					<input type="radio" name="SignOnType" id="SignOnType1" value="1" checked="checked">
+					<input type="radio" name="SignOnType" id="SignOnType1" value="1" checked="checked" onclick="responseHub.signOn.showOperationDetails();">
 					Operation
 				</label>
 				<label class="radio-inline">
-					<input type="radio" name="SignOnType" id="SignOnType2" value="2">
+					<input type="radio" name="SignOnType" id="SignOnType2" value="2" onclick="responseHub.signOn.showTrainingDetails();">
 					Training
 				</label>
 			</div>
@@ -57,6 +57,7 @@
 	</div>
 
 	<div id="operation-task" class="form-group">
+		<p><strong>Operation details</strong></p>
 		<p>Enter a description for the operation or select one below:</p>
 		<div class="row">
 			<div class="col-sm-8 col-md-6 col-lg-4">
@@ -75,6 +76,20 @@
 				</div>
 			}
 
+		</div>
+	</div>
+
+	<div id="training-task" class="form-group hidden">
+		<p><strong>Training details</strong></p>
+		<p>Select a training type below:</p>
+
+		<div class="">
+			<label for="Service">Training type *</label>
+			<div class="row">
+				<div class="col-sm-8 col-md-6 col-lg-4">
+					@Html.DropDownListFor(model => model.TrainingType, Model.AvailableTrainingTypes, new { @class = "form-control" })
+				</div>
+			</div>
 		</div>
 	</div>
 

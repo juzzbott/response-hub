@@ -96,6 +96,9 @@
     <Compile Include="Messages\MessageType.cs" />
     <Compile Include="PagedResultSet.cs" />
     <Compile Include="Parsers\AddressParserData.cs" />
+    <Compile Include="SignOn\SignOnEntry.cs" />
+    <Compile Include="SignOn\SignOnType.cs" />
+    <Compile Include="SignOn\TrainingType.cs" />
     <Compile Include="Spatial\AddressInfo.cs" />
     <Compile Include="Spatial\LocationInfo.cs" />
     <Compile Include="Messages\JobMessage.cs" />

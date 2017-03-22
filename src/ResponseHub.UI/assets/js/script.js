@@ -2127,6 +2127,18 @@ responseHub.signOn = (function () {
 		$('#OperationJobId').val(jobId);
 	}
 
+	// Shows the elements for operation details
+	function showOperationDetails() {
+		$('#operation-task').removeClass('hidden');
+		$('#training-task').addClass('hidden');
+	}
+
+	// Shows the elements for training details
+	function showTrainingDetails() {
+		$('#training-task').removeClass('hidden');
+		$('#operation-task').addClass('hidden');
+	}
+
 	// Binds the UI elements.
 	function bindUI() {
 
@@ -2155,7 +2167,9 @@ responseHub.signOn = (function () {
 	bindUI();
 
 	return {
-		setOperationJobNumber: setOperationJobNumber
+		setOperationJobNumber: setOperationJobNumber,
+		showOperationDetails: showOperationDetails,
+		showTrainingDetails: showTrainingDetails
 	}
 
 })();
