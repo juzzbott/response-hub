@@ -31,6 +31,22 @@ namespace Enivate.ResponseHub.Model.Messages
 
 		public IList<Guid> AttachmentIds { get; set; }
 
+		public MessageType Type
+		{
+			get
+			{
+				switch (Priority)
+				{
+					case MessagePriority.Emergency:
+					case MessagePriority.NonEmergency:
+						return MessageType.Job;
+
+					default:
+						return MessageType.Message;
+				}
+			}
+		}
+
 		public JobMessage()
 		{
 
