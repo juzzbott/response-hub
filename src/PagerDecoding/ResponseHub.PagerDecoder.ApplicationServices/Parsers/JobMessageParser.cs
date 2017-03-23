@@ -93,6 +93,9 @@ namespace Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers
 			// Get the job number from the message.
 			msg.JobNumber = GetJobNumber(msg.MessageContent);
 
+			// Set the message type
+			msg.Type = (!String.IsNullOrEmpty(msg.JobNumber) ? MessageType.Job : MessageType.Message);
+
 			// Get any map references from the message
 			msg.Location = GetLocation(msg.MessageContent);
 
@@ -322,7 +325,7 @@ namespace Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers
 		}
 
 		/// <summary>
-		/// 
+		/// Gets the job number from the message content.
 		/// </summary>
 		/// <param name="messageBody"></param>
 		/// <returns></returns>
