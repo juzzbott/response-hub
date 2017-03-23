@@ -1,21 +1,21 @@
-﻿using Enivate.ResponseHub.DataAccess.Interface;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using Enivate.ResponseHub.Model.SignOn.Interface;
-using Enivate.ResponseHub.Model.SignOn;
+using Enivate.ResponseHub.DataAccess.Interface;
+using Enivate.ResponseHub.Model.SignIn;
+using Enivate.ResponseHub.Model.SignIn.Interface;
 
 namespace Enivate.ResponseHub.ApplicationServices
 {
-	public class SignOnEntryService : ISignOnEntryService
+	public class SignInEntryService : ISignInEntryService
 	{
 
-		private ISignOnEntryRepository _repository;
+		private ISignInEntryRepository _repository;
 
-		public SignOnEntryService(ISignOnEntryRepository repository)
+		public SignInEntryService(ISignInEntryRepository repository)
 		{
 			_repository = repository;
 		}
@@ -25,7 +25,7 @@ namespace Enivate.ResponseHub.ApplicationServices
 			await _repository.SignUserOut(signOnId, signOutTime);
 		}
 
-		public async Task SignUserIn(SignOnEntry signOn)
+		public async Task SignUserIn(SignInEntry signOn)
 		{
 			await _repository.SignUserIn(signOn);
 		}

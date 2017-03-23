@@ -210,7 +210,7 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 				if (groupAdmin == null)
 				{
 					ModelState.AddModelError("", "There was a system error creating the group.");
-					await Log.Error(String.Format("Unable to create group. Existing user with email ''  could not be found.", createGroupModel.GroupAdministratorEmail));
+					await Log.Error(String.Format("Unable to create group. Existing user with email '{0}' could not be found.", createGroupModel.GroupAdministratorEmail));
 					return View("ConfirmUser", model);
 				}
 			}

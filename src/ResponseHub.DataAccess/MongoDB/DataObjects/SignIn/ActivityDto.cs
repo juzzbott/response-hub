@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 using MongoDB.Bson.Serialization.Attributes;
 
-namespace Enivate.ResponseHub.DataAccess.MongoDB.DataObjects.SignOn
+namespace Enivate.ResponseHub.DataAccess.MongoDB.DataObjects.SignIn
 {
 
 	[BsonKnownTypes(typeof(OperationActivityDto), typeof(TrainingActivityDto))]

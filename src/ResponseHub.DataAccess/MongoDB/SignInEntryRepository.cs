@@ -5,15 +5,15 @@ using System.Text;
 using System.Threading.Tasks;
 
 using Enivate.ResponseHub.DataAccess.Interface;
-using Enivate.ResponseHub.Model.SignOn;
+using Enivate.ResponseHub.Model.SignIn;
 
 using MongoDB.Driver;
-using Enivate.ResponseHub.DataAccess.MongoDB.DataObjects.SignOn;
+using Enivate.ResponseHub.DataAccess.MongoDB.DataObjects.SignIn;
 
 namespace Enivate.ResponseHub.DataAccess.MongoDB
 {
 	[MongoCollectionName("user_sign_ins")]
-	public class SignOnEntryRepository : MongoRepository<SignOnEntryDto>, ISignOnEntryRepository
+	public class SignInEntryRepository : MongoRepository<SignInEntryDto>, ISignInEntryRepository
 	{
 
 		/// <summary>
@@ -25,10 +25,10 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 		public async Task SignUserOut(Guid signOnId, DateTime signOutTime)
 		{
 			// Get the filter based on id
-			FilterDefinition<SignOnEntryDto> filter = Builders<SignOnEntryDto>.Filter.Eq(i => i.Id, signOnId);
+			FilterDefinition<SignInEntryDto> filter = Builders<SignInEntryDto>.Filter.Eq(i => i.Id, signOnId);
 
 			// Set the update
-			UpdateDefinition<SignOnEntryDto> update = Builders<SignOnEntryDto>.Update.Set(i => i.SignOutTime, signOutTime);
+			UpdateDefinition<SignInEntryDto> update = Builders<SignInEntryDto>.Update.Set(i => i.SignOutTime, signOutTime);
 
 			// Perform the update
 			await Collection.UpdateOneAsync(filter, update);
@@ -39,7 +39,7 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 		/// </summary>
 		/// <param name="signOn">The sign on entry to store in the database.</param>
 		/// <returns></returns>
-		public async Task SignUserIn(SignOnEntry signOn)
+		public async Task SignUserIn(SignInEntry signOn)
 		{
 			await Add(MapModelObjectToDb(signOn));
 		}
@@ -51,7 +51,7 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 		/// </summary>
 		/// <param name="dbObject">The sign on entry db object</param>
 		/// <returns>The mapped SignOnEntry model object.</returns>
-		private SignOnEntry MapDbObjectToModel(SignOnEntryDto dbObject)
+		private SignInEntry MapDbObjectToModel(SignInEntryDto dbObject)
 		{
 			// if db object is null, return null
 			if (dbObject == null)
@@ -60,13 +60,13 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 			}
 
 			// return the mapped object
-			return new SignOnEntry()
+			return new SignInEntry()
 			{
 				ActivityDetails = MapActivityDbObjectToModel(dbObject.ActivityDetails),
 				GroupId = dbObject.GroupId,
 				Id = dbObject.Id,
 				SignInTime = dbObject.SignInTime,
-				SignOnType = dbObject.SignOnType,
+				SignInType = dbObject.SignInType,
 				SignOutTime = dbObject.SignOutTime,
 				UserId = dbObject.UserId
 			};
@@ -77,7 +77,7 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 		/// </summary>
 		/// <param name="modelObject">The sign on entry db object</param>
 		/// <returns>The mapped SignOnEntry model object.</returns>
-		private SignOnEntryDto MapModelObjectToDb(SignOnEntry modelObject)
+		private SignInEntryDto MapModelObjectToDb(SignInEntry modelObject)
 		{
 			// if db object is null, return null
 			if (modelObject == null)
@@ -86,13 +86,13 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 			}
 
 			// return the mapped object
-			return new SignOnEntryDto()
+			return new SignInEntryDto()
 			{
 				ActivityDetails = MapActivityModelToDbObject(modelObject.ActivityDetails),
 				GroupId = modelObject.GroupId,
 				Id = modelObject.Id,
 				SignInTime = modelObject.SignInTime,
-				SignOnType = modelObject.SignOnType,
+				SignInType = modelObject.SignInType,
 				SignOutTime = modelObject.SignOutTime,
 				UserId = modelObject.UserId
 			};

@@ -4,9 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Enivate.ResponseHub.Model.SignOn
+using Enivate.ResponseHub.Model.SignIn;
+
+namespace Enivate.ResponseHub.DataAccess.MongoDB.DataObjects.SignIn
 {
-	public class TrainingActivity : Activity
+	public class TrainingActivityDto : ActivityDto
 	{
 
 		public TrainingType TrainingType { get; set; }

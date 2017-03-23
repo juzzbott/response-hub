@@ -218,7 +218,7 @@
     <Compile Include="Controllers\MessagesController.cs" />
     <Compile Include="Controllers\ProfileController.cs" />
     <Compile Include="Controllers\SearchController.cs" />
-    <Compile Include="Controllers\SignOnController.cs" />
+    <Compile Include="Controllers\SignInController.cs" />
     <Compile Include="Controllers\WeatherCentreController.cs" />
     <Compile Include="Filters\SystemAdminUserRedirectAttribute.cs" />
     <Compile Include="Helpers\JobMessageModelHelper.cs" />
@@ -271,7 +271,7 @@
     <Compile Include="Models\MyAccount\CreatePasswordViewModel.cs" />
     <Compile Include="Models\MyAccount\LoginViewModel.cs" />
     <Compile Include="Models\Search\SearchViewModel.cs" />
-    <Compile Include="Models\SignOn\SignOnViewModel.cs" />
+    <Compile Include="Models\SignIn\SignInViewModel.cs" />
     <Compile Include="Models\Users\GroupUserViewModel.cs" />
     <Compile Include="Models\Wallboard\WallboardViewModel.cs" />
     <Compile Include="Models\WeatherCentre\RadarLoopViewModel.cs" />
@@ -541,7 +541,8 @@
     <Content Include="Areas\ControlPanel\Views\Groups\ChangeUserRole.cshtml" />
     <Content Include="Areas\ControlPanel\Views\Groups\ConfirmUser.cshtml" />
     <Content Include="Views\Profile\ViewProfile.cshtml" />
-    <Content Include="Views\SignOn\Index.cshtml" />
+    <Content Include="Views\SignIn\Index.cshtml" />
+    <Content Include="Views\SignIn\SignInComplete.cshtml" />
     <None Include="Web.Staging.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

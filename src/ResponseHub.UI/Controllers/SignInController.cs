@@ -12,22 +12,22 @@ using Enivate.ResponseHub.Model.Groups;
 using Enivate.ResponseHub.Model.Groups.Interface;
 using Enivate.ResponseHub.Model.Messages;
 using Enivate.ResponseHub.Model.Messages.Interface;
-using Enivate.ResponseHub.UI.Models.SignOn;
-using Enivate.ResponseHub.Model.SignOn;
-using Enivate.ResponseHub.Model.SignOn.Interface;
+using Enivate.ResponseHub.UI.Models.SignIn;
+using Enivate.ResponseHub.Model.SignIn;
+using Enivate.ResponseHub.Model.SignIn.Interface;
 
 namespace Enivate.ResponseHub.UI.Controllers
 {
 
-	[RoutePrefix("sign-on")]
-    public class SignOnController : BaseController
+	[RoutePrefix("sign-in")]
+    public class SignInController : BaseController
 	{
 
 		protected readonly ICapcodeService CapcodeService = ServiceLocator.Get<ICapcodeService>();
 		protected readonly IJobMessageService JobMessageService = ServiceLocator.Get<IJobMessageService>();
-		protected readonly ISignOnEntryService SignOnService = ServiceLocator.Get<ISignOnEntryService>();
+		protected readonly ISignInEntryService SignOnService = ServiceLocator.Get<ISignInEntryService>();
 
-		// GET: SignOn
+		// GET: Sign-in
 		[Route]
 		public async Task<ActionResult> Index()
 		{
@@ -56,7 +56,7 @@ namespace Enivate.ResponseHub.UI.Controllers
 				availableOperations.Add(new Tuple<Guid, string, string>(message.Id, description, message.JobNumber));
 			}
 
-			SignOnViewModel model = new SignOnViewModel()
+			SignInViewModel model = new SignInViewModel()
 			{
 				StartDate = DateTime.Now.ToString("yyyy-MM-dd"),
 				StartTime = DateTime.Now.ToString("HH:mm"),
@@ -68,25 +68,25 @@ namespace Enivate.ResponseHub.UI.Controllers
 
 		[Route]
 		[HttpPost]
-		public async Task<ActionResult> Index(SignOnViewModel model)
+		public async Task<ActionResult> Index(SignInViewModel model)
 		{
 
 			// Get the dateTime from the model
 			DateTime signInTime = DateTime.ParseExact(String.Format("{0} {1}", model.StartDate, model.StartTime), "yyyy-MM-dd HH:mm", null).ToUniversalTime();
 
 			// Create the sign on entry from the model
-			SignOnEntry signOn = new SignOnEntry()
+			SignInEntry signOn = new SignInEntry()
 			{
 				UserId = UserId,
 				GroupId = Guid.Empty,
 				SignInTime = signInTime,
-				SignOnType = model.SignOnType
+				SignInType = model.SignOnType
 			};
 
 			// Set the specific 
 			switch(model.SignOnType)
 			{
-				case SignOnType.Operations:
+				case SignInType.Operations:
 					signOn.ActivityDetails = new OperationActivity()
 					{
 						Description = model.OperationDescription,
@@ -94,7 +94,7 @@ namespace Enivate.ResponseHub.UI.Controllers
 					};
 					break;
 
-				case SignOnType.Training:
+				case SignInType.Training:
 					signOn.ActivityDetails = new TrainingActivity()
 					{
 						OtherDescription = model.TrainingTypeOther,
@@ -103,11 +103,29 @@ namespace Enivate.ResponseHub.UI.Controllers
 					break;
 			}
 
-			// Add the sign in to the database
-			await SignOnService.SignUserIn(signOn);
+			try
+			{
+
+				// Add the sign in to the database
+				await SignOnService.SignUserIn(signOn);
 
 
-			return View(model);
+				return new RedirectResult("/sign-in/complete");
+
+			}
+			catch (Exception ex)
+			{
+				// Display and log the exception.
+				ModelState.AddModelError("", "There was a system error signing you in.");
+				await Log.Error(String.Format("Unable to sign user '{0}' in. Message: {1}", UserId, ex.Message), ex);
+				return View(model);
+			}
+		}
+
+		[Route("complete")]	
+		public ActionResult SignInComplete()
+		{
+			return View();
 		}
     }
 }

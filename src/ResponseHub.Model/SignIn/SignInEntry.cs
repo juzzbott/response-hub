@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Enivate.ResponseHub.Model.SignOn
+namespace Enivate.ResponseHub.Model.SignIn
 {
-	public class SignOnEntry : IEntity
+	public class SignInEntry : IEntity
 	{
 
 		public Guid Id { get; set; }
@@ -19,11 +19,11 @@ namespace Enivate.ResponseHub.Model.SignOn
 
 		public DateTime SignOutTime { get; set; }
 
-		public SignOnType SignOnType { get; set; }
+		public SignInType SignInType { get; set; }
 
 		public Activity ActivityDetails { get; set; }
 
-		public SignOnEntry()
+		public SignInEntry()
 		{
 			Id = Guid.NewGuid();
 		}

@@ -4,14 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using Enivate.ResponseHub.Model.SignOn;
-
-namespace Enivate.ResponseHub.DataAccess.Interface
+namespace Enivate.ResponseHub.Model.SignIn.Interface
 {
-	public interface ISignOnEntryRepository
+	public interface ISignInEntryService
 	{
 
-		Task SignUserIn(SignOnEntry signOn);
+		Task SignUserIn(SignInEntry signOn);
 
 		Task SignUserOut(Guid signOnId, DateTime signOutTime);
 

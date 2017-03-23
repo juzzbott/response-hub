@@ -1,15 +1,16 @@
-﻿using Enivate.ResponseHub.Common.Extensions;
-using Enivate.ResponseHub.Model.SignOn;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 
-namespace Enivate.ResponseHub.UI.Models.SignOn
+using Enivate.ResponseHub.Common.Extensions;
+using Enivate.ResponseHub.Model.SignIn;
+
+namespace Enivate.ResponseHub.UI.Models.SignIn
 {
-	public class SignOnViewModel
+	public class SignInViewModel
 	{
 
 		[Required(ErrorMessage = "Please ensure you have selected a date.")]
@@ -19,7 +20,7 @@ namespace Enivate.ResponseHub.UI.Models.SignOn
 		public string StartTime { get; set; }
 
 		[Required(ErrorMessage = "You must select a sign on type.")]
-		public SignOnType SignOnType { get; set; }
+		public SignInType SignOnType { get; set; }
 
 		public string OperationDescription { get; set; }
 
@@ -33,7 +34,7 @@ namespace Enivate.ResponseHub.UI.Models.SignOn
 
 		public IList<SelectListItem> AvailableTrainingTypes { get; set; }
 
-		public SignOnViewModel()
+		public SignInViewModel()
 		{
 			AvailableOperations = new List<Tuple<Guid, string, string>>();
 			AvailableTrainingTypes = new List<SelectListItem>();

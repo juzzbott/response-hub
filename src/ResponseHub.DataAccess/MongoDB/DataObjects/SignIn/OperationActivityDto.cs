@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Enivate.ResponseHub.DataAccess.MongoDB.DataObjects.SignOn
+namespace Enivate.ResponseHub.DataAccess.MongoDB.DataObjects.SignIn
 {
 	public class OperationActivityDto : ActivityDto
 	{

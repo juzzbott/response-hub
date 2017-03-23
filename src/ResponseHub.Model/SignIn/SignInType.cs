@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Enivate.ResponseHub.Model.SignOn
+namespace Enivate.ResponseHub.Model.SignIn
 {
-	public enum SignOnType
+	public enum SignInType
 	{
 
 		Operations = 1,
