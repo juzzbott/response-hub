@@ -25,7 +25,8 @@
 
 		// Set the StartTime time picker
 		if ($('body.sign-on').length > 0) {	
-			console.log('sign-on');
+
+			// Bind the time picker
 			$('#StartTime').datetimepicker({
 				format: 'HH:mm',
 				icons: {
@@ -38,6 +39,18 @@
 					today: 'fa fa-fw fa-bullseye',
 					clear: 'fa fa-fw fa-trash-o',
 					close: 'fa fa-fw fa-times'
+				}
+			});
+
+			// Bind the "TrainingOther" option to show the textbox
+			$('#TrainingType').on('change', function () {
+				if ($(this).val() == "99")
+				{
+					$('.training-type-other').removeClass('hidden');
+				}
+				else
+				{
+					$('.training-type-other').addClass('hidden');
 				}
 			});
 		}

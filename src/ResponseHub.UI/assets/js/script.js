@@ -119,6 +119,26 @@ var responseHub = (function () {
 
 		});
 
+		// Set the graphic radioes and checkboxes
+		setGraphicRadiosCheckboxes();
+
+	}
+
+	// Create the "graphic radio" and "graphic checkbox" functionality
+	function setGraphicRadiosCheckboxes() {
+		
+		$('.graphic-radio label, .graphic-checkbox label').each(function (index, elem) {
+			$(elem).contents().eq(2).wrap('<span/>');
+		});
+
+		$('.graphic-radio label input[type="radio"]').each(function (index, elem) {
+			$(elem).after('<i class="fa fa-circle-o"></i><i class="fa fa-dot-circle-o"></i>');
+		});
+
+		$('.graphic-checkbox label input[type="checkbox"]').each(function (index, elem) {
+			$(elem).after('<i class="fa fa-fw fa-square-o"></i><i class="fa  fa-fw fa-check-square-o"></i>');
+		});
+
 	}
 
 	// Bind the modal
@@ -2144,7 +2164,8 @@ responseHub.signOn = (function () {
 
 		// Set the StartTime time picker
 		if ($('body.sign-on').length > 0) {	
-			console.log('sign-on');
+
+			// Bind the time picker
 			$('#StartTime').datetimepicker({
 				format: 'HH:mm',
 				icons: {
@@ -2157,6 +2178,18 @@ responseHub.signOn = (function () {
 					today: 'fa fa-fw fa-bullseye',
 					clear: 'fa fa-fw fa-trash-o',
 					close: 'fa fa-fw fa-times'
+				}
+			});
+
+			// Bind the "TrainingOther" option to show the textbox
+			$('#TrainingType').on('change', function () {
+				if ($(this).val() == "99")
+				{
+					$('.training-type-other').removeClass('hidden');
+				}
+				else
+				{
+					$('.training-type-other').addClass('hidden');
 				}
 			});
 		}

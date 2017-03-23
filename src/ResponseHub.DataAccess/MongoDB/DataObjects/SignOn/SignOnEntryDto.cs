@@ -1,12 +1,14 @@
-﻿using System;
+﻿using Enivate.ResponseHub.Model;
+using Enivate.ResponseHub.Model.SignOn;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Enivate.ResponseHub.Model.SignOn
+namespace Enivate.ResponseHub.DataAccess.MongoDB.DataObjects.SignOn
 {
-	public class SignOnEntry : IEntity
+	public class SignOnEntryDto : IEntity
 	{
 
 		public Guid Id { get; set; }
@@ -21,9 +23,9 @@ namespace Enivate.ResponseHub.Model.SignOn
 
 		public SignOnType SignOnType { get; set; }
 
-		public Activity ActivityDetails { get; set; }
+		public ActivityDto ActivityDetails { get; set; }
 
-		public SignOnEntry()
+		public SignOnEntryDto()
 		{
 			Id = Guid.NewGuid();
 		}

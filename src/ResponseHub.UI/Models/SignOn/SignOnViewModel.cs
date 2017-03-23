@@ -19,7 +19,7 @@ namespace Enivate.ResponseHub.UI.Models.SignOn
 		public string StartTime { get; set; }
 
 		[Required(ErrorMessage = "You must select a sign on type.")]
-		public int SignOnType { get; set; }
+		public SignOnType SignOnType { get; set; }
 
 		public string OperationDescription { get; set; }
 
@@ -28,6 +28,8 @@ namespace Enivate.ResponseHub.UI.Models.SignOn
 		public IList<Tuple<Guid, string, string>> AvailableOperations { get; set; }
 
 		public TrainingType TrainingType { get; set; }
+
+		public string TrainingTypeOther { get; set; }
 
 		public IList<SelectListItem> AvailableTrainingTypes { get; set; }
 

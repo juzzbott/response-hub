@@ -105,6 +105,7 @@
     <Compile Include="JobMessageService.cs" />
     <Compile Include="MailService.cs" />
     <Compile Include="RadarImageService.cs" />
+    <Compile Include="SignOnEntryService.cs" />
     <Compile Include="UserService.cs" />
     <Compile Include="PagerMessageService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

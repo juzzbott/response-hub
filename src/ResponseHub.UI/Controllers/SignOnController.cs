@@ -13,6 +13,8 @@ using Enivate.ResponseHub.Model.Groups.Interface;
 using Enivate.ResponseHub.Model.Messages;
 using Enivate.ResponseHub.Model.Messages.Interface;
 using Enivate.ResponseHub.UI.Models.SignOn;
+using Enivate.ResponseHub.Model.SignOn;
+using Enivate.ResponseHub.Model.SignOn.Interface;
 
 namespace Enivate.ResponseHub.UI.Controllers
 {
@@ -23,6 +25,7 @@ namespace Enivate.ResponseHub.UI.Controllers
 
 		protected readonly ICapcodeService CapcodeService = ServiceLocator.Get<ICapcodeService>();
 		protected readonly IJobMessageService JobMessageService = ServiceLocator.Get<IJobMessageService>();
+		protected readonly ISignOnEntryService SignOnService = ServiceLocator.Get<ISignOnEntryService>();
 
 		// GET: SignOn
 		[Route]
@@ -65,8 +68,45 @@ namespace Enivate.ResponseHub.UI.Controllers
 
 		[Route]
 		[HttpPost]
-		public ActionResult Index(SignOnViewModel model)
+		public async Task<ActionResult> Index(SignOnViewModel model)
 		{
+
+			// Get the dateTime from the model
+			DateTime signInTime = DateTime.ParseExact(String.Format("{0} {1}", model.StartDate, model.StartTime), "yyyy-MM-dd HH:mm", null).ToUniversalTime();
+
+			// Create the sign on entry from the model
+			SignOnEntry signOn = new SignOnEntry()
+			{
+				UserId = UserId,
+				GroupId = Guid.Empty,
+				SignInTime = signInTime,
+				SignOnType = model.SignOnType
+			};
+
+			// Set the specific 
+			switch(model.SignOnType)
+			{
+				case SignOnType.Operations:
+					signOn.ActivityDetails = new OperationActivity()
+					{
+						Description = model.OperationDescription,
+						JobId = model.OperationJobId.Value
+					};
+					break;
+
+				case SignOnType.Training:
+					signOn.ActivityDetails = new TrainingActivity()
+					{
+						OtherDescription = model.TrainingTypeOther,
+						TrainingType = model.TrainingType
+					};
+					break;
+			}
+
+			// Add the sign in to the database
+			await SignOnService.SignUserIn(signOn);
+
+
 			return View(model);
 		}
     }

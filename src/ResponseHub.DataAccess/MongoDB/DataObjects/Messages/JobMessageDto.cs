@@ -10,7 +10,6 @@ using System.Threading.Tasks;
 
 namespace Enivate.ResponseHub.DataAccess.MongoDB.DataObjects.Messages
 {
-	[BsonIgnoreExtraElements]
 	public class JobMessageDto : IEntity
 	{
 
