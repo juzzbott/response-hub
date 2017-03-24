@@ -11,6 +11,8 @@ namespace Enivate.ResponseHub.Model.SignIn
 
 		public Guid Id { get; set; }
 
+		public DateTime Created { get; set; }
+
 		public Guid GroupId { get; set; }
 
 		public Guid UserId { get; set; }
@@ -26,6 +28,7 @@ namespace Enivate.ResponseHub.Model.SignIn
 		public SignInEntry()
 		{
 			Id = Guid.NewGuid();
+			Created = DateTime.UtcNow;
 		}
 
 	}

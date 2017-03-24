@@ -14,6 +14,8 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB.DataObjects.SignIn
 
 		public Guid Id { get; set; }
 
+		public DateTime Created { get; set; }
+
 		public Guid GroupId { get; set; }
 
 		public Guid UserId { get; set; }
@@ -29,6 +31,7 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB.DataObjects.SignIn
 		public SignInEntryDto()
 		{
 			Id = Guid.NewGuid();
+			Created = DateTime.UtcNow;
 		}
 
 	}

@@ -4,7 +4,7 @@ button:active {
   outline: none !important;
 }
 body {
-  background: #fafafa;
+  background: #f0f0f0;
   padding-top: 50px;
   font-family: 'Ubuntu', sans-serif;
   color: #333;
@@ -55,6 +55,19 @@ input[type="date"]::-webkit-input-placeholder {
 }
 .dl-horizontal dt {
   text-align: left;
+}
+h1 i,
+h2 i,
+h3 i,
+h4 i,
+h5 i {
+  margin-right: 10px;
+}
+@media (max-width: 768px) {
+  h3,
+  .h3 {
+    font-size: 20px;
+  }
 }
 @media (max-width: 768px) {
   .text-xs-left {
@@ -398,11 +411,11 @@ footer p {
 .breadcrumb {
   margin-top: 10px;
   margin-bottom: 0;
-  background-color: #fafafa;
+  background-color: #f0f0f0;
   padding-left: 0;
 }
 .breadcrumb li.home a {
-  border: 1px solid #ddd;
+  border: 1px solid #ccc;
   border-radius: 2px;
   padding: 4px 6px;
   background-color: #fff;
@@ -415,7 +428,12 @@ footer p {
   padding: 0 20px;
   background: #fff;
   margin-top: 10px;
-  border: 1px solid #ddd;
+  border: 1px solid #ccc;
+  -webkit-border-radius: 1px;
+  -moz-border-radius: 1px;
+  -ms-border-radius: 1px;
+  -o-border-radius: 1px;
+  border-radius: 1px;
 }
 /*
 	Page content styles
@@ -671,7 +689,7 @@ fieldset[disabled] .form-control {
 	Login styles
 */
 .login-layout {
-  background-color: #fafafa;
+  background-color: #f0f0f0;
   color: #333;
 }
 .login-container {
@@ -697,7 +715,7 @@ fieldset[disabled] .form-control {
 }
 .login-container .form-container {
   margin-top: 30px;
-  border: 1px solid #e1e1e1;
+  border: 1px solid #d7d7d7;
   background-color: #fff;
   padding: 15px 20px 20px;
   border-radius: 2px;
@@ -1049,7 +1067,7 @@ i.p-message-admin {
 .capcode-list-tags {
   margin-top: 20px;
   border: 1px solid #c8c5ba;
-  background-color: #fafafa;
+  background-color: #f0f0f0;
   padding: 10px 10px 0;
 }
 .capcode-list-tags .label {

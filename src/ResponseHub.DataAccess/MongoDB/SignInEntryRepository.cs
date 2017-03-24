@@ -19,8 +19,8 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 		/// <summary>
 		/// Signs the user out for the particular sign on session.
 		/// </summary>
-		/// <param name="signOnId"></param>
-		/// <param name="signOutTime"></param>
+		/// <param name="signOnId">The id of the sign in entry.</param>
+		/// <param name="signOutTime">The datetime the user signed out.</param>
 		/// <returns></returns>
 		public async Task SignUserOut(Guid signOnId, DateTime signOutTime)
 		{
@@ -44,6 +44,27 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 			await Add(MapModelObjectToDb(signOn));
 		}
 
+		/// <summary>
+		/// Gets the sign in history for the specified user.
+		/// </summary>
+		/// <param name="userId">The ID of the user to get the sign ins for.</param>
+		/// <returns>The list of sign in entries for the user.</returns>
+		public async Task<IList<SignInEntry>> GetSignInsForUser(Guid userId)
+		{
+			// Create the filter definition
+			FilterDefinition<SignInEntryDto> filter = Builders<SignInEntryDto>.Filter.Eq(i => i.UserId, userId);
+
+			// Create the sort definition
+			SortDefinition<SignInEntryDto> sort = Builders<SignInEntryDto>.Sort.Descending(i => i.SignInTime).Descending(i => i.Created);
+
+			// Get the sign ins for the user
+			IList<SignInEntryDto> signIns = await Collection.Find(filter).Sort(sort).ToListAsync();
+
+			// return the list of mapped sign ins
+			return signIns.Select(i => MapDbObjectToModel(i)).ToList();
+
+		}
+
 		#region Mappers
 
 		/// <summary>
@@ -63,6 +84,7 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 			return new SignInEntry()
 			{
 				ActivityDetails = MapActivityDbObjectToModel(dbObject.ActivityDetails),
+				Created = dbObject.Created,
 				GroupId = dbObject.GroupId,
 				Id = dbObject.Id,
 				SignInTime = dbObject.SignInTime,
@@ -89,6 +111,7 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 			return new SignInEntryDto()
 			{
 				ActivityDetails = MapActivityModelToDbObject(modelObject.ActivityDetails),
+				Created = modelObject.Created,
 				GroupId = modelObject.GroupId,
 				Id = modelObject.Id,
 				SignInTime = modelObject.SignInTime,
