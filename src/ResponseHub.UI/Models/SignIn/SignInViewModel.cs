@@ -34,10 +34,18 @@ namespace Enivate.ResponseHub.UI.Models.SignIn
 
 		public IList<SelectListItem> AvailableTrainingTypes { get; set; }
 
+		public IList<SelectListItem> AvailableUsers { get; set; }
+
+		public Guid GroupId { get; set; }
+
+		[Required(ErrorMessage = "Please select a user to sign in.")]
+		public Guid UserId { get; set; }
+
 		public SignInViewModel()
 		{
 			AvailableOperations = new List<Tuple<Guid, string, string>>();
 			AvailableTrainingTypes = new List<SelectListItem>();
+			AvailableUsers = new List<SelectListItem>();
 
 			// Set the available training types from the enum list
 			foreach (TrainingType trainingType in Enum.GetValues(typeof(TrainingType)))

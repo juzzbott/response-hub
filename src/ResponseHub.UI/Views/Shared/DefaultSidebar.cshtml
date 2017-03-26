@@ -9,7 +9,15 @@
 	</li>
 	<li class="@(ViewContext.RouteData.Values["Controller"].ToString() == "SignIn" ? "active" : "")">
 		<a href="/sign-in"><i class="fa fa-fw fa-address-book-o"></i>Sign in</a>
-	</li>
+		@if (ViewContext.RouteData.Values["Controller"].ToString() == "SignIn")
+		{
+			<ul>
+				<li>
+					<a href="/sign-in/group-sign-in">Group sign in</a>
+				</li>
+			</ul>
+		}
+</li>
 	<li class="@(ViewContext.RouteData.Values["Controller"].ToString() == "Events" ? "active" : "")">
 		<a href="/events"><i class="fa fa-fw fa-bullhorn"></i>Events</a>
 	</li>

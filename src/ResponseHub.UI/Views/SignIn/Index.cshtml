@@ -12,6 +12,23 @@
 
 	@Html.ValidationSummary()
 
+	@if (Model.AvailableUsers != null && Model.AvailableUsers.Count > 0)
+	{
+		<div class="form-group">
+			<label for="TrainingType">Member to sign in *</label>
+			<div class="row">
+				<div class="col-sm-8 col-md-6 col-lg-4">
+					@Html.DropDownListFor(model => model.UserId, Model.AvailableUsers, new { @class = "form-control" })
+				</div>
+			</div>
+			@Html.ValidationMessageFor(model => model.UserId)
+		</div>
+	}
+	else
+	{
+		@Html.HiddenFor(model => model.UserId)
+	}
+
 	<div class="form-group">
 		<label for="StartDate">Start date *</label>
 		<div class="row">
