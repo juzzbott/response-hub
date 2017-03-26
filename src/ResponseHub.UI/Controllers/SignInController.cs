@@ -26,6 +26,7 @@ namespace Enivate.ResponseHub.UI.Controllers
 	{
 
 		protected readonly ICapcodeService CapcodeService = ServiceLocator.Get<ICapcodeService>();
+		protected readonly IGroupService GroupService = ServiceLocator.Get<IGroupService>();
 		protected readonly IJobMessageService JobMessageService = ServiceLocator.Get<IJobMessageService>();
 		protected readonly ISignInEntryService SignOnService = ServiceLocator.Get<ISignInEntryService>();
 		protected readonly IGroupService GroupService = ServiceLocator.Get<IGroupService>();
@@ -34,6 +35,9 @@ namespace Enivate.ResponseHub.UI.Controllers
 		[Route]
 		public async Task<ActionResult> Index()
 		{
+
+			// Get the groups for the current user
+			IList<Group> userGroups =  await GroupService.GetGroupsForUser(UserId);
 
 			// Get the capcodes for the current user
 			IList<Capcode> capcodes = await CapcodeService.GetCapcodesForUser(UserId);
@@ -63,14 +67,30 @@ namespace Enivate.ResponseHub.UI.Controllers
 				AvailableOperations = availableOperations,
 				UserId = UserId
 			};
+			
+			// Create the available groups
+			foreach (Group group in userGroups)
+			{
+				model.AvailableGroups.Add(new SelectListItem() { Text = group.Name, Value = group.Id.ToString() });
+			}
 
-            return View(model);
+			return View(model);
         }
 
 		[Route]
 		[HttpPost]
 		public async Task<ActionResult> Index(SignInViewModel model)
 		{
+			
+			// Get the groups for the current user
+			IList<Group> userGroups = await GroupService.GetGroupsForUser(UserId);
+
+			// Create the available groups
+			model.AvailableGroups.Clear();
+			foreach (Group group in userGroups)
+			{
+				model.AvailableGroups.Add(new SelectListItem() { Text = group.Name, Value = group.Id.ToString() });
+			}
 
 			// Get the dateTime from the model
 			DateTime signInTime = DateTime.ParseExact(String.Format("{0} {1}", model.StartDate, model.StartTime), "yyyy-MM-dd HH:mm", null).ToUniversalTime();
@@ -79,7 +99,7 @@ namespace Enivate.ResponseHub.UI.Controllers
 			SignInEntry signOn = new SignInEntry()
 			{
 				UserId = UserId,
-				GroupId = Guid.Empty,
+				GroupId = model.Group,
 				SignInTime = signInTime,
 				SignInType = model.SignOnType
 			};

@@ -1,7 +1,7 @@
 /** Import the Bootstrap variables files*/
 @import (reference) "../../../bower_components/bootstrap/less/variables.less";
 
-@body-bg: #fafafa;
+@body-bg: #f0f0f0;
 @body-color: #333;
 
 @ses-orange: #FF862F;
@@ -100,6 +100,20 @@ input[type="date"]::-webkit-input-placeholder{
 
 .dl-horizontal dt {
 	text-align: left;
+}
+
+h1 i,
+h2 i,
+h3 i,
+h4 i,
+h5 i {
+	margin-right: 10px;
+}
+
+@media (max-width: 768px) {
+	h3, .h3 {
+		font-size: 20px;
+	}
 }
 
 @media (max-width: 768px) {
@@ -540,7 +554,7 @@ footer {
 	padding-left: 0;
 
 	li.home a {
-		border: 1px solid #ddd;
+		border: 1px solid #ccc;
 		border-radius: 2px;
 		padding: 4px 6px;
 		background-color: #fff;
@@ -560,7 +574,12 @@ footer {
 	padding: 0 20px;
 	background: #fff;
 	margin-top: 10px;
-	border: 1px solid #ddd;
+	border: 1px solid #ccc;
+	-webkit-border-radius: 1px;
+	-moz-border-radius: 1px;
+	-ms-border-radius: 1px;
+	-o-border-radius: 1px;
+	border-radius: 1px;
 }
 
 

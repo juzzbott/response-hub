@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
@@ -13,12 +15,16 @@ using Microsoft.Owin.Security;
 
 using Enivate.ResponseHub.ApplicationServices;
 using Enivate.ResponseHub.Common;
+using Enivate.ResponseHub.Common.Extensions;
 using Enivate.ResponseHub.Logging;
-using Enivate.ResponseHub.Model.Identity;
-using Enivate.ResponseHub.UI.Models.MyAccount;
-using System.Security.Claims;
-using System.Net;
 using Enivate.ResponseHub.Model;
+using Enivate.ResponseHub.Model.Groups;
+using Enivate.ResponseHub.Model.Groups.Interface;
+using Enivate.ResponseHub.Model.Identity;
+using Enivate.ResponseHub.Model.SignIn.Interface;
+using Enivate.ResponseHub.Model.SignIn;
+using Enivate.ResponseHub.UI.Models.MyAccount;
+using Enivate.ResponseHub.UI.Models.SignIn;
 
 namespace Enivate.ResponseHub.UI.Controllers
 {
@@ -36,21 +42,35 @@ namespace Enivate.ResponseHub.UI.Controllers
 			}
 		}
 		
-		private IAuthenticationManager _authenticationManager;
 		protected IAuthenticationManager AuthenticationManager
 		{
 			get
 			{
-				return _authenticationManager ?? (_authenticationManager = HttpContext.GetOwinContext().Authentication);
+				return ServiceLocator.Get<IAuthenticationManager>();
 			}
 		}
 		
-		private IMailService _mailService;
 		protected IMailService MailService
 		{
 			get
 			{
-				return _mailService ?? (_mailService = UnityConfiguration.Container.Resolve<IMailService>());
+				return ServiceLocator.Get<IMailService>();
+			}
+		}
+
+		protected ISignInEntryService SignInService
+		{
+			get
+			{
+				return ServiceLocator.Get<ISignInEntryService>();
+			}
+		}
+
+		protected IGroupService GroupService
+		{
+			get
+			{
+				return ServiceLocator.Get<IGroupService>();
 			}
 		}
 
@@ -691,6 +711,70 @@ namespace Enivate.ResponseHub.UI.Controllers
 
 			return View();
 
+		}
+
+		#endregion
+
+		#region Sign In History
+
+		[Route("sign-in-history")]
+		public async Task<ActionResult> SignInHistory()
+		{
+
+			// Get the sign ins for the user
+			IList<SignInEntry> signIns = await SignInService.GetSignInsForUser(UserId);
+
+			// Get the groups for the user
+			IList<Group> userGroups = await GroupService.GetGroupsForUser(UserId);
+
+			// Map the sign ins to the SignInEntryListItemViewModel class
+			IList<SignInEntryListItemViewModel> model = signIns.Select(i => MapToSignInListItemViewModel(i, userGroups)).ToList();
+
+			return View(model);
+		}
+
+		private SignInEntryListItemViewModel MapToSignInListItemViewModel(SignInEntry entry, IList<Group> userGroups)
+		{
+			SignInEntryListItemViewModel viewModel = new SignInEntryListItemViewModel()
+			{
+				GroupId = entry.GroupId,
+				SignInTime = entry.SignInTime,
+				SignOutTime = entry.SignOutTime,
+				SignInType = entry.SignInType.GetEnumDescription()
+			};
+
+			// Find the group and add the group name if it exists
+			Group group = userGroups.FirstOrDefault(i => i.Id == entry.GroupId);
+			if (group != null)
+			{
+				viewModel.GroupName = group.Name;
+			}
+
+			// Set the activity
+			if (entry.ActivityDetails.GetType() == typeof(OperationActivity))
+			{
+				// Set the operation activity
+				OperationActivity activity = (OperationActivity)entry.ActivityDetails;
+				viewModel.Description = activity.Description;
+			}
+			else if (entry.ActivityDetails.GetType() == typeof(TrainingActivity))
+			{
+				// Set the training activity
+				TrainingActivity activity = (TrainingActivity)entry.ActivityDetails;
+
+				// If it's other, format it slightly differently, otherwise just set the training type.
+				if (activity.TrainingType == TrainingType.Other && !String.IsNullOrEmpty(activity.OtherDescription))
+				{
+					viewModel.Description = String.Format("Other - {0}", activity.OtherDescription);
+				}
+				else
+				{
+					viewModel.Description = activity.TrainingType.GetEnumDescription();
+				}
+			}
+
+			// return the view model
+			return viewModel;
 		}
 
 		#endregion

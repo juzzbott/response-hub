@@ -13,5 +13,7 @@ namespace Enivate.ResponseHub.Model.SignIn.Interface
 
 		Task SignUserOut(Guid signOnId, DateTime signOutTime);
 
+		Task<IList<SignInEntry>> GetSignInsForUser(Guid userId);
+
 	}
 }

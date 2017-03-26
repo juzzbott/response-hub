@@ -1,0 +1,31 @@
+﻿@model IList<Enivate.ResponseHub.UI.Models.SignIn.SignInEntryListItemViewModel>
+
+@{
+    ViewBag.Title = "Sign in history";
+}
+
+<h1>@ViewBag.Title</h1>
+
+<table class="table table-striped">
+	<thead>
+		<tr>
+			<th>Group</th>
+			<th>Sign in</th>
+			<th>Sign out</th>
+			<th>Type</th>
+			<th>Description</th>
+		</tr>
+	</thead>
+	<tbody>
+		@foreach(var item in Model)
+		{
+			<tr>
+				<td>@item.GroupName</td>
+				<td>@item.SignInTime.ToLocalTime().ToString("yyyy-MM-dd HH:mm")</td>
+				<td>@(item.SignOutTime != DateTime.MinValue ? item.SignOutTime.ToLocalTime().ToString("yyyy-MM-dd HH:mm") : "")</td>
+				<td>@item.SignInType</td>
+				<td>@item.Description</td>
+			</tr>
+		}
+	</tbody>
+</table>
