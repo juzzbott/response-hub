@@ -29,7 +29,6 @@ namespace Enivate.ResponseHub.UI.Controllers
 		protected readonly IGroupService GroupService = ServiceLocator.Get<IGroupService>();
 		protected readonly IJobMessageService JobMessageService = ServiceLocator.Get<IJobMessageService>();
 		protected readonly ISignInEntryService SignOnService = ServiceLocator.Get<ISignInEntryService>();
-		protected readonly IGroupService GroupService = ServiceLocator.Get<IGroupService>();
 
 		// GET: Sign-in
 		[Route]
