@@ -44,35 +44,18 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 		[Route]
 		[HttpGet]
         // GET: ControlPanel/DataExport
-        public async Task<ActionResult> Index()
+        public ActionResult Index()
         {
-
-			// Get the groups
-			IList<Guid> groupIds = await GetGroupIdsUserIsGroupAdminOf();
-			IList<Group> groups = await GroupService.GetByIds(groupIds);
-
-			// Create the data export model
-			DataExportFilterViewModel model = new DataExportFilterViewModel();
-			
-			// Add the groups to the select list
-			foreach(Group group in groups)
-			{
-				model.AvailableGroups.Add(new SelectListItem { Text = group.Name, Value = group.Id.ToString() });
-			}
-
-			// If there is more than one group, add a please select
-			if (model.AvailableGroups.Count > 1)
-			{
-				model.AvailableGroups.Insert(0, new SelectListItem { Text = "Select a group...", Value = "" });
-			}
-
-            return View(model);
+            return View();
         }
 
 		[Route]
 		[HttpPost]
 		public async Task<ActionResult> Index(DataExportFilterViewModel model)
 		{
+
+			// Get the current group id
+			Guid groupId = GetControlPanelGroupId();
 
 			// Get the list of jobs between the start and end dates
 			DateTime dateFrom = model.DateFrom.Date;
@@ -82,7 +65,7 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 			if (model.ExportType.ToLower() == "csv")
 			{
 				
-				string export = await DataExportService.BuildCsvExportFile(model.GroupId, dateFrom, dateTo);
+				string export = await DataExportService.BuildCsvExportFile(groupId, dateFrom, dateTo);
 
 				// return the file as a download
 				FileContentResult result = new FileContentResult(Encoding.UTF8.GetBytes(export), "text/csv");
@@ -93,7 +76,7 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 			{
 
 				// Get the PDF bytes
-				byte[] pdfBytes = await DataExportService.BuildPdfExportFile(model.GroupId, dateFrom, dateTo);
+				byte[] pdfBytes = await DataExportService.BuildPdfExportFile(groupId, dateFrom, dateTo);
 
 				FileContentResult result = new FileContentResult(pdfBytes, "application/pdf");
 				result.FileDownloadName = String.Format("data-export-{0}.pdf", DateTime.Now.ToString("yyyy-MM-dd-HHmmss"));
@@ -103,7 +86,7 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 			{
 
 				// Get the PDF bytes
-				string htmlContent = await DataExportService.BuildHtmlExportFile(model.GroupId, dateFrom, dateTo);
+				string htmlContent = await DataExportService.BuildHtmlExportFile(groupId, dateFrom, dateTo);
 
 				FileContentResult result = new FileContentResult(Encoding.UTF8.GetBytes(htmlContent), "text/html");
 				result.FileDownloadName = String.Format("data-export-{0}.html", DateTime.Now.ToString("yyyy-MM-dd-HHmmss"));

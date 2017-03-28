@@ -13,16 +13,6 @@
 		@Html.AntiForgeryToken()
 
 		<div class="form-group">
-			<label for="Service">Group *</label>
-			<div class="row">
-				<div class="col-sm-8 col-md-6 col-lg-4">
-					@Html.DropDownListFor(model => model.GroupId, Model.AvailableGroups, new { @class = "form-control" })
-				</div>
-			</div>
-			@Html.ValidationMessageFor(model => model.GroupId)
-		</div>
-
-		<div class="form-group">
 			<label for="DateStarted">Date from *</label>
 			<div class="row">
 				<div class="col-sm-6 col-md-4">

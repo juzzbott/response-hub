@@ -395,6 +395,24 @@ footer p {
     width: 16.66666667%;
   }
 }
+.breadcrumb-select-group {
+  margin-top: 13px;
+  border: 1px solid #ddd;
+  border-radius: 2px;
+  padding: 6px 6px;
+  background-color: #fff;
+  float: right;
+}
+.breadcrumb-select-group:hover {
+  background-color: #fff;
+  border: 1px solid #ddd;
+  text-decoration: none;
+}
+@media (max-width: 992px) {
+  .breadcrumb-select-group {
+    display: none;
+  }
+}
 .breadcrumb {
   margin-top: 10px;
   margin-bottom: 0;
@@ -551,6 +569,11 @@ fieldset[disabled] .form-control {
   background-color: #fff;
   line-height: 1.42857143;
   color: #555;
+}
+td .radio,
+td .checkbox {
+  margin-top: 0;
+  margin-bottom: 0;
 }
 /* Value edit controls */
 .val-edit .val-edit-input {

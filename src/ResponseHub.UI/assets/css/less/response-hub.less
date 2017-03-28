@@ -533,6 +533,28 @@ footer {
 	}
 }
 
+.breadcrumb-select-group {
+	margin-top: 13px;
+	border: 1px solid #ddd;
+	border-radius: 2px;
+	padding: 6px 6px;
+	background-color: #fff;
+	float: right;
+
+	&:hover {
+		background-color: #fff;
+		border: 1px solid #ddd;
+		text-decoration: none;
+	}
+}
+
+@media (max-width: 992px)
+{
+	.breadcrumb-select-group {
+		display: none;
+	}
+}
+
 .breadcrumb {
 	margin-top: 10px;
 	margin-bottom: 0;
@@ -718,6 +740,12 @@ h4.legend {
 
 	}
 
+}
+
+td .radio,
+td .checkbox {
+	margin-top: 0;
+	margin-bottom: 0;
 }
 
 /* Value edit controls */

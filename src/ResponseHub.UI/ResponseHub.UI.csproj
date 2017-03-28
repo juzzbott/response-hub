@@ -195,6 +195,7 @@
     <Compile Include="Areas\Admin\Controllers\BaseAdminController.cs" />
     <Compile Include="Areas\Admin\Controllers\CapcodesController.cs" />
     <Compile Include="Areas\Admin\Controllers\GroupsController.cs" />
+    <Compile Include="Areas\ControlPanel\Controllers\GroupSelectionController.cs" />
     <Compile Include="Areas\Admin\Controllers\HomeController.cs" />
     <Compile Include="Areas\Admin\Controllers\LogViewerController.cs" />
     <Compile Include="Areas\Admin\Controllers\ReportsController.cs" />
@@ -204,6 +205,7 @@
     <Compile Include="Areas\Admin\Models\LogViewer\LogViewModel.cs" />
     <Compile Include="Areas\Admin\Models\SystemSettings\CacheDetails.cs" />
     <Compile Include="Areas\Admin\Models\SystemSettings\SystemSettingsViewModel.cs" />
+    <Compile Include="Areas\ControlPanel\Models\Home\GroupSelectionViewModel.cs" />
     <Compile Include="Controllers\Api\SearchController.cs" />
     <Compile Include="Controllers\PagerMessagesController.cs" />
     <Compile Include="Areas\ControlPanel\Controllers\BaseControlPanelController.cs" />
@@ -219,6 +221,7 @@
     <Compile Include="Controllers\ProfileController.cs" />
     <Compile Include="Controllers\SearchController.cs" />
     <Compile Include="Controllers\WeatherCentreController.cs" />
+    <Compile Include="Filters\EnforceControlPanelGroupSelectionAttribute.cs" />
     <Compile Include="Filters\SystemAdminUserRedirectAttribute.cs" />
     <Compile Include="Helpers\JobMessageModelHelper.cs" />
     <Compile Include="Models\Api\Events\AddResourcePostModel.cs" />
@@ -338,8 +341,8 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Areas\Admin\Views\BaseAdmin\" />
+    <Folder Include="Areas\Admin\Views\GroupSelection\" />
     <Folder Include="Areas\ControlPanel\Views\BaseControlPanel\" />
-    <Folder Include="Areas\ControlPanel\Views\Home\" />
     <Folder Include="Views\Base\" />
     <Folder Include="Views\Media\" />
   </ItemGroup>
@@ -538,6 +541,7 @@
     <Content Include="Areas\ControlPanel\Views\Groups\ChangeUserRole.cshtml" />
     <Content Include="Areas\ControlPanel\Views\Groups\ConfirmUser.cshtml" />
     <Content Include="Views\Profile\ViewProfile.cshtml" />
+    <Content Include="Areas\ControlPanel\Views\GroupSelection\Index.cshtml" />
     <None Include="Web.Staging.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
