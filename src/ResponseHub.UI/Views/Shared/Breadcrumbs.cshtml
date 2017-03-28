@@ -1,12 +1,24 @@
-﻿<ul class="breadcrumb">
-	<li class="home"><a href="/"><i class="fa fa-fw fa-home"></i></a></li>
-	@if (ViewContext.RouteData.DataTokens["area"] != null)
+﻿<div class="row">
+	<div class="col-md-10">
+		<ul class="breadcrumb">
+			<li class="home"><a href="/"><i class="fa fa-fw fa-home"></i></a></li>
+			@if (ViewContext.RouteData.DataTokens["area"] != null)
+			{
+				<li>@Html.BreadcrumbAreaLink()</li>
+			}
+			<li>@Html.BreadcrumbControllerLink()</li>
+			@if (ViewContext.RouteData.Values["Action"].ToString().ToLower() != "index")
+			{
+				<li>@ViewBag.Title</li>
+			}
+		</ul>
+	</div>
+
+	@if (ViewContext.RouteData.DataTokens["area"] != null && ViewContext.RouteData.DataTokens["area"].ToString().ToLower() == "controlpanel")
 	{
-		<li>@Html.BreadcrumbAreaLink()</li>
+		<div class="col-md-2">
+			<a href="/control-panel/group-selection" class="breadcrumb-select-group btn btn-link btn-icon"><i class="fa fa-fw fa-users"></i>Select group context</a>
+		</div>
 	}
-	<li>@Html.BreadcrumbControllerLink()</li>
-	@if (ViewContext.RouteData.Values["Action"].ToString().ToLower() != "index")
-	{
-		<li>@ViewBag.Title</li>
-	}
-</ul>
+
+</div>

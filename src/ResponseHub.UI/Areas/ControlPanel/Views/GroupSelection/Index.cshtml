@@ -1,0 +1,41 @@
+﻿@model Enivate.ResponseHub.UI.Areas.ControlPanel.Models.Home.GroupSelectionViewModel
+@{
+    ViewBag.Title = "Select group";
+    Layout = "~/Areas/ControlPanel/Views/Shared/_Layout.cshtml";
+}
+
+<h1>@ViewBag.Title</h1>
+
+<p>Select the group below to administer.</p>
+
+@if (Request.QueryString["show_info_message"] != null && Request.QueryString["show_info_message"] == "1")
+{
+	<div class="alert alert-info" role="alert">
+		<strong><i class="fa fa-info-circle"></i></strong>&nbsp;&nbsp;You need to select a group to administer before proceeding.
+	</div>
+}
+
+<form action="@Request.Url.LocalPath" method="post">
+
+	<table class="table table-striped">
+		@foreach(var group in Model.AvailableGroups)
+		{
+			<tr>
+				<td>
+					<div class="radio graphic-radio">
+						<label>
+							<input type="radio" name="GroupId" id="Group_@group.Key" value="@group.Key">
+							@group.Value
+						</label>
+					</div>
+				</td>
+			</tr>
+		}
+	</table>
+
+	<div class="top-20">
+		<button type="submit" class="btn btn-primary btn-icon"><i class="fa fa-arrow-circle-o-right"></i>Set group</button>
+	</div>
+
+</form>
+

@@ -16,6 +16,7 @@ using Enivate.ResponseHub.UI.Areas.Admin.Models.Groups;
 using Enivate.ResponseHub.Common.Extensions;
 using Enivate.ResponseHub.Model;
 using Enivate.ResponseHub.Model.Spatial;
+using Enivate.ResponseHub.Common.Constants;
 
 namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 {
@@ -542,9 +543,7 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 		#endregion
 
 		#region Helpers
-
-
-
+		
 		/// <summary>
 		/// Gets the list of regions in a select list for use on the screens.
 		/// </summary>
@@ -565,9 +564,7 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 			// return the list of items
 			return items;
 		}
-
-
-
+		
 		/// <summary>
 		/// Gets the list of guids from the hidden value for the additional capcodes.
 		/// </summary>
@@ -631,8 +628,7 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 			}
 
 		}
-
-
+		
 		/// <summary>
 		/// Gets the list of available roles for the users to be set as.
 		/// </summary>
@@ -646,6 +642,22 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 
 			// return the available roles
 			return availableRoles;
+		}
+
+		/// <summary>
+		/// Gets the current context group id for the control panel.
+		/// </summary>
+		/// <returns></returns>
+		protected Guid GetControlPanelGroupId()
+		{
+			if (Session[SessionConstants.ControlPanelContextGroupId] != null)
+			{
+				return (Guid)Session[SessionConstants.ControlPanelContextGroupId];
+			}
+			else
+			{
+				return Guid.Empty;
+			}
 		}
 
 		#endregion
