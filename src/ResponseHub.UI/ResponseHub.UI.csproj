@@ -204,6 +204,12 @@
     <Compile Include="Areas\Admin\Models\LogViewer\LogViewModel.cs" />
     <Compile Include="Areas\Admin\Models\SystemSettings\CacheDetails.cs" />
     <Compile Include="Areas\Admin\Models\SystemSettings\SystemSettingsViewModel.cs" />
+    <Compile Include="Areas\ControlPanel\Controllers\ReportsController.cs" />
+    <Compile Include="Areas\ControlPanel\Models\Reports\ReportFilterViewModel.cs" />
+    <Compile Include="Areas\ControlPanel\Models\Reports\Training\GroupTrainingGraphItem.cs" />
+    <Compile Include="Areas\ControlPanel\Models\Reports\Training\GroupTrainingReportItem.cs" />
+    <Compile Include="Areas\ControlPanel\Models\Reports\Training\GroupTrainingMemberReportItem.cs" />
+    <Compile Include="Areas\ControlPanel\Models\Reports\Training\TrainingReportViewModel.cs" />
     <Compile Include="Controllers\Api\SearchController.cs" />
     <Compile Include="Controllers\PagerMessagesController.cs" />
     <Compile Include="Areas\ControlPanel\Controllers\BaseControlPanelController.cs" />
@@ -545,6 +551,9 @@
     <Content Include="Views\SignIn\Index.cshtml" />
     <Content Include="Views\SignIn\SignInComplete.cshtml" />
     <Content Include="Views\MyAccount\SignInHistory.cshtml" />
+    <Content Include="Areas\ControlPanel\Views\Reports\Index.cshtml" />
+    <Content Include="Areas\ControlPanel\Views\Reports\TrainingReport.cshtml" />
+    <Content Include="Areas\ControlPanel\Views\Reports\GenerateTrainingReportHtml.cshtml" />
     <None Include="Web.Staging.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

@@ -96,6 +96,8 @@
     <Compile Include="Messages\MessageType.cs" />
     <Compile Include="PagedResultSet.cs" />
     <Compile Include="Parsers\AddressParserData.cs" />
+    <Compile Include="PdfGeneration\Interface\IPdfGenerationService.cs" />
+    <Compile Include="Reports\Interface\IReportService.cs" />
     <Compile Include="SignIn\Interface\ISignInEntryService.cs" />
     <Compile Include="SignIn\Activity.cs" />
     <Compile Include="SignIn\SignInEntry.cs" />

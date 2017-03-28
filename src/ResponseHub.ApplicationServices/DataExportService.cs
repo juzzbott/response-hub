@@ -15,32 +15,22 @@ using Enivate.ResponseHub.Model.Messages;
 using Enivate.ResponseHub.Model.Messages.Interface;
 using Enivate.ResponseHub.Model.Spatial;
 using Enivate.ResponseHub.Model.Groups.Interface;
-
-using EvoPdf;
+using Enivate.ResponseHub.Model.PdfGeneration.Interface;
 
 namespace Enivate.ResponseHub.ApplicationServices
 {
 	public class DataExportService : IDataExportService
 	{
 
-		private const string EvoPdfLicenseKey = "SsTXxdDVxdbcxdDL1cXW1MvU18vc3Nzc";
+		private IJobMessageService _jobMessageService;
+		private IGroupService _groupService;
+		private IPdfGenerationService _pdfGenerationService;
 
-		protected IJobMessageService JobMessageService
+		public DataExportService(IJobMessageService jobMessageService, IGroupService groupService, IPdfGenerationService pdfGenerationService)
 		{
-			get
-			{
-				return ServiceLocator.Get<IJobMessageService>();
-			}
-		}
-
-
-
-		protected IGroupService GroupService
-		{
-			get
-			{
-				return ServiceLocator.Get<IGroupService>();
-			}
+			_jobMessageService = jobMessageService;
+			_groupService = groupService;
+			_pdfGenerationService = pdfGenerationService;
 		}
 
 		private const string OverviewTemplateFilename = "DataExportOverview.html";
@@ -48,24 +38,11 @@ namespace Enivate.ResponseHub.ApplicationServices
 		public async Task<byte[]> BuildPdfExportFile(Guid groupId, DateTime dateFrom, DateTime dateTo)
 		{
 
-			// Create the converter
-			HtmlToPdfConverter converter = new HtmlToPdfConverter();
+			// Get the HTML content.
+			string htmlContent = await BuildHtmlExportFile(groupId, dateFrom, dateTo);
 
-			//set the PDF document margins
-			converter.LicenseKey = EvoPdfLicenseKey;
-			converter.PdfDocumentOptions.LeftMargin = 30;
-			converter.PdfDocumentOptions.RightMargin = 30;
-			converter.PdfDocumentOptions.TopMargin = 30;
-			converter.PdfDocumentOptions.BottomMargin = 30;
-			
-			// embed the true type fonts in the generated PDF document
-			converter.PdfDocumentOptions.EmbedFonts = true;
-			
-			// compress the images in PDF with JPEG to reduce the PDF document size
-			converter.PdfDocumentOptions.JpegCompressionEnabled = false;
-			
 			// Return the pdf bytes
-			return converter.ConvertHtml(await BuildHtmlExportFile(groupId, dateFrom, dateTo), ConfigurationManager.AppSettings["BaseWebsiteUrl"]);
+			return _pdfGenerationService.GeneratePdfFromHtml(htmlContent, true);
 			
 		}
 
@@ -98,10 +75,10 @@ namespace Enivate.ResponseHub.ApplicationServices
 		{
 
 			// Get the group by the id
-			Group group = await GroupService.GetById(groupId);
+			Group group = await _groupService.GetById(groupId);
 
 			// Get the list of messages for the capcode
-			IList<JobMessage> messages = await JobMessageService.GetJobMessagesBetweenDates(
+			IList<JobMessage> messages = await _jobMessageService.GetJobMessagesBetweenDates(
 				new List<string> { group.Capcode },
 				MessageType.Job & MessageType.Message,
 				dateFrom,

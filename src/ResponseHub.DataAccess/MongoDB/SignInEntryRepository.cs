@@ -65,6 +65,34 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 
 		}
 
+		/// <summary>
+		/// Gets the sign in entries for the specific group, based on the type of sign in types.
+		/// </summary>
+		/// <param name="groupId">The group id to get the results for.</param>
+		/// <param name="signInTypes">The sign in flag types to return.</param>
+		/// <returns>The list of sign in types for the group.</returns>
+		public async Task<IList<SignInEntry>> GetSignInsForGroup(Guid groupId, DateTime from, DateTime to, SignInType signInTypes)
+		{
+			
+			// Create the filter
+			FilterDefinitionBuilder<SignInEntryDto> builder = Builders<SignInEntryDto>.Filter;
+			FilterDefinition<SignInEntryDto> filter = builder.Eq(i => i.GroupId, groupId);
+
+			// Set the date range
+			filter = filter & builder.Gte(i => i.SignInTime, from) & builder.Lte(i => i.SignInTime, to);
+
+			// Set the message types
+			filter = filter & builder.BitsAnySet(i => i.SignInType, (long)signInTypes);
+
+			// return the sign in entries
+			IList<SignInEntryDto> signIns = await Collection.Find(filter).ToListAsync();
+
+			// Map the results to model objects
+			return signIns.Select(i => MapDbObjectToModel(i)).ToList();
+
+
+		}
+
 		#region Mappers
 
 		/// <summary>

@@ -32,7 +32,8 @@ module.exports = function(grunt) {
 					'bower_components/dropzone/dist/min/dropzone.min.js',
 					'bower_components/blueimp-gallery/js/jquery.blueimp-gallery.min.js',
 					'bower_components/blueimp-bootstrap-image-gallery/js/bootstrap-image-gallery.min.js',
-					'bower_components/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js'
+					'bower_components/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js',
+					'bower_components/Chart.js/dist/Chart.min.js'
 				],
 				dest: 'assets/js/framework.js'
 			},

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace Enivate.ResponseHub.Model.SignIn
 {
+	[Flags]
 	public enum SignInType
 	{
 
@@ -13,7 +14,7 @@ namespace Enivate.ResponseHub.Model.SignIn
 
 		Training = 2,
 
-		Other = 3
+		Other = 4
 
 	}
 }

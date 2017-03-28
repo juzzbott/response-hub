@@ -1,8 +1,11 @@
-﻿<p class="explore">System Administration</p>
+﻿<p class="explore">Group Administration</p>
 
 <ul class="nav nav-sidebar">
 	<li class="@(ViewContext.RouteData.Values["Controller"].ToString() == "Groups" ? "active" : "")">
 		<a href="/control-panel/groups"><i class="fa fa-fw fa-users"></i>Groups</a>
+	</li>
+	<li class="@(ViewContext.RouteData.Values["Controller"].ToString() == "Reports" ? "active" : "")">
+		<a href="/control-panel/reports"><i class="fa fa-fw fa-bar-chart"></i>Reports</a>
 	</li>
 	<li class="@(ViewContext.RouteData.Values["Controller"].ToString() == "DataExport" ? "active" : "")">
 		<a href="/control-panel/data-export"><i class="fa fa-fw fa-database"></i>Data export</a>

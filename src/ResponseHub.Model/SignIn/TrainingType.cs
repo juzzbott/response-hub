@@ -22,6 +22,18 @@ namespace Enivate.ResponseHub.Model.SignIn
 		[Description("Land search")]
 		LandSearch = 4,
 
+		[Description("Rescue boat")]
+		RescueBoat = 5,
+
+		[Description("Chainsaws")]
+		Chainsaws = 6,
+
+		[Description("Storm & Water")]
+		StormWater = 7,
+
+		[Description("Communications")]
+		Communications = 8,
+
 		[Description("Other")]
 		Other = 99
 
