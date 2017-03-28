@@ -11871,6 +11871,1481 @@ delete this._layers[e],this},hasLayer:function(t){return!!t&&(t in this._layers|
 this._newPos=this._startPos.add(s),this._moving=!0,o.Util.cancelAnimFrame(this._animRequest),this._lastEvent=t,this._animRequest=o.Util.requestAnimFrame(this._updatePosition,this,!0)))},_updatePosition:function(){var t={originalEvent:this._lastEvent};this.fire("predrag",t),o.DomUtil.setPosition(this._element,this._newPos),this.fire("drag",t)},_onUp:function(){o.DomUtil.removeClass(e.body,"leaflet-dragging"),this._lastTarget&&(o.DomUtil.removeClass(this._lastTarget,"leaflet-drag-target"),this._lastTarget=null);for(var t in o.Draggable.MOVE)o.DomEvent.off(e,o.Draggable.MOVE[t],this._onMove,this).off(e,o.Draggable.END[t],this._onUp,this);o.DomUtil.enableImageDrag(),o.DomUtil.enableTextSelection(),this._moved&&this._moving&&(o.Util.cancelAnimFrame(this._animRequest),this.fire("dragend",{distance:this._newPos.distanceTo(this._startPos)})),this._moving=!1,o.Draggable._dragging=!1}}),o.Handler=o.Class.extend({initialize:function(t){this._map=t},enable:function(){this._enabled||(this._enabled=!0,this.addHooks())},disable:function(){this._enabled&&(this._enabled=!1,this.removeHooks())},enabled:function(){return!!this._enabled}}),o.Map.mergeOptions({dragging:!0,inertia:!o.Browser.android23,inertiaDeceleration:3400,inertiaMaxSpeed:1/0,easeLinearity:.2,worldCopyJump:!1}),o.Map.Drag=o.Handler.extend({addHooks:function(){if(!this._draggable){var t=this._map;this._draggable=new o.Draggable(t._mapPane,t._container),this._draggable.on({down:this._onDown,dragstart:this._onDragStart,drag:this._onDrag,dragend:this._onDragEnd},this),this._draggable.on("predrag",this._onPreDragLimit,this),t.options.worldCopyJump&&(this._draggable.on("predrag",this._onPreDragWrap,this),t.on("zoomend",this._onZoomEnd,this),t.whenReady(this._onZoomEnd,this))}o.DomUtil.addClass(this._map._container,"leaflet-grab"),this._draggable.enable()},removeHooks:function(){o.DomUtil.removeClass(this._map._container,"leaflet-grab"),this._draggable.disable()},moved:function(){return this._draggable&&this._draggable._moved},_onDown:function(){this._map.stop()},_onDragStart:function(){var t=this._map;if(this._map.options.maxBounds&&this._map.options.maxBoundsViscosity){var e=o.latLngBounds(this._map.options.maxBounds);this._offsetLimit=o.bounds(this._map.latLngToContainerPoint(e.getNorthWest()).multiplyBy(-1),this._map.latLngToContainerPoint(e.getSouthEast()).multiplyBy(-1).add(this._map.getSize())),this._viscosity=Math.min(1,Math.max(0,this._map.options.maxBoundsViscosity))}else this._offsetLimit=null;t.fire("movestart").fire("dragstart"),t.options.inertia&&(this._positions=[],this._times=[])},_onDrag:function(t){if(this._map.options.inertia){var e=this._lastTime=+new Date,i=this._lastPos=this._draggable._absPos||this._draggable._newPos;this._positions.push(i),this._times.push(e),e-this._times[0]>50&&(this._positions.shift(),this._times.shift())}this._map.fire("move",t).fire("drag",t)},_onZoomEnd:function(){var t=this._map.getSize().divideBy(2),e=this._map.latLngToLayerPoint([0,0]);this._initialWorldOffset=e.subtract(t).x,this._worldWidth=this._map.getPixelWorldBounds().getSize().x},_viscousLimit:function(t,e){return t-(t-e)*this._viscosity},_onPreDragLimit:function(){if(this._viscosity&&this._offsetLimit){var t=this._draggable._newPos.subtract(this._draggable._startPos),e=this._offsetLimit;t.x<e.min.x&&(t.x=this._viscousLimit(t.x,e.min.x)),t.y<e.min.y&&(t.y=this._viscousLimit(t.y,e.min.y)),t.x>e.max.x&&(t.x=this._viscousLimit(t.x,e.max.x)),t.y>e.max.y&&(t.y=this._viscousLimit(t.y,e.max.y)),this._draggable._newPos=this._draggable._startPos.add(t)}},_onPreDragWrap:function(){var t=this._worldWidth,e=Math.round(t/2),i=this._initialWorldOffset,n=this._draggable._newPos.x,o=(n-e+i)%t+e-i,s=(n+e+i)%t-e-i,r=Math.abs(o+i)<Math.abs(s+i)?o:s;this._draggable._absPos=this._draggable._newPos.clone(),this._draggable._newPos.x=r},_onDragEnd:function(t){var e=this._map,i=e.options,n=!i.inertia||this._times.length<2;if(e.fire("dragend",t),n)e.fire("moveend");else{var s=this._lastPos.subtract(this._positions[0]),r=(this._lastTime-this._times[0])/1e3,a=i.easeLinearity,h=s.multiplyBy(a/r),l=h.distanceTo([0,0]),u=Math.min(i.inertiaMaxSpeed,l),c=h.multiplyBy(u/l),d=u/(i.inertiaDeceleration*a),_=c.multiplyBy(-d/2).round();_.x||_.y?(_=e._limitOffset(_,e.options.maxBounds),o.Util.requestAnimFrame(function(){e.panBy(_,{duration:d,easeLinearity:a,noMoveStart:!0,animate:!0})})):e.fire("moveend")}}}),o.Map.addInitHook("addHandler","dragging",o.Map.Drag),o.Map.mergeOptions({doubleClickZoom:!0}),o.Map.DoubleClickZoom=o.Handler.extend({addHooks:function(){this._map.on("dblclick",this._onDoubleClick,this)},removeHooks:function(){this._map.off("dblclick",this._onDoubleClick,this)},_onDoubleClick:function(t){var e=this._map,i=e.getZoom(),n=t.originalEvent.shiftKey?Math.ceil(i)-1:Math.floor(i)+1;"center"===e.options.doubleClickZoom?e.setZoom(n):e.setZoomAround(t.containerPoint,n)}}),o.Map.addInitHook("addHandler","doubleClickZoom",o.Map.DoubleClickZoom),o.Map.mergeOptions({scrollWheelZoom:!0,wheelDebounceTime:40}),o.Map.ScrollWheelZoom=o.Handler.extend({addHooks:function(){o.DomEvent.on(this._map._container,{mousewheel:this._onWheelScroll,MozMousePixelScroll:o.DomEvent.preventDefault},this),this._delta=0},removeHooks:function(){o.DomEvent.off(this._map._container,{mousewheel:this._onWheelScroll,MozMousePixelScroll:o.DomEvent.preventDefault},this)},_onWheelScroll:function(t){var e=o.DomEvent.getWheelDelta(t),i=this._map.options.wheelDebounceTime;this._delta+=e,this._lastMousePos=this._map.mouseEventToContainerPoint(t),this._startTime||(this._startTime=+new Date);var n=Math.max(i-(+new Date-this._startTime),0);clearTimeout(this._timer),this._timer=setTimeout(o.bind(this._performZoom,this),n),o.DomEvent.stop(t)},_performZoom:function(){var t=this._map,e=this._delta,i=t.getZoom();t.stop(),e=e>0?Math.ceil(e):Math.floor(e),e=Math.max(Math.min(e,4),-4),e=t._limitZoom(i+e)-i,this._delta=0,this._startTime=null,e&&("center"===t.options.scrollWheelZoom?t.setZoom(i+e):t.setZoomAround(this._lastMousePos,i+e))}}),o.Map.addInitHook("addHandler","scrollWheelZoom",o.Map.ScrollWheelZoom),o.extend(o.DomEvent,{_touchstart:o.Browser.msPointer?"MSPointerDown":o.Browser.pointer?"pointerdown":"touchstart",_touchend:o.Browser.msPointer?"MSPointerUp":o.Browser.pointer?"pointerup":"touchend",addDoubleTapListener:function(t,e,i){function n(t){var e;if(e=o.Browser.pointer?o.DomEvent._pointersCount:t.touches.length,!(e>1)){var i=Date.now(),n=i-(r||i);a=t.touches?t.touches[0]:t,h=n>0&&l>=n,r=i}}function s(){if(h&&!a.cancelBubble){if(o.Browser.pointer){var t,i,n={};for(i in a)t=a[i],n[i]=t&&t.bind?t.bind(a):t;a=n}a.type="dblclick",e(a),r=null}}var r,a,h=!1,l=250,u="_leaflet_",c=this._touchstart,d=this._touchend;return t[u+c+i]=n,t[u+d+i]=s,t.addEventListener(c,n,!1),t.addEventListener(d,s,!1),this},removeDoubleTapListener:function(t,e){var i="_leaflet_",n=t[i+this._touchend+e];return t.removeEventListener(this._touchstart,t[i+this._touchstart+e],!1),t.removeEventListener(this._touchend,n,!1),this}}),o.extend(o.DomEvent,{POINTER_DOWN:o.Browser.msPointer?"MSPointerDown":"pointerdown",POINTER_MOVE:o.Browser.msPointer?"MSPointerMove":"pointermove",POINTER_UP:o.Browser.msPointer?"MSPointerUp":"pointerup",POINTER_CANCEL:o.Browser.msPointer?"MSPointerCancel":"pointercancel",_pointers:{},_pointersCount:0,addPointerListener:function(t,e,i,n){return"touchstart"===e?this._addPointerStart(t,i,n):"touchmove"===e?this._addPointerMove(t,i,n):"touchend"===e&&this._addPointerEnd(t,i,n),this},removePointerListener:function(t,e,i){var n=t["_leaflet_"+e+i];return"touchstart"===e?t.removeEventListener(this.POINTER_DOWN,n,!1):"touchmove"===e?t.removeEventListener(this.POINTER_MOVE,n,!1):"touchend"===e&&(t.removeEventListener(this.POINTER_UP,n,!1),t.removeEventListener(this.POINTER_CANCEL,n,!1)),this},_addPointerStart:function(t,i,n){var s=o.bind(function(t){"mouse"!==t.pointerType&&t.pointerType!==t.MSPOINTER_TYPE_MOUSE&&o.DomEvent.preventDefault(t),this._handlePointer(t,i)},this);if(t["_leaflet_touchstart"+n]=s,t.addEventListener(this.POINTER_DOWN,s,!1),!this._pointerDocListener){var r=o.bind(this._globalPointerUp,this);e.documentElement.addEventListener(this.POINTER_DOWN,o.bind(this._globalPointerDown,this),!0),e.documentElement.addEventListener(this.POINTER_MOVE,o.bind(this._globalPointerMove,this),!0),e.documentElement.addEventListener(this.POINTER_UP,r,!0),e.documentElement.addEventListener(this.POINTER_CANCEL,r,!0),this._pointerDocListener=!0}},_globalPointerDown:function(t){this._pointers[t.pointerId]=t,this._pointersCount++},_globalPointerMove:function(t){this._pointers[t.pointerId]&&(this._pointers[t.pointerId]=t)},_globalPointerUp:function(t){delete this._pointers[t.pointerId],this._pointersCount--},_handlePointer:function(t,e){t.touches=[];for(var i in this._pointers)t.touches.push(this._pointers[i]);t.changedTouches=[t],e(t)},_addPointerMove:function(t,e,i){var n=o.bind(function(t){(t.pointerType!==t.MSPOINTER_TYPE_MOUSE&&"mouse"!==t.pointerType||0!==t.buttons)&&this._handlePointer(t,e)},this);t["_leaflet_touchmove"+i]=n,t.addEventListener(this.POINTER_MOVE,n,!1)},_addPointerEnd:function(t,e,i){var n=o.bind(function(t){this._handlePointer(t,e)},this);t["_leaflet_touchend"+i]=n,t.addEventListener(this.POINTER_UP,n,!1),t.addEventListener(this.POINTER_CANCEL,n,!1)}}),o.Map.mergeOptions({touchZoom:o.Browser.touch&&!o.Browser.android23,bounceAtZoomLimits:!0}),o.Map.TouchZoom=o.Handler.extend({addHooks:function(){o.DomEvent.on(this._map._container,"touchstart",this._onTouchStart,this)},removeHooks:function(){o.DomEvent.off(this._map._container,"touchstart",this._onTouchStart,this)},_onTouchStart:function(t){var i=this._map;if(t.touches&&2===t.touches.length&&!i._animatingZoom&&!this._zooming){var n=i.mouseEventToContainerPoint(t.touches[0]),s=i.mouseEventToContainerPoint(t.touches[1]);this._centerPoint=i.getSize()._divideBy(2),this._startLatLng=i.containerPointToLatLng(this._centerPoint),"center"!==i.options.touchZoom&&(this._pinchStartLatLng=i.containerPointToLatLng(n.add(s)._divideBy(2))),this._startDist=n.distanceTo(s),this._startZoom=i.getZoom(),this._moved=!1,this._zooming=!0,i.stop(),o.DomEvent.on(e,"touchmove",this._onTouchMove,this).on(e,"touchend",this._onTouchEnd,this),o.DomEvent.preventDefault(t)}},_onTouchMove:function(t){if(t.touches&&2===t.touches.length&&this._zooming){var e=this._map,i=e.mouseEventToContainerPoint(t.touches[0]),n=e.mouseEventToContainerPoint(t.touches[1]),s=i.distanceTo(n)/this._startDist;if(this._zoom=e.getScaleZoom(s,this._startZoom),"center"===e.options.touchZoom){if(this._center=this._startLatLng,1===s)return}else{var r=i._add(n)._divideBy(2)._subtract(this._centerPoint);if(1===s&&0===r.x&&0===r.y)return;this._center=e.unproject(e.project(this._pinchStartLatLng).subtract(r))}if(e.options.bounceAtZoomLimits||!(this._zoom<=e.getMinZoom()&&1>s||this._zoom>=e.getMaxZoom()&&s>1)){this._moved||(e._moveStart(!0),this._moved=!0),o.Util.cancelAnimFrame(this._animRequest);var a=o.bind(e._move,e,this._center,this._zoom,{pinch:!0,round:!1});this._animRequest=o.Util.requestAnimFrame(a,this,!0),o.DomEvent.preventDefault(t)}}},_onTouchEnd:function(){if(!this._moved||!this._zooming)return void(this._zooming=!1);this._zooming=!1,o.Util.cancelAnimFrame(this._animRequest),o.DomEvent.off(e,"touchmove",this._onTouchMove).off(e,"touchend",this._onTouchEnd);var t=this._zoom;t=this._map._limitZoom(t-this._startZoom>0?Math.ceil(t):Math.floor(t)),this._map._animateZoom(this._center,t,!0,!0)}}),o.Map.addInitHook("addHandler","touchZoom",o.Map.TouchZoom),o.Map.mergeOptions({tap:!0,tapTolerance:15}),o.Map.Tap=o.Handler.extend({addHooks:function(){o.DomEvent.on(this._map._container,"touchstart",this._onDown,this)},removeHooks:function(){o.DomEvent.off(this._map._container,"touchstart",this._onDown,this)},_onDown:function(t){if(t.touches){if(o.DomEvent.preventDefault(t),this._fireClick=!0,t.touches.length>1)return this._fireClick=!1,void clearTimeout(this._holdTimeout);var i=t.touches[0],n=i.target;this._startPos=this._newPos=new o.Point(i.clientX,i.clientY),n.tagName&&"a"===n.tagName.toLowerCase()&&o.DomUtil.addClass(n,"leaflet-active"),this._holdTimeout=setTimeout(o.bind(function(){this._isTapValid()&&(this._fireClick=!1,this._onUp(),this._simulateEvent("contextmenu",i))},this),1e3),this._simulateEvent("mousedown",i),o.DomEvent.on(e,{touchmove:this._onMove,touchend:this._onUp},this)}},_onUp:function(t){if(clearTimeout(this._holdTimeout),o.DomEvent.off(e,{touchmove:this._onMove,touchend:this._onUp},this),this._fireClick&&t&&t.changedTouches){var i=t.changedTouches[0],n=i.target;n&&n.tagName&&"a"===n.tagName.toLowerCase()&&o.DomUtil.removeClass(n,"leaflet-active"),this._simulateEvent("mouseup",i),this._isTapValid()&&this._simulateEvent("click",i)}},_isTapValid:function(){return this._newPos.distanceTo(this._startPos)<=this._map.options.tapTolerance},_onMove:function(t){var e=t.touches[0];this._newPos=new o.Point(e.clientX,e.clientY),this._simulateEvent("mousemove",e)},_simulateEvent:function(i,n){var o=e.createEvent("MouseEvents");o._simulated=!0,n.target._simulatedClick=!0,o.initMouseEvent(i,!0,!0,t,1,n.screenX,n.screenY,n.clientX,n.clientY,!1,!1,!1,!1,0,null),n.target.dispatchEvent(o)}}),o.Browser.touch&&!o.Browser.pointer&&o.Map.addInitHook("addHandler","tap",o.Map.Tap),o.Map.mergeOptions({boxZoom:!0}),o.Map.BoxZoom=o.Handler.extend({initialize:function(t){this._map=t,this._container=t._container,this._pane=t._panes.overlayPane},addHooks:function(){o.DomEvent.on(this._container,"mousedown",this._onMouseDown,this)},removeHooks:function(){o.DomEvent.off(this._container,"mousedown",this._onMouseDown,this)},moved:function(){return this._moved},_resetState:function(){this._moved=!1},_onMouseDown:function(t){return!t.shiftKey||1!==t.which&&1!==t.button?!1:(this._resetState(),o.DomUtil.disableTextSelection(),o.DomUtil.disableImageDrag(),this._startPoint=this._map.mouseEventToContainerPoint(t),void o.DomEvent.on(e,{contextmenu:o.DomEvent.stop,mousemove:this._onMouseMove,mouseup:this._onMouseUp,keydown:this._onKeyDown},this))},_onMouseMove:function(t){this._moved||(this._moved=!0,this._box=o.DomUtil.create("div","leaflet-zoom-box",this._container),o.DomUtil.addClass(this._container,"leaflet-crosshair"),this._map.fire("boxzoomstart")),this._point=this._map.mouseEventToContainerPoint(t);var e=new o.Bounds(this._point,this._startPoint),i=e.getSize();o.DomUtil.setPosition(this._box,e.min),this._box.style.width=i.x+"px",this._box.style.height=i.y+"px"},_finish:function(){this._moved&&(o.DomUtil.remove(this._box),o.DomUtil.removeClass(this._container,"leaflet-crosshair")),o.DomUtil.enableTextSelection(),o.DomUtil.enableImageDrag(),o.DomEvent.off(e,{contextmenu:o.DomEvent.stop,mousemove:this._onMouseMove,mouseup:this._onMouseUp,keydown:this._onKeyDown},this)},_onMouseUp:function(t){if((1===t.which||1===t.button)&&(this._finish(),this._moved)){setTimeout(o.bind(this._resetState,this),0);var e=new o.LatLngBounds(this._map.containerPointToLatLng(this._startPoint),this._map.containerPointToLatLng(this._point));this._map.fitBounds(e).fire("boxzoomend",{boxZoomBounds:e})}},_onKeyDown:function(t){27===t.keyCode&&this._finish()}}),o.Map.addInitHook("addHandler","boxZoom",o.Map.BoxZoom),o.Map.mergeOptions({keyboard:!0,keyboardPanOffset:80,keyboardZoomOffset:1}),o.Map.Keyboard=o.Handler.extend({keyCodes:{left:[37],right:[39],down:[40],up:[38],zoomIn:[187,107,61,171],zoomOut:[189,109,54,173]},initialize:function(t){this._map=t,this._setPanOffset(t.options.keyboardPanOffset),this._setZoomOffset(t.options.keyboardZoomOffset)},addHooks:function(){var t=this._map._container;t.tabIndex<=0&&(t.tabIndex="0"),o.DomEvent.on(t,{focus:this._onFocus,blur:this._onBlur,mousedown:this._onMouseDown},this),this._map.on({focus:this._addHooks,blur:this._removeHooks},this)},removeHooks:function(){this._removeHooks(),o.DomEvent.off(this._map._container,{focus:this._onFocus,blur:this._onBlur,mousedown:this._onMouseDown},this),this._map.off({focus:this._addHooks,blur:this._removeHooks},this)},_onMouseDown:function(){if(!this._focused){var i=e.body,n=e.documentElement,o=i.scrollTop||n.scrollTop,s=i.scrollLeft||n.scrollLeft;this._map._container.focus(),t.scrollTo(s,o)}},_onFocus:function(){this._focused=!0,this._map.fire("focus")},_onBlur:function(){this._focused=!1,this._map.fire("blur")},_setPanOffset:function(t){var e,i,n=this._panKeys={},o=this.keyCodes;for(e=0,i=o.left.length;i>e;e++)n[o.left[e]]=[-1*t,0];for(e=0,i=o.right.length;i>e;e++)n[o.right[e]]=[t,0];for(e=0,i=o.down.length;i>e;e++)n[o.down[e]]=[0,t];for(e=0,i=o.up.length;i>e;e++)n[o.up[e]]=[0,-1*t]},_setZoomOffset:function(t){var e,i,n=this._zoomKeys={},o=this.keyCodes;for(e=0,i=o.zoomIn.length;i>e;e++)n[o.zoomIn[e]]=t;for(e=0,i=o.zoomOut.length;i>e;e++)n[o.zoomOut[e]]=-t},_addHooks:function(){o.DomEvent.on(e,"keydown",this._onKeyDown,this)},_removeHooks:function(){o.DomEvent.off(e,"keydown",this._onKeyDown,this)},_onKeyDown:function(t){if(!(t.altKey||t.ctrlKey||t.metaKey)){var e,i=t.keyCode,n=this._map;if(i in this._panKeys){if(n._panAnim&&n._panAnim._inProgress)return;e=this._panKeys[i],t.shiftKey&&(e=o.point(e).multiplyBy(3)),n.panBy(e),n.options.maxBounds&&n.panInsideBounds(n.options.maxBounds)}else if(i in this._zoomKeys)n.setZoom(n.getZoom()+(t.shiftKey?3:1)*this._zoomKeys[i]);else{if(27!==i)return;n.closePopup()}o.DomEvent.stop(t)}}}),o.Map.addInitHook("addHandler","keyboard",o.Map.Keyboard),o.Handler.MarkerDrag=o.Handler.extend({initialize:function(t){this._marker=t},addHooks:function(){var t=this._marker._icon;this._draggable||(this._draggable=new o.Draggable(t,t,!0)),this._draggable.on({dragstart:this._onDragStart,drag:this._onDrag,dragend:this._onDragEnd},this).enable(),o.DomUtil.addClass(t,"leaflet-marker-draggable")},removeHooks:function(){this._draggable.off({dragstart:this._onDragStart,drag:this._onDrag,dragend:this._onDragEnd},this).disable(),this._marker._icon&&o.DomUtil.removeClass(this._marker._icon,"leaflet-marker-draggable")},moved:function(){return this._draggable&&this._draggable._moved},_onDragStart:function(){this._marker.closePopup().fire("movestart").fire("dragstart")},_onDrag:function(t){var e=this._marker,i=e._shadow,n=o.DomUtil.getPosition(e._icon),s=e._map.layerPointToLatLng(n);i&&o.DomUtil.setPosition(i,n),e._latlng=s,t.latlng=s,e.fire("move",t).fire("drag",t)},_onDragEnd:function(t){this._marker.fire("moveend").fire("dragend",t)}}),o.Control=o.Class.extend({options:{position:"topright"},initialize:function(t){o.setOptions(this,t)},getPosition:function(){return this.options.position},setPosition:function(t){var e=this._map;return e&&e.removeControl(this),this.options.position=t,e&&e.addControl(this),this},getContainer:function(){return this._container},addTo:function(t){this.remove(),this._map=t;var e=this._container=this.onAdd(t),i=this.getPosition(),n=t._controlCorners[i];return o.DomUtil.addClass(e,"leaflet-control"),-1!==i.indexOf("bottom")?n.insertBefore(e,n.firstChild):n.appendChild(e),this},remove:function(){return this._map?(o.DomUtil.remove(this._container),this.onRemove&&this.onRemove(this._map),this._map=null,this):this},_refocusOnMap:function(t){this._map&&t&&t.screenX>0&&t.screenY>0&&this._map.getContainer().focus()}}),o.control=function(t){return new o.Control(t)},o.Map.include({addControl:function(t){return t.addTo(this),this},removeControl:function(t){return t.remove(),this},_initControlPos:function(){function t(t,s){var r=i+t+" "+i+s;e[t+s]=o.DomUtil.create("div",r,n)}var e=this._controlCorners={},i="leaflet-",n=this._controlContainer=o.DomUtil.create("div",i+"control-container",this._container);t("top","left"),t("top","right"),t("bottom","left"),t("bottom","right")},_clearControlPos:function(){o.DomUtil.remove(this._controlContainer)}}),o.Control.Zoom=o.Control.extend({options:{position:"topleft",zoomInText:"+",zoomInTitle:"Zoom in",zoomOutText:"-",zoomOutTitle:"Zoom out"},onAdd:function(t){var e="leaflet-control-zoom",i=o.DomUtil.create("div",e+" leaflet-bar"),n=this.options;return this._zoomInButton=this._createButton(n.zoomInText,n.zoomInTitle,e+"-in",i,this._zoomIn),this._zoomOutButton=this._createButton(n.zoomOutText,n.zoomOutTitle,e+"-out",i,this._zoomOut),this._updateDisabled(),t.on("zoomend zoomlevelschange",this._updateDisabled,this),i},onRemove:function(t){t.off("zoomend zoomlevelschange",this._updateDisabled,this)},disable:function(){return this._disabled=!0,this._updateDisabled(),this},enable:function(){return this._disabled=!1,this._updateDisabled(),this},_zoomIn:function(t){this._disabled||this._map.zoomIn(t.shiftKey?3:1)},_zoomOut:function(t){this._disabled||this._map.zoomOut(t.shiftKey?3:1)},_createButton:function(t,e,i,n,s){var r=o.DomUtil.create("a",i,n);return r.innerHTML=t,r.href="#",r.title=e,o.DomEvent.on(r,"mousedown dblclick",o.DomEvent.stopPropagation).on(r,"click",o.DomEvent.stop).on(r,"click",s,this).on(r,"click",this._refocusOnMap,this),r},_updateDisabled:function(){var t=this._map,e="leaflet-disabled";o.DomUtil.removeClass(this._zoomInButton,e),o.DomUtil.removeClass(this._zoomOutButton,e),(this._disabled||t._zoom===t.getMinZoom())&&o.DomUtil.addClass(this._zoomOutButton,e),(this._disabled||t._zoom===t.getMaxZoom())&&o.DomUtil.addClass(this._zoomInButton,e)}}),o.Map.mergeOptions({zoomControl:!0}),o.Map.addInitHook(function(){this.options.zoomControl&&(this.zoomControl=new o.Control.Zoom,this.addControl(this.zoomControl))}),o.control.zoom=function(t){return new o.Control.Zoom(t)},o.Control.Attribution=o.Control.extend({options:{position:"bottomright",prefix:'<a href="http://leafletjs.com" title="A JS library for interactive maps">Leaflet</a>'},initialize:function(t){o.setOptions(this,t),this._attributions={}},onAdd:function(t){this._container=o.DomUtil.create("div","leaflet-control-attribution"),o.DomEvent&&o.DomEvent.disableClickPropagation(this._container);for(var e in t._layers)t._layers[e].getAttribution&&this.addAttribution(t._layers[e].getAttribution());return this._update(),this._container},setPrefix:function(t){return this.options.prefix=t,this._update(),this},addAttribution:function(t){return t?(this._attributions[t]||(this._attributions[t]=0),this._attributions[t]++,this._update(),this):this},removeAttribution:function(t){return t?(this._attributions[t]&&(this._attributions[t]--,this._update()),this):this},_update:function(){if(this._map){var t=[];for(var e in this._attributions)this._attributions[e]&&t.push(e);var i=[];this.options.prefix&&i.push(this.options.prefix),t.length&&i.push(t.join(", ")),this._container.innerHTML=i.join(" | ")}}}),o.Map.mergeOptions({attributionControl:!0}),o.Map.addInitHook(function(){this.options.attributionControl&&(this.attributionControl=(new o.Control.Attribution).addTo(this))}),o.control.attribution=function(t){return new o.Control.Attribution(t)},o.Control.Scale=o.Control.extend({options:{position:"bottomleft",maxWidth:100,metric:!0,imperial:!0},onAdd:function(t){var e="leaflet-control-scale",i=o.DomUtil.create("div",e),n=this.options;return this._addScales(n,e+"-line",i),t.on(n.updateWhenIdle?"moveend":"move",this._update,this),t.whenReady(this._update,this),i},onRemove:function(t){t.off(this.options.updateWhenIdle?"moveend":"move",this._update,this)},_addScales:function(t,e,i){t.metric&&(this._mScale=o.DomUtil.create("div",e,i)),t.imperial&&(this._iScale=o.DomUtil.create("div",e,i))},_update:function(){var t=this._map,e=t.getSize().y/2,i=t.distance(t.containerPointToLatLng([0,e]),t.containerPointToLatLng([this.options.maxWidth,e]));this._updateScales(i)},_updateScales:function(t){this.options.metric&&t&&this._updateMetric(t),this.options.imperial&&t&&this._updateImperial(t)},_updateMetric:function(t){var e=this._getRoundNum(t),i=1e3>e?e+" m":e/1e3+" km";this._updateScale(this._mScale,i,e/t)},_updateImperial:function(t){var e,i,n,o=3.2808399*t;o>5280?(e=o/5280,i=this._getRoundNum(e),this._updateScale(this._iScale,i+" mi",i/e)):(n=this._getRoundNum(o),this._updateScale(this._iScale,n+" ft",n/o))},_updateScale:function(t,e,i){t.style.width=Math.round(this.options.maxWidth*i)+"px",t.innerHTML=e},_getRoundNum:function(t){var e=Math.pow(10,(Math.floor(t)+"").length-1),i=t/e;return i=i>=10?10:i>=5?5:i>=3?3:i>=2?2:1,e*i}}),o.control.scale=function(t){return new o.Control.Scale(t)},o.Control.Layers=o.Control.extend({options:{collapsed:!0,position:"topright",autoZIndex:!0,hideSingleBase:!1},initialize:function(t,e,i){o.setOptions(this,i),this._layers={},this._lastZIndex=0,this._handlingClick=!1;for(var n in t)this._addLayer(t[n],n);for(n in e)this._addLayer(e[n],n,!0)},onAdd:function(t){return this._initLayout(),this._update(),this._map=t,t.on("zoomend",this._checkDisabledLayers,this),this._container},onRemove:function(){this._map.off("zoomend",this._checkDisabledLayers,this)},addBaseLayer:function(t,e){return this._addLayer(t,e),this._update()},addOverlay:function(t,e){return this._addLayer(t,e,!0),this._update()},removeLayer:function(t){return t.off("add remove",this._onLayerChange,this),delete this._layers[o.stamp(t)],this._update()},_initLayout:function(){var t="leaflet-control-layers",e=this._container=o.DomUtil.create("div",t);e.setAttribute("aria-haspopup",!0),o.DomEvent.disableClickPropagation(e),o.Browser.touch||o.DomEvent.disableScrollPropagation(e);var i=this._form=o.DomUtil.create("form",t+"-list");if(this.options.collapsed){o.Browser.android||o.DomEvent.on(e,{mouseenter:this._expand,mouseleave:this._collapse},this);var n=this._layersLink=o.DomUtil.create("a",t+"-toggle",e);n.href="#",n.title="Layers",o.Browser.touch?o.DomEvent.on(n,"click",o.DomEvent.stop).on(n,"click",this._expand,this):o.DomEvent.on(n,"focus",this._expand,this),o.DomEvent.on(i,"click",function(){setTimeout(o.bind(this._onInputClick,this),0)},this),this._map.on("click",this._collapse,this)}else this._expand();this._baseLayersList=o.DomUtil.create("div",t+"-base",i),this._separator=o.DomUtil.create("div",t+"-separator",i),this._overlaysList=o.DomUtil.create("div",t+"-overlays",i),e.appendChild(i)},_addLayer:function(t,e,i){t.on("add remove",this._onLayerChange,this);var n=o.stamp(t);this._layers[n]={layer:t,name:e,overlay:i},this.options.autoZIndex&&t.setZIndex&&(this._lastZIndex++,t.setZIndex(this._lastZIndex))},_update:function(){if(!this._container)return this;o.DomUtil.empty(this._baseLayersList),o.DomUtil.empty(this._overlaysList);var t,e,i,n,s=0;for(i in this._layers)n=this._layers[i],this._addItem(n),e=e||n.overlay,t=t||!n.overlay,s+=n.overlay?0:1;return this.options.hideSingleBase&&(t=t&&s>1,this._baseLayersList.style.display=t?"":"none"),this._separator.style.display=e&&t?"":"none",this},_onLayerChange:function(t){this._handlingClick||this._update();var e=this._layers[o.stamp(t.target)],i=e.overlay?"add"===t.type?"overlayadd":"overlayremove":"add"===t.type?"baselayerchange":null;i&&this._map.fire(i,e)},_createRadioElement:function(t,i){var n='<input type="radio" class="leaflet-control-layers-selector" name="'+t+'"'+(i?' checked="checked"':"")+"/>",o=e.createElement("div");return o.innerHTML=n,o.firstChild},_addItem:function(t){var i,n=e.createElement("label"),s=this._map.hasLayer(t.layer);t.overlay?(i=e.createElement("input"),i.type="checkbox",i.className="leaflet-control-layers-selector",i.defaultChecked=s):i=this._createRadioElement("leaflet-base-layers",s),i.layerId=o.stamp(t.layer),o.DomEvent.on(i,"click",this._onInputClick,this);var r=e.createElement("span");r.innerHTML=" "+t.name;var a=e.createElement("div");n.appendChild(a),a.appendChild(i),a.appendChild(r);var h=t.overlay?this._overlaysList:this._baseLayersList;return h.appendChild(n),this._checkDisabledLayers(),n},_onInputClick:function(){var t,e,i,n=this._form.getElementsByTagName("input"),o=[],s=[];this._handlingClick=!0;for(var r=n.length-1;r>=0;r--)t=n[r],e=this._layers[t.layerId].layer,i=this._map.hasLayer(e),t.checked&&!i?o.push(e):!t.checked&&i&&s.push(e);for(r=0;r<s.length;r++)this._map.removeLayer(s[r]);for(r=0;r<o.length;r++)this._map.addLayer(o[r]);this._handlingClick=!1,this._refocusOnMap()},_expand:function(){o.DomUtil.addClass(this._container,"leaflet-control-layers-expanded"),this._form.style.height=null;var t=this._map._size.y-(this._container.offsetTop+50);t<this._form.clientHeight?(o.DomUtil.addClass(this._form,"leaflet-control-layers-scrollbar"),this._form.style.height=t+"px"):o.DomUtil.removeClass(this._form,"leaflet-control-layers-scrollbar"),this._checkDisabledLayers()},_collapse:function(){o.DomUtil.removeClass(this._container,"leaflet-control-layers-expanded")},_checkDisabledLayers:function(){for(var t,e,n=this._form.getElementsByTagName("input"),o=this._map.getZoom(),s=n.length-1;s>=0;s--)t=n[s],e=this._layers[t.layerId].layer,t.disabled=e.options.minZoom!==i&&o<e.options.minZoom||e.options.maxZoom!==i&&o>e.options.maxZoom}}),o.control.layers=function(t,e,i){return new o.Control.Layers(t,e,i)},o.PosAnimation=o.Evented.extend({run:function(t,e,i,n){this.stop(),this._el=t,this._inProgress=!0,this._duration=i||.25,this._easeOutPower=1/Math.max(n||.5,.2),this._startPos=o.DomUtil.getPosition(t),this._offset=e.subtract(this._startPos),this._startTime=+new Date,this.fire("start"),this._animate()},stop:function(){this._inProgress&&(this._step(!0),this._complete())},_animate:function(){this._animId=o.Util.requestAnimFrame(this._animate,this),this._step()},_step:function(t){var e=+new Date-this._startTime,i=1e3*this._duration;i>e?this._runFrame(this._easeOut(e/i),t):(this._runFrame(1),this._complete())},_runFrame:function(t,e){var i=this._startPos.add(this._offset.multiplyBy(t));e&&i._round(),o.DomUtil.setPosition(this._el,i),this.fire("step")},_complete:function(){o.Util.cancelAnimFrame(this._animId),this._inProgress=!1,this.fire("end")},_easeOut:function(t){return 1-Math.pow(1-t,this._easeOutPower)}}),o.Map.include({setView:function(t,e,n){if(e=e===i?this._zoom:this._limitZoom(e),t=this._limitCenter(o.latLng(t),e,this.options.maxBounds),n=n||{},this.stop(),this._loaded&&!n.reset&&n!==!0){n.animate!==i&&(n.zoom=o.extend({animate:n.animate},n.zoom),n.pan=o.extend({animate:n.animate,duration:n.duration},n.pan));var s=this._zoom!==e?this._tryAnimatedZoom&&this._tryAnimatedZoom(t,e,n.zoom):this._tryAnimatedPan(t,n.pan);if(s)return clearTimeout(this._sizeTimer),this}return this._resetView(t,e),this},panBy:function(t,e){if(t=o.point(t).round(),e=e||{},!t.x&&!t.y)return this.fire("moveend");if(e.animate!==!0&&!this.getSize().contains(t))return this._resetView(this.unproject(this.project(this.getCenter()).add(t)),this.getZoom()),this;if(this._panAnim||(this._panAnim=new o.PosAnimation,this._panAnim.on({step:this._onPanTransitionStep,end:this._onPanTransitionEnd},this)),e.noMoveStart||this.fire("movestart"),e.animate!==!1){o.DomUtil.addClass(this._mapPane,"leaflet-pan-anim");var i=this._getMapPanePos().subtract(t);this._panAnim.run(this._mapPane,i,e.duration||.25,e.easeLinearity)}else this._rawPanBy(t),this.fire("move").fire("moveend");return this},_onPanTransitionStep:function(){this.fire("move")},_onPanTransitionEnd:function(){o.DomUtil.removeClass(this._mapPane,"leaflet-pan-anim"),this.fire("moveend")},_tryAnimatedPan:function(t,e){var i=this._getCenterOffset(t)._floor();return(e&&e.animate)===!0||this.getSize().contains(i)?(this.panBy(i,e),!0):!1}}),o.Map.mergeOptions({zoomAnimation:!0,zoomAnimationThreshold:4});var h=o.DomUtil.TRANSITION&&o.Browser.any3d&&!o.Browser.mobileOpera;h&&o.Map.addInitHook(function(){this._zoomAnimated=this.options.zoomAnimation,this._zoomAnimated&&(this._createAnimProxy(),o.DomEvent.on(this._proxy,o.DomUtil.TRANSITION_END,this._catchTransitionEnd,this))}),o.Map.include(h?{_createAnimProxy:function(){var t=this._proxy=o.DomUtil.create("div","leaflet-proxy leaflet-zoom-animated");this._panes.mapPane.appendChild(t),this.on("zoomanim",function(e){var i=o.DomUtil.TRANSFORM,n=t.style[i];o.DomUtil.setTransform(t,this.project(e.center,e.zoom),this.getZoomScale(e.zoom,1)),n===t.style[i]&&this._animatingZoom&&this._onZoomTransitionEnd()},this),this.on("load moveend",function(){var e=this.getCenter(),i=this.getZoom();
 o.DomUtil.setTransform(t,this.project(e,i),this.getZoomScale(i,1))},this)},_catchTransitionEnd:function(t){this._animatingZoom&&t.propertyName.indexOf("transform")>=0&&this._onZoomTransitionEnd()},_nothingToAnimate:function(){return!this._container.getElementsByClassName("leaflet-zoom-animated").length},_tryAnimatedZoom:function(t,e,i){if(this._animatingZoom)return!0;if(i=i||{},!this._zoomAnimated||i.animate===!1||this._nothingToAnimate()||Math.abs(e-this._zoom)>this.options.zoomAnimationThreshold)return!1;var n=this.getZoomScale(e),s=this._getCenterOffset(t)._divideBy(1-1/n);return i.animate===!0||this.getSize().contains(s)?(o.Util.requestAnimFrame(function(){this._moveStart(!0)._animateZoom(t,e,!0)},this),!0):!1},_animateZoom:function(t,e,i,n){i&&(this._animatingZoom=!0,this._animateToCenter=t,this._animateToZoom=e,o.DomUtil.addClass(this._mapPane,"leaflet-zoom-anim")),this.fire("zoomanim",{center:t,zoom:e,noUpdate:n}),setTimeout(o.bind(this._onZoomTransitionEnd,this),250)},_onZoomTransitionEnd:function(){this._animatingZoom&&(o.DomUtil.removeClass(this._mapPane,"leaflet-zoom-anim"),o.Util.requestAnimFrame(function(){this._animatingZoom=!1,this._move(this._animateToCenter,this._animateToZoom)._moveEnd(!0)},this))}}:{}),o.Map.include({flyTo:function(t,e,n){function s(t){var e=(v*v-g*g+(t?-1:1)*L*L*y*y)/(2*(t?v:g)*L*y);return Math.log(Math.sqrt(e*e+1)-e)}function r(t){return(Math.exp(t)-Math.exp(-t))/2}function a(t){return(Math.exp(t)+Math.exp(-t))/2}function h(t){return r(t)/a(t)}function l(t){return g*(a(x)/a(x+P*t))}function u(t){return g*(a(x)*h(x+P*t)-r(x))/L}function c(t){return 1-Math.pow(1-t,1.5)}function d(){var i=(Date.now()-b)/D,n=c(i)*w;1>=i?(this._flyToFrame=o.Util.requestAnimFrame(d,this),this._move(this.unproject(_.add(m.subtract(_).multiplyBy(u(n)/y)),f),this.getScaleZoom(g/l(n),f),{flyTo:!0})):this._move(t,e)._moveEnd(!0)}if(n=n||{},n.animate===!1||!o.Browser.any3d)return this.setView(t,e,n);this.stop();var _=this.project(this.getCenter()),m=this.project(t),p=this.getSize(),f=this._zoom;t=o.latLng(t),e=e===i?f:e;var g=Math.max(p.x,p.y),v=g*this.getZoomScale(f,e),y=m.distanceTo(_)||1,P=1.42,L=P*P,x=s(0),b=Date.now(),w=(s(1)-x)/P,D=n.duration?1e3*n.duration:1e3*w*.8;return this._moveStart(!0),d.call(this),this},flyToBounds:function(t,e){var i=this._getBoundsCenterZoom(t,e);return this.flyTo(i.center,i.zoom,e)}}),o.Map.include({_defaultLocateOptions:{timeout:1e4,watch:!1},locate:function(t){if(t=this._locateOptions=o.extend({},this._defaultLocateOptions,t),!("geolocation"in navigator))return this._handleGeolocationError({code:0,message:"Geolocation not supported."}),this;var e=o.bind(this._handleGeolocationResponse,this),i=o.bind(this._handleGeolocationError,this);return t.watch?this._locationWatchId=navigator.geolocation.watchPosition(e,i,t):navigator.geolocation.getCurrentPosition(e,i,t),this},stopLocate:function(){return navigator.geolocation&&navigator.geolocation.clearWatch&&navigator.geolocation.clearWatch(this._locationWatchId),this._locateOptions&&(this._locateOptions.setView=!1),this},_handleGeolocationError:function(t){var e=t.code,i=t.message||(1===e?"permission denied":2===e?"position unavailable":"timeout");this._locateOptions.setView&&!this._loaded&&this.fitWorld(),this.fire("locationerror",{code:e,message:"Geolocation error: "+i+"."})},_handleGeolocationResponse:function(t){var e=t.coords.latitude,i=t.coords.longitude,n=new o.LatLng(e,i),s=n.toBounds(t.coords.accuracy),r=this._locateOptions;if(r.setView){var a=this.getBoundsZoom(s);this.setView(n,r.maxZoom?Math.min(a,r.maxZoom):a)}var h={latlng:n,bounds:s,timestamp:t.timestamp};for(var l in t.coords)"number"==typeof t.coords[l]&&(h[l]=t.coords[l]);this.fire("locationfound",h)}})}(window,document);
 
+/** @license
+ *
+ *     Colour Palette Generator script.
+ *     Copyright (c) 2014 Google Inc.
+ *
+ *     Licensed under the Apache License, Version 2.0 (the "License"); you may
+ *     not use this file except in compliance with the License.  You may
+ *     obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *     Unless required by applicable law or agreed to in writing, software
+ *     distributed under the License is distributed on an "AS IS" BASIS,
+ *     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+ *     implied.  See the License for the specific language governing
+ *     permissions and limitations under the License.
+ *
+ * Furthermore, ColorBrewer colour schemes are covered by the following:
+ *
+ *     Copyright (c) 2002 Cynthia Brewer, Mark Harrower, and
+ *                        The Pennsylvania State University.
+ *
+ *     Licensed under the Apache License, Version 2.0 (the "License"); you may
+ *     not use this file except in compliance with the License. You may obtain
+ *     a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *     Unless required by applicable law or agreed to in writing, software
+ *     distributed under the License is distributed on an "AS IS" BASIS,
+ *     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+ *     implied. See the License for the specific language governing
+ *     permissions and limitations under the License.
+ *
+ *     Redistribution and use in source and binary forms, with or without
+ *     modification, are permitted provided that the following conditions are
+ *     met:
+ *
+ *     1. Redistributions as source code must retain the above copyright
+ *     notice, this list of conditions and the following disclaimer.
+ *
+ *     2. The end-user documentation included with the redistribution, if any,
+ *     must include the following acknowledgment: "This product includes color
+ *     specifications and designs developed by Cynthia Brewer
+ *     (http://colorbrewer.org/)." Alternately, this acknowledgment may appear
+ *     in the software itself, if and wherever such third-party
+ *     acknowledgments normally appear.
+ *
+ *     4. The name "ColorBrewer" must not be used to endorse or promote products
+ *     derived from this software without prior written permission. For written
+ *     permission, please contact Cynthia Brewer at cbrewer@psu.edu.
+ *
+ *     5. Products derived from this software may not be called "ColorBrewer",
+ *     nor may "ColorBrewer" appear in their name, without prior written
+ *     permission of Cynthia Brewer.
+ *
+ * Furthermore, Solarized colour schemes are covered by the following:
+ *
+ *     Copyright (c) 2011 Ethan Schoonover
+ *
+ *     Permission is hereby granted, free of charge, to any person obtaining
+ *     a copy of this software and associated documentation files (the
+ *     "Software"), to deal in the Software without restriction, including
+ *     without limitation the rights to use, copy, modify, merge, publish,
+ *     distribute, sublicense, and/or sell copies of the Software, and to
+ *     permit persons to whom the Software is furnished to do so, subject to
+ *     the following conditions:
+ *
+ *     The above copyright notice and this permission notice shall be included
+ *     in all copies or substantial portions of the Software.
+ *
+ *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+ *     OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ *     MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ *     LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ *     OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ *     WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
+
+'use strict';
+
+var palette = (function () {
+
+	var proto = Array.prototype;
+	var slice = function (arr, opt_begin, opt_end) {
+		return proto.slice.apply(arr, proto.slice.call(arguments, 1));
+	};
+
+	var extend = function (arr, arr2) {
+		return proto.push.apply(arr, arr2);
+	};
+
+	var function_type = typeof function () { };
+
+	var INF = 1000000000;  // As far as we're concerned, that's infinity. ;)
+
+
+	/**
+	 * Generate a colour palette from given scheme.
+	 *
+	 * If scheme argument is not a function it is passed to palettes.listSchemes
+	 * function (along with the number argument).  This may result in an array
+	 * of more than one available scheme.  If that is the case, scheme at
+	 * opt_index position is taken.
+	 *
+	 * This allows using different palettes for different data without having to
+	 * name the schemes specifically, for example:
+	 *
+	 *     palette_for_foo = palette('sequential', 10, 0);
+	 *     palette_for_bar = palette('sequential', 10, 1);
+	 *     palette_for_baz = palette('sequential', 10, 2);
+	 *
+	 * @param {!palette.SchemeType|string|palette.Palette} scheme Scheme to
+	 *     generate palette for.  Either a function constructed with
+	 *     palette.Scheme object, or anything that palette.listSchemes accepts
+	 *     as name argument.
+	 * @param {number} number Number of colours to return.  If negative, absolute
+	 *     value is taken and colours will be returned in reverse order.
+	 * @param {number=} opt_index If scheme is a name of a group or an array and
+	 *     results in more than one scheme, index of the scheme to use.  The
+	 *     index wraps around.
+	 * @param {...*} varargs Additional arguments to pass to palette or colour
+	 *     generator (if the chosen scheme uses those).
+	 * @return {Array<string>} Array of abs(number) 'RRGGBB' strings or null if
+	 *     no matching scheme was found.
+	 */
+	var palette = function (scheme, number, opt_index, varargs) {
+		number |= 0;
+		if (number == 0) {
+			return [];
+		}
+
+		if (typeof scheme !== function_type) {
+			var arr = palette.listSchemes(
+          /** @type {string|palette.Palette} */(scheme), number);
+			if (!arr.length) {
+				return null;
+			}
+			scheme = arr[(opt_index || 0) % arr.length];
+		}
+
+		var args = slice(arguments, 2);
+		args[0] = number;
+		return scheme.apply(scheme, args);
+	};
+
+
+	/**
+	 * Returns a callable colour scheme object.
+	 *
+	 * Just after being created, the scheme has no colour palettes and no way of
+	 * generating any, thus generate method will return null.  To turn scheme
+	 * into a useful object, addPalette, addPalettes or setColorFunction methods
+	 * need to be used.
+	 *
+	 * To generate a colour palette with given number colours using function
+	 * returned by this method, just call it with desired number of colours.
+	 *
+	 * Since this function *returns* a callable object, it must *not* be used
+	 * with the new operator.
+	 *
+	 * @param {string} name Name of the scheme.
+	 * @param {string|!Array<string>=} opt_groups A group name or list of
+	 *     groups the scheme should be categorised under.  Three typical groups
+	 *     to use are 'qualitative', 'sequential' and 'diverging', but any
+	 *     groups may be created.
+	 * @return {!palette.SchemeType} A colour palette generator function, which
+	 *     in addition has methods and properties like a regular object.  Think
+	 *     of it as a callable object.
+	 */
+	palette.Scheme = function (name, opt_groups) {
+		/**
+		 * A map from a number to a colour palettes with given number of colours.
+		 * @type {!Object<number, palette.Palette>}
+		 */
+		var palettes = {};
+
+		/**
+		 * The biggest palette in palettes map.
+		 * @type {number}
+		 */
+		var palettes_max = 0;
+
+		/**
+		 * The smallest palette in palettes map.
+		 * @type {number}
+		 */
+		var palettes_min = INF;
+
+		var makeGenerator = function () {
+			if (arguments.length <= 1) {
+				return self.color_func.bind(self);
+			} else {
+				var args = slice(arguments);
+				return function (x) {
+					args[0] = x;
+					return self.color_func.apply(self, args);
+				};
+			}
+		};
+
+		/**
+		 * Generate a colour palette from the scheme.
+		 *
+		 * If there was a palette added with addPalette (or addPalettes) with
+		 * enough colours, that palette will be used.  Otherwise, if colour
+		 * function has been set using setColorFunction method, that function will
+		 * be used to generate the palette.  Otherwise null is returned.
+		 *
+		 * @param {number} number Number of colours to return.  If negative,
+		 *     absolute value is taken and colours will be returned in reverse
+		 *     order.
+		 * @param {...*} varargs Additional arguments to pass to palette or colour
+		 *     generator (if the chosen scheme uses those).
+		 */
+		var self = function (number, varargs) {
+			number |= 0;
+			if (!number) {
+				return [];
+			}
+
+			var _number = number;
+			number = Math.abs(number);
+
+			if (number <= palettes_max) {
+				for (var i = Math.max(number, palettes_min); !(i in palettes); ++i) {
+					/* nop */
+				}
+				var colors = palettes[i];
+				if (i > number) {
+					var take_head =
+						'shrinking_takes_head' in colors ?
+							colors.shrinking_takes_head : self.shrinking_takes_head;
+					if (take_head) {
+						colors = colors.slice(0, number);
+						i = number;
+					} else {
+						return palette.generate(
+							function (x) { return colors[Math.round(x)]; },
+							_number, 0, colors.length - 1);
+					}
+				}
+				colors = colors.slice();
+				if (_number < 0) {
+					colors.reverse();
+				}
+				return colors;
+
+			} else if (self.color_func) {
+				return palette.generate(makeGenerator.apply(self, arguments),
+					_number, 0, 1, self.color_func_cyclic);
+
+			} else {
+				return null;
+			}
+		};
+
+		/**
+		 * The name of the palette.
+		 * @type {string}
+		 */
+		self.scheme_name = name;
+
+		/**
+		 * A list of groups the palette belongs to.
+		 * @type {!Array<string>}
+		 */
+		self.groups = opt_groups ?
+			typeof opt_groups === 'string' ? [opt_groups] : opt_groups : [];
+
+		/**
+		 * The biggest palette this scheme can generate.
+		 * @type {number}
+		 */
+		self.max = 0;
+
+		/**
+		 * The biggest palette this scheme can generate that is colour-blind
+		 * friendly.
+		 * @type {number}
+		 */
+		self.cbf_max = INF;
+
+
+		/**
+		 * Adds a colour palette to the colour scheme.
+		 *
+		 * @param {palette.Palette} palette An array of 'RRGGBB' strings
+		 *     representing the palette to add.
+		 * @param {boolean=} opt_is_cbf Whether the palette is colourblind friendly.
+		 */
+		self.addPalette = function (palette, opt_is_cbf) {
+			var len = palette.length;
+			if (len) {
+				palettes[len] = palette;
+				palettes_min = Math.min(palettes_min, len);
+				palettes_max = Math.max(palettes_max, len);
+				self.max = Math.max(self.max, len);
+				if (!opt_is_cbf && len != 1) {
+					self.cbf_max = Math.min(self.cbf_max, len - 1);
+				}
+			}
+		};
+
+		/**
+		 * Adds number of colour palettes to the colour scheme.
+		 *
+		 * @param {palette.PalettesList} palettes A map or an array of colour
+		 *     palettes to add.  If map, i.e.  object, is used, properties should
+		 *     use integer property names.
+		 * @param {number=} opt_max Size of the biggest palette in palettes set.
+		 *     If not set, palettes must have a length property which will be used.
+		 * @param {number=} opt_cbf_max Size of the biggest palette which is still
+		 *     colourblind friendly.  1 by default.
+		 */
+		self.addPalettes = function (palettes, opt_max, opt_cbf_max) {
+			opt_max = opt_max || palettes.length;
+			for (var i = 0; i < opt_max; ++i) {
+				if (i in palettes) {
+					self.addPalette(palettes[i], true);
+				}
+			}
+			self.cbf_max = Math.min(self.cbf_max, opt_cbf_max || 1);
+		};
+
+		/**
+		 * Enable shrinking palettes taking head of the list of colours.
+		 *
+		 * When user requests n-colour palette but the smallest palette added with
+		 * addPalette (or addPalettes) is m-colour one (where n < m), n colours
+		 * across the palette will be returned.  For example:
+		 *     var ex = palette.Scheme('ex');
+		 *     ex.addPalette(['000000', 'bcbcbc', 'ffffff']);
+		 *     var pal = ex(2);
+		 *     // pal == ['000000', 'ffffff']
+		 *
+		 * This works for palettes where the distance between colours is
+		 * correlated to distance in the palette array, which is true in gradients
+		 * such as the one above.
+		 *
+		 * To turn this feature off shrinkByTakingHead can be set to true either
+		 * for all palettes in the scheme (if opt_idx is not given) or for palette
+		 * with given number of colours only.  In general, setting the option for
+		 * given palette overwrites whatever has been set for the scheme.  The
+		 * default, as described above, is false.
+		 *
+		 * Alternatively, the feature can be enabled by setting shrinking_takes_head
+		 * property for the palette Array or the scheme object.
+		 *
+		 * For example, all of the below give equivalent results:
+		 *     var pal = ['ff0000', '00ff00', '0000ff'];
+		 *
+		 *     var ex = palette.Scheme('ex');
+		 *     ex.addPalette(pal);               // ex(2) == ['ff0000', '0000ff']
+		 *     ex.shrinkByTakingHead(true);      // ex(2) == ['ff0000', '00ff00']
+		 *
+		 *     ex = palette.Scheme('ex');
+		 *     ex.addPalette(pal);               // ex(2) == ['ff0000', '0000ff']
+		 *     ex.shrinkByTakingHead(true, 3);   // ex(2) == ['ff0000', '00ff00']
+		 *
+		 *     ex = palette.Scheme('ex');
+		 *     ex.addPalette(pal);
+		 *     ex.addPalette(pal);               // ex(2) == ['ff0000', '0000ff']
+		 *     pal.shrinking_takes_head = true;  // ex(2) == ['ff0000', '00ff00']
+		 *
+		 * @param {boolean} enabled Whether to enable or disable the “shrinking
+		 *     takes head” feature.  It is disabled by default.
+		 * @param {number=} opt_idx If given, the “shrinking takes head” option
+		 *     for palette with given number of colours is set.  If such palette
+		 *     does not exist, nothing happens.
+		 */
+		self.shrinkByTakingHead = function (enabled, opt_idx) {
+			if (opt_idx !== void (0)) {
+				if (opt_idx in palettes) {
+					palettes[opt_idx].shrinking_takes_head = !!enabled;
+				}
+			} else {
+				self.shrinking_takes_head = !!enabled;
+			}
+		};
+
+		/**
+		 * Sets a colour generation function of the colour scheme.
+		 *
+		 * The function must accept a singe number argument whose value can be from
+		 * 0.0 to 1.0, and return a colour as an 'RRGGBB' string.  This function
+		 * will be used when generating palettes, i.e. if 11-colour palette is
+		 * requested, this function will be called with arguments 0.0, 0.1, …, 1.0.
+		 *
+		 * If the palette generated by the function is colourblind friendly,
+		 * opt_is_cbf should be set to true.
+		 *
+		 * In some cases, it is not desirable to reach 1.0 when generating
+		 * a palette.  This happens for hue-rainbows where the 0–1 range corresponds
+		 * to a 0°–360° range in hues, and since hue at 0° is the same as at 360°,
+		 * it's desired to stop short the end of the range when generating
+		 * a palette.  To accomplish this, opt_cyclic should be set to true.
+		 *
+		 * @param {palette.ColorFunction} func A colour generator function.
+		 * @param {boolean=} opt_is_cbf Whether palette generate with the function
+		 *     is colour-blind friendly.
+		 * @param {boolean=} opt_cyclic Whether colour at 0.0 is the same as the
+		 *     one at 1.0.
+		 */
+		self.setColorFunction = function (func, opt_is_cbf, opt_cyclic) {
+			self.color_func = func;
+			self.color_func_cyclic = !!opt_cyclic;
+			self.max = INF;
+			if (!opt_is_cbf && self.cbf_max === INF) {
+				self.cbf_max = 1;
+			}
+		};
+
+		self.color = function (x, varargs) {
+			if (self.color_func) {
+				return self.color_func.apply(this, arguments);
+			} else {
+				return null;
+			}
+		};
+
+		return self;
+	};
+
+
+	/**
+	 * Creates a new palette.Scheme and initialises it by calling addPalettes
+	 * method with the rest of the arguments.
+	 *
+	 * @param {string} name Name of the scheme.
+	 * @param {string|!Array<string>} groups A group name or list of group
+	 *     names the scheme belongs to.
+	 * @param {!Object<number, palette.Palette>|!Array<palette.Palette>}
+	 *     palettes A map or an array of colour palettes to add.  If map, i.e.
+	 *     object, is used, properties should use integer property names.
+	 * @param {number=} opt_max Size of the biggest palette in palettes set.
+	 *     If not set, palettes must have a length property which will be used.
+	 * @param {number=} opt_cbf_max Size of the biggest palette which is still
+	 *     colourblind friendly.  1 by default.
+	 * @return {!palette.SchemeType} A colour palette generator function, which
+	 *     in addition has methods and properties like a regular object.  Think
+	 *     of it as a callable object.
+	 */
+	palette.Scheme.fromPalettes = function (name, groups,
+		palettes, opt_max, opt_cbf_max) {
+		var scheme = palette.Scheme(name, groups);
+		scheme.addPalettes.apply(scheme, slice(arguments, 2));
+		return scheme;
+	};
+
+
+	/**
+	 * Creates a new palette.Scheme and initialises it by calling
+	 * setColorFunction method with the rest of the arguments.
+	 *
+	 * @param {string} name Name of the scheme.
+	 * @param {string|!Array<string>} groups A group name or list of group
+	 *     names the scheme belongs to.
+	 * @param {palette.ColorFunction} func A colour generator function.
+	 * @param {boolean=} opt_is_cbf Whether palette generate with the function
+	 *     is colour-blind friendly.
+	 * @param {boolean=} opt_cyclic Whether colour at 0.0 is the same as the
+	 *     one at 1.0.
+	 * @return {!palette.SchemeType} A colour palette generator function, which
+	 *     in addition has methods and properties like a regular object.  Think
+	 *     of it as a callable object.
+	 */
+	palette.Scheme.withColorFunction = function (name, groups,
+		func, opt_is_cbf, opt_cyclic) {
+		var scheme = palette.Scheme(name, groups);
+		scheme.setColorFunction.apply(scheme, slice(arguments, 2));
+		return scheme;
+	};
+
+
+	/**
+	 * A map of registered schemes.  Maps a scheme or group name to a list of
+	 * scheme objects.  Property name is either 'n-<name>' for single scheme
+	 * names or 'g-<name>' for scheme group names.
+	 *
+	 * @type {!Object<string, !Array<!Object>>}
+	 */
+	var registered_schemes = {};
+
+
+	/**
+	 * Registers a new colour scheme.
+	 *
+	 * @param {!palette.SchemeType} scheme The scheme to add.
+	 */
+	palette.register = function (scheme) {
+		registered_schemes['n-' + scheme.scheme_name] = [scheme];
+		scheme.groups.forEach(function (g) {
+			(registered_schemes['g-' + g] =
+				registered_schemes['g-' + g] || []).push(scheme);
+		});
+		(registered_schemes['g-all'] =
+			registered_schemes['g-all'] || []).push(scheme);
+	};
+
+
+	/**
+	 * List all schemes that match given name and number of colours.
+	 *
+	 * name argument can be either a string or an array of strings.  In the
+	 * former case, the function acts as if the argument was an array with name
+	 * as a single argument (i.e. “palette.listSchemes('foo')” is exactly the same
+	 * as “palette.listSchemes(['foo'])”).
+	 *
+	 * Each name can be either name of a palette (e.g. 'tol-sq' for Paul Tol's
+	 * sequential palette), or a name of a group (e.g. 'sequential' for all
+	 * sequential palettes).  Name can therefore map to a single scheme or
+	 * several schemes.
+	 *
+	 * Furthermore, name can be suffixed with '-cbf' to indicate that only
+	 * schemes that are colourblind friendly should be returned.  For example,
+	 * 'rainbow' returns a HSV rainbow scheme, but because it is not colourblind
+	 * friendly, 'rainbow-cbf' returns no schemes.
+	 *
+	 * Some schemes may produce colourblind friendly palettes for some number of
+	 * colours.  For example ColorBrewer's Dark2 scheme is colourblind friendly
+	 * if no more than 3 colours are generated.  If opt_number is not specified,
+	 * 'qualitative-cbf' will include 'cb-Dark2' but if opt_number is given as,
+	 * say, 5 it won't.
+	 *
+	 * Name can also be 'all' which will return all registered schemes.
+	 * Naturally, 'all-cbf' will return all colourblind friendly schemes.
+	 *
+	 * Schemes are added to the library using palette.register.  Schemes are
+	 * created using palette.Scheme function.  By default, the following schemes
+	 * are available:
+	 *
+	 *     Name            Description
+	 *     --------------  -----------------------------------------------------
+	 *     tol             Paul Tol's qualitative scheme, cbf, max 12 colours.
+	 *     tol-dv          Paul Tol's diverging scheme, cbf.
+	 *     tol-seq         Paul Tol's sequential scheme, cbf.
+	 *     tol-rainbow     Paul Tol's qualitative scheme, cbf.
+	 *
+	 *     rainbow         A rainbow palette.
+	 *
+	 *     cb-YlGn         ColorBrewer sequential schemes.
+	 *     cb-YlGnBu
+	 *     cb-GnBu
+	 *     cb-BuGn
+	 *     cb-PuBuGn
+	 *     cb-PuBu
+	 *     cb-BuPu
+	 *     cb-RdPu
+	 *     cb-PuRd
+	 *     cb-OrRd
+	 *     cb-YlOrRd
+	 *     cb-YlOrBr
+	 *     cb-Purples
+	 *     cb-Blues
+	 *     cb-Greens
+	 *     cb-Oranges
+	 *     cb-Reds
+	 *     cb-Greys
+	 *
+	 *     cb-PuOr         ColorBrewer diverging schemes.
+	 *     cb-BrBG
+	 *     cb-PRGn
+	 *     cb-PiYG
+	 *     cb-RdBu
+	 *     cb-RdGy
+	 *     cb-RdYlBu
+	 *     cb-Spectral
+	 *     cb-RdYlGn
+	 *
+	 *     cb-Accent       ColorBrewer qualitative schemes.
+	 *     cb-Dark2
+	 *     cb-Paired
+	 *     cb-Pastel1
+	 *     cb-Pastel2
+	 *     cb-Set1
+	 *     cb-Set2
+	 *     cb-Set3
+	 *
+	 *     sol-base        Solarized base colours.
+	 *     sol-accent      Solarized accent colours.
+	 *
+	 * The following groups are also available by default:
+	 *
+	 *     Name            Description
+	 *     --------------  -----------------------------------------------------
+	 *     all             All registered schemes.
+	 *     sequential      All sequential schemes.
+	 *     diverging       All diverging schemes.
+	 *     qualitative     All qualitative schemes.
+	 *     cb-sequential   All ColorBrewer sequential schemes.
+	 *     cb-diverging    All ColorBrewer diverging schemes.
+	 *     cb-qualitative  All ColorBrewer qualitative schemes.
+	 *
+	 * You can read more about Paul Tol's palettes at http://www.sron.nl/~pault/.
+	 * You can read more about ColorBrewer at http://colorbrewer2.org.
+	 *
+	 * @param {string|!Array<string>} name A name of a colour scheme, of
+	 *     a group of colour schemes, or an array of any of those.
+	 * @param {number=} opt_number When requesting only colourblind friendly
+	 *     schemes, number of colours the scheme must provide generating such
+	 *     that the palette is still colourblind friendly.  2 by default.
+	 * @return {!Array<!palette.SchemeType>} An array of colour scheme objects
+	 *     matching the criteria.  Sorted by scheme name.
+	 */
+	palette.listSchemes = function (name, opt_number) {
+		if (!opt_number) {
+			opt_number = 2;
+		} else if (opt_number < 0) {
+			opt_number = -opt_number;
+		}
+
+		var ret = [];
+		(typeof name === 'string' ? [name] : name).forEach(function (n) {
+			var cbf = n.substring(n.length - 4) === '-cbf';
+			if (cbf) {
+				n = n.substring(0, n.length - 4);
+			}
+			var schemes =
+				registered_schemes['g-' + n] ||
+				registered_schemes['n-' + n] ||
+				[];
+			for (var i = 0, scheme; (scheme = schemes[i]); ++i) {
+				if ((cbf ? scheme.cbf : scheme.max) >= opt_number) {
+					ret.push(scheme);
+				}
+			}
+		});
+
+		ret.sort(function (a, b) {
+			return a.scheme_name >= b.scheme_name ?
+				a.scheme_name > b.scheme_name ? 1 : 0 : -1;
+		});
+		return ret;
+	};
+
+
+	/**
+	 * Generates a palette using given colour generating function.
+	 *
+	 * The color_func callback must accept a singe number argument whose value
+	 * can vary from 0.0 to 1.0 (or in general from opt_start to opt_end), and
+	 * return a colour as an 'RRGGBB' string.  This function will be used when
+	 * generating palettes, i.e. if 11-colour palette is requested, this
+	 * function will be called with arguments 0.0, 0.1, …, 1.0.
+	 *
+	 * In some cases, it is not desirable to reach 1.0 when generating
+	 * a palette.  This happens for hue-rainbows where the 0–1 range corresponds
+	 * to a 0°–360° range in hues, and since hue at 0° is the same as at 360°,
+	 * it's desired to stop short the end of the range when generating
+	 * a palette.  To accomplish this, opt_cyclic should be set to true.
+	 *
+	 * opt_start and opt_end may be used to change the range the colour
+	 * generation function is called with.  opt_end may be less than opt_start
+	 * which will case to traverse the range in reverse.  Another way to reverse
+	 * the palette is requesting negative number of colours.  The two methods do
+	 * not always lead to the same results (especially if opt_cyclic is set).
+	 *
+	 * @param {palette.ColorFunction} color_func A colours generating callback
+	 *     function.
+	 * @param {number} number Number of colours to generate in the palette.  If
+	 *     number is negative, colours in the palette will be reversed.  If only
+	 *     one colour is requested, colour at opt_start will be returned.
+	 * @param {number=} opt_start Optional starting point for the palette
+	 *     generation function.  Zero by default.
+	 * @param {number=} opt_end Optional ending point for the palette generation
+	 *     function.  One by default.
+	 * @param {boolean=} opt_cyclic If true, function will assume colour at
+	 *     point opt_start is the same as one at opt_end.
+	 * @return {palette.Palette} An array of 'RRGGBB' colours.
+	 */
+	palette.generate = function (color_func, number, opt_start, opt_end,
+		opt_cyclic) {
+		if (Math.abs(number) < 1) {
+			return [];
+		}
+
+		opt_start = opt_start === void (0) ? 0 : opt_start;
+		opt_end = opt_end === void (0) ? 1 : opt_end;
+
+		if (Math.abs(number) < 2) {
+			return [color_func(opt_start)];
+		}
+
+		var i = Math.abs(number);
+		var x = opt_start;
+		var ret = [];
+		var step = (opt_end - opt_start) / (opt_cyclic ? i : (i - 1));
+
+		for (; --i >= 0; x += step) {
+			ret.push(color_func(x));
+		}
+		if (number < 0) {
+			ret.reverse();
+		}
+		return ret;
+	};
+
+
+	/**
+	 * Clamps value to [0, 1] range.
+	 * @param {number} v Number to limit value of.
+	 * @return {number} If v is inside of [0, 1] range returns v, otherwise
+	 *     returns 0 or 1 depending which side of the range v is closer to.
+	 */
+	var clamp = function (v) {
+		return v > 0 ? (v < 1 ? v : 1) : 0;
+	};
+
+	/**
+	 * Converts r, g, b triple into RRGGBB hex representation.
+	 * @param {number} r Red value of the colour in the range [0, 1].
+	 * @param {number} g Green value of the colour in the range [0, 1].
+	 * @param {number} b Blue value of the colour in the range [0, 1].
+	 * @return {string} A lower-case RRGGBB representation of the colour.
+	 */
+	palette.rgbColor = function (r, g, b) {
+		return [r, g, b].map(function (v) {
+			v = Number(Math.round(clamp(v) * 255)).toString(16);
+			return v.length == 1 ? '0' + v : v;
+		}).join('');
+	};
+
+	/**
+	 * Converts a linear r, g, b triple into RRGGBB hex representation.
+	 * @param {number} r Linear red value of the colour in the range [0, 1].
+	 * @param {number} g Linear green value of the colour in the range [0, 1].
+	 * @param {number} b Linear blue value of the colour in the range [0, 1].
+	 * @return {string} A lower-case RRGGBB representation of the colour.
+	 */
+	palette.linearRgbColor = function (r, g, b) {
+		// http://www.brucelindbloom.com/index.html?Eqn_XYZ_to_RGB.html
+		return [r, g, b].map(function (v) {
+			v = clamp(v);
+			if (v <= 0.0031308) {
+				v = 12.92 * v;
+			} else {
+				v = 1.055 * Math.pow(v, 1 / 2.4) - 0.055;
+			}
+			v = Number(Math.round(v * 255)).toString(16);
+			return v.length == 1 ? '0' + v : v;
+		}).join('');
+	};
+
+	/**
+	 * Converts an HSV colours to RRGGBB hex representation.
+	 * @param {number} h Hue in the range [0, 1].
+	 * @param {number=} opt_s Saturation in the range [0, 1].  One by default.
+	 * @param {number=} opt_v Value in the range [0, 1].  One by default.
+	 * @return {string} An RRGGBB representation of the colour.
+	 */
+	palette.hsvColor = function (h, opt_s, opt_v) {
+		h *= 6;
+		var s = opt_s === void (0) ? 1 : clamp(opt_s);
+		var v = opt_v === void (0) ? 1 : clamp(opt_v);
+		var x = v * (1 - s * Math.abs(h % 2 - 1));
+		var m = v * (1 - s);
+		switch (Math.floor(h) % 6) {
+			case 0: return palette.rgbColor(v, x, m);
+			case 1: return palette.rgbColor(x, v, m);
+			case 2: return palette.rgbColor(m, v, x);
+			case 3: return palette.rgbColor(m, x, v);
+			case 4: return palette.rgbColor(x, m, v);
+			default: return palette.rgbColor(v, m, x);
+		}
+	};
+
+	palette.register(palette.Scheme.withColorFunction(
+		'rainbow', 'qualitative', palette.hsvColor, false, true));
+
+	return palette;
+})();
+
+
+/** @typedef {function(number): string} */
+palette.ColorFunction;
+
+/** @typedef {!Array<string>} */
+palette.Palette;
+
+/** @typedef {!Object<number, palette.Palette>|!Array<palette.Palette>} */
+palette.PalettesList;
+
+/**
+ * @typedef {
+ *   function(number, ...?): Array<string>|
+ *   {
+ *     scheme_name: string,
+ *     groups: !Array<string>,
+ *     max: number,
+ *     cbf_max: number,
+ *     addPalette: function(!Array<string>, boolean=),
+ *     addPalettes: function(palette.PalettesList, number=, number=),
+ *     shrinkByTakingHead: function(boolean, number=),
+ *     setColorFunction: function(palette.ColorFunction, boolean=, boolean=),
+ *     color: function(number, ...?): ?string}}
+ */
+palette.SchemeType;
+
+
+/* Paul Tol's schemes start here. *******************************************/
+/* See http://www.sron.nl/~pault/ */
+
+(function () {
+	var rgb = palette.rgbColor;
+
+	/**
+	 * Calculates value of a polynomial at given point.
+	 * For example, poly(x, 1, 2, 3) calculates value of “1 + 2*x + 2*X^2”.
+	 * @param {number} x Value to calculate polynomial for.
+	 * @param {...number} varargs Coefficients of the polynomial specified in
+	 *     the order of rising powers of x including constant as the first
+	 *     variable argument.
+	 */
+	var poly = function (x, varargs) {
+		var i = arguments.length - 1, n = arguments[i];
+		while (i > 1) {
+			n = n * x + arguments[--i];
+		}
+		return n;
+	};
+
+	/**
+	 * Calculate approximate value of error function with maximum error of 0.0005.
+	 * See <https://en.wikipedia.org/wiki/Error_function>.
+	 * @param {number} x Argument of the error function.
+	 * @return {number} Value of error function for x.
+	 */
+	var erf = function (x) {
+		// https://en.wikipedia.org/wiki/Error_function#Approximation_with_elementary_functions
+		// This produces a maximum error of 0.0005 which is more then we need.  In
+		// the worst case, that error is multiplied by four and then divided by two
+		// before being multiplied by 255, so in the end, the error is multiplied by
+		// 510 which produces 0.255 which is less than a single colour step.
+		var y = poly(Math.abs(x), 1, 0.278393, 0.230389, 0.000972, 0.078108);
+		y *= y; // y^2
+		y *= y; // y^4
+		y = 1 - 1 / y;
+		return x < 0 ? -y : y;
+	};
+
+	palette.register(palette.Scheme.fromPalettes('tol', 'qualitative', [
+		['4477aa'],
+		['4477aa', 'cc6677'],
+		['4477aa', 'ddcc77', 'cc6677'],
+		['4477aa', '117733', 'ddcc77', 'cc6677'],
+		['332288', '88ccee', '117733', 'ddcc77', 'cc6677'],
+		['332288', '88ccee', '117733', 'ddcc77', 'cc6677', 'aa4499'],
+		['332288', '88ccee', '44aa99', '117733', 'ddcc77', 'cc6677', 'aa4499'],
+		['332288', '88ccee', '44aa99', '117733', '999933', 'ddcc77', 'cc6677',
+			'aa4499'],
+		['332288', '88ccee', '44aa99', '117733', '999933', 'ddcc77', 'cc6677',
+			'882255', 'aa4499'],
+		['332288', '88ccee', '44aa99', '117733', '999933', 'ddcc77', '661100',
+			'cc6677', '882255', 'aa4499'],
+		['332288', '6699cc', '88ccee', '44aa99', '117733', '999933', 'ddcc77',
+			'661100', 'cc6677', '882255', 'aa4499'],
+		['332288', '6699cc', '88ccee', '44aa99', '117733', '999933', 'ddcc77',
+			'661100', 'cc6677', 'aa4466', '882255', 'aa4499']
+	], 12, 12));
+
+	/**
+	 * Calculates a colour along Paul Tol's sequential colours axis.
+	 * See <http://www.sron.nl/~pault/colourschemes.pdf> figure 7 and equation 1.
+	 * @param {number} x Position of the colour on the axis in the [0, 1] range.
+	 * @return {string} An RRGGBB representation of the colour.
+	 */
+	palette.tolSequentialColor = function (x) {
+		return rgb(1 - 0.392 * (1 + erf((x - 0.869) / 0.255)),
+			1.021 - 0.456 * (1 + erf((x - 0.527) / 0.376)),
+			1 - 0.493 * (1 + erf((x - 0.272) / 0.309)));
+	};
+
+	palette.register(palette.Scheme.withColorFunction(
+		'tol-sq', 'sequential', palette.tolSequentialColor, true));
+
+	/**
+	 * Calculates a colour along Paul Tol's diverging colours axis.
+	 * See <http://www.sron.nl/~pault/colourschemes.pdf> figure 8 and equation 2.
+	 * @param {number} x Position of the colour on the axis in the [0, 1] range.
+	 * @return {string} An RRGGBB representation of the colour.
+	 */
+	palette.tolDivergingColor = function (x) {
+		var g = poly(x, 0.572, 1.524, -1.811) / poly(x, 1, -0.291, 0.1574);
+		return rgb(poly(x, 0.235, -2.13, 26.92, -65.5, 63.5, -22.36),
+			g * g,
+			1 / poly(x, 1.579, -4.03, 12.92, -31.4, 48.6, -23.36));
+	};
+
+	palette.register(palette.Scheme.withColorFunction(
+		'tol-dv', 'diverging', palette.tolDivergingColor, true));
+
+	/**
+	 * Calculates a colour along Paul Tol's rainbow colours axis.
+	 * See <http://www.sron.nl/~pault/colourschemes.pdf> figure 13 and equation 3.
+	 * @param {number} x Position of the colour on the axis in the [0, 1] range.
+	 * @return {string} An RRGGBB representation of the colour.
+	 */
+	palette.tolRainbowColor = function (x) {
+		return rgb(poly(x, 0.472, -0.567, 4.05) / poly(x, 1, 8.72, -19.17, 14.1),
+			poly(x, 0.108932, -1.22635, 27.284, -98.577, 163.3, -131.395,
+				40.634),
+			1 / poly(x, 1.97, 3.54, -68.5, 243, -297, 125));
+	};
+
+	palette.register(palette.Scheme.withColorFunction(
+		'tol-rainbow', 'qualitative', palette.tolRainbowColor, true));
+})();
+
+
+/* Solarized colour schemes start here. *************************************/
+/* See http://ethanschoonover.com/solarized */
+
+(function () {
+	/*
+	 * Those are not really designed to be used in graphs, but we're keeping
+	 * them here in case someone cares.
+	 */
+	palette.register(palette.Scheme.fromPalettes('sol-base', 'sequential', [
+		['002b36', '073642', '586e75', '657b83', '839496', '93a1a1', 'eee8d5',
+			'fdf6e3']
+	], 1, 8));
+	palette.register(palette.Scheme.fromPalettes('sol-accent', 'qualitative', [
+		['b58900', 'cb4b16', 'dc322f', 'd33682', '6c71c4', '268bd2', '2aa198',
+			'859900']
+	]));
+})();
+
+
+/* ColorBrewer colour schemes start here. ***********************************/
+/* See http://colorbrewer2.org/ */
+
+(function () {
+	var schemes = {
+		YlGn: {
+			type: 'sequential',
+			cbf: 42,
+			3: ['f7fcb9', 'addd8e', '31a354'],
+			4: ['ffffcc', 'c2e699', '78c679', '238443'],
+			5: ['ffffcc', 'c2e699', '78c679', '31a354', '006837'],
+			6: ['ffffcc', 'd9f0a3', 'addd8e', '78c679', '31a354', '006837'],
+			7: ['ffffcc', 'd9f0a3', 'addd8e', '78c679', '41ab5d', '238443',
+				'005a32'],
+			8: ['ffffe5', 'f7fcb9', 'd9f0a3', 'addd8e', '78c679', '41ab5d',
+				'238443', '005a32'],
+			9: ['ffffe5', 'f7fcb9', 'd9f0a3', 'addd8e', '78c679', '41ab5d',
+				'238443', '006837', '004529']
+		},
+		YlGnBu: {
+			type: 'sequential',
+			cbf: 42,
+			3: ['edf8b1', '7fcdbb', '2c7fb8'],
+			4: ['ffffcc', 'a1dab4', '41b6c4', '225ea8'],
+			5: ['ffffcc', 'a1dab4', '41b6c4', '2c7fb8', '253494'],
+			6: ['ffffcc', 'c7e9b4', '7fcdbb', '41b6c4', '2c7fb8', '253494'],
+			7: ['ffffcc', 'c7e9b4', '7fcdbb', '41b6c4', '1d91c0', '225ea8',
+				'0c2c84'],
+			8: ['ffffd9', 'edf8b1', 'c7e9b4', '7fcdbb', '41b6c4', '1d91c0',
+				'225ea8', '0c2c84'],
+			9: ['ffffd9', 'edf8b1', 'c7e9b4', '7fcdbb', '41b6c4', '1d91c0',
+				'225ea8', '253494', '081d58']
+		},
+		GnBu: {
+			type: 'sequential',
+			cbf: 42,
+			3: ['e0f3db', 'a8ddb5', '43a2ca'],
+			4: ['f0f9e8', 'bae4bc', '7bccc4', '2b8cbe'],
+			5: ['f0f9e8', 'bae4bc', '7bccc4', '43a2ca', '0868ac'],
+			6: ['f0f9e8', 'ccebc5', 'a8ddb5', '7bccc4', '43a2ca', '0868ac'],
+			7: ['f0f9e8', 'ccebc5', 'a8ddb5', '7bccc4', '4eb3d3', '2b8cbe',
+				'08589e'],
+			8: ['f7fcf0', 'e0f3db', 'ccebc5', 'a8ddb5', '7bccc4', '4eb3d3',
+				'2b8cbe', '08589e'],
+			9: ['f7fcf0', 'e0f3db', 'ccebc5', 'a8ddb5', '7bccc4', '4eb3d3',
+				'2b8cbe', '0868ac', '084081']
+		},
+		BuGn: {
+			type: 'sequential',
+			cbf: 42,
+			3: ['e5f5f9', '99d8c9', '2ca25f'],
+			4: ['edf8fb', 'b2e2e2', '66c2a4', '238b45'],
+			5: ['edf8fb', 'b2e2e2', '66c2a4', '2ca25f', '006d2c'],
+			6: ['edf8fb', 'ccece6', '99d8c9', '66c2a4', '2ca25f', '006d2c'],
+			7: ['edf8fb', 'ccece6', '99d8c9', '66c2a4', '41ae76', '238b45',
+				'005824'],
+			8: ['f7fcfd', 'e5f5f9', 'ccece6', '99d8c9', '66c2a4', '41ae76',
+				'238b45', '005824'],
+			9: ['f7fcfd', 'e5f5f9', 'ccece6', '99d8c9', '66c2a4', '41ae76',
+				'238b45', '006d2c', '00441b']
+		},
+		PuBuGn: {
+			type: 'sequential',
+			cbf: 42,
+			3: ['ece2f0', 'a6bddb', '1c9099'],
+			4: ['f6eff7', 'bdc9e1', '67a9cf', '02818a'],
+			5: ['f6eff7', 'bdc9e1', '67a9cf', '1c9099', '016c59'],
+			6: ['f6eff7', 'd0d1e6', 'a6bddb', '67a9cf', '1c9099', '016c59'],
+			7: ['f6eff7', 'd0d1e6', 'a6bddb', '67a9cf', '3690c0', '02818a',
+				'016450'],
+			8: ['fff7fb', 'ece2f0', 'd0d1e6', 'a6bddb', '67a9cf', '3690c0',
+				'02818a', '016450'],
+			9: ['fff7fb', 'ece2f0', 'd0d1e6', 'a6bddb', '67a9cf', '3690c0',
+				'02818a', '016c59', '014636']
+		},
+		PuBu: {
+			type: 'sequential',
+			cbf: 42,
+			3: ['ece7f2', 'a6bddb', '2b8cbe'],
+			4: ['f1eef6', 'bdc9e1', '74a9cf', '0570b0'],
+			5: ['f1eef6', 'bdc9e1', '74a9cf', '2b8cbe', '045a8d'],
+			6: ['f1eef6', 'd0d1e6', 'a6bddb', '74a9cf', '2b8cbe', '045a8d'],
+			7: ['f1eef6', 'd0d1e6', 'a6bddb', '74a9cf', '3690c0', '0570b0',
+				'034e7b'],
+			8: ['fff7fb', 'ece7f2', 'd0d1e6', 'a6bddb', '74a9cf', '3690c0',
+				'0570b0', '034e7b'],
+			9: ['fff7fb', 'ece7f2', 'd0d1e6', 'a6bddb', '74a9cf', '3690c0',
+				'0570b0', '045a8d', '023858']
+		},
+		BuPu: {
+			type: 'sequential',
+			cbf: 42,
+			3: ['e0ecf4', '9ebcda', '8856a7'],
+			4: ['edf8fb', 'b3cde3', '8c96c6', '88419d'],
+			5: ['edf8fb', 'b3cde3', '8c96c6', '8856a7', '810f7c'],
+			6: ['edf8fb', 'bfd3e6', '9ebcda', '8c96c6', '8856a7', '810f7c'],
+			7: ['edf8fb', 'bfd3e6', '9ebcda', '8c96c6', '8c6bb1', '88419d',
+				'6e016b'],
+			8: ['f7fcfd', 'e0ecf4', 'bfd3e6', '9ebcda', '8c96c6', '8c6bb1',
+				'88419d', '6e016b'],
+			9: ['f7fcfd', 'e0ecf4', 'bfd3e6', '9ebcda', '8c96c6', '8c6bb1',
+				'88419d', '810f7c', '4d004b']
+		},
+		RdPu: {
+			type: 'sequential',
+			cbf: 42,
+			3: ['fde0dd', 'fa9fb5', 'c51b8a'],
+			4: ['feebe2', 'fbb4b9', 'f768a1', 'ae017e'],
+			5: ['feebe2', 'fbb4b9', 'f768a1', 'c51b8a', '7a0177'],
+			6: ['feebe2', 'fcc5c0', 'fa9fb5', 'f768a1', 'c51b8a', '7a0177'],
+			7: ['feebe2', 'fcc5c0', 'fa9fb5', 'f768a1', 'dd3497', 'ae017e',
+				'7a0177'],
+			8: ['fff7f3', 'fde0dd', 'fcc5c0', 'fa9fb5', 'f768a1', 'dd3497',
+				'ae017e', '7a0177'],
+			9: ['fff7f3', 'fde0dd', 'fcc5c0', 'fa9fb5', 'f768a1', 'dd3497',
+				'ae017e', '7a0177', '49006a']
+		},
+		PuRd: {
+			type: 'sequential',
+			cbf: 42,
+			3: ['e7e1ef', 'c994c7', 'dd1c77'],
+			4: ['f1eef6', 'd7b5d8', 'df65b0', 'ce1256'],
+			5: ['f1eef6', 'd7b5d8', 'df65b0', 'dd1c77', '980043'],
+			6: ['f1eef6', 'd4b9da', 'c994c7', 'df65b0', 'dd1c77', '980043'],
+			7: ['f1eef6', 'd4b9da', 'c994c7', 'df65b0', 'e7298a', 'ce1256',
+				'91003f'],
+			8: ['f7f4f9', 'e7e1ef', 'd4b9da', 'c994c7', 'df65b0', 'e7298a',
+				'ce1256', '91003f'],
+			9: ['f7f4f9', 'e7e1ef', 'd4b9da', 'c994c7', 'df65b0', 'e7298a',
+				'ce1256', '980043', '67001f']
+		},
+		OrRd: {
+			type: 'sequential',
+			cbf: 42,
+			3: ['fee8c8', 'fdbb84', 'e34a33'],
+			4: ['fef0d9', 'fdcc8a', 'fc8d59', 'd7301f'],
+			5: ['fef0d9', 'fdcc8a', 'fc8d59', 'e34a33', 'b30000'],
+			6: ['fef0d9', 'fdd49e', 'fdbb84', 'fc8d59', 'e34a33', 'b30000'],
+			7: ['fef0d9', 'fdd49e', 'fdbb84', 'fc8d59', 'ef6548', 'd7301f',
+				'990000'],
+			8: ['fff7ec', 'fee8c8', 'fdd49e', 'fdbb84', 'fc8d59', 'ef6548',
+				'd7301f', '990000'],
+			9: ['fff7ec', 'fee8c8', 'fdd49e', 'fdbb84', 'fc8d59', 'ef6548',
+				'd7301f', 'b30000', '7f0000']
+		},
+		YlOrRd: {
+			type: 'sequential',
+			cbf: 42,
+			3: ['ffeda0', 'feb24c', 'f03b20'],
+			4: ['ffffb2', 'fecc5c', 'fd8d3c', 'e31a1c'],
+			5: ['ffffb2', 'fecc5c', 'fd8d3c', 'f03b20', 'bd0026'],
+			6: ['ffffb2', 'fed976', 'feb24c', 'fd8d3c', 'f03b20', 'bd0026'],
+			7: ['ffffb2', 'fed976', 'feb24c', 'fd8d3c', 'fc4e2a', 'e31a1c',
+				'b10026'],
+			8: ['ffffcc', 'ffeda0', 'fed976', 'feb24c', 'fd8d3c', 'fc4e2a',
+				'e31a1c', 'b10026'],
+			9: ['ffffcc', 'ffeda0', 'fed976', 'feb24c', 'fd8d3c', 'fc4e2a',
+				'e31a1c', 'bd0026', '800026']
+		},
+		YlOrBr: {
+			type: 'sequential',
+			cbf: 42,
+			3: ['fff7bc', 'fec44f', 'd95f0e'],
+			4: ['ffffd4', 'fed98e', 'fe9929', 'cc4c02'],
+			5: ['ffffd4', 'fed98e', 'fe9929', 'd95f0e', '993404'],
+			6: ['ffffd4', 'fee391', 'fec44f', 'fe9929', 'd95f0e', '993404'],
+			7: ['ffffd4', 'fee391', 'fec44f', 'fe9929', 'ec7014', 'cc4c02',
+				'8c2d04'],
+			8: ['ffffe5', 'fff7bc', 'fee391', 'fec44f', 'fe9929', 'ec7014',
+				'cc4c02', '8c2d04'],
+			9: ['ffffe5', 'fff7bc', 'fee391', 'fec44f', 'fe9929', 'ec7014',
+				'cc4c02', '993404', '662506']
+		},
+		Purples: {
+			type: 'sequential',
+			cbf: 42,
+			3: ['efedf5', 'bcbddc', '756bb1'],
+			4: ['f2f0f7', 'cbc9e2', '9e9ac8', '6a51a3'],
+			5: ['f2f0f7', 'cbc9e2', '9e9ac8', '756bb1', '54278f'],
+			6: ['f2f0f7', 'dadaeb', 'bcbddc', '9e9ac8', '756bb1', '54278f'],
+			7: ['f2f0f7', 'dadaeb', 'bcbddc', '9e9ac8', '807dba', '6a51a3',
+				'4a1486'],
+			8: ['fcfbfd', 'efedf5', 'dadaeb', 'bcbddc', '9e9ac8', '807dba',
+				'6a51a3', '4a1486'],
+			9: ['fcfbfd', 'efedf5', 'dadaeb', 'bcbddc', '9e9ac8', '807dba',
+				'6a51a3', '54278f', '3f007d']
+		},
+		Blues: {
+			type: 'sequential',
+			cbf: 42,
+			3: ['deebf7', '9ecae1', '3182bd'],
+			4: ['eff3ff', 'bdd7e7', '6baed6', '2171b5'],
+			5: ['eff3ff', 'bdd7e7', '6baed6', '3182bd', '08519c'],
+			6: ['eff3ff', 'c6dbef', '9ecae1', '6baed6', '3182bd', '08519c'],
+			7: ['eff3ff', 'c6dbef', '9ecae1', '6baed6', '4292c6', '2171b5',
+				'084594'],
+			8: ['f7fbff', 'deebf7', 'c6dbef', '9ecae1', '6baed6', '4292c6',
+				'2171b5', '084594'],
+			9: ['f7fbff', 'deebf7', 'c6dbef', '9ecae1', '6baed6', '4292c6',
+				'2171b5', '08519c', '08306b']
+		},
+		Greens: {
+			type: 'sequential',
+			cbf: 42,
+			3: ['e5f5e0', 'a1d99b', '31a354'],
+			4: ['edf8e9', 'bae4b3', '74c476', '238b45'],
+			5: ['edf8e9', 'bae4b3', '74c476', '31a354', '006d2c'],
+			6: ['edf8e9', 'c7e9c0', 'a1d99b', '74c476', '31a354', '006d2c'],
+			7: ['edf8e9', 'c7e9c0', 'a1d99b', '74c476', '41ab5d', '238b45',
+				'005a32'],
+			8: ['f7fcf5', 'e5f5e0', 'c7e9c0', 'a1d99b', '74c476', '41ab5d',
+				'238b45', '005a32'],
+			9: ['f7fcf5', 'e5f5e0', 'c7e9c0', 'a1d99b', '74c476', '41ab5d',
+				'238b45', '006d2c', '00441b']
+		},
+		Oranges: {
+			type: 'sequential',
+			cbf: 42,
+			3: ['fee6ce', 'fdae6b', 'e6550d'],
+			4: ['feedde', 'fdbe85', 'fd8d3c', 'd94701'],
+			5: ['feedde', 'fdbe85', 'fd8d3c', 'e6550d', 'a63603'],
+			6: ['feedde', 'fdd0a2', 'fdae6b', 'fd8d3c', 'e6550d', 'a63603'],
+			7: ['feedde', 'fdd0a2', 'fdae6b', 'fd8d3c', 'f16913', 'd94801',
+				'8c2d04'],
+			8: ['fff5eb', 'fee6ce', 'fdd0a2', 'fdae6b', 'fd8d3c', 'f16913',
+				'd94801', '8c2d04'],
+			9: ['fff5eb', 'fee6ce', 'fdd0a2', 'fdae6b', 'fd8d3c', 'f16913',
+				'd94801', 'a63603', '7f2704']
+		},
+		Reds: {
+			type: 'sequential',
+			cbf: 42,
+			3: ['fee0d2', 'fc9272', 'de2d26'],
+			4: ['fee5d9', 'fcae91', 'fb6a4a', 'cb181d'],
+			5: ['fee5d9', 'fcae91', 'fb6a4a', 'de2d26', 'a50f15'],
+			6: ['fee5d9', 'fcbba1', 'fc9272', 'fb6a4a', 'de2d26', 'a50f15'],
+			7: ['fee5d9', 'fcbba1', 'fc9272', 'fb6a4a', 'ef3b2c', 'cb181d',
+				'99000d'],
+			8: ['fff5f0', 'fee0d2', 'fcbba1', 'fc9272', 'fb6a4a', 'ef3b2c',
+				'cb181d', '99000d'],
+			9: ['fff5f0', 'fee0d2', 'fcbba1', 'fc9272', 'fb6a4a', 'ef3b2c',
+				'cb181d', 'a50f15', '67000d']
+		},
+		Greys: {
+			type: 'sequential',
+			cbf: 42,
+			3: ['f0f0f0', 'bdbdbd', '636363'],
+			4: ['f7f7f7', 'cccccc', '969696', '525252'],
+			5: ['f7f7f7', 'cccccc', '969696', '636363', '252525'],
+			6: ['f7f7f7', 'd9d9d9', 'bdbdbd', '969696', '636363', '252525'],
+			7: ['f7f7f7', 'd9d9d9', 'bdbdbd', '969696', '737373', '525252',
+				'252525'],
+			8: ['ffffff', 'f0f0f0', 'd9d9d9', 'bdbdbd', '969696', '737373',
+				'525252', '252525'],
+			9: ['ffffff', 'f0f0f0', 'd9d9d9', 'bdbdbd', '969696', '737373',
+				'525252', '252525', '000000']
+		},
+		PuOr: {
+			type: 'diverging',
+			cbf: 42,
+			3: ['f1a340', 'f7f7f7', '998ec3'],
+			4: ['e66101', 'fdb863', 'b2abd2', '5e3c99'],
+			5: ['e66101', 'fdb863', 'f7f7f7', 'b2abd2', '5e3c99'],
+			6: ['b35806', 'f1a340', 'fee0b6', 'd8daeb', '998ec3', '542788'],
+			7: ['b35806', 'f1a340', 'fee0b6', 'f7f7f7', 'd8daeb', '998ec3',
+				'542788'],
+			8: ['b35806', 'e08214', 'fdb863', 'fee0b6', 'd8daeb', 'b2abd2',
+				'8073ac', '542788'],
+			9: ['b35806', 'e08214', 'fdb863', 'fee0b6', 'f7f7f7', 'd8daeb',
+				'b2abd2', '8073ac', '542788'],
+			10: ['7f3b08', 'b35806', 'e08214', 'fdb863', 'fee0b6', 'd8daeb',
+				'b2abd2', '8073ac', '542788', '2d004b'],
+			11: ['7f3b08', 'b35806', 'e08214', 'fdb863', 'fee0b6', 'f7f7f7',
+				'd8daeb', 'b2abd2', '8073ac', '542788', '2d004b']
+		},
+		BrBG: {
+			type: 'diverging',
+			cbf: 42,
+			3: ['d8b365', 'f5f5f5', '5ab4ac'],
+			4: ['a6611a', 'dfc27d', '80cdc1', '018571'],
+			5: ['a6611a', 'dfc27d', 'f5f5f5', '80cdc1', '018571'],
+			6: ['8c510a', 'd8b365', 'f6e8c3', 'c7eae5', '5ab4ac', '01665e'],
+			7: ['8c510a', 'd8b365', 'f6e8c3', 'f5f5f5', 'c7eae5', '5ab4ac',
+				'01665e'],
+			8: ['8c510a', 'bf812d', 'dfc27d', 'f6e8c3', 'c7eae5', '80cdc1',
+				'35978f', '01665e'],
+			9: ['8c510a', 'bf812d', 'dfc27d', 'f6e8c3', 'f5f5f5', 'c7eae5',
+				'80cdc1', '35978f', '01665e'],
+			10: ['543005', '8c510a', 'bf812d', 'dfc27d', 'f6e8c3', 'c7eae5',
+				'80cdc1', '35978f', '01665e', '003c30'],
+			11: ['543005', '8c510a', 'bf812d', 'dfc27d', 'f6e8c3', 'f5f5f5',
+				'c7eae5', '80cdc1', '35978f', '01665e', '003c30']
+		},
+		PRGn: {
+			type: 'diverging',
+			cbf: 42,
+			3: ['af8dc3', 'f7f7f7', '7fbf7b'],
+			4: ['7b3294', 'c2a5cf', 'a6dba0', '008837'],
+			5: ['7b3294', 'c2a5cf', 'f7f7f7', 'a6dba0', '008837'],
+			6: ['762a83', 'af8dc3', 'e7d4e8', 'd9f0d3', '7fbf7b', '1b7837'],
+			7: ['762a83', 'af8dc3', 'e7d4e8', 'f7f7f7', 'd9f0d3', '7fbf7b',
+				'1b7837'],
+			8: ['762a83', '9970ab', 'c2a5cf', 'e7d4e8', 'd9f0d3', 'a6dba0',
+				'5aae61', '1b7837'],
+			9: ['762a83', '9970ab', 'c2a5cf', 'e7d4e8', 'f7f7f7', 'd9f0d3',
+				'a6dba0', '5aae61', '1b7837'],
+			10: ['40004b', '762a83', '9970ab', 'c2a5cf', 'e7d4e8', 'd9f0d3',
+				'a6dba0', '5aae61', '1b7837', '00441b'],
+			11: ['40004b', '762a83', '9970ab', 'c2a5cf', 'e7d4e8', 'f7f7f7',
+				'd9f0d3', 'a6dba0', '5aae61', '1b7837', '00441b']
+		},
+		PiYG: {
+			type: 'diverging',
+			cbf: 42,
+			3: ['e9a3c9', 'f7f7f7', 'a1d76a'],
+			4: ['d01c8b', 'f1b6da', 'b8e186', '4dac26'],
+			5: ['d01c8b', 'f1b6da', 'f7f7f7', 'b8e186', '4dac26'],
+			6: ['c51b7d', 'e9a3c9', 'fde0ef', 'e6f5d0', 'a1d76a', '4d9221'],
+			7: ['c51b7d', 'e9a3c9', 'fde0ef', 'f7f7f7', 'e6f5d0', 'a1d76a',
+				'4d9221'],
+			8: ['c51b7d', 'de77ae', 'f1b6da', 'fde0ef', 'e6f5d0', 'b8e186',
+				'7fbc41', '4d9221'],
+			9: ['c51b7d', 'de77ae', 'f1b6da', 'fde0ef', 'f7f7f7', 'e6f5d0',
+				'b8e186', '7fbc41', '4d9221'],
+			10: ['8e0152', 'c51b7d', 'de77ae', 'f1b6da', 'fde0ef', 'e6f5d0',
+				'b8e186', '7fbc41', '4d9221', '276419'],
+			11: ['8e0152', 'c51b7d', 'de77ae', 'f1b6da', 'fde0ef', 'f7f7f7',
+				'e6f5d0', 'b8e186', '7fbc41', '4d9221', '276419']
+		},
+		RdBu: {
+			type: 'diverging',
+			cbf: 42,
+			3: ['ef8a62', 'f7f7f7', '67a9cf'],
+			4: ['ca0020', 'f4a582', '92c5de', '0571b0'],
+			5: ['ca0020', 'f4a582', 'f7f7f7', '92c5de', '0571b0'],
+			6: ['b2182b', 'ef8a62', 'fddbc7', 'd1e5f0', '67a9cf', '2166ac'],
+			7: ['b2182b', 'ef8a62', 'fddbc7', 'f7f7f7', 'd1e5f0', '67a9cf',
+				'2166ac'],
+			8: ['b2182b', 'd6604d', 'f4a582', 'fddbc7', 'd1e5f0', '92c5de',
+				'4393c3', '2166ac'],
+			9: ['b2182b', 'd6604d', 'f4a582', 'fddbc7', 'f7f7f7', 'd1e5f0',
+				'92c5de', '4393c3', '2166ac'],
+			10: ['67001f', 'b2182b', 'd6604d', 'f4a582', 'fddbc7', 'd1e5f0',
+				'92c5de', '4393c3', '2166ac', '053061'],
+			11: ['67001f', 'b2182b', 'd6604d', 'f4a582', 'fddbc7', 'f7f7f7',
+				'd1e5f0', '92c5de', '4393c3', '2166ac', '053061']
+		},
+		RdGy: {
+			type: 'diverging',
+			cbf: 42,
+			3: ['ef8a62', 'ffffff', '999999'],
+			4: ['ca0020', 'f4a582', 'bababa', '404040'],
+			5: ['ca0020', 'f4a582', 'ffffff', 'bababa', '404040'],
+			6: ['b2182b', 'ef8a62', 'fddbc7', 'e0e0e0', '999999', '4d4d4d'],
+			7: ['b2182b', 'ef8a62', 'fddbc7', 'ffffff', 'e0e0e0', '999999',
+				'4d4d4d'],
+			8: ['b2182b', 'd6604d', 'f4a582', 'fddbc7', 'e0e0e0', 'bababa',
+				'878787', '4d4d4d'],
+			9: ['b2182b', 'd6604d', 'f4a582', 'fddbc7', 'ffffff', 'e0e0e0',
+				'bababa', '878787', '4d4d4d'],
+			10: ['67001f', 'b2182b', 'd6604d', 'f4a582', 'fddbc7', 'e0e0e0',
+				'bababa', '878787', '4d4d4d', '1a1a1a'],
+			11: ['67001f', 'b2182b', 'd6604d', 'f4a582', 'fddbc7', 'ffffff',
+				'e0e0e0', 'bababa', '878787', '4d4d4d', '1a1a1a']
+		},
+		RdYlBu: {
+			type: 'diverging',
+			cbf: 42,
+			3: ['fc8d59', 'ffffbf', '91bfdb'],
+			4: ['d7191c', 'fdae61', 'abd9e9', '2c7bb6'],
+			5: ['d7191c', 'fdae61', 'ffffbf', 'abd9e9', '2c7bb6'],
+			6: ['d73027', 'fc8d59', 'fee090', 'e0f3f8', '91bfdb', '4575b4'],
+			7: ['d73027', 'fc8d59', 'fee090', 'ffffbf', 'e0f3f8', '91bfdb',
+				'4575b4'],
+			8: ['d73027', 'f46d43', 'fdae61', 'fee090', 'e0f3f8', 'abd9e9',
+				'74add1', '4575b4'],
+			9: ['d73027', 'f46d43', 'fdae61', 'fee090', 'ffffbf', 'e0f3f8',
+				'abd9e9', '74add1', '4575b4'],
+			10: ['a50026', 'd73027', 'f46d43', 'fdae61', 'fee090', 'e0f3f8',
+				'abd9e9', '74add1', '4575b4', '313695'],
+			11: ['a50026', 'd73027', 'f46d43', 'fdae61', 'fee090', 'ffffbf',
+				'e0f3f8', 'abd9e9', '74add1', '4575b4', '313695']
+		},
+		Spectral: {
+			type: 'diverging',
+			cbf: 0,
+			3: ['fc8d59', 'ffffbf', '99d594'],
+			4: ['d7191c', 'fdae61', 'abdda4', '2b83ba'],
+			5: ['d7191c', 'fdae61', 'ffffbf', 'abdda4', '2b83ba'],
+			6: ['d53e4f', 'fc8d59', 'fee08b', 'e6f598', '99d594', '3288bd'],
+			7: ['d53e4f', 'fc8d59', 'fee08b', 'ffffbf', 'e6f598', '99d594',
+				'3288bd'],
+			8: ['d53e4f', 'f46d43', 'fdae61', 'fee08b', 'e6f598', 'abdda4',
+				'66c2a5', '3288bd'],
+			9: ['d53e4f', 'f46d43', 'fdae61', 'fee08b', 'ffffbf', 'e6f598',
+				'abdda4', '66c2a5', '3288bd'],
+			10: ['9e0142', 'd53e4f', 'f46d43', 'fdae61', 'fee08b', 'e6f598',
+				'abdda4', '66c2a5', '3288bd', '5e4fa2'],
+			11: ['9e0142', 'd53e4f', 'f46d43', 'fdae61', 'fee08b', 'ffffbf',
+				'e6f598', 'abdda4', '66c2a5', '3288bd', '5e4fa2']
+		},
+		RdYlGn: {
+			type: 'diverging',
+			cbf: 0,
+			3: ['fc8d59', 'ffffbf', '91cf60'],
+			4: ['d7191c', 'fdae61', 'a6d96a', '1a9641'],
+			5: ['d7191c', 'fdae61', 'ffffbf', 'a6d96a', '1a9641'],
+			6: ['d73027', 'fc8d59', 'fee08b', 'd9ef8b', '91cf60', '1a9850'],
+			7: ['d73027', 'fc8d59', 'fee08b', 'ffffbf', 'd9ef8b', '91cf60',
+				'1a9850'],
+			8: ['d73027', 'f46d43', 'fdae61', 'fee08b', 'd9ef8b', 'a6d96a',
+				'66bd63', '1a9850'],
+			9: ['d73027', 'f46d43', 'fdae61', 'fee08b', 'ffffbf', 'd9ef8b',
+				'a6d96a', '66bd63', '1a9850'],
+			10: ['a50026', 'd73027', 'f46d43', 'fdae61', 'fee08b', 'd9ef8b',
+				'a6d96a', '66bd63', '1a9850', '006837'],
+			11: ['a50026', 'd73027', 'f46d43', 'fdae61', 'fee08b', 'ffffbf',
+				'd9ef8b', 'a6d96a', '66bd63', '1a9850', '006837']
+		},
+		Accent: {
+			type: 'qualitative',
+			cbf: 0,
+			3: ['7fc97f', 'beaed4', 'fdc086'],
+			4: ['7fc97f', 'beaed4', 'fdc086', 'ffff99'],
+			5: ['7fc97f', 'beaed4', 'fdc086', 'ffff99', '386cb0'],
+			6: ['7fc97f', 'beaed4', 'fdc086', 'ffff99', '386cb0', 'f0027f'],
+			7: ['7fc97f', 'beaed4', 'fdc086', 'ffff99', '386cb0', 'f0027f',
+				'bf5b17'],
+			8: ['7fc97f', 'beaed4', 'fdc086', 'ffff99', '386cb0', 'f0027f',
+				'bf5b17', '666666']
+		},
+		Dark2: {
+			type: 'qualitative',
+			cbf: 3,
+			3: ['1b9e77', 'd95f02', '7570b3'],
+			4: ['1b9e77', 'd95f02', '7570b3', 'e7298a'],
+			5: ['1b9e77', 'd95f02', '7570b3', 'e7298a', '66a61e'],
+			6: ['1b9e77', 'd95f02', '7570b3', 'e7298a', '66a61e', 'e6ab02'],
+			7: ['1b9e77', 'd95f02', '7570b3', 'e7298a', '66a61e', 'e6ab02',
+				'a6761d'],
+			8: ['1b9e77', 'd95f02', '7570b3', 'e7298a', '66a61e', 'e6ab02',
+				'a6761d', '666666']
+		},
+		Paired: {
+			type: 'qualitative',
+			cbf: 4,
+			3: ['a6cee3', '1f78b4', 'b2df8a'],
+			4: ['a6cee3', '1f78b4', 'b2df8a', '33a02c'],
+			5: ['a6cee3', '1f78b4', 'b2df8a', '33a02c', 'fb9a99'],
+			6: ['a6cee3', '1f78b4', 'b2df8a', '33a02c', 'fb9a99', 'e31a1c'],
+			7: ['a6cee3', '1f78b4', 'b2df8a', '33a02c', 'fb9a99', 'e31a1c',
+				'fdbf6f'],
+			8: ['a6cee3', '1f78b4', 'b2df8a', '33a02c', 'fb9a99', 'e31a1c',
+				'fdbf6f', 'ff7f00'],
+			9: ['a6cee3', '1f78b4', 'b2df8a', '33a02c', 'fb9a99', 'e31a1c',
+				'fdbf6f', 'ff7f00', 'cab2d6'],
+			10: ['a6cee3', '1f78b4', 'b2df8a', '33a02c', 'fb9a99', 'e31a1c',
+				'fdbf6f', 'ff7f00', 'cab2d6', '6a3d9a'],
+			11: ['a6cee3', '1f78b4', 'b2df8a', '33a02c', 'fb9a99', 'e31a1c',
+				'fdbf6f', 'ff7f00', 'cab2d6', '6a3d9a', 'ffff99'],
+			12: ['a6cee3', '1f78b4', 'b2df8a', '33a02c', 'fb9a99', 'e31a1c',
+				'fdbf6f', 'ff7f00', 'cab2d6', '6a3d9a', 'ffff99', 'b15928']
+		},
+		Pastel1: {
+			type: 'qualitative',
+			cbf: 0,
+			3: ['fbb4ae', 'b3cde3', 'ccebc5'],
+			4: ['fbb4ae', 'b3cde3', 'ccebc5', 'decbe4'],
+			5: ['fbb4ae', 'b3cde3', 'ccebc5', 'decbe4', 'fed9a6'],
+			6: ['fbb4ae', 'b3cde3', 'ccebc5', 'decbe4', 'fed9a6', 'ffffcc'],
+			7: ['fbb4ae', 'b3cde3', 'ccebc5', 'decbe4', 'fed9a6', 'ffffcc',
+				'e5d8bd'],
+			8: ['fbb4ae', 'b3cde3', 'ccebc5', 'decbe4', 'fed9a6', 'ffffcc',
+				'e5d8bd', 'fddaec'],
+			9: ['fbb4ae', 'b3cde3', 'ccebc5', 'decbe4', 'fed9a6', 'ffffcc',
+				'e5d8bd', 'fddaec', 'f2f2f2']
+		},
+		Pastel2: {
+			type: 'qualitative',
+			cbf: 0,
+			3: ['b3e2cd', 'fdcdac', 'cbd5e8'],
+			4: ['b3e2cd', 'fdcdac', 'cbd5e8', 'f4cae4'],
+			5: ['b3e2cd', 'fdcdac', 'cbd5e8', 'f4cae4', 'e6f5c9'],
+			6: ['b3e2cd', 'fdcdac', 'cbd5e8', 'f4cae4', 'e6f5c9', 'fff2ae'],
+			7: ['b3e2cd', 'fdcdac', 'cbd5e8', 'f4cae4', 'e6f5c9', 'fff2ae',
+				'f1e2cc'],
+			8: ['b3e2cd', 'fdcdac', 'cbd5e8', 'f4cae4', 'e6f5c9', 'fff2ae',
+				'f1e2cc', 'cccccc']
+		},
+		Set1: {
+			type: 'qualitative',
+			cbf: 0,
+			3: ['e41a1c', '377eb8', '4daf4a'],
+			4: ['e41a1c', '377eb8', '4daf4a', '984ea3'],
+			5: ['e41a1c', '377eb8', '4daf4a', '984ea3', 'ff7f00'],
+			6: ['e41a1c', '377eb8', '4daf4a', '984ea3', 'ff7f00', 'ffff33'],
+			7: ['e41a1c', '377eb8', '4daf4a', '984ea3', 'ff7f00', 'ffff33',
+				'a65628'],
+			8: ['e41a1c', '377eb8', '4daf4a', '984ea3', 'ff7f00', 'ffff33',
+				'a65628', 'f781bf'],
+			9: ['e41a1c', '377eb8', '4daf4a', '984ea3', 'ff7f00', 'ffff33',
+				'a65628', 'f781bf', '999999']
+		},
+		Set2: {
+			type: 'qualitative',
+			cbf: 3,
+			3: ['66c2a5', 'fc8d62', '8da0cb'],
+			4: ['66c2a5', 'fc8d62', '8da0cb', 'e78ac3'],
+			5: ['66c2a5', 'fc8d62', '8da0cb', 'e78ac3', 'a6d854'],
+			6: ['66c2a5', 'fc8d62', '8da0cb', 'e78ac3', 'a6d854', 'ffd92f'],
+			7: ['66c2a5', 'fc8d62', '8da0cb', 'e78ac3', 'a6d854', 'ffd92f',
+				'e5c494'],
+			8: ['66c2a5', 'fc8d62', '8da0cb', 'e78ac3', 'a6d854', 'ffd92f',
+				'e5c494', 'b3b3b3']
+		},
+		Set3: {
+			type: 'qualitative',
+			cbf: 0,
+			3: ['8dd3c7', 'ffffb3', 'bebada'],
+			4: ['8dd3c7', 'ffffb3', 'bebada', 'fb8072'],
+			5: ['8dd3c7', 'ffffb3', 'bebada', 'fb8072', '80b1d3'],
+			6: ['8dd3c7', 'ffffb3', 'bebada', 'fb8072', '80b1d3', 'fdb462'],
+			7: ['8dd3c7', 'ffffb3', 'bebada', 'fb8072', '80b1d3', 'fdb462',
+				'b3de69'],
+			8: ['8dd3c7', 'ffffb3', 'bebada', 'fb8072', '80b1d3', 'fdb462',
+				'b3de69', 'fccde5'],
+			9: ['8dd3c7', 'ffffb3', 'bebada', 'fb8072', '80b1d3', 'fdb462',
+				'b3de69', 'fccde5', 'd9d9d9'],
+			10: ['8dd3c7', 'ffffb3', 'bebada', 'fb8072', '80b1d3', 'fdb462',
+				'b3de69', 'fccde5', 'd9d9d9', 'bc80bd'],
+			11: ['8dd3c7', 'ffffb3', 'bebada', 'fb8072', '80b1d3', 'fdb462',
+				'b3de69', 'fccde5', 'd9d9d9', 'bc80bd', 'ccebc5'],
+			12: ['8dd3c7', 'ffffb3', 'bebada', 'fb8072', '80b1d3', 'fdb462',
+				'b3de69', 'fccde5', 'd9d9d9', 'bc80bd', 'ccebc5', 'ffed6f']
+		}
+	};
+
+	for (var name in schemes) {
+		var scheme = schemes[name];
+		scheme = palette.Scheme.fromPalettes(
+			'cb-' + name, [scheme.type, 'cb-' + scheme.type], scheme, 12, scheme.cbf);
+		palette.register(scheme);
+	}
+})();
+
 /*
  Scrollator jQuery Plugin
  Scrollator is a jQuery-based replacement for the browsers scroll bar, which doesn't use any space.

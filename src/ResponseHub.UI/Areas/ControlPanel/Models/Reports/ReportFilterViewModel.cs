@@ -16,5 +16,7 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Models.Reports
 		[Required(ErrorMessage = "You must enter a finish date for the export.")]
 		[DataType(DataType.Date, ErrorMessage = "Please enter a valid date (dd/mm/yyyy).")]
 		public DateTime DateTo { get; set; }
+
+		public string ReportFormat { get; set; }
 	}
 }

@@ -1,13 +1,13 @@
 ﻿@model Enivate.ResponseHub.UI.Areas.ControlPanel.Models.Reports.ReportFilterViewModel
 
 @{
-    ViewBag.Title = "Training report";
-    Layout = "~/Areas/ControlPanel/Views/Shared/_Layout.cshtml";
+	ViewBag.Title = "Training report";
+	Layout = "~/Areas/ControlPanel/Views/Shared/_Layout.cshtml";
 }
 
 <h1>@ViewBag.Title</h1>
 
-<form action="@Request.Url.LocalPath" method="post" id="export-form">
+<form action="@Request.Url.LocalPath" method="post" id="training-report-form">
 
 	@Html.AntiForgeryToken()
 
@@ -43,14 +43,16 @@
 		</div>
 	</div>
 
+	@Html.HiddenFor(model => model.ReportFormat, new { @Value = "display" })
+
 	<div class="btn-group">
-		<button type="submit" class="btn btn-primary btn-icon" onclick="$('#ExportType').val('csv'); $('#export-form').submit(); return false;"><i class="fa fa-fw fa-file-text-o"></i> View report</button>
+		<button type="submit" class="btn btn-primary btn-icon" onclick="$('#ReportFormat').val('display'); $('#training-report-form').submit(); return false;"><i class="fa fa-fw fa-file-text-o"></i> View report</button>
 		<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 			<span class="caret"></span>
 			<span class="sr-only">Toggle Dropdown</span>
 		</button>
 		<ul class="dropdown-menu">
-			<li><a href="#" onclick="$('#ExportType').val('pdf'); $('#export-form').submit(); return false;">Generate PDF</a></li>
+			<li><a href="#" onclick="$('#ReportFormat').val('pdf'); $('#training-report-form').submit(); return false;">Generate PDF</a></li>
 		</ul>
 	</div>
 	<a href="/control-panel/reports" class="btn btn-link">Cancel</a>

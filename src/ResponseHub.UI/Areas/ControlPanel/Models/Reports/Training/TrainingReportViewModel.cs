@@ -21,6 +21,8 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Models.Reports.Training
 
 		public DateTime DateTo { get; set; }
 
+		public bool UseStandardLayout { get; set; }
+
 		public TrainingReportViewModel()
 		{
 			TrainingTypes = new Dictionary<TrainingType, string>();

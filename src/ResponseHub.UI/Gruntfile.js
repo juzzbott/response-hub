@@ -28,6 +28,7 @@ module.exports = function(grunt) {
 					'assets/js/lib/bootstrap-tabcollapse.js',
 					'assets/js/lib/bootstrap-typeahead.min.js',
 					'assets/js/lib/leaflet.js',
+					'assets/js/lib/palette.js',
 					'assets/js/lib/fm.scrollator.jquery.js',
 					'bower_components/dropzone/dist/min/dropzone.min.js',
 					'bower_components/blueimp-gallery/js/jquery.blueimp-gallery.min.js',
@@ -55,7 +56,8 @@ module.exports = function(grunt) {
 					'assets/js/modules/attachments.js',
 					'assets/js/modules/gallery.js',
 					'assets/js/modules/weather-centre.js',
-					'assets/js/modules/sign-on.js'
+					'assets/js/modules/sign-on.js',
+					'assets/js/modules/reports.js'
 				],
 				dest: 'assets/js/script.js'
 			},

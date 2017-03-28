@@ -12,9 +12,5 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Models.Reports.Training
 
 		public int Value { get; set; }
 
-		public string Colour { get; set; }
-
-		public string HoverColour { get; set; }
-
 	}
 }

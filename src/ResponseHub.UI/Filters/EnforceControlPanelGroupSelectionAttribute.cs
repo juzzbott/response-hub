@@ -26,6 +26,14 @@ namespace Enivate.ResponseHub.UI.Filters
 				if (userIdentity.IsAuthenticated)
 				{
 
+					// Determine if we need to skip authentication.
+					bool skipAuthorization = filterContext.ActionDescriptor.IsDefined(typeof(AllowAnonymousAttribute), inherit: true)
+											 || filterContext.ActionDescriptor.ControllerDescriptor.IsDefined(typeof(AllowAnonymousAttribute), inherit: true);
+					if (skipAuthorization)
+					{
+						return;
+					}
+
 					// Determine if we are a Groupo admin, if we are not, then don't do any further checking
 					bool isGroupAdmin = userIdentity.Claims.Any(i => i.Type == ClaimTypes.Role && i.Value == RoleTypes.GroupAdministrator);
 					if (!isGroupAdmin)

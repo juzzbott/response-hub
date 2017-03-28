@@ -16,6 +16,7 @@ using Enivate.ResponseHub.UI.Areas.ControlPanel.Models.Reports.Training;
 using Enivate.ResponseHub.Common.Extensions;
 using System.Text;
 using Enivate.ResponseHub.Model.Reports.Interface;
+using System.Net;
 
 namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 {
@@ -64,13 +65,25 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 			DateTime dateFrom = model.DateFrom.Date;
 			DateTime dateTo = new DateTime(model.DateTo.Year, model.DateTo.Month, model.DateTo.Day, 23, 59, 59);
 
-			// Get the PDF bytes
-			// HACK: FixThis
-			byte[] pdfBytes = await ReportService.GenerateTrainingReportPdfFile(new Guid("2E54F8EA-25E6-40C5-A64B-7950D84A059C"), dateFrom, dateTo);
+			if (model.ReportFormat.ToLower() == "display")
+			{
+				TrainingReportViewModel reportViewModel = await GetTrainingReportModel(GetControlPanelGroupId(), dateFrom, dateTo);
+				reportViewModel.UseStandardLayout = true;
+				return View("GenerateTrainingReportHtml", reportViewModel);
+			}
+			else if (model.ReportFormat.ToLower() == "pdf")
+			{
+				// Get the PDF bytes
+				byte[] pdfBytes = await ReportService.GenerateTrainingReportPdfFile(GetControlPanelGroupId(), dateFrom, dateTo);
 
-			FileContentResult result = new FileContentResult(pdfBytes, "application/pdf");
-			result.FileDownloadName = String.Format("training-report-{0}.pdf", DateTime.Now.ToString("yyyy-MM-dd"));
-			return result;
+				FileContentResult result = new FileContentResult(pdfBytes, "application/pdf");
+				result.FileDownloadName = String.Format("training-report-{0}.pdf", DateTime.Now.ToString("yyyy-MM-dd"));
+				return result;
+			}
+			else
+			{
+				throw new HttpException((int)HttpStatusCode.BadRequest, "Bad request.");
+			}
 		}
 
 		[Route("operations-report")]
@@ -90,12 +103,27 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 			DateTime dateFrom = DateTime.ParseExact(Request.QueryString["date_from"], "yyyyMMddHHmmss", CultureInfo.CurrentCulture);
 			DateTime dateTo = DateTime.ParseExact(Request.QueryString["date_to"], "yyyyMMddHHmmss", CultureInfo.CurrentCulture);
 
+			TrainingReportViewModel model = await GetTrainingReportModel(groupId, dateFrom, dateTo);
+
+			return View(model);
+
+		}
+
+		/// <summary>
+		/// Gets the training report model to display to the page.
+		/// </summary>
+		/// <param name="groupId"></param>
+		/// <param name="dateFrom"></param>
+		/// <param name="dateTo"></param>
+		/// <returns></returns>
+		private async Task<TrainingReportViewModel> GetTrainingReportModel(Guid groupId, DateTime dateFrom, DateTime dateTo)
+		{
 			// Get the training sign-ins for the group
 			IList<SignInEntry> signIns = await SignInService.GetSignInsForGroup(groupId, dateFrom, dateTo, SignInType.Training);
 
 			// Count the different training types
 			IList<GroupTrainingReportItem> trainingReportItems = new List<GroupTrainingReportItem>();
-			foreach(SignInEntry signIn in signIns)
+			foreach (SignInEntry signIn in signIns)
 			{
 				// If the list doesn't contain a training report item with the current date and type, add it
 				if (!trainingReportItems.Any(i => i.TrainingType == ((TrainingActivity)signIn.ActivityDetails).TrainingType && i.TrainingDate == signIn.SignInTime.Date))
@@ -114,84 +142,28 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 
 			// Loop through the aggregates and create the list of values
 			IList<GroupTrainingGraphItem> graphItems = new List<GroupTrainingGraphItem>();
-			foreach(KeyValuePair<TrainingType, int> aggregate in trainingTypeAggregate)
+			foreach (KeyValuePair<TrainingType, int> aggregate in trainingTypeAggregate)
 			{
-				switch (aggregate.Key)
+				graphItems.Add(new GroupTrainingGraphItem()
 				{
-					case TrainingType.General:
-						graphItems.Add(new GroupTrainingGraphItem() {
-							Label = aggregate.Key.GetEnumDescription(),
-							Value = aggregate.Value,
-							Colour = "#27718F",
-							HoverColour = "#0E5876"
-						}
-						);
-						break;
-					case TrainingType.GeneralRescue:
-						graphItems.Add(new GroupTrainingGraphItem()
-						{
-							Label = aggregate.Key.GetEnumDescription(),
-							Value = aggregate.Value,
-							Colour = "#1F8F4A",
-							HoverColour = "#067631"
-						}
-						);
-						break;
-					case TrainingType.LandSearch:
-						graphItems.Add(new GroupTrainingGraphItem()
-						{
-							Label = aggregate.Key.GetEnumDescription(),
-							Value = aggregate.Value,
-							Colour = "#8C25A6",
-							HoverColour = "#730C8D"
-						}
-						);
-						break;
-					case TrainingType.RoadRescue:
-						graphItems.Add(new GroupTrainingGraphItem()
-						{
-							Label = aggregate.Key.GetEnumDescription(),
-							Value = aggregate.Value,
-							Colour = "#BF5717",
-							HoverColour = "#A63E00"
-						}
-						);
-						break;
-					case TrainingType.Other:
-						graphItems.Add(new GroupTrainingGraphItem()
-						{
-							Label = aggregate.Key.GetEnumDescription(),
-							Value = aggregate.Value,
-							Colour = "#C40600",
-							HoverColour = "#AB0000"
-						}
-						);
-						break;
-				}
+					Label = aggregate.Key.GetEnumDescription(),
+					Value = aggregate.Value
+				});
 			}
 
 			// Build the dataset js
 			StringBuilder sbJsDataset = new StringBuilder();
-			sbJsDataset.Append("{ labels: [");
+			sbJsDataset.Append("{ \"labels\": [");
 			for (int i = 0; i < graphItems.Count; i++)
 			{
 				sbJsDataset.AppendFormat("{0}\"{1}\"", (i != 0 ? "," : ""), graphItems[i].Label);
 			}
-			sbJsDataset.Append("], datasets: [{ data: [");
+			sbJsDataset.Append("], \"datasets\": [{ \"data\": [");
 			for (int i = 0; i < graphItems.Count; i++)
 			{
 				sbJsDataset.AppendFormat("{0}{1}", (i != 0 ? "," : ""), graphItems[i].Value);
 			}
-			sbJsDataset.Append("], backgroundColor: [");
-			for (int i = 0; i < graphItems.Count; i++)
-			{
-				sbJsDataset.AppendFormat("{0}\"{1}\"", (i != 0 ? "," : ""), graphItems[i].Colour);
-			}
-			sbJsDataset.Append("], hoverBackgroundColor: [");
-			for (int i = 0; i < graphItems.Count; i++)
-			{
-				sbJsDataset.AppendFormat("{0}\"{1}\"", (i != 0 ? "," : ""), graphItems[i].HoverColour);
-			}
+			//sbJsDataset.AppendFormat("], \"backgroundColor\": palette('tol', {0}).map(function(hex) {{return '#' + hex;}})", graphItems.Count);
 			sbJsDataset.Append("]}]}");
 
 			// Get the members for the group
@@ -199,7 +171,7 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 
 			// Create the member report items
 			IList<GroupTrainingMemberReportItem> memberTraining = new List<GroupTrainingMemberReportItem>();
-			foreach(IdentityUser user in groupMembers)
+			foreach (IdentityUser user in groupMembers)
 			{
 				// Create the training item
 				GroupTrainingMemberReportItem memberTrainingRecord = new GroupTrainingMemberReportItem()
@@ -211,7 +183,7 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 				foreach (TrainingType trainingType in Enum.GetValues(typeof(TrainingType)))
 				{
 					// Get the total amount of training sessions for each session
-					memberTrainingRecord.TrainingSessions.Add(trainingType, 
+					memberTrainingRecord.TrainingSessions.Add(trainingType,
 						signIns.Where(i => i.UserId == user.Id && ((TrainingActivity)i.ActivityDetails).TrainingType == trainingType).Count());
 					memberTrainingRecord.TrainingDates.Add(trainingType,
 						signIns.Where(i => i.UserId == user.Id && ((TrainingActivity)i.ActivityDetails).TrainingType == trainingType).Select(i => i.SignInTime).ToList());
@@ -221,10 +193,13 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 				memberTraining.Add(memberTrainingRecord);
 			}
 
+			StringBuilder sbChartOptionsJs = new StringBuilder();
+
 			// Create the model
 			TrainingReportViewModel model = new TrainingReportViewModel()
 			{
 				ChartDataJs = sbJsDataset.ToString(),
+				ChartOptionsJs = sbChartOptionsJs.ToString(),
 				MemberReports = memberTraining,
 				DateFrom = dateFrom,
 				DateTo = dateTo
@@ -236,9 +211,7 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 				model.TrainingTypes.Add(trainingType, trainingType.GetEnumDescription());
 			}
 
-			return View(model);
-
+			return model;
 		}
-
 	}
 }

@@ -316,6 +316,7 @@
     <Content Include="assets\js\lib\bootstrap-typeahead.min.js" />
     <Content Include="assets\js\lib\fm.scrollator.jquery.js" />
     <Content Include="assets\js\lib\leaflet.js" />
+    <Content Include="assets\js\lib\palette.js" />
     <Content Include="assets\js\modules\attachments.js" />
     <Content Include="assets\js\modules\gallery.js" />
     <Content Include="assets\js\modules\pager-messages.js" />
@@ -325,6 +326,7 @@
     <Content Include="assets\js\modules\logviewer.js" />
     <Content Include="assets\js\modules\maps.js" />
     <Content Include="assets\js\modules\password-strength.js" />
+    <Content Include="assets\js\modules\reports.js" />
     <Content Include="assets\js\modules\resources.js" />
     <Content Include="assets\js\modules\search.js" />
     <Content Include="assets\js\modules\sign-on.js" />

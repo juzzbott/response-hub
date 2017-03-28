@@ -1,47 +1,23 @@
 ﻿@model Enivate.ResponseHub.UI.Areas.ControlPanel.Models.Reports.Training.TrainingReportViewModel
 @{
 	ViewBag.Title = "Training report";
-	Layout = "~/Areas/ControlPanel/Views/Shared/HtmlExportLayout.cshtml";
+	if (Model.UseStandardLayout)
+	{
+		Layout = "~/Areas/ControlPanel/Views/Shared/_Layout.cshtml";
+	}
+	else
+	{
+		Layout = "~/Areas/ControlPanel/Views/Shared/HtmlExportLayout.cshtml";
+	}
 }
 
-<h1>@ViewBag.Title</h1>
+<h1 id="training-report">@ViewBag.Title</h1>
 
 <h2>Training overview</h2>
 
 <div id="chart-container" style="width: 700px;">
 </div>
-<script language="javascript">
-var PIXEL_RATIO = (function () {
-	var ctx = document.createElement("canvas").getContext("2d"),
-		dpr = window.devicePixelRatio || 1,
-		bsr = ctx.webkitBackingStorePixelRatio ||
-			ctx.mozBackingStorePixelRatio ||
-			ctx.msBackingStorePixelRatio ||
-			ctx.oBackingStorePixelRatio ||
-			ctx.backingStorePixelRatio || 1;
-
-	return dpr / bsr;
-})();
-
-
-createHiDPICanvas = function (w, h, ratio) {
-	if (!ratio) { ratio = PIXEL_RATIO; }
-	var can = document.createElement("canvas");
-	can.width = w * ratio;
-	can.height = h * ratio;
-	can.style.width = w + "px";
-	can.style.height = h + "px";
-	can.getContext("2d").setTransform(ratio, 0, 0, ratio, 0, 0);
-	document.getElementById("chart-container").appendChild(can);
-	return can;
-}
-
-	var chartCanvas = createHiDPICanvas(700, 400);
-var myPieChart = new Chart(chartCanvas, {
-	type: 'pie',
-	data: @Html.Raw(Model.ChartDataJs)
-});
-</script>
+<input type="hidden" value="@Model.ChartDataJs" id="chart-data" />
 
 <h2 style="page-break-before: always">Member training sessions</h2>
 
