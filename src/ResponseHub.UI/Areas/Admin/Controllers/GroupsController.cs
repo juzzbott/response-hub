@@ -194,8 +194,14 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 			if (!model.UserExists)
 			{
 
+				// Create the profile
+				UserProfile profile = new UserProfile()
+				{
+					MemberNumber = model.MemberNumber
+				};
+
 				// Create the new user
-				groupAdmin = await UserService.CreateAsync(model.EmailAddress, model.FirstName, model.Surname, new List<string>() { RoleTypes.GroupAdministrator, RoleTypes.GeneralUser });
+				groupAdmin = await UserService.CreateAsync(model.EmailAddress, model.FirstName, model.Surname, new List<string>() { RoleTypes.GroupAdministrator, RoleTypes.GeneralUser }, profile);
 
 				// Send the email to the user
 				await MailService.SendAccountActivationEmail(groupAdmin);

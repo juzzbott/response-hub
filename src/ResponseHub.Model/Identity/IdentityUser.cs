@@ -41,11 +41,14 @@ namespace Enivate.ResponseHub.Model.Identity
 
 		public string ActivationCode { get; set; }
 
+		public UserProfile Profile { get; set; }
+
 		public IdentityUser()
 		{
 			Id = Guid.NewGuid();
 			Claims = new List<Claim>();
 			Logins = new List<UserLoginInfo>();
+			Profile = new UserProfile();
 		}
 
 	}

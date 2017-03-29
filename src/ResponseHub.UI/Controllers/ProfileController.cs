@@ -55,7 +55,8 @@ namespace Enivate.ResponseHub.UI.Controllers
 			{
 				FirstName = user.FirstName,
 				Surname = user.Surname,
-				DateCreated = user.Created
+				DateCreated = user.Created,
+				Profile = user.Profile
 			};
 		}
 	}
