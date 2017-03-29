@@ -174,7 +174,8 @@ namespace Enivate.ResponseHub.UI.Controllers
 				EmailAddress = currentUser.EmailAddress,
 				FirstName = currentUser.FirstName,
 				Surname = currentUser.Surname,
-				CanChangePassword = !String.IsNullOrEmpty(currentUser.PasswordHash)
+				CanChangePassword = !String.IsNullOrEmpty(currentUser.PasswordHash),
+				Profile = currentUser.Profile
 			};
 
 			return View(model);

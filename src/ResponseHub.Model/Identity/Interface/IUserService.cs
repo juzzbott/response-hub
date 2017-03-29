@@ -109,7 +109,7 @@ namespace Enivate.ResponseHub.Model.Identity.Interface
 
 		Task<IdentityResult> UpdateUserNameAsync(Guid userId, string newUsername, string password);
 
-		Task<IdentityUser> CreateAsync(string emailAddress, string firstName, string surname, IList<string> roles);
+		Task<IdentityUser> CreateAsync(string emailAddress, string firstName, string surname, IList<string> roles, UserProfile profile);
 
 		Task<IList<IdentityUser>> GetUsersByIds(IEnumerable<Guid> userIds);
 

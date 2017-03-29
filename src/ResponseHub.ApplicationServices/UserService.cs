@@ -363,7 +363,7 @@ namespace Enivate.ResponseHub.ApplicationServices
 		/// <param name="surname"></param>
 		/// <param name="roles"></param>
 		/// <returns></returns>
-		public async Task<IdentityUser> CreateAsync(string emailAddress, string firstName, string surname, IList<string> roles)
+		public async Task<IdentityUser> CreateAsync(string emailAddress, string firstName, string surname, IList<string> roles, UserProfile profile)
 		{
 
 			// If the roles list is null, instantiate to empty list
@@ -393,7 +393,8 @@ namespace Enivate.ResponseHub.ApplicationServices
 				Surname = surname,
 				UserName = emailAddress,
 				Claims = claims,
-				ActivationCode = HashGenerator.GetSha256HashString(Guid.NewGuid().ToString(), 1)
+				ActivationCode = HashGenerator.GetSha256HashString(Guid.NewGuid().ToString(), 1),
+				Profile = profile
 			};
 
 			// Add the user

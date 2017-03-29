@@ -20,5 +20,8 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Models.Groups
 		public bool UserExists { get; set; }
 
 		public string Role { get; set; }
+
+		[Required(ErrorMessage = "Please enter the member number for the user.")]
+		public string MemberNumber { get; set; }
 	}
 }

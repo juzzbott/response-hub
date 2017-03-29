@@ -70,6 +70,16 @@
 			</div>
 			@Html.ValidationMessageFor(model => model.Surname)
 		</div>
+
+		<div class="form-group">
+			<label for="Name">Member number *</label>
+			<div class="row">
+				<div class="col-sm-8 col-md-6 col-lg-4">
+					@Html.TextBoxFor(model => model.MemberNumber, new { @class = "form-control", placeholder = "6xxxx" })
+				</div>
+			</div>
+			@Html.ValidationMessageFor(model => model.MemberNumber)
+		</div>
 	}
 
 	<button type="submit" class="btn btn-default">@ViewBag.SubmitButtonTitle</button>

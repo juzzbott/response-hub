@@ -85,6 +85,7 @@
     <Compile Include="Identity\IdentityUser.cs" />
     <Compile Include="Identity\Interface\IUserService.cs" />
     <Compile Include="Identity\PasswordResetToken.cs" />
+    <Compile Include="Identity\UserProfile.cs" />
     <Compile Include="IEntity.cs" />
     <Compile Include="Identity\RoleTypes.cs" />
     <Compile Include="IMailService.cs" />

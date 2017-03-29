@@ -548,7 +548,8 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 				PasswordResetToken = dbObject.PasswordResetToken,
 				Surname = dbObject.Surname,
 				UserName = dbObject.UserName,
-				ActivationCode = dbObject.ActivationCode
+				ActivationCode = dbObject.ActivationCode,
+				Profile = dbObject.Profile
 			};
 
 			// Map the claims
@@ -584,7 +585,8 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 				PasswordResetToken = modelObj.PasswordResetToken,
 				Surname = modelObj.Surname,
 				UserName = modelObj.UserName,
-				ActivationCode = modelObj.ActivationCode
+				ActivationCode = modelObj.ActivationCode,
+				Profile = modelObj.Profile
 			};
 
 			// Map the claims

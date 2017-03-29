@@ -423,8 +423,14 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 				else
 				{
 
+					// Create the profile
+					UserProfile profile = new UserProfile()
+					{
+						MemberNumber = model.MemberNumber
+					};
+
 					// Create the new user, and then create the group mapping for the new user.
-					newUser = await UserService.CreateAsync(model.EmailAddress, model.FirstName, model.Surname, new List<string>() { model.Role });
+					newUser = await UserService.CreateAsync(model.EmailAddress, model.FirstName, model.Surname, new List<string>() { model.Role }, profile);
 
 					// Send the activation email
 					await MailService.SendAccountActivationEmail(newUser);

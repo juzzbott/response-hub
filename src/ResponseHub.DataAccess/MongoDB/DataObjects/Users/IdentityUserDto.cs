@@ -34,11 +34,14 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB.DataObjects.Users
 
 		public string ActivationCode { get; set; }
 
+		public UserProfile Profile { get; set; }
+
 		public IdentityUserDto()
 		{
 			Id = Guid.NewGuid();
 			Claims = new List<ClaimDto>();
 			Logins = new List<UserLoginInfo>();
+			Profile = new UserProfile();
 		}
 
 	}
