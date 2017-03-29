@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.Text;
 using System.Web;
 using System.Web.Mvc;
 
@@ -12,11 +14,10 @@ using Enivate.ResponseHub.UI.Areas.ControlPanel.Models.Reports;
 using Enivate.ResponseHub.Common;
 using Enivate.ResponseHub.Model.SignIn.Interface;
 using Enivate.ResponseHub.Model.SignIn;
+using Enivate.ResponseHub.Model.Training;
 using Enivate.ResponseHub.UI.Areas.ControlPanel.Models.Reports.Training;
 using Enivate.ResponseHub.Common.Extensions;
-using System.Text;
 using Enivate.ResponseHub.Model.Reports.Interface;
-using System.Net;
 
 namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 {

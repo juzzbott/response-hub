@@ -16,13 +16,13 @@ using Microsoft.Owin.Security;
 using Enivate.ResponseHub.ApplicationServices;
 using Enivate.ResponseHub.Common;
 using Enivate.ResponseHub.Common.Extensions;
-using Enivate.ResponseHub.Logging;
 using Enivate.ResponseHub.Model;
 using Enivate.ResponseHub.Model.Groups;
 using Enivate.ResponseHub.Model.Groups.Interface;
 using Enivate.ResponseHub.Model.Identity;
 using Enivate.ResponseHub.Model.SignIn.Interface;
 using Enivate.ResponseHub.Model.SignIn;
+using Enivate.ResponseHub.Model.Training;
 using Enivate.ResponseHub.UI.Models.MyAccount;
 using Enivate.ResponseHub.UI.Models.SignIn;
 

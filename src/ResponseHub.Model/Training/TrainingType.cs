@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Enivate.ResponseHub.Model.SignIn
+namespace Enivate.ResponseHub.Model.Training
 {
 	public enum TrainingType
 	{

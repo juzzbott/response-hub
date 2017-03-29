@@ -15,7 +15,7 @@
 	</div>
 }
 
-<form action="@Request.Url.LocalPath" method="post">
+<form action="@Request.Url.PathAndQuery" method="post">
 
 	<table class="table table-striped">
 		@foreach(var group in Model.AvailableGroups)

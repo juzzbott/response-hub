@@ -4,6 +4,17 @@
 	<li class="@(ViewContext.RouteData.Values["Controller"].ToString() == "Groups" ? "active" : "")">
 		<a href="/control-panel/groups"><i class="fa fa-fw fa-users"></i>Group administration</a>
 	</li>
+	<li class="@(ViewContext.RouteData.Values["Controller"].ToString() == "Training" ? "active" : "")">
+		<a href="/control-panel/training"><i class="fa fa-fw fa-graduation-cap"></i>Training</a>
+		@if (ViewContext.RouteData.Values["Controller"].ToString() == "Training")
+		{
+			<ul>
+				<li>
+					<a href="/control-panel/training/add">Add training session</a>
+				</li>
+			</ul>
+		}
+	</li>
 	<li class="@(ViewContext.RouteData.Values["Controller"].ToString() == "Reports" ? "active" : "")">
 		<a href="/control-panel/reports"><i class="fa fa-fw fa-bar-chart"></i>Reports</a>
 	</li>

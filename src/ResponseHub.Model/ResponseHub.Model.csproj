@@ -104,7 +104,7 @@
     <Compile Include="SignIn\OperationActivity.cs" />
     <Compile Include="SignIn\TrainingActivity.cs" />
     <Compile Include="SignIn\SignInType.cs" />
-    <Compile Include="SignIn\TrainingType.cs" />
+    <Compile Include="Training\TrainingType.cs" />
     <Compile Include="Spatial\AddressInfo.cs" />
     <Compile Include="Spatial\LocationInfo.cs" />
     <Compile Include="Messages\JobMessage.cs" />

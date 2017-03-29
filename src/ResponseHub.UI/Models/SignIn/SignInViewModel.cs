@@ -7,6 +7,7 @@ using System.Web.Mvc;
 
 using Enivate.ResponseHub.Common.Extensions;
 using Enivate.ResponseHub.Model.SignIn;
+using Enivate.ResponseHub.Model.Training;
 
 namespace Enivate.ResponseHub.UI.Models.SignIn
 {

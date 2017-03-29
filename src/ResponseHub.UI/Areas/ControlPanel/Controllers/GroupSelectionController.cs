@@ -27,6 +27,12 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 			// Get the group ids that the user is a group administrator of
 			IList<Guid> groupIds = await GetGroupIdsUserIsGroupAdminOf();
 
+			// If there is only one group, when we just need to set this and return the user.
+			if (groupIds.Count == 1)
+			{
+				return SetGroupIdAndRedirect(groupIds[0]);
+			}
+
 			// Get the groups based on the ids
 			IList<Group> groups = await GroupService.GetByIds(groupIds);
 			groups = groups.OrderBy(i => i.Name).ToList();
@@ -75,8 +81,30 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 				return View("GroupContextSelection", model);
 			}
 
-			Session[SessionConstants.ControlPanelContextGroupId] = model.GroupId;
-			return new RedirectResult(String.Format("/control-panel/groups/{0}", model.GroupId));
+
+			return SetGroupIdAndRedirect(model.GroupId);
+		}
+
+		/// <summary>
+		/// Set the session id and return the specific action result.
+		/// </summary>
+		/// <param name="groupId"></param>
+		/// <returns></returns>
+		private ActionResult SetGroupIdAndRedirect(Guid groupId)
+		{
+			// Set the session context group id
+			Session[SessionConstants.ControlPanelContextGroupId] = groupId;
+
+			// If there is a return url, then redirect back, otherwise just return to the group screen
+			if (!String.IsNullOrEmpty(Request.QueryString["return_url"]))
+			{
+				string returnUrl = Server.UrlDecode(Request.QueryString["return_url"]);
+				return new RedirectResult(returnUrl);
+			}
+			else
+			{
+				return new RedirectResult(String.Format("/control-panel/groups/{0}", groupId));
+			}
 		}
 	}
 }

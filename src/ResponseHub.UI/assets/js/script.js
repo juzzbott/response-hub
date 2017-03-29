@@ -2235,16 +2235,34 @@ responseHub.reports = (function () {
 
 	function displayTrainingReportGraph() {
 
-		var chartCanvas = createHiDPICanvas(700, 400);
+		var chartCanvas = createHiDPICanvas(1200, 400);
 		
 		document.getElementById("chart-container").appendChild(chartCanvas);
 		var jsonData = $('#chart-data').val().replace(/&quot;/g, '"');
-		console.log(jsonData);
 		var chartData = JSON.parse(jsonData);
+		var itemLength = chartData.datasets[0].data.length;
+		chartData.datasets[0].backgroundColor = palette('tol', itemLength).map(function(hex) {{return '#' + hex;}})
 
 		var myPieChart = new Chart(chartCanvas, {
 			type: 'bar',
-			data: chartData
+			data: chartData,
+			options: {
+				scales: {
+					yAxes: [{
+						ticks: {
+							stepSize: 1
+						}
+					}]
+				},
+				title: {
+					display: true,
+					text: 'Unit training sessions',
+					fontSize: 16
+				},
+				legend: {
+					display: false
+				}
+			}
 		});
 
 	}

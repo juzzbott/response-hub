@@ -59,7 +59,8 @@ namespace Enivate.ResponseHub.UI.Filters
 					}
 
 					// Otherwise, return to control panel home to set the group id
-					filterContext.HttpContext.Response.Redirect("/control-panel/group-selection?show_info_message=1");
+					filterContext.HttpContext.Response.Redirect(String.Format("/control-panel/group-selection?show_info_message=1&return_url={0}", 
+						filterContext.HttpContext.Server.UrlEncode(filterContext.HttpContext.Request.Url.PathAndQuery)));
 
 				}
 
