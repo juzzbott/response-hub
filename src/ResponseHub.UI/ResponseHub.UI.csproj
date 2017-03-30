@@ -121,6 +121,10 @@
       <HintPath>..\packages\Owin.1.0\lib\net40\Owin.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="StackifyHttpTracer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=93c44ce23f2048dd, processorArchitecture=MSIL">
+      <HintPath>..\packages\StackifyHttpModule.1.0.28.0\lib\net45\StackifyHttpTracer.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
@@ -213,7 +217,9 @@
     <Compile Include="Areas\ControlPanel\Models\Reports\Training\GroupTrainingReportItem.cs" />
     <Compile Include="Areas\ControlPanel\Models\Reports\Training\GroupTrainingMemberReportItem.cs" />
     <Compile Include="Areas\ControlPanel\Models\Reports\Training\TrainingReportViewModel.cs" />
-    <Compile Include="Areas\ControlPanel\Models\Training\AddTrainingSessionViewModel.cs" />
+    <Compile Include="Areas\ControlPanel\Models\Training\AddEditTrainingSessionViewModel.cs" />
+    <Compile Include="Areas\ControlPanel\Models\Training\TrainingHomeViewModel.cs" />
+    <Compile Include="Areas\ControlPanel\Models\Training\ViewTrainingSessionViewModel.cs" />
     <Compile Include="Controllers\Api\SearchController.cs" />
     <Compile Include="Controllers\PagerMessagesController.cs" />
     <Compile Include="Areas\ControlPanel\Controllers\BaseControlPanelController.cs" />
@@ -332,6 +338,7 @@
     <Content Include="assets\js\modules\resources.js" />
     <Content Include="assets\js\modules\search.js" />
     <Content Include="assets\js\modules\sign-on.js" />
+    <Content Include="assets\js\modules\training.js" />
     <Content Include="assets\js\modules\wallboard.js" />
     <Content Include="assets\js\modules\weather-centre.js" />
     <Content Include="assets\js\modules\_core.js" />
@@ -563,7 +570,8 @@
     <Content Include="Areas\ControlPanel\Views\Reports\TrainingReport.cshtml" />
     <Content Include="Areas\ControlPanel\Views\Reports\GenerateTrainingReportHtml.cshtml" />
     <Content Include="Areas\ControlPanel\Views\Training\Index.cshtml" />
-    <Content Include="Areas\ControlPanel\Views\Training\Add.cshtml" />
+    <Content Include="Areas\ControlPanel\Views\Training\AddEdit.cshtml" />
+    <Content Include="Areas\ControlPanel\Views\Training\View.cshtml" />
     <None Include="Web.Staging.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

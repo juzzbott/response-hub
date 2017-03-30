@@ -34,7 +34,8 @@ module.exports = function(grunt) {
 					'bower_components/blueimp-gallery/js/jquery.blueimp-gallery.min.js',
 					'bower_components/blueimp-bootstrap-image-gallery/js/bootstrap-image-gallery.min.js',
 					'bower_components/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js',
-					'bower_components/Chart.js/dist/Chart.min.js'
+					'bower_components/Chart.js/dist/Chart.min.js',
+					'bower_components/chartist/dist/chartist.min.js'
 				],
 				dest: 'assets/js/framework.js'
 			},
@@ -57,7 +58,8 @@ module.exports = function(grunt) {
 					'assets/js/modules/gallery.js',
 					'assets/js/modules/weather-centre.js',
 					'assets/js/modules/sign-on.js',
-					'assets/js/modules/reports.js'
+					'assets/js/modules/reports.js',
+					'assets/js/modules/training.js'
 				],
 				dest: 'assets/js/script.js'
 			},
@@ -73,7 +75,8 @@ module.exports = function(grunt) {
 					'bower_components/dropzone/dist/min/dropzone.min.css',
 					'bower_components/blueimp-gallery/css/blueimp-gallery.min.css',
 					'bower_components/blueimp-bootstrap-image-gallery/css/bootstrap-image-gallery.min.css',
-					'bower_components/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css'
+					'bower_components/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css',
+					'bower_components/chartist/dist/chartist.min.css'
 				],
 				dest: 'assets/css/framework.css'
 			}

@@ -1,0 +1,202 @@
+﻿@model Enivate.ResponseHub.UI.Areas.ControlPanel.Models.Training.AddEditTrainingSessionViewModel
+@using Enivate.ResponseHub.Model.Training
+@{
+    ViewBag.Title = String.Format("{0} training session", (ViewContext.RouteData.Values["action"].ToString().ToLower() == "edit" ? "Edit" : "Add"));
+    Layout = "~/Areas/ControlPanel/Views/Shared/_Layout.cshtml";
+}
+
+<h1 id="add-training-session">@ViewBag.Title</h1>
+
+<form action="@Request.Url.LocalPath" method="post">
+
+	@Html.AntiForgeryToken()
+
+	<div class="form-group">
+		<label for="SessionDate">Session date *</label>
+		<div class="row">
+			<div class="col-sm-6 col-md-4">
+				<div class="input-group date datepicker-control" data-provide="datepicker" data-date-format="dd/mm/yyyy" data-date-autoclose="true" data-date-show-on-focus="false">
+					@Html.TextBoxFor(model => model.SessionDate, new { @class = "form-control", @Value = DateTime.Now.ToString("dd/MM/yyyy") })
+					<div class="input-group-addon">
+						<i class="fa fa-fw fa-calendar"></i>
+					</div>
+				</div>
+				@Html.ValidationMessageFor(model => model.SessionDate)
+				<div class="text-muted"><em>Date format should be dd/mm/yyyy.</em></div>
+			</div>
+		</div>
+	</div>
+
+	<div class="form-group">
+		<label for="Service">Training type *</label>
+		<div class="row">
+			<div class="col-sm-8 col-md-6 col-lg-4">
+				@Html.DropDownListFor(model => model.TrainingType, Model.AvailableTrainingTypes, new { @class = "form-control" })
+			</div>
+		</div>
+		@Html.ValidationMessageFor(model => model.TrainingType)
+	</div>
+
+	<div class="form-group">
+		<label for="Service">Description of activities</label>
+		<div class="row">
+			<div class="col-sm-8 col-md-6 col-lg-4">
+				@Html.TextAreaFor(model => model.Description, new { @class = "form-control", rows = "3" })
+			</div>
+		</div>
+	</div>
+
+	<div class="form-group">
+		<label for="Service">Duration *</label>
+		<div class="row">
+			<div class="col-sm-8 col-md-6 col-lg-4">
+				@Html.TextBoxFor(model => model.Duration, new { @class = "form-control", placeholder = "eg. 2.5", Value = (Model.Duration > 0 ? Model.Duration.ToString() : "") })
+			</div>
+		</div>
+		@Html.ValidationMessageFor(model => model.Duration)
+		<div class="text-muted"><em>Duration should be in hours.</em></div>
+	</div>
+
+	<div class="form-group">
+		<label>Training session type *</label>
+		<div class="row">
+			<div class="col-sm-12 graphic-radio">
+				<label class="radio-inline">
+					@Html.RadioButtonFor(model => model.SessionType, TrainingSessionType.Practical)
+					Practical
+				</label>
+				<label class="radio-inline">
+					@Html.RadioButtonFor(model => model.SessionType, TrainingSessionType.Classroom)
+					Classroom
+				</label>
+			</div>
+		</div>
+		@Html.ValidationMessageFor(model => model.SessionType)
+	</div>
+
+
+	<script language="javascript">
+		var users = [
+			@for (int i = 0; i < Model.AvailableUsers.Count; i++)
+			{
+				@Html.Raw(String.Format("{0}{{id: \"{1}\", name: \"{2}\", memberNumber: \"{3}\"}}", (i > 0 ? "," : ""), Model.AvailableUsers[i].Item1, Model.AvailableUsers[i].Item2, Model.AvailableUsers[i].Item3));
+				@Html.Raw("\r\n");
+			}
+		];
+	</script>
+
+	<h3>Members</h3>
+	<div class="form-group">
+		<label for="AvailableMembers">Find members *</label>
+		<div class="row">
+			<div class="col-sm-8 col-md-6 col-lg-4">
+				<select class="form-control selectpicker" data-live-search="true" id="AvailableMembers" title="Select member...">
+					@foreach (var user in Model.AvailableUsers)
+					{
+						<option data-tokens="@user.Item2" value="@user.Item1">@user.Item2</option>
+					}
+				</select>
+			</div>
+		</div>
+		@Html.ValidationMessageFor(model => model.SelectedMembers)
+	</div>
+	@Html.HiddenFor(model => model.SelectedMembers)
+
+	<table class="table table-responsive table-striped table-hover" id="training-members-table" data-selected-list="SelectedMembers" data-select-box="AvailableMembers">
+		<thead>
+			<tr>
+				<th>Name</th>
+				<th>Member number</th>
+				<th width="50">&nbsp;</th>
+			</tr>
+		</thead>
+		<tbody>
+			@if (String.IsNullOrEmpty(Model.SelectedMembers))
+			{
+			<tr>
+				<td colspan="3" class="none-selected">No members have been added to the this training session yet.</td>
+			</tr>
+			}
+			else
+			{
+				foreach(var strUserId in Model.SelectedMembers.Split(new char[] { '|' }, StringSplitOptions.RemoveEmptyEntries))
+				{
+					Guid userId = new Guid(strUserId);
+					Tuple<Guid, string, string> user = Model.AvailableUsers.FirstOrDefault(i => i.Item1 == userId);
+					if (user != null)
+					{
+						<tr data-user-id="@user.Item1">
+							<td>@user.Item2</td>
+							<td>@user.Item3</td>
+							<td><a href="#" onclick="responseHub.training.removeTrainingMember(this); return false;" title="Remove member"><i class="fa fa-fw fa-times"></i></td>
+						</tr>
+					}
+				}
+			}
+		</tbody>
+	</table>
+
+	<h3>Trainers</h3>
+	<div class="form-group">
+		<label for="AvailableTrainers">Find trainers *</label>
+		<div class="row">
+			<div class="col-sm-8 col-md-6 col-lg-4">
+				<select class="form-control selectpicker" data-live-search="true" id="AvailableTrainers" title="Select trainer...">
+					@foreach (var user in Model.AvailableUsers)
+					{
+						<option data-tokens="@user.Item2" value="@user.Item1">@user.Item2</option>
+					}
+				</select>
+			</div>
+		</div>
+		@Html.ValidationMessageFor(model => model.SelectedTrainers)
+	</div>
+	@Html.HiddenFor(model => model.SelectedTrainers)
+
+	<table class="table table-responsive table-striped table-hover" id="training-trainers-table" data-selected-list="SelectedTrainers" data-select-box="AvailableTrainers">
+		<thead>
+			<tr>
+				<th>Name</th>
+				<th>Member number</th>
+				<th width="50">&nbsp;</th>
+			</tr>
+		</thead>
+		<tbody>
+			@if (String.IsNullOrEmpty(Model.SelectedTrainers))
+			{
+			<tr>
+				<td colspan="3" class="none-selected">No trainers have been added to the this training session yet.</td>
+			</tr>			
+			}
+			else
+			{
+			foreach(var strUserId in Model.SelectedTrainers.Split(new char[] { '|' }, StringSplitOptions.RemoveEmptyEntries))
+			{
+				Guid userId = new Guid(strUserId);
+				Tuple
+				<Guid, string, string>
+					user = Model.AvailableUsers.FirstOrDefault(i => i.Item1 == userId);
+					if (user != null)
+					{
+					<tr data-user-id="@user.Item1">
+						<td>@user.Item2</td>
+						<td>@user.Item3</td>
+						<td><a href="#" onclick="responseHub.training.removeTrainingMember(this); return false;" title="Remove member"><i class="fa fa-fw fa-times"></i></td>
+					</tr>
+					}
+				}
+			}
+		</tbody>
+	</table>
+
+	@if (ViewContext.RouteData.Values["action"].ToString().ToLower() == "edit")
+	{
+		<button type="submit" class="btn btn-primary btn-icon"><i class="fa fa-save"></i>Save session</button>
+	}
+	else
+	{
+		<button type="submit" class="btn btn-primary btn-icon"><i class="fa fa-plus"></i>Create session</button>
+	}
+	<a href="/control-panel/training" class="btn btn-link">Cancel</a>
+
+</form>

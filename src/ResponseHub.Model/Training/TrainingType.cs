@@ -28,7 +28,7 @@ namespace Enivate.ResponseHub.Model.Training
 		[Description("Chainsaws")]
 		Chainsaws = 6,
 
-		[Description("Storm & Water")]
+		[Description("Storm & water")]
 		StormWater = 7,
 
 		[Description("Communications")]

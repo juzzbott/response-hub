@@ -105,6 +105,9 @@
     <Compile Include="SignIn\OperationActivity.cs" />
     <Compile Include="SignIn\TrainingActivity.cs" />
     <Compile Include="SignIn\SignInType.cs" />
+    <Compile Include="Training\Interface\ITrainingSessionService.cs" />
+    <Compile Include="Training\TrainingSession.cs" />
+    <Compile Include="Training\TrainingSessionType.cs" />
     <Compile Include="Training\TrainingType.cs" />
     <Compile Include="Spatial\AddressInfo.cs" />
     <Compile Include="Spatial\LocationInfo.cs" />

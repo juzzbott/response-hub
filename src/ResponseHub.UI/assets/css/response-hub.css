@@ -79,6 +79,9 @@ h5 i {
     display: inline;
   }
 }
+table {
+  border-bottom: 1px solid #ddd;
+}
 .btn-icon i {
   margin-right: 6px;
 }
@@ -93,6 +96,15 @@ h5 i {
 }
 .cursor-pointer {
   cursor: pointer;
+}
+.text-warning {
+  color: #CF7D2F;
+}
+@media (max-width: 768px) {
+  .title-row a.pull-right {
+    float: left !important;
+    padding-left: 0;
+  }
 }
 /*
 	Top navbar styles
@@ -1288,6 +1300,117 @@ body.data-export-pdf .notes li .wordback-icon {
   margin-bottom: 10px;
   padding-bottom: 10px;
   border-bottom: 1px solid #ededed;
+}
+/**
+	Charts
+*/
+.ct-label {
+  font-size: 12px;
+  color: #878787;
+  font-family: 'Ubuntu', sans-serif;
+}
+.ct-bar {
+  stroke-width: 20px;
+}
+.ct-series-a .ct-point,
+.ct-series-a .ct-line,
+.ct-series-a .ct-bar,
+.ct-series-a .ct-slice-donut {
+  stroke: #67001f;
+}
+.ct-series-a .ct-slice-pie,
+.ct-series-a .ct-area {
+  fill: #67001f;
+}
+.ct-series-b .ct-point,
+.ct-series-b .ct-line,
+.ct-series-b .ct-bar,
+.ct-series-b .ct-slice-donut {
+  stroke: #b2182b;
+}
+.ct-series-b .ct-slice-pie,
+.ct-series-b .ct-area {
+  fill: #b2182b;
+}
+.ct-series-c .ct-point,
+.ct-series-c .ct-line,
+.ct-series-c .ct-bar,
+.ct-series-c .ct-slice-donut {
+  stroke: #d6604d;
+}
+.ct-series-c .ct-slice-pie,
+.ct-series-c .ct-area {
+  fill: #d6604d;
+}
+.ct-series-d .ct-point,
+.ct-series-d .ct-line,
+.ct-series-d .ct-bar,
+.ct-series-d .ct-slice-donut {
+  stroke: #f4a582;
+}
+.ct-series-d .ct-slice-pie,
+.ct-series-d .ct-area {
+  fill: #f4a582;
+}
+.ct-series-e .ct-point,
+.ct-series-e .ct-line,
+.ct-series-e .ct-bar,
+.ct-series-e .ct-slice-donut {
+  stroke: #fddbc7;
+}
+.ct-series-e .ct-slice-pie,
+.ct-series-e .ct-area {
+  fill: #fddbc7;
+}
+.ct-series-f .ct-point,
+.ct-series-f .ct-line,
+.ct-series-f .ct-bar,
+.ct-series-f .ct-slice-donut {
+  stroke: #d1e5f0;
+}
+.ct-series-f .ct-slice-pie,
+.ct-series-f .ct-area {
+  fill: #d1e5f0;
+}
+.ct-series-g .ct-point,
+.ct-series-g .ct-line,
+.ct-series-g .ct-bar,
+.ct-series-g .ct-slice-donut {
+  stroke: #92c5de;
+}
+.ct-series-g .ct-slice-pie,
+.ct-series-g .ct-area {
+  fill: #92c5de;
+}
+.ct-series-h .ct-point,
+.ct-series-h .ct-line,
+.ct-series-h .ct-bar,
+.ct-series-h .ct-slice-donut {
+  stroke: #4393c3;
+}
+.ct-series-h .ct-slice-pie,
+.ct-series-h .ct-area {
+  fill: #4393c3;
+}
+.ct-series-i .ct-point,
+.ct-series-i .ct-line,
+.ct-series-i .ct-bar,
+.ct-series-i .ct-slice-donut {
+  stroke: #2166ac;
+}
+.ct-series-i .ct-slice-pie,
+.ct-series-i .ct-area {
+  fill: #2166ac;
+}
+.ct-series-j .ct-point,
+.ct-series-j .ct-line,
+.ct-series-j .ct-bar,
+.ct-series-j .ct-slice-donut {
+  stroke: #053061;
+}
+.ct-series-j .ct-slice-pie,
+.ct-series-j .ct-area {
+  fill: #053061;
 }
 /**
  * Mixins

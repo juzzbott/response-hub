@@ -91,6 +91,7 @@
     <Compile Include="Interface\IRegionRepository.cs" />
     <Compile Include="Interface\IRepository.cs" />
     <Compile Include="Interface\ISignInEntryRepository.cs" />
+    <Compile Include="Interface\ITrainingSessionRepository.cs" />
     <Compile Include="Interface\IUserRepository.cs" />
     <Compile Include="MongoDB\AddressRepository.cs" />
     <Compile Include="MongoDB\AgencyRepository.cs" />
@@ -119,6 +120,7 @@
     <Compile Include="MongoDB\PagerMessageRepository.cs" />
     <Compile Include="MongoDB\RegionRepository.cs" />
     <Compile Include="MongoDB\SignInEntryRepository.cs" />
+    <Compile Include="MongoDB\TrainingSessionRepository.cs" />
     <Compile Include="MongoDB\UserRepository.cs" />
     <Compile Include="MongoRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

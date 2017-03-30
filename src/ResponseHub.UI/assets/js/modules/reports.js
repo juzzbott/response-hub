@@ -21,14 +21,16 @@
 		can.style.width = w + "px";
 		can.style.height = h + "px";
 		can.getContext("2d").setTransform(ratio, 0, 0, ratio, 0, 0);
+		console.log(w);
 		return can;
 	}
 
 	function displayTrainingReportGraph() {
 
-		var chartCanvas = createHiDPICanvas(1200, 400);
+		var chartCanvas = document.getElementById("canvas").getContext("2d");
+		//chartCanvas.translate(1, 1);
 		
-		document.getElementById("chart-container").appendChild(chartCanvas);
+		//document.getElementById("chart-container").appendChild(chartCanvas);
 		var jsonData = $('#chart-data').val().replace(/&quot;/g, '"');
 		var chartData = JSON.parse(jsonData);
 		var itemLength = chartData.datasets[0].data.length;
@@ -38,6 +40,7 @@
 			type: 'bar',
 			data: chartData,
 			options: {
+				responsive: false,
 				scales: {
 					yAxes: [{
 						ticks: {
