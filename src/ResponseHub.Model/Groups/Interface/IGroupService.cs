@@ -41,6 +41,8 @@ namespace Enivate.ResponseHub.Model.Groups.Interface
 
 		Task<IDictionary<Guid, UserMapping>> GetUserMappingsForUser(Guid userId);
 
+		Task<IList<Guid>> GetGroupIdsUserIsGroupAdminOf(Guid userId);
+
 	}
 
 }

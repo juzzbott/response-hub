@@ -26,7 +26,7 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 		{
 
 			// Get the group ids that the user is a group administrator of
-			IList<Guid> groupIds = await GetGroupIdsUserIsGroupAdminOf();
+			IList<Guid> groupIds = await GroupService.GetGroupIdsUserIsGroupAdminOf(UserId);
 
 			// If there is 1 group, add the context group id to the session
 			if (groupIds.Count == 1)

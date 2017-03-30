@@ -25,7 +25,7 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 		public async Task<ActionResult> Index()
         {
 			// Get the group ids that the user is a group administrator of
-			IList<Guid> groupIds = await GetGroupIdsUserIsGroupAdminOf();
+			IList<Guid> groupIds = await GroupService.GetGroupIdsUserIsGroupAdminOf(UserId);
 
 			// If there is only one group, when we just need to set this and return the user.
 			if (groupIds.Count == 1)
@@ -60,7 +60,7 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 		{
 
 			// Get the group ids that the user is a group administrator of
-			IList<Guid> groupIds = await GetGroupIdsUserIsGroupAdminOf();
+			IList<Guid> groupIds = await GroupService.GetGroupIdsUserIsGroupAdminOf(UserId);
 
 			// Get the groups based on the ids
 			IList<Group> groups = await GroupService.GetByIds(groupIds);

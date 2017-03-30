@@ -12,11 +12,16 @@ using System.Security.Claims;
 using Enivate.ResponseHub.Model.Identity;
 using System.Web.Routing;
 using Enivate.ResponseHub.Common.Constants;
+using Microsoft.AspNet.Identity;
+using Enivate.ResponseHub.Model.Groups.Interface;
+using Enivate.ResponseHub.Common;
+using System.Threading.Tasks;
 
 namespace Enivate.ResponseHub.UI.Helpers
 {
 	public static class HtmlHelpers
 	{
+
 
 		/// <summary>
 		/// Gets the enum description for the enum value.
@@ -128,6 +133,40 @@ namespace Enivate.ResponseHub.UI.Helpers
 
 			return identity.Claims.Any(i => i.Type.Equals(ClaimTypes.Role, StringComparison.CurrentCultureIgnoreCase) && i.Value.Equals(RoleTypes.GroupAdministrator, StringComparison.CurrentCultureIgnoreCase));
 
+		}
+
+		public static bool IsGroupAdminUserOfMultipleGroups(this HtmlHelper helper)
+		{
+			// If the user is null or not authenticated, then just return false
+			if (HttpContext.Current == null)
+			{
+				return false;
+			}
+
+			if (HttpContext.Current.User == null || !HttpContext.Current.User.Identity.IsAuthenticated)
+			{
+				return false;
+			}
+
+			// Get the identity as a claims identity
+			ClaimsIdentity identity = (ClaimsIdentity)HttpContext.Current.User.Identity;
+
+			// Get the user id from the claim
+			Guid userId = new Guid(identity.GetUserId());
+
+			// Get the group service
+			IGroupService groupService = ServiceLocator.Get<IGroupService>();
+
+			IList<Guid> userGroupIds = null;
+			int groupCount = 0;
+			Task t = Task.Run(async () =>
+			{
+				userGroupIds = await groupService.GetGroupIdsUserIsGroupAdminOf(userId);
+				groupCount = userGroupIds.Count;
+			});
+			t.Wait();
+
+			return groupCount > 1;
 		}
 
 		/// <summary>

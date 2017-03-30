@@ -16,6 +16,7 @@ namespace Enivate.ResponseHub.UI
 			filters.Add(new SystemAdminUserRedirectAttribute());
 			filters.Add(new EnforceControlPanelGroupSelectionAttribute());
 			filters.Add(new ResponseHubPageAttribute());
+			filters.Add(new ExceptionLogFilter());
 		}
 	}
 }
