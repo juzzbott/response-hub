@@ -222,6 +222,7 @@
     <Compile Include="Controllers\SearchController.cs" />
     <Compile Include="Controllers\WeatherCentreController.cs" />
     <Compile Include="Filters\EnforceControlPanelGroupSelectionAttribute.cs" />
+    <Compile Include="Filters\ExceptionLogFilter.cs" />
     <Compile Include="Filters\SystemAdminUserRedirectAttribute.cs" />
     <Compile Include="Helpers\JobMessageModelHelper.cs" />
     <Compile Include="Models\Api\Events\AddResourcePostModel.cs" />
