@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
+using Enivate.ResponseHub.Model.Identity;
+
 namespace Enivate.ResponseHub.UI.Models.Users
 {
 	public class GroupUserViewModel
@@ -25,6 +27,8 @@ namespace Enivate.ResponseHub.UI.Models.Users
 		public string EmailAddress { get; set; }
 
 		public String GroupRole { get; set; }
+
+		public UserProfile Profile { get; set; }
 
 	}
 }

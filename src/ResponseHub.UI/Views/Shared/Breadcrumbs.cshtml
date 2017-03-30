@@ -14,7 +14,7 @@
 		</ul>
 	</div>
 
-	@if (ViewContext.RouteData.DataTokens["area"] != null && ViewContext.RouteData.DataTokens["area"].ToString().ToLower() == "controlpanel")
+	@if (ViewContext.RouteData.DataTokens["area"] != null && ViewContext.RouteData.DataTokens["area"].ToString().ToLower() == "controlpanel" && Html.IsGroupAdminUserOfMultipleGroups())
 	{
 		<div class="col-md-2">
 			<a href="/control-panel/group-selection" class="breadcrumb-select-group btn btn-link btn-icon"><i class="fa fa-fw fa-users"></i>Select group context</a>

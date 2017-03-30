@@ -189,6 +189,8 @@ namespace Enivate.ResponseHub.ApplicationServices
 			// Clear the group from the cache
 			CacheManager.RemoveItem(RecentlyAddedGroupsCacheKey);
 			CacheManager.RemoveItem(CacheUtility.GetEntityCacheKey(typeof(Group), groupId.ToString()));
+			string groupAdminListCacheKey = String.Format("GroupAdminGroupIds_{0}", userId);
+			CacheManager.RemoveItem(groupAdminListCacheKey);
 		}
 
 		public async Task RemoveUserFromGroup(Guid userId, Guid groupId)
@@ -198,6 +200,8 @@ namespace Enivate.ResponseHub.ApplicationServices
 			// Clear the group from the cache
 			CacheManager.RemoveItem(RecentlyAddedGroupsCacheKey);
 			CacheManager.RemoveItem(CacheUtility.GetEntityCacheKey(typeof(Group), groupId.ToString()));
+			string groupAdminListCacheKey = String.Format("GroupAdminGroupIds_{0}", userId);
+			CacheManager.RemoveItem(groupAdminListCacheKey);
 		}
 
 		/// <summary>
@@ -321,6 +325,8 @@ namespace Enivate.ResponseHub.ApplicationServices
 			// Remove the group from cache so that a fresh reload occurs
 			CacheManager.RemoveItem(RecentlyAddedGroupsCacheKey);
 			CacheManager.RemoveItem(CacheUtility.GetEntityCacheKey(typeof(Group), groupId.ToString()));
+			string groupAdminListCacheKey = String.Format("GroupAdminGroupIds_{0}", userId);
+			CacheManager.RemoveItem(groupAdminListCacheKey);
 
 		}
 
@@ -332,6 +338,38 @@ namespace Enivate.ResponseHub.ApplicationServices
 		public async Task<IDictionary<Guid, UserMapping>> GetUserMappingsForUser(Guid userId)
 		{
 			return await _repository.GetUserMappingsForUser(userId);
+		}
+		
+		/// <summary>
+		/// Gets the list of GroupIds the current user is a group admin of.
+		/// </summary>
+		/// <returns></returns>
+		public async Task<IList<Guid>> GetGroupIdsUserIsGroupAdminOf(Guid userId)
+		{
+
+			// Specify the cache key
+			string cacheKey = String.Format("GroupAdminGroupIds_{0}", userId);
+
+			// Get the item from cache if it exists
+			IList<Guid> groupAdminGroupIds = CacheManager.GetItem<IList<Guid>>(cacheKey);
+
+			// If the cache item is not null, return it
+			if (groupAdminGroupIds != null)
+			{
+				return groupAdminGroupIds;
+			}
+
+			// Get the group ids and user mappings for those groups
+			IDictionary<Guid, UserMapping> userGroupMappings = await GetUserMappingsForUser(userId);
+
+			groupAdminGroupIds = userGroupMappings.Where(i => i.Value.Role == RoleTypes.GroupAdministrator).Select(i => i.Key).ToList();
+
+			// Add to cache for the next time
+			CacheManager.AddItem(cacheKey, groupAdminGroupIds, 1440);
+
+			// Get the user mappings for groups for the user
+			return groupAdminGroupIds;
+
 		}
 	}
 }

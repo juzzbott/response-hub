@@ -41,7 +41,7 @@
 								<li><a href="/my-account">My account<i class="fa fa-fw fa-cog pull-right"></i></a></li>
 								<li><a href="/my-account/change-password">Change password<i class="fa fa-fw fa-lock pull-right"></i></a></li>
 								<li role="separator" class="divider"></li>
-								@if (ViewContext.RouteData.DataTokens["area"] != null && ViewContext.RouteData.DataTokens["area"].ToString().ToLower() == "controlpanel")
+								@if (ViewContext.RouteData.DataTokens["area"] != null && ViewContext.RouteData.DataTokens["area"].ToString().ToLower() == "controlpanel" && Html.IsGroupAdminUserOfMultipleGroups())
 								{
 									<li><a href="/control-panel/group-selection">Select group context<i class="fa fa-fw fa-users pull-right"></i></a></li>
 									<li role="separator" class="divider"></li>
