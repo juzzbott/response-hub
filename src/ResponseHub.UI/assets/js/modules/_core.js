@@ -119,6 +119,26 @@
 
 		});
 
+		// Set the graphic radioes and checkboxes
+		setGraphicRadiosCheckboxes();
+
+	}
+
+	// Create the "graphic radio" and "graphic checkbox" functionality
+	function setGraphicRadiosCheckboxes() {
+		
+		$('.graphic-radio label, .graphic-checkbox label').each(function (index, elem) {
+			$(elem).contents().eq(2).wrap('<span/>');
+		});
+
+		$('.graphic-radio label input[type="radio"]').each(function (index, elem) {
+			$(elem).after('<i class="fa fa-circle-o"></i><i class="fa fa-dot-circle-o"></i>');
+		});
+
+		$('.graphic-checkbox label input[type="checkbox"]').each(function (index, elem) {
+			$(elem).after('<i class="fa fa-fw fa-square-o"></i><i class="fa  fa-fw fa-check-square-o"></i>');
+		});
+
 	}
 
 	// Bind the modal

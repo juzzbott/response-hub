@@ -14,7 +14,7 @@ module.exports = function(grunt) {
 		},
 		concat: {
 			options: {
-				separator: '\r\n\r\n',
+				separator: '\r\n\r\n'
 			},
 			framework_js: {
 				src: [
@@ -28,10 +28,14 @@ module.exports = function(grunt) {
 					'assets/js/lib/bootstrap-tabcollapse.js',
 					'assets/js/lib/bootstrap-typeahead.min.js',
 					'assets/js/lib/leaflet.js',
+					'assets/js/lib/palette.js',
 					'assets/js/lib/fm.scrollator.jquery.js',
 					'bower_components/dropzone/dist/min/dropzone.min.js',
 					'bower_components/blueimp-gallery/js/jquery.blueimp-gallery.min.js',
-					'bower_components/blueimp-bootstrap-image-gallery/js/bootstrap-image-gallery.min.js'
+					'bower_components/blueimp-bootstrap-image-gallery/js/bootstrap-image-gallery.min.js',
+					'bower_components/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js',
+					'bower_components/Chart.js/dist/Chart.min.js',
+					'bower_components/chartist/dist/chartist.min.js'
 				],
 				dest: 'assets/js/framework.js'
 			},
@@ -52,7 +56,10 @@ module.exports = function(grunt) {
 					'assets/js/modules/search.js',
 					'assets/js/modules/attachments.js',
 					'assets/js/modules/gallery.js',
-					'assets/js/modules/weather-centre.js'
+					'assets/js/modules/weather-centre.js',
+					'assets/js/modules/sign-on.js',
+					'assets/js/modules/reports.js',
+					'assets/js/modules/training.js'
 				],
 				dest: 'assets/js/script.js'
 			},
@@ -67,9 +74,11 @@ module.exports = function(grunt) {
 					'assets/css/lib/fm.scrollator.jquery.css',
 					'bower_components/dropzone/dist/min/dropzone.min.css',
 					'bower_components/blueimp-gallery/css/blueimp-gallery.min.css',
-					'bower_components/blueimp-bootstrap-image-gallery/css/bootstrap-image-gallery.min.css'
+					'bower_components/blueimp-bootstrap-image-gallery/css/bootstrap-image-gallery.min.css',
+					'bower_components/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css',
+					'bower_components/chartist/dist/chartist.min.css'
 				],
-				dest: 'assets/css/framework.css',
+				dest: 'assets/css/framework.css'
 			}
 		},
 		less: {
@@ -82,11 +91,11 @@ module.exports = function(grunt) {
 		watch: {
 			css: {
 				files: 'assets/css/less/*',
-				tasks: ['less:build'],
+				tasks: ['less:build']
 			},
 			js: {
 				files: 'assets/js/modules/*',
-				tasks: ['concat:script_js'],
+				tasks: ['concat:script_js']
 			}
         }
 	});

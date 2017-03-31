@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
+using Enivate.ResponseHub.Model.Identity;
+
 namespace Enivate.ResponseHub.UI.Models.Profile
 {
 	public class ProfileViewModel
@@ -21,6 +23,8 @@ namespace Enivate.ResponseHub.UI.Models.Profile
 		}
 
 		public DateTime DateCreated { get; set; }
+
+		public UserProfile Profile { get; set; }
 
 	}
 }

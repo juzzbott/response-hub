@@ -1,6 +1,7 @@
 ﻿using Enivate.ResponseHub.DataAccess.MongoDB.DataObjects.Spatial;
 using Enivate.ResponseHub.Model;
 using Enivate.ResponseHub.Model.Messages;
+using MongoDB.Bson.Serialization.Attributes;
 using System;
 using System.Collections.Generic;
 using System.Linq;

@@ -15,93 +15,32 @@ using Enivate.ResponseHub.Model.Messages;
 using Enivate.ResponseHub.Model.Messages.Interface;
 using Enivate.ResponseHub.Model.Spatial;
 using Enivate.ResponseHub.Model.Groups.Interface;
-
-using EvoPdf;
+using Enivate.ResponseHub.Model.PdfGeneration.Interface;
 
 namespace Enivate.ResponseHub.ApplicationServices
 {
 	public class DataExportService : IDataExportService
 	{
 
-		private const string EvoPdfLicenseKey = "SsTXxdDVxdbcxdDL1cXW1MvU18vc3Nzc";
+		private IJobMessageService _jobMessageService;
+		private IGroupService _groupService;
+		private IPdfGenerationService _pdfGenerationService;
 
-		protected IJobMessageService JobMessageService
+		public DataExportService(IJobMessageService jobMessageService, IGroupService groupService, IPdfGenerationService pdfGenerationService)
 		{
-			get
-			{
-				return ServiceLocator.Get<IJobMessageService>();
-			}
-		}
-
-
-
-		protected IGroupService GroupService
-		{
-			get
-			{
-				return ServiceLocator.Get<IGroupService>();
-			}
-		}
-
-		private const string OverviewTemplateFilename = "DataExportOverview.html";
-
-		public async Task<byte[]> BuildPdfExportFile(Guid groupId, DateTime dateFrom, DateTime dateTo)
-		{
-
-			// Create the converter
-			HtmlToPdfConverter converter = new HtmlToPdfConverter();
-
-			//set the PDF document margins
-			converter.LicenseKey = EvoPdfLicenseKey;
-			converter.PdfDocumentOptions.LeftMargin = 30;
-			converter.PdfDocumentOptions.RightMargin = 30;
-			converter.PdfDocumentOptions.TopMargin = 30;
-			converter.PdfDocumentOptions.BottomMargin = 30;
-			
-			// embed the true type fonts in the generated PDF document
-			converter.PdfDocumentOptions.EmbedFonts = true;
-			
-			// compress the images in PDF with JPEG to reduce the PDF document size
-			converter.PdfDocumentOptions.JpegCompressionEnabled = false;
-			
-			// Return the pdf bytes
-			return converter.ConvertHtml(await BuildHtmlExportFile(groupId, dateFrom, dateTo), ConfigurationManager.AppSettings["BaseWebsiteUrl"]);
-			
-		}
-
-		public async Task<string> BuildHtmlExportFile(Guid groupId, DateTime dateFrom, DateTime dateTo)
-		{
-			// Get the web response for the report
-			// To force a page break: style="page-break-before: always"
-			HttpWebRequest request = HttpWebRequest.CreateHttp(String.Format("{0}/control-panel/data-export/generate-html-export?group_id={1}&date_from={2}&date_to={3}",
-				ConfigurationManager.AppSettings[ConfigurationKeys.BaseWebsiteUrl],
-				groupId,
-				dateFrom.ToString("yyyyMMddHHmmss"),
-				dateTo.ToString("yyyyMMddHHmmss")));
-
-			HttpWebResponse response = (HttpWebResponse)await request.GetResponseAsync();
-
-			// If the response is not successful, then throw exception
-			if (response.StatusCode != HttpStatusCode.OK)
-			{
-				throw new Exception("There was an error response from the Generate PDF Export request.");
-			}
-
-			// Get the test from the response
-			using (StreamReader reader = new StreamReader(response.GetResponseStream()))
-			{
-				return reader.ReadToEnd();
-			}
+			_jobMessageService = jobMessageService;
+			_groupService = groupService;
+			_pdfGenerationService = pdfGenerationService;
 		}
 		
 		public async Task<string> BuildCsvExportFile(Guid groupId, DateTime dateFrom, DateTime dateTo)
 		{
 
 			// Get the group by the id
-			Group group = await GroupService.GetById(groupId);
+			Group group = await _groupService.GetById(groupId);
 
 			// Get the list of messages for the capcode
-			IList<JobMessage> messages = await JobMessageService.GetJobMessagesBetweenDates(
+			IList<JobMessage> messages = await _jobMessageService.GetJobMessagesBetweenDates(
 				new List<string> { group.Capcode },
 				MessageType.Job & MessageType.Message,
 				dateFrom,

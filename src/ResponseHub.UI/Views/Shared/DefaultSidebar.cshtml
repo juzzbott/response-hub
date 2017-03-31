@@ -1,19 +1,30 @@
 ﻿<p class="explore">Explore</p>
 
 <ul class="nav nav-sidebar">
-	<li>
+	<li class="@(ViewContext.RouteData.Values["Controller"].ToString() == "Jobs" ? "active" : "")">
 		<a href="/jobs"><i class="fa fa-fw fa-list-alt"></i>Jobs</a>
 	</li>
-	<li>
+	<li class="@(ViewContext.RouteData.Values["Controller"].ToString() == "Messages" ? "active" : "")">
 		<a href="/messages"><i class="fa fa-fw fa-sticky-note-o"></i>Messages</a>
 	</li>
-	<li>
+	<li class="@(ViewContext.RouteData.Values["Controller"].ToString() == "SignIn" ? "active" : "")">
+		<a href="/sign-in"><i class="fa fa-fw fa-address-book-o"></i>Sign in</a>
+		@if (ViewContext.RouteData.Values["Controller"].ToString() == "SignIn")
+		{
+			<ul>
+				<li>
+					<a href="/sign-in/group-sign-in">Group sign in</a>
+				</li>
+			</ul>
+		}
+</li>
+	<li class="@(ViewContext.RouteData.Values["Controller"].ToString() == "Events" ? "active" : "")">
 		<a href="/events"><i class="fa fa-fw fa-bullhorn"></i>Events</a>
 	</li>
-	<li>
+	<li class="@(ViewContext.RouteData.Values["Controller"].ToString() == "Wallboard" ? "active" : "")">
 		<a href="/wallboard"><i class="fa fa-fw fa-desktop"></i>Wallboard view</a>
 	</li>
-	<li>
+	<li class="@(ViewContext.RouteData.Values["Controller"].ToString() == "WeatherCentre" ? "active" : "")">
 		<a href="/weather-centre"><i class="fa fa-fw fa-bolt"></i>Weather centre</a>
 	</li>
 	<li class="@(ViewContext.RouteData.Values["Controller"].ToString() == "MyAccount" ? "active" : "")">
@@ -23,6 +34,9 @@
 		<ul>
 			<li>
 				<a href="/my-account/update-account">Update account</a>
+			</li>
+			<li>
+				<a href="/my-account/sign-in-history">View sign in history</a>
 			</li>
 			<li>
 				<a href="/my-account/update-email">Update email address</a>

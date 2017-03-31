@@ -1,0 +1,113 @@
+﻿@model Enivate.ResponseHub.UI.Models.SignIn.SignInViewModel
+@{
+    ViewBag.Title = "Sign in";
+	ViewBag.BodyClass = "sign-on";
+}
+
+<h1>@ViewBag.Title</h1>
+
+<form action="@Request.Url" method="post">
+
+	@Html.AntiForgeryToken()
+
+	@Html.ValidationSummary()
+
+	@Html.HiddenFor(model => model.GroupId)
+	
+	@if (Model.AvailableUsers != null && Model.AvailableUsers.Count > 0)
+	{
+		<div class="form-group">
+			<label for="TrainingType">Member to sign in *</label>
+			<div class="row">
+				<div class="col-sm-8 col-md-6 col-lg-4">
+					@Html.DropDownListFor(model => model.UserId, Model.AvailableUsers, new { @class = "form-control" })
+				</div>
+			</div>
+			@Html.ValidationMessageFor(model => model.UserId)
+		</div>
+	}
+	else
+	{
+		@Html.HiddenFor(model => model.UserId)
+	}
+
+	<div class="form-group">
+		<label for="StartDate">Start date *</label>
+		<div class="row">
+			<div class="col-sm-8 col-md-6 col-lg-4">
+				<div class="input-group date datepicker-control" data-provide="datepicker" data-date-format="yyyy-mm-dd" data-date-autoclose="true" data-date-show-on-focus="false">
+					@Html.TextBoxFor(model => model.StartDate, new { @class = "form-control" })
+					<div class="input-group-addon">
+						<i class="fa fa-fw fa-calendar"></i>
+					</div>
+				</div>
+				<div class="text-muted"><em>Date format should be yyyy-mm-dd.</em></div>
+			</div>
+		</div>
+		@Html.ValidationMessageFor(model => model.StartDate)
+	</div>
+
+	<div class="form-group">
+		<label for="StartTime">Start time *</label>
+		<div class="row">
+			<div class="col-sm-8 col-md-6 col-lg-4">
+				<div class="input-group">
+					@Html.TextBoxFor(model => model.StartTime, new { @class = "form-control" })
+					<div class="input-group-addon">
+						<i class="fa fa-fw fa-clock-o"></i>
+					</div>
+				</div>
+				<div class="text-muted"><em>Date format should be hh:mm and in 24 hour time.</em></div>
+			</div>
+		</div>
+		@Html.ValidationMessageFor(model => model.StartTime)
+	</div>
+
+	<div class="form-group">
+		<h3>Sign in type *</h3>
+		<div class="row">
+			<div class="col-sm-12 graphic-radio">
+				<label class="radio-inline" for="SignOnType1">
+					<input type="radio" name="SignOnType" id="SignOnType1" value="1" checked="checked" onclick="responseHub.signOn.showOperationDetails();">
+					Operation
+				</label>
+				<label class="radio-inline" for="SignOnType2">
+					<input type="radio" name="SignOnType" id="SignOnType2" value="2" onclick="responseHub.signOn.hideOperationDetails();">
+					Training
+				</label>
+			</div>
+		</div>
+		@Html.ValidationMessageFor(model => model.SignOnType)
+	</div>
+
+	<div id="operation-task">
+		<p><strong>Operation details</strong></p>
+		<p>Enter a description for the operation or select one below:</p>
+		<div class="form-group row">
+			<div class="col-sm-8 col-md-6 col-lg-4">
+				@Html.TextBoxFor(model => model.OperationDescription, new { @class = "form-control", placeholder = "Rescue, tree down, job number..." })
+			</div>
+		</div>
+		@Html.HiddenFor(model => model.OperationJobId)
+		<div class="sign-on-operation">
+			@foreach (Tuple<Guid, string, string> job in Model.AvailableOperations)
+			{
+				<div class="row">
+					<div class="col-lg-10 col-xl-9 radio graphic-radio">
+						<label onclick="responseHub.signOn.setOperationJobNumber('@job.Item3', '@job.Item1');">
+							<input type="radio" name="OperationList" id="Operation_@job.Item1" value="@job.Item1">
+							@job.Item2
+						</label>
+					</div>
+				</div>
+			}
+
+		</div>
+	</div>
+
+	<div class="top-20">
+		<button type="submit" class="btn btn-lg btn-primary btn-icon"><i class="fa fa-sign-in"></i>Sign in</button>
+		<a href="/sign-on" class="btn btn-link">Cancel</a>
+	</div>
+
+</form>

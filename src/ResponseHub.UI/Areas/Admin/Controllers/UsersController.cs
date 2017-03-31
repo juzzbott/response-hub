@@ -131,8 +131,11 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 					return View(model);
 				}
 
+				// Create the profile
+				UserProfile profile = new UserProfile();
+
 				// Create the administrator user
-				IdentityUser newUser = await UserService.CreateAsync(model.EmailAddress, model.FirstName, model.Surname, new List<string>() { RoleTypes.SystemAdministrator });
+				IdentityUser newUser = await UserService.CreateAsync(model.EmailAddress, model.FirstName, model.Surname, new List<string>() { RoleTypes.SystemAdministrator }, profile);
 
 				// Send the email
 				await MailService.SendAccountActivationEmail(newUser);

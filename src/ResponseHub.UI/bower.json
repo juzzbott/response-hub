@@ -14,11 +14,14 @@
 		"bootstrap": "3.3.6",
 		"bootstrap-select": "1.10.0",
 		"moment": "~2.11.1",
-		"fontawesome": "~4.6.3",
+		"fontawesome": "~4.7.0",
 		"jquery-validation": "~1.14.0",
 		"jquery-validation-unobtrusive": "~3.2.5",
 		"dropzone": "~4.3.0",
 		"blueimp-gallery": "~2.21.3",
-		"blueimp-bootstrap-image-gallery": "~3.4.2"
+		"blueimp-bootstrap-image-gallery": "~3.4.2",
+		"eonasdan-bootstrap-datetimepicker": "~4.17.47",
+		"Chart.js": "~2.5.0",
+		"chartist": "~0.10.1"
 	}
 }

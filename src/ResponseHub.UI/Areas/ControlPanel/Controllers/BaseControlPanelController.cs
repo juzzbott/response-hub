@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
@@ -10,12 +11,13 @@ using Enivate.ResponseHub.Common;
 using Enivate.ResponseHub.Model.Groups.Interface;
 using Enivate.ResponseHub.Model.Groups;
 using Enivate.ResponseHub.Model.Identity;
-using System.Net;
 using Enivate.ResponseHub.UI.Models.Users;
 using Enivate.ResponseHub.UI.Areas.Admin.Models.Groups;
 using Enivate.ResponseHub.Common.Extensions;
 using Enivate.ResponseHub.Model;
 using Enivate.ResponseHub.Model.Spatial;
+using Enivate.ResponseHub.Common.Constants;
+using Enivate.ResponseHub.Caching;
 
 namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 {
@@ -54,23 +56,6 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 			{
 				return RouteData.DataTokens["area"].ToString() == "admin" ? "admin" : "control-panel";
 			}
-		}
-
-		/// <summary>
-		/// Gets the list of GroupIds the current user is a group admin of.
-		/// </summary>
-		/// <returns></returns>
-		public async Task<IList<Guid>> GetGroupIdsUserIsGroupAdminOf()
-		{
-
-			// Get the group ids and user mappings for those groups
-			IDictionary<Guid, UserMapping> userGroupMappings = await GroupService.GetUserMappingsForUser(UserId);
-
-			IList<Guid> groupAdminGroupIds = userGroupMappings.Where(i => i.Value.Role == RoleTypes.GroupAdministrator).Select(i => i.Key).ToList();
-
-			// Get the user mappings for groups for the user
-			return groupAdminGroupIds;
-
 		}
 
 		public async Task<bool> CurrentUserIsAdminOfGroup(Guid groupId)
@@ -130,7 +115,8 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 					FirstName = groupUser.FirstName,
 					GroupRole = group.Users.FirstOrDefault(i => i.UserId == groupUser.Id).Role,
 					Id = groupUser.Id,
-					Surname = groupUser.Surname
+					Surname = groupUser.Surname,
+					Profile = groupUser.Profile
 				});
 			}
 
@@ -422,8 +408,14 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 				else
 				{
 
+					// Create the profile
+					UserProfile profile = new UserProfile()
+					{
+						MemberNumber = model.MemberNumber
+					};
+
 					// Create the new user, and then create the group mapping for the new user.
-					newUser = await UserService.CreateAsync(model.EmailAddress, model.FirstName, model.Surname, new List<string>() { model.Role });
+					newUser = await UserService.CreateAsync(model.EmailAddress, model.FirstName, model.Surname, new List<string>() { model.Role }, profile);
 
 					// Send the activation email
 					await MailService.SendAccountActivationEmail(newUser);
@@ -542,9 +534,7 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 		#endregion
 
 		#region Helpers
-
-
-
+		
 		/// <summary>
 		/// Gets the list of regions in a select list for use on the screens.
 		/// </summary>
@@ -565,9 +555,7 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 			// return the list of items
 			return items;
 		}
-
-
-
+		
 		/// <summary>
 		/// Gets the list of guids from the hidden value for the additional capcodes.
 		/// </summary>
@@ -631,8 +619,7 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 			}
 
 		}
-
-
+		
 		/// <summary>
 		/// Gets the list of available roles for the users to be set as.
 		/// </summary>
@@ -646,6 +633,22 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 
 			// return the available roles
 			return availableRoles;
+		}
+
+		/// <summary>
+		/// Gets the current context group id for the control panel.
+		/// </summary>
+		/// <returns></returns>
+		protected Guid GetControlPanelGroupId()
+		{
+			if (Session[SessionConstants.ControlPanelContextGroupId] != null)
+			{
+				return (Guid)Session[SessionConstants.ControlPanelContextGroupId];
+			}
+			else
+			{
+				return Guid.Empty;
+			}
 		}
 
 		#endregion

@@ -4,9 +4,9 @@
 	Layout = "~/Areas/ControlPanel/Views/Shared/_Layout.cshtml";
 }
 
-<div class="row">
+<div class="row title-row">
 	<div class="col-sm-9">
-		<h1>@Model.Name</h1>
+		<h1>@ViewBag.Title</h1>
 	</div>
 	<div class="col-sm-3">
 		<a href="@Request.Url.LocalPath/edit" class="btn btn-link btn-icon btn-lg pull-right"><i class="fa fa-pencil-square-o"></i>Edit group</a>
@@ -72,6 +72,7 @@
 	<thead>
 		<tr>
 			<th>Name</th>
+			<th>Member number</th>
 			<th>Email</th>
 			<th>Security</th>
 			<th>Actions</th>
@@ -91,6 +92,7 @@
 			{
 				<tr>
 					<td><a href="/profile/@user.Id">@user.FullName</a></td>
+					<td>@user.Profile.MemberNumber</td>
 					<td>@user.EmailAddress</td>
 					<td>@user.GroupRole</td>
 					<td>

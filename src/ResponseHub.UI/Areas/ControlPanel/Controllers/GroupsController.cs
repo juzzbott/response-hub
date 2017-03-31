@@ -13,7 +13,7 @@ using Enivate.ResponseHub.Common.Constants;
 namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 {
 
-	[RouteArea("control-panel")]
+	[RouteArea("ControlPanel", AreaPrefix ="control-panel")]
 	[RoutePrefix("groups")]
 	[ClaimsAuthorize(Roles = RoleTypes.GroupAdministrator)]
 	public class GroupsController : BaseControlPanelController
@@ -21,22 +21,10 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 
 		[Route]
         // GET: ControlPanel/Groups
-        public async Task<ActionResult> Index()
+        public ActionResult Index()
         {
-			// Get the group ids that the user is a group administrator of
-			IList<Guid> groupIds = await GetGroupIdsUserIsGroupAdminOf();
-
-			// If there is 1 group, add the context group id to the session
-			if (groupIds.Count == 1)
-			{
-				Guid groupId = groupIds.First();
-				Session[SessionConstants.GroupAdminContextGroupId] = groupId;
-				return new RedirectResult(String.Format("/control-panel/groups/{0}", groupId));
-			}
-			else
-			{
-				return View();
-			}
+			Guid groupId = GetControlPanelGroupId();
+			return new RedirectResult(String.Format("/control-panel/groups/{0}", groupId));
 		}
 		
 		#region View group

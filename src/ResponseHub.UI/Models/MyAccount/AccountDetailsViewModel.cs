@@ -4,6 +4,8 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
 
+using Enivate.ResponseHub.Model.Identity;
+
 namespace Enivate.ResponseHub.UI.Models.MyAccount
 {
 	public class AccountDetailsViewModel
@@ -15,6 +17,8 @@ namespace Enivate.ResponseHub.UI.Models.MyAccount
 
 		[Required(ErrorMessage = "Please enter the first name for the user")]
 		public string FirstName { get; set; }
+
+		public UserProfile Profile { get; set; }
 
 		[Required(ErrorMessage = "Please enter the surname for the user")]
 		public string Surname { get; set; }

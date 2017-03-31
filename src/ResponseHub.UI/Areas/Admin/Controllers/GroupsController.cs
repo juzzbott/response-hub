@@ -194,8 +194,14 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 			if (!model.UserExists)
 			{
 
+				// Create the profile
+				UserProfile profile = new UserProfile()
+				{
+					MemberNumber = model.MemberNumber
+				};
+
 				// Create the new user
-				groupAdmin = await UserService.CreateAsync(model.EmailAddress, model.FirstName, model.Surname, new List<string>() { RoleTypes.GroupAdministrator, RoleTypes.GeneralUser });
+				groupAdmin = await UserService.CreateAsync(model.EmailAddress, model.FirstName, model.Surname, new List<string>() { RoleTypes.GroupAdministrator, RoleTypes.GeneralUser }, profile);
 
 				// Send the email to the user
 				await MailService.SendAccountActivationEmail(groupAdmin);
@@ -210,7 +216,7 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 				if (groupAdmin == null)
 				{
 					ModelState.AddModelError("", "There was a system error creating the group.");
-					await Log.Error(String.Format("Unable to create group. Existing user with email ''  could not be found.", createGroupModel.GroupAdministratorEmail));
+					await Log.Error(String.Format("Unable to create group. Existing user with email '{0}' could not be found.", createGroupModel.GroupAdministratorEmail));
 					return View("ConfirmUser", model);
 				}
 			}
