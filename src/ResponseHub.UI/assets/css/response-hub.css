@@ -82,6 +82,9 @@ h5 i {
 table {
   border-bottom: 1px solid #ddd;
 }
+.table-small {
+  font-size: 10px;
+}
 .btn-icon i {
   margin-right: 6px;
 }

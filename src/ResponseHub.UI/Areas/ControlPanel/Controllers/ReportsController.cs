@@ -18,6 +18,7 @@ using Enivate.ResponseHub.Model.Training;
 using Enivate.ResponseHub.UI.Areas.ControlPanel.Models.Reports.Training;
 using Enivate.ResponseHub.Common.Extensions;
 using Enivate.ResponseHub.Model.Reports.Interface;
+using Enivate.ResponseHub.Model.Training.Interface;
 
 namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 {
@@ -41,6 +42,14 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 			get
 			{
 				return ServiceLocator.Get<IReportService>();
+			}
+		}
+
+		public ITrainingSessionService TrainingSessionService
+		{
+			get
+			{
+				return ServiceLocator.Get<ITrainingSessionService>();
 			}
 		}
 
@@ -119,16 +128,73 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 		/// <returns></returns>
 		private async Task<TrainingReportViewModel> GetTrainingReportModel(Guid groupId, DateTime dateFrom, DateTime dateTo)
 		{
-			
+			// Get the training sessions
+			IList<TrainingSession> trainingSessions = await TrainingSessionService.GetTrainingSessionsForGroup(groupId);
+
+			// Get the members for the group
+			IList<IdentityUser> groupMembers = await GroupService.GetUsersForGroup(groupId);
+
+			// Get the aggregate chart data
+			IDictionary<string, int> aggregate = new Dictionary<string, int>();
+			foreach (TrainingType trainingType in Enum.GetValues(typeof(TrainingType)))
+			{
+				aggregate.Add(trainingType.GetEnumDescription(), trainingSessions.Count(i => i.TrainingType == trainingType));
+			}
+
+			// Build the chart data
+			StringBuilder sbChartData = new StringBuilder();
+			sbChartData.Append("{\"labels\": [");
+			for (int i = 0; i < aggregate.Count; i++)
+			{
+				KeyValuePair<string, int> item = aggregate.ElementAt(i);
+				sbChartData.AppendFormat("{0}\"{1}\"", (i == 0 ? "" : ","), item.Key);
+			}
+			sbChartData.Append("],\"series\": [");
+			for (int i = 0; i < aggregate.Count; i++)
+			{
+				KeyValuePair<string, int> item = aggregate.ElementAt(i);
+				sbChartData.AppendFormat("{0}{1}", (i == 0 ? "" : ","), item.Value);
+			}
+			sbChartData.Append("]}");
 
 			StringBuilder sbChartOptionsJs = new StringBuilder();
+
+			// Build the member reports
+			IList<GroupTrainingMemberReportItem> groupMemberReports = new List<GroupTrainingMemberReportItem>();
+
+			// Create the member report items
+			foreach (IdentityUser user in groupMembers)
+			{
+				// Create the training item
+				GroupTrainingMemberReportItem memberTrainingRecord = new GroupTrainingMemberReportItem()
+				{
+					Name = user.FullName
+				};
+
+				// Get the training session where the user is recorded as either a member or trainer
+				IList<TrainingSession> userSessions = trainingSessions.Where(i => i.Members.Contains(user.Id) || i.Trainers.Contains(user.Id)).ToList();
+
+				// Get the training types
+				foreach (TrainingType trainingType in Enum.GetValues(typeof(TrainingType)))
+				{
+
+					// Get the total amount of training sessions for each session
+					memberTrainingRecord.TrainingSessions.Add(trainingType, userSessions.Where(i => i.TrainingType == trainingType).Count());
+
+					// Get the dates the user was training for.
+					memberTrainingRecord.TrainingDates.Add(trainingType, userSessions.Where(i => i.TrainingType == trainingType).Select(i => i.SessionDate).ToList());
+				}
+
+				// Add to the list of members
+				groupMemberReports.Add(memberTrainingRecord);
+			}
 
 			// Create the model
 			TrainingReportViewModel model = new TrainingReportViewModel()
 			{
-				ChartDataJs = "",
+				ChartDataJs = sbChartData.ToString(),
 				ChartOptionsJs = sbChartOptionsJs.ToString(),
-				MemberReports = new List<GroupTrainingMemberReportItem>(),
+				MemberReports = groupMemberReports,
 				DateFrom = dateFrom,
 				DateTo = dateTo
 			};

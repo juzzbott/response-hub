@@ -15,14 +15,12 @@
 
 <h2>Training overview</h2>
 
-<div class="canvas-holder">
-	<canvas id="canvas" width="1200" height="400"></canvas>
-</div>
-<input type="hidden" value="@Model.ChartDataJs" id="chart-data" />
+<div id="training-overview-chart" class="ct-chart ct-perfect-fourth" style="width: 900px; height: 400px;"></div>
+<input type="hidden" id="training-overview-chart-data" value="@Model.ChartDataJs" />
 
 <h2 style="page-break-before: always">Member training sessions</h2>
 
-<table class="table table-striped results-overview">
+<table class="table table-striped results-overview table-small">
 	<thead>
 		<tr>
 			<th>&nbsp;</th>
@@ -48,7 +46,7 @@
 
 <h2 style="page-break-before: always">Member training dates</h2>
 
-<table class="table table-striped results-overview">
+<table class="table table-striped results-overview table-small">
 	<thead>
 		<tr>
 			<th>&nbsp;</th>

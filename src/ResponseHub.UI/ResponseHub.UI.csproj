@@ -213,8 +213,6 @@
     <Compile Include="Areas\ControlPanel\Models\Home\GroupSelectionViewModel.cs" />
     <Compile Include="Areas\ControlPanel\Controllers\ReportsController.cs" />
     <Compile Include="Areas\ControlPanel\Models\Reports\ReportFilterViewModel.cs" />
-    <Compile Include="Areas\ControlPanel\Models\Reports\Training\GroupTrainingGraphItem.cs" />
-    <Compile Include="Areas\ControlPanel\Models\Reports\Training\GroupTrainingReportItem.cs" />
     <Compile Include="Areas\ControlPanel\Models\Reports\Training\GroupTrainingMemberReportItem.cs" />
     <Compile Include="Areas\ControlPanel\Models\Reports\Training\TrainingReportViewModel.cs" />
     <Compile Include="Areas\ControlPanel\Models\Training\AddEditTrainingSessionViewModel.cs" />
