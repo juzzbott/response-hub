@@ -101,10 +101,6 @@
     <Compile Include="MongoDB\DataObjects\Events\EventDto.cs" />
     <Compile Include="MongoDB\DataObjects\Groups\GroupDto.cs" />
     <Compile Include="MongoDB\DataObjects\Messages\JobMessageDto.cs" />
-    <Compile Include="MongoDB\DataObjects\SignIn\ActivityDto.cs" />
-    <Compile Include="MongoDB\DataObjects\SignIn\SignInEntryDto.cs" />
-    <Compile Include="MongoDB\DataObjects\SignIn\OperationActivityDto.cs" />
-    <Compile Include="MongoDB\DataObjects\SignIn\TrainingActivityDto.cs" />
     <Compile Include="MongoDB\DataObjects\Spatial\MapGridReferenceInfoDto.cs" />
     <Compile Include="MongoDB\DataObjects\Spatial\LocationInfoDto.cs" />
     <Compile Include="MongoDB\DataObjects\Spatial\MapIndexDto.cs" />

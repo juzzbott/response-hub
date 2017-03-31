@@ -23,7 +23,7 @@ namespace Enivate.ResponseHub.Model.SignIn
 
 		public SignInType SignInType { get; set; }
 
-		public Activity ActivityDetails { get; set; }
+		public OperationActivity OperationDetails { get; set; }
 
 		public SignInEntry()
 		{

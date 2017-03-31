@@ -11,12 +11,10 @@
 	// Shows the elements for operation details
 	function showOperationDetails() {
 		$('#operation-task').removeClass('hidden');
-		$('#training-task').addClass('hidden');
 	}
 
-	// Shows the elements for training details
-	function showTrainingDetails() {
-		$('#training-task').removeClass('hidden');
+	// Hides the elements for operation details
+	function hideOperationDetails() {
 		$('#operation-task').addClass('hidden');
 	}
 
@@ -63,7 +61,7 @@
 	return {
 		setOperationJobNumber: setOperationJobNumber,
 		showOperationDetails: showOperationDetails,
-		showTrainingDetails: showTrainingDetails
+		hideOperationDetails: hideOperationDetails
 	}
 
 })();

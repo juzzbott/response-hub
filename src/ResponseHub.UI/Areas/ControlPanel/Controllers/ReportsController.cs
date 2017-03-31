@@ -119,89 +119,16 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 		/// <returns></returns>
 		private async Task<TrainingReportViewModel> GetTrainingReportModel(Guid groupId, DateTime dateFrom, DateTime dateTo)
 		{
-			// Get the training sign-ins for the group
-			IList<SignInEntry> signIns = await SignInService.GetSignInsForGroup(groupId, dateFrom, dateTo, SignInType.Training);
-
-			// Count the different training types
-			IList<GroupTrainingReportItem> trainingReportItems = new List<GroupTrainingReportItem>();
-			foreach (SignInEntry signIn in signIns)
-			{
-				// If the list doesn't contain a training report item with the current date and type, add it
-				if (!trainingReportItems.Any(i => i.TrainingType == ((TrainingActivity)signIn.ActivityDetails).TrainingType && i.TrainingDate == signIn.SignInTime.Date))
-				{
-					trainingReportItems.Add(new GroupTrainingReportItem() { TrainingDate = signIn.SignInTime.Date, TrainingType = ((TrainingActivity)signIn.ActivityDetails).TrainingType });
-				}
-			}
-
-			// Count the different training types
-			IDictionary<TrainingType, int> trainingTypeAggregate = new Dictionary<TrainingType, int>();
-			foreach (TrainingType trainingType in Enum.GetValues(typeof(TrainingType)))
-			{
-				trainingTypeAggregate.Add(trainingType, trainingReportItems.Count(i => i.TrainingType == trainingType));
-			}
-
-
-			// Loop through the aggregates and create the list of values
-			IList<GroupTrainingGraphItem> graphItems = new List<GroupTrainingGraphItem>();
-			foreach (KeyValuePair<TrainingType, int> aggregate in trainingTypeAggregate)
-			{
-				graphItems.Add(new GroupTrainingGraphItem()
-				{
-					Label = aggregate.Key.GetEnumDescription(),
-					Value = aggregate.Value
-				});
-			}
-
-			// Build the dataset js
-			StringBuilder sbJsDataset = new StringBuilder();
-			sbJsDataset.Append("{ \"labels\": [");
-			for (int i = 0; i < graphItems.Count; i++)
-			{
-				sbJsDataset.AppendFormat("{0}\"{1}\"", (i != 0 ? "," : ""), graphItems[i].Label);
-			}
-			sbJsDataset.Append("], \"datasets\": [{ \"data\": [");
-			for (int i = 0; i < graphItems.Count; i++)
-			{
-				sbJsDataset.AppendFormat("{0}{1}", (i != 0 ? "," : ""), graphItems[i].Value);
-			}
-			//sbJsDataset.AppendFormat("], \"backgroundColor\": palette('tol', {0}).map(function(hex) {{return '#' + hex;}})", graphItems.Count);
-			sbJsDataset.Append("]}]}");
-
-			// Get the members for the group
-			IList<IdentityUser> groupMembers = await GroupService.GetUsersForGroup(groupId);
-
-			// Create the member report items
-			IList<GroupTrainingMemberReportItem> memberTraining = new List<GroupTrainingMemberReportItem>();
-			foreach (IdentityUser user in groupMembers)
-			{
-				// Create the training item
-				GroupTrainingMemberReportItem memberTrainingRecord = new GroupTrainingMemberReportItem()
-				{
-					Name = user.FullName
-				};
-
-				// Get the training types
-				foreach (TrainingType trainingType in Enum.GetValues(typeof(TrainingType)))
-				{
-					// Get the total amount of training sessions for each session
-					memberTrainingRecord.TrainingSessions.Add(trainingType,
-						signIns.Where(i => i.UserId == user.Id && ((TrainingActivity)i.ActivityDetails).TrainingType == trainingType).Count());
-					memberTrainingRecord.TrainingDates.Add(trainingType,
-						signIns.Where(i => i.UserId == user.Id && ((TrainingActivity)i.ActivityDetails).TrainingType == trainingType).Select(i => i.SignInTime).ToList());
-				}
-
-				// Add to the list of members
-				memberTraining.Add(memberTrainingRecord);
-			}
+			
 
 			StringBuilder sbChartOptionsJs = new StringBuilder();
 
 			// Create the model
 			TrainingReportViewModel model = new TrainingReportViewModel()
 			{
-				ChartDataJs = sbJsDataset.ToString(),
+				ChartDataJs = "",
 				ChartOptionsJs = sbChartOptionsJs.ToString(),
-				MemberReports = memberTraining,
+				MemberReports = new List<GroupTrainingMemberReportItem>(),
 				DateFrom = dateFrom,
 				DateTo = dateTo
 			};

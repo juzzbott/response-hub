@@ -14,11 +14,6 @@ namespace Enivate.ResponseHub.UI.Models.SignIn
 	public class SignInViewModel
 	{
 
-		[Required(ErrorMessage = "Please ensure you have selected a group to sign in for.")]
-		public Guid Group { get; set; }
-		
-		public IList<SelectListItem> AvailableGroups { get; set; }
-
 		[Required(ErrorMessage = "Please ensure you have selected a date.")]
 		public string StartDate { get; set; }
 
@@ -42,6 +37,7 @@ namespace Enivate.ResponseHub.UI.Models.SignIn
 
 		public IList<SelectListItem> AvailableUsers { get; set; }
 
+		[Required(ErrorMessage = "Please ensure you have selected a group to sign in for.")]
 		public Guid GroupId { get; set; }
 
 		[Required(ErrorMessage = "Please select a user to sign in.")]
@@ -49,7 +45,6 @@ namespace Enivate.ResponseHub.UI.Models.SignIn
 
 		public SignInViewModel()
 		{
-			AvailableGroups = new List<SelectListItem>();
 			AvailableOperations = new List<Tuple<Guid, string, string>>();
 			AvailableTrainingTypes = new List<SelectListItem>();
 			AvailableUsers = new List<SelectListItem>();

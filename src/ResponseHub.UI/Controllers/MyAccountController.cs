@@ -752,26 +752,14 @@ namespace Enivate.ResponseHub.UI.Controllers
 			}
 
 			// Set the activity
-			if (entry.ActivityDetails.GetType() == typeof(OperationActivity))
+			if (entry.SignInType == SignInType.Operations)
 			{
 				// Set the operation activity
-				OperationActivity activity = (OperationActivity)entry.ActivityDetails;
-				viewModel.Description = activity.Description;
+				viewModel.Description = (entry.OperationDetails != null ? entry.OperationDetails.Description : "Operation");
 			}
-			else if (entry.ActivityDetails.GetType() == typeof(TrainingActivity))
+			else if (entry.SignInType == SignInType.Training)
 			{
-				// Set the training activity
-				TrainingActivity activity = (TrainingActivity)entry.ActivityDetails;
-
-				// If it's other, format it slightly differently, otherwise just set the training type.
-				if (activity.TrainingType == TrainingType.Other && !String.IsNullOrEmpty(activity.OtherDescription))
-				{
-					viewModel.Description = String.Format("Other - {0}", activity.OtherDescription);
-				}
-				else
-				{
-					viewModel.Description = activity.TrainingType.GetEnumDescription();
-				}
+				viewModel.Description = "Training";
 			}
 
 			// return the view model

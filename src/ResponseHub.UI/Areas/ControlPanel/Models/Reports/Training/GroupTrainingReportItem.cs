@@ -9,9 +9,7 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Models.Reports.Training
 {
 	public class GroupTrainingReportItem
 	{
-
-		public TrainingType TrainingType { get; set; }
-
+		
 		public DateTime TrainingDate { get; set; }
 
 

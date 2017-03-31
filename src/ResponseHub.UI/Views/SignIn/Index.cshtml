@@ -1,6 +1,6 @@
 ﻿@model Enivate.ResponseHub.UI.Models.SignIn.SignInViewModel
 @{
-    ViewBag.Title = "Sign on";
+    ViewBag.Title = "Sign in";
 	ViewBag.BodyClass = "sign-on";
 }
 
@@ -12,22 +12,8 @@
 
 	@Html.ValidationSummary()
 
-	@if (Model.AvailableGroups.Count == 1)
-	{
-		<input type="hidden" name="Group" id=="Group" value="@Model.AvailableGroups[0].Value" />
-	}
-	else
-	{
-		<div class="form-group">
-			<label for="Group">Group *</label>
-			<div class="row">
-				<div class="col-sm-8 col-md-6 col-lg-4">
-					@Html.DropDownListFor(model => model.Group, Model.AvailableGroups, new { @class = "form-control" })
-				</div>
-			</div>
-		</div>
-	}
-
+	@Html.HiddenFor(model => model.GroupId)
+	
 	@if (Model.AvailableUsers != null && Model.AvailableUsers.Count > 0)
 	{
 		<div class="form-group">
@@ -86,7 +72,7 @@
 					Operation
 				</label>
 				<label class="radio-inline" for="SignOnType2">
-					<input type="radio" name="SignOnType" id="SignOnType2" value="2" onclick="responseHub.signOn.showTrainingDetails();">
+					<input type="radio" name="SignOnType" id="SignOnType2" value="2" onclick="responseHub.signOn.hideOperationDetails();">
 					Training
 				</label>
 			</div>
@@ -116,28 +102,6 @@
 				</div>
 			}
 
-		</div>
-	</div>
-
-	<div id="training-task" class="hidden">
-		<p><strong>Training details</strong></p>
-		<p>Select a training type below:</p>
-
-		<div class="form-group">
-			<label for="TrainingType">Training type *</label>
-			<div class="row">
-				<div class="col-sm-8 col-md-6 col-lg-4">
-					@Html.DropDownListFor(model => model.TrainingType, Model.AvailableTrainingTypes, new { @class = "form-control" })
-				</div>
-			</div>
-		</div>
-		<div class="training-type-other hidden form-group">
-			<label for="TrainingTypeOther">Other training *</label>
-			<div class="row">
-				<div class="col-sm-8 col-md-6 col-lg-4">
-					@Html.TextBoxFor(model => model.TrainingTypeOther, new { @class = "form-control", placeholder = "Enter a training description..." })
-				</div>
-			</div>
 		</div>
 	</div>
 
