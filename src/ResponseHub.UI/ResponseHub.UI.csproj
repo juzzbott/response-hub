@@ -226,7 +226,7 @@
     <Compile Include="Areas\ControlPanel\Controllers\HomeController.cs" />
     <Compile Include="Areas\ControlPanel\ControlPanelAreaRegistration.cs" />
     <Compile Include="Areas\ControlPanel\Models\DataExport\DataExportFilterViewModel.cs" />
-    <Compile Include="Areas\ControlPanel\Models\DataExport\HtmlDataExportViewModel.cs" />
+    <Compile Include="Areas\ControlPanel\Models\Reports\Operations\OperationsReportViewModel.cs" />
     <Compile Include="Controllers\Api\EventsController.cs" />
     <Compile Include="Controllers\BaseJobsMessagesController.cs" />
     <Compile Include="Controllers\MessagesController.cs" />
@@ -554,7 +554,7 @@
     <Content Include="Areas\ControlPanel\Views\Shared\_Layout.cshtml" />
     <Content Include="Areas\ControlPanel\Views\Shared\ControlPanelSidebarMenu.cshtml" />
     <Content Include="Areas\ControlPanel\Views\DataExport\Index.cshtml" />
-    <Content Include="Areas\ControlPanel\Views\DataExport\GenerateHtmlExport.cshtml" />
+    <Content Include="Areas\ControlPanel\Views\Reports\GenerateOperationsReportHtml.cshtml" />
     <Content Include="Areas\ControlPanel\Views\Shared\HtmlExportLayout.cshtml" />
     <Content Include="Areas\ControlPanel\Views\Groups\Edit.cshtml" />
     <Content Include="Areas\ControlPanel\Views\Groups\ViewGroup.cshtml" />
@@ -571,6 +571,7 @@
     <Content Include="Areas\ControlPanel\Views\Training\Index.cshtml" />
     <Content Include="Areas\ControlPanel\Views\Training\AddEdit.cshtml" />
     <Content Include="Areas\ControlPanel\Views\Training\View.cshtml" />
+    <Content Include="Areas\ControlPanel\Views\Reports\OperationsReport.cshtml" />
     <None Include="Web.Staging.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

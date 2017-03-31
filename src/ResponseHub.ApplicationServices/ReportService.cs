@@ -53,6 +53,46 @@ namespace Enivate.ResponseHub.ApplicationServices
 			return _pdfGenerationService.GeneratePdfFromHtml(htmlContent, false);
 
 		}
+		
+		/// <summary>
+		/// Builds the operations report pdf file.
+		/// </summary>
+		/// <param name="groupId"></param>
+		/// <param name="dateFrom"></param>
+		/// <param name="dateTo"></param>
+		/// <returns></returns>
+		public async Task<byte[]> GenerationOperationsReportPdfFile(Guid groupId, DateTime dateFrom, DateTime dateTo)
+		{
+
+			// Get the web response for the report
+			// To force a page break: style="page-break-before: always"
+			HttpWebRequest request = HttpWebRequest.CreateHttp(String.Format("{0}/control-panel/reports/generate-operations-report-html?group_id={1}&date_from={2}&date_to={3}",
+				ConfigurationManager.AppSettings[ConfigurationKeys.BaseWebsiteUrl],
+				groupId,
+				dateFrom.ToString("yyyyMMddHHmmss"),
+				dateTo.ToString("yyyyMMddHHmmss")));
+
+			HttpWebResponse response = (HttpWebResponse)await request.GetResponseAsync();
+
+			// If the response is not successful, then throw exception
+			if (response.StatusCode != HttpStatusCode.OK)
+			{
+				throw new Exception("There was an error response from the Generate PDF Export request.");
+			}
+
+			// Store the html string in a variable
+			string htmlContent = "";
+
+			// Get the test from the response
+			using (StreamReader reader = new StreamReader(response.GetResponseStream()))
+			{
+				htmlContent = reader.ReadToEnd();
+			}
+
+			// Return the pdf bytes
+			return _pdfGenerationService.GeneratePdfFromHtml(htmlContent, true);
+
+		}
 
 	}
 }

@@ -18,7 +18,5 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Models.DataExport
 		[DataType(DataType.Date, ErrorMessage = "Please enter a valid date (dd/mm/yyyy).")]
 		public DateTime DateTo { get; set; }
 
-		public string ExportType { get; set; }
-
 	}
 }

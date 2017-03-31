@@ -1,12 +1,13 @@
-﻿using Enivate.ResponseHub.Model.Messages;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Models.DataExport
+using Enivate.ResponseHub.Model.Messages;
+
+namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Models.Reports.Operations
 {
-	public class HtmlDataExportViewModel
+	public class OperationsReportViewModel
 	{
 
 		public IList<JobMessage> Jobs { get; set; }
@@ -17,7 +18,9 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Models.DataExport
 
 		public DateTime FinishDate { get; set; }
 
-		public HtmlDataExportViewModel()
+		public bool UseStandardLayout { get; set; }
+
+		public OperationsReportViewModel()
 		{
 			Messages = new List<JobMessage>();
 			Jobs = new List<JobMessage>();

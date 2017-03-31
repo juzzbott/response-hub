@@ -11,5 +11,7 @@ namespace Enivate.ResponseHub.Model.Reports.Interface
 
 		Task<byte[]> GenerateTrainingReportPdfFile(Guid groupId, DateTime dateFrom, DateTime dateTo);
 
+		Task<byte[]> GenerationOperationsReportPdfFile(Guid groupId, DateTime dateFrom, DateTime dateTo);
+
 	}
 }

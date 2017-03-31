@@ -1,8 +1,15 @@
-﻿@model Enivate.ResponseHub.UI.Areas.ControlPanel.Models.DataExport.HtmlDataExportViewModel
+﻿@model Enivate.ResponseHub.UI.Areas.ControlPanel.Models.Reports.Operations.OperationsReportViewModel
 @using Enivate.ResponseHub.Common.Extensions;
 @{
-    ViewBag.Title = "Job data export";
-    Layout = "~/Areas/ControlPanel/Views/Shared/HtmlExportLayout.cshtml";
+	ViewBag.Title = "Operations export";
+	if (Model.UseStandardLayout)
+	{
+		Layout = "~/Areas/ControlPanel/Views/Shared/_Layout.cshtml";
+	}
+	else
+	{
+		Layout = "~/Areas/ControlPanel/Views/Shared/HtmlExportLayout.cshtml";
+	}
 }
 
 <h1 class="text-primary">Job data report</h1>

@@ -12,13 +12,17 @@ using System.Threading.Tasks;
 using System.Globalization;
 using Enivate.ResponseHub.UI.Areas.ControlPanel.Models.Reports;
 using Enivate.ResponseHub.Common;
-using Enivate.ResponseHub.Model.SignIn.Interface;
 using Enivate.ResponseHub.Model.SignIn;
+using Enivate.ResponseHub.Model.SignIn.Interface;
 using Enivate.ResponseHub.Model.Training;
 using Enivate.ResponseHub.UI.Areas.ControlPanel.Models.Reports.Training;
 using Enivate.ResponseHub.Common.Extensions;
 using Enivate.ResponseHub.Model.Reports.Interface;
 using Enivate.ResponseHub.Model.Training.Interface;
+using Enivate.ResponseHub.Model.Messages;
+using Enivate.ResponseHub.Model.Messages.Interface;
+using Enivate.ResponseHub.UI.Areas.ControlPanel.Models.Reports.Operations;
+using Enivate.ResponseHub.Model.Groups;
 
 namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 {
@@ -50,6 +54,14 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 			get
 			{
 				return ServiceLocator.Get<ITrainingSessionService>();
+			}
+		}
+
+		protected IJobMessageService JobMessageService
+		{
+			get
+			{
+				return ServiceLocator.Get<IJobMessageService>();
 			}
 		}
 
@@ -102,6 +114,35 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 			return View();
 		}
 
+		[Route("operations-report")]
+		[HttpPost]
+		public async Task<ActionResult> OperationsReport(ReportFilterViewModel model)
+		{
+			// Get the list of jobs between the start and end dates
+			DateTime dateFrom = model.DateFrom.Date;
+			DateTime dateTo = new DateTime(model.DateTo.Year, model.DateTo.Month, model.DateTo.Day, 23, 59, 59);
+
+			if (model.ReportFormat.ToLower() == "display")
+			{
+				OperationsReportViewModel reportViewModel = await GetOperationsReportModel(GetControlPanelGroupId(), dateFrom, dateTo);
+				reportViewModel.UseStandardLayout = true;
+				return View("GenerateOperationsReportHtml", reportViewModel);
+			}
+			else if (model.ReportFormat.ToLower() == "pdf")
+			{
+				// Get the PDF bytes
+				byte[] pdfBytes = await ReportService.GenerationOperationsReportPdfFile(GetControlPanelGroupId(), dateFrom, dateTo);
+
+				FileContentResult result = new FileContentResult(pdfBytes, "application/pdf");
+				result.FileDownloadName = String.Format("operations-report-{0}.pdf", DateTime.Now.ToString("yyyy-MM-dd"));
+				return result;
+			}
+			else
+			{
+				throw new HttpException((int)HttpStatusCode.BadRequest, "Bad request.");
+			}
+		}
+
 		[Route("generate-training-report-html")]
 		[HttpGet]
 		[AllowAnonymous]
@@ -113,11 +154,70 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 			DateTime dateFrom = DateTime.ParseExact(Request.QueryString["date_from"], "yyyyMMddHHmmss", CultureInfo.CurrentCulture);
 			DateTime dateTo = DateTime.ParseExact(Request.QueryString["date_to"], "yyyyMMddHHmmss", CultureInfo.CurrentCulture);
 
+			// Get the training report model
 			TrainingReportViewModel model = await GetTrainingReportModel(groupId, dateFrom, dateTo);
 
 			return View(model);
 
 		}
+
+		[Route("generate-operations-report-html")]
+		[HttpGet]
+		[AllowAnonymous]
+		public async Task<ActionResult> GenerateOperationsReportHtml()
+		{
+
+			// Get the parameters from the query string
+			Guid groupId = new Guid(Request.QueryString["group_id"]);
+			DateTime dateFrom = DateTime.ParseExact(Request.QueryString["date_from"], "yyyyMMddHHmmss", CultureInfo.CurrentCulture);
+			DateTime dateTo = DateTime.ParseExact(Request.QueryString["date_to"], "yyyyMMddHHmmss", CultureInfo.CurrentCulture);
+
+			// Get the group by the id
+			Group group = await GroupService.GetById(groupId);
+
+			// Ensure the user is a group administrator of the specific group, otherwise 403 forbidden.
+			
+			// Get the operations report model
+			OperationsReportViewModel model = await GetOperationsReportModel(group.Id, dateFrom, dateTo);
+
+			// return the model
+			return View(model);
+
+		}
+
+		/// <summary>
+		/// Gets the operations report model to display the page.
+		/// </summary>
+		/// <param name="dateFrom"></param>
+		/// <param name="dateTo"></param>
+		/// <param name="group"></param>
+		/// <returns></returns>
+		private async Task<OperationsReportViewModel> GetOperationsReportModel(Guid groupId, DateTime dateFrom, DateTime dateTo)
+		{
+
+			// Get the group by the id
+			Group group = await GroupService.GetById(groupId);
+
+			// Get the list of messages for the capcode
+			IList<JobMessage> jobMessages = await JobMessageService.GetJobMessagesBetweenDates(
+				new List<string> { group.Capcode },
+				MessageType.Job & MessageType.Message,
+				dateFrom,
+				dateTo);
+
+			// Create the model
+			OperationsReportViewModel model = new OperationsReportViewModel
+			{
+				Messages = jobMessages.Where(i => i.Type == MessageType.Message).ToList(),
+				Jobs = jobMessages.Where(i => i.Type == MessageType.Job).OrderBy(i => i.Priority).ToList(),
+				StartDate = dateFrom,
+				FinishDate = dateTo
+			};
+
+			// return the model
+			return model;
+		}
+
 
 		/// <summary>
 		/// Gets the training report model to display to the page.

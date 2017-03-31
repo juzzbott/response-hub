@@ -32,44 +32,6 @@ namespace Enivate.ResponseHub.ApplicationServices
 			_groupService = groupService;
 			_pdfGenerationService = pdfGenerationService;
 		}
-
-		private const string OverviewTemplateFilename = "DataExportOverview.html";
-
-		public async Task<byte[]> BuildPdfExportFile(Guid groupId, DateTime dateFrom, DateTime dateTo)
-		{
-
-			// Get the HTML content.
-			string htmlContent = await BuildHtmlExportFile(groupId, dateFrom, dateTo);
-
-			// Return the pdf bytes
-			return _pdfGenerationService.GeneratePdfFromHtml(htmlContent, true);
-			
-		}
-
-		public async Task<string> BuildHtmlExportFile(Guid groupId, DateTime dateFrom, DateTime dateTo)
-		{
-			// Get the web response for the report
-			// To force a page break: style="page-break-before: always"
-			HttpWebRequest request = HttpWebRequest.CreateHttp(String.Format("{0}/control-panel/data-export/generate-html-export?group_id={1}&date_from={2}&date_to={3}",
-				ConfigurationManager.AppSettings[ConfigurationKeys.BaseWebsiteUrl],
-				groupId,
-				dateFrom.ToString("yyyyMMddHHmmss"),
-				dateTo.ToString("yyyyMMddHHmmss")));
-
-			HttpWebResponse response = (HttpWebResponse)await request.GetResponseAsync();
-
-			// If the response is not successful, then throw exception
-			if (response.StatusCode != HttpStatusCode.OK)
-			{
-				throw new Exception("There was an error response from the Generate PDF Export request.");
-			}
-
-			// Get the test from the response
-			using (StreamReader reader = new StreamReader(response.GetResponseStream()))
-			{
-				return reader.ReadToEnd();
-			}
-		}
 		
 		public async Task<string> BuildCsvExportFile(Guid groupId, DateTime dateFrom, DateTime dateTo)
 		{
