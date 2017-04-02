@@ -150,6 +150,7 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 				model.GroupAdministrator.FirstName = groupAdminUser.FirstName;
 				model.GroupAdministrator.Surname = groupAdminUser.Surname;
 				model.GroupAdministrator.UserExists = true;
+				model.GroupAdministrator.MemberNumber = groupAdminUser.Profile.MemberNumber;
 			}
 
 			return View("ConfirmUser", model.GroupAdministrator);
@@ -201,7 +202,7 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 				};
 
 				// Create the new user
-				groupAdmin = await UserService.CreateAsync(model.EmailAddress, model.FirstName, model.Surname, new List<string>() { RoleTypes.GroupAdministrator, RoleTypes.GeneralUser }, profile);
+				groupAdmin = await UserService.CreateAsync(model.EmailAddress, model.FirstName, model.Surname, new List<string>() { RoleTypes.GroupAdministrator, RoleTypes.GeneralUser }, profile, true);
 
 				// Send the email to the user
 				await MailService.SendAccountActivationEmail(groupAdmin);

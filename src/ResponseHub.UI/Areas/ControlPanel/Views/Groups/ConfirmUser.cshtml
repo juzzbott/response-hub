@@ -12,6 +12,8 @@
 
 	@Html.AntiForgeryToken()
 
+	@Html.ValidationSummary()
+
 	@Html.HiddenFor(model => model.Role)
 	@Html.HiddenFor(model => model.EmailAddress)
 
@@ -31,6 +33,7 @@
 							<td><strong>Email address</strong></td>
 							<td><strong>First name</strong></td>
 							<td><strong>Surname</strong></td>
+							<td><strong>Member number</strong></td>
 						</tr>
 					</thead>
 					<tbody>
@@ -38,6 +41,7 @@
 							<td>@Model.EmailAddress</td>
 							<td>@Model.FirstName</td>
 							<td>@Model.Surname</td>
+							<td>@Model.MemberNumber</td>
 						</tr>
 					</tbody>
 				</table>
@@ -79,6 +83,17 @@
 				</div>
 			</div>
 			@Html.ValidationMessageFor(model => model.MemberNumber)
+		</div>
+
+		<div class="form-group">
+			<div class="row">
+				<div class="col-sm-12 graphic-checkbox">
+					<label class="radio-inline" for="SkipEmailActivation">
+						@Html.CheckBoxFor(model => model.SkipEmailActivation)
+						Skip email activation
+					</label>
+				</div>
+			</div>
 		</div>
 	}
 

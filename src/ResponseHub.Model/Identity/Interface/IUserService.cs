@@ -109,7 +109,7 @@ namespace Enivate.ResponseHub.Model.Identity.Interface
 
 		Task<IdentityResult> UpdateUserNameAsync(Guid userId, string newUsername, string password);
 
-		Task<IdentityUser> CreateAsync(string emailAddress, string firstName, string surname, IList<string> roles, UserProfile profile);
+		Task<IdentityUser> CreateAsync(string emailAddress, string firstName, string surname, IList<string> roles, UserProfile profile, bool activate);
 
 		Task<IList<IdentityUser>> GetUsersByIds(IEnumerable<Guid> userIds);
 
@@ -128,6 +128,8 @@ namespace Enivate.ResponseHub.Model.Identity.Interface
 		Task UpdateAccountDetails(Guid userId, string firstName, string surname);
 
 		Task<IdentityUser> GetUserByForgottenPasswordToken(string token);
+
+		Task<string> ResetActivationCode(Guid userId);
 
 		#endregion
 

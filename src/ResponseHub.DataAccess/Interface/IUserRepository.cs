@@ -125,6 +125,8 @@ namespace Enivate.ResponseHub.DataAccess.Interface
 
 		Task<IdentityUser> GetUserByForgottenPasswordToken(string token);
 
+		Task UpdateActivationCode(Guid userId, string activationCode);
+
 		#endregion
 
 	}

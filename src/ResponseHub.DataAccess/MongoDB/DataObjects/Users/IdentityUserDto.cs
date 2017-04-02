@@ -36,6 +36,8 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB.DataObjects.Users
 
 		public UserProfile Profile { get; set; }
 
+		public UserStatus Status { get; set; }
+
 		public IdentityUserDto()
 		{
 			Id = Guid.NewGuid();

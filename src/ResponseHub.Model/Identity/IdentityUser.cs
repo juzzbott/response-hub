@@ -43,6 +43,8 @@ namespace Enivate.ResponseHub.Model.Identity
 
 		public UserProfile Profile { get; set; }
 
+		public UserStatus Status { get; set; }
+
 		public IdentityUser()
 		{
 			Id = Guid.NewGuid();
