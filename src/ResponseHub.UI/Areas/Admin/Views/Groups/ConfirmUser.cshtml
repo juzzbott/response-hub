@@ -10,7 +10,9 @@
 
 <form action="@Request.Url.LocalPath" method="post">
 
-	@Html.AntiForgeryToken()
+		@Html.AntiForgeryToken()
+
+		@Html.ValidationSummary()
 
 	@Html.HiddenFor(model => model.Role)
 	@Html.HiddenFor(model => model.EmailAddress)
