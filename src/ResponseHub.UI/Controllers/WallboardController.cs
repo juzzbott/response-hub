@@ -48,7 +48,8 @@ namespace Enivate.ResponseHub.UI.Controllers
 			IList<JobMessage> jobMessages = await JobMessageService.GetMostRecent(capcodes, MessageType.Job, 30);
 
 			// Create the jobs list view model.
-			JobMessageListViewModel jobListModel = await BaseJobsMessagesController.CreateJobMessageListModel(capcodes, jobMessages);
+			JobsController jobsController = new JobsController();
+			JobMessageListViewModel jobListModel = await jobsController.CreateJobMessageListModel(capcodes, jobMessages);
 			model.Messages = jobListModel.Messages;
 			
 			return View(model);

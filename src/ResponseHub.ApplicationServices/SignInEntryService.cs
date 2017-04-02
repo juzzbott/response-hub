@@ -58,7 +58,7 @@ namespace Enivate.ResponseHub.ApplicationServices
 		/// <returns>The list of sign in types for the group.</returns>
 		public async Task<IList<SignInEntry>> GetSignInsForGroup(Guid groupId, DateTime dateFrom, DateTime dateTo)
 		{
-			return await GetSignInsForGroup(groupId, dateFrom, dateTo, SignInType.Operations | SignInType.Training | SignInType.Other);
+			return await GetSignInsForGroup(groupId, dateFrom, dateTo, SignInType.Operation | SignInType.Training | SignInType.Other);
 		}
 
 		/// <summary>
@@ -70,6 +70,26 @@ namespace Enivate.ResponseHub.ApplicationServices
 		public async Task<IList<SignInEntry>> GetSignInsForGroup(Guid groupId, DateTime dateFrom, DateTime dateTo, SignInType signInTypes)
 		{
 			return await _repository.GetSignInsForGroup(groupId, dateFrom, dateTo, signInTypes);
+		}
+
+		/// <summary>
+		/// Gets the sign in entries for the specific job ids.
+		/// </summary>
+		/// <param name="jobMessageIds">The collection of job ids to get the sign in entries for.</param>
+		/// <returns>The list of sign ins that match the job ids.</returns>
+		public async Task<IList<SignInEntry>> GetSignInsForJobMessages(IEnumerable<Guid> jobMessageIds)
+		{
+			return await _repository.GetSignInsForJobMessages(jobMessageIds);
+		}
+		
+		/// <summary>
+		/// Gets the sign in entries for the specific job id.
+		/// </summary>
+		/// <param name="jobMessageId">The job id to get the sign in entries for.</param>
+		/// <returns>The list of sign ins that match the job id.</returns>
+		public async Task<IList<SignInEntry>> GetSignInsForJobMessage(Guid jobMessageId)
+		{
+			return await _repository.GetSignInsForJobMessages(new Guid[] { jobMessageId });
 		}
 	}
 }

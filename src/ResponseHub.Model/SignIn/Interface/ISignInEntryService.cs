@@ -19,5 +19,9 @@ namespace Enivate.ResponseHub.Model.SignIn.Interface
 
 		Task<IList<SignInEntry>> GetSignInsForGroup(Guid groupId, DateTime dateFrom, DateTime dateTo, SignInType signInTypes);
 
+		Task<IList<SignInEntry>> GetSignInsForJobMessages(IEnumerable<Guid> jobMessageIds);
+
+		Task<IList<SignInEntry>> GetSignInsForJobMessage(Guid jobMessageId);
+
 	}
 }

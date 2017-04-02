@@ -10,7 +10,7 @@ namespace Enivate.ResponseHub.Model.SignIn
 	public enum SignInType
 	{
 
-		Operations = 1,
+		Operation = 1,
 
 		Training = 2,
 
