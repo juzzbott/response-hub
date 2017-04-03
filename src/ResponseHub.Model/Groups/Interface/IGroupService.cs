@@ -43,6 +43,8 @@ namespace Enivate.ResponseHub.Model.Groups.Interface
 
 		Task<IList<Guid>> GetGroupIdsUserIsGroupAdminOf(Guid userId);
 
+		Task<IList<Group>> GetGroupsByCapcode(Capcode capcode);
+
 	}
 
 }

@@ -79,6 +79,15 @@ else
 		</div>
 	</div>
 
+	@if (Model.Id != Guid.Empty)
+	{
+		<div class="row">
+			<div class="col-xs-12">
+				<a href="/admin/capcodes/delete/@Model.Id" class="btn btn-link btn-icon btn-link-delete" onclick="return confirm('Are you sure you wish to delete this capcode?');"><i class="fa fa-fw fa-times"></i>Delete capcode</a>
+			</div>
+		</div>
+	}
+
 	<div class="top-20">
 		@if (Model.Id == Guid.Empty)
 		{

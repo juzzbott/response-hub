@@ -262,5 +262,20 @@ namespace Enivate.ResponseHub.ApplicationServices
 			return await _repository.GetAllByGroupOnly(groupOnly);
 		}
 
+		/// <summary>
+		/// Removes the capcode based on the id.
+		/// </summary>
+		/// <param name="id"></param>
+		/// <returns></returns>
+		public async Task Remove(Guid id)
+		{
+
+			// Remove the capcode.
+			await _repository.Remove(id);
+
+			// Remove the capcodes from cache to reload them
+			CacheManager.RemoveItem(AllCapcodesCacheKey);
+		}
+
 	}
 }

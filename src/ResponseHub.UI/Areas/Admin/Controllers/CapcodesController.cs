@@ -23,27 +23,8 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 	[RouteArea("admin")]
 	[RoutePrefix("capcodes")]
 	[ClaimsAuthorize(Roles = RoleTypes.SystemAdministrator)]
-	public class CapcodesController : Controller
+	public class CapcodesController : BaseAdminController
     {
-
-
-		private ICapcodeService _capcodeService;
-		protected ICapcodeService CapcodeService
-		{
-			get
-			{
-				return _capcodeService ?? (_capcodeService = UnityConfiguration.Container.Resolve<ICapcodeService>());
-			}
-		}
-
-		private ILogger _log;
-		protected ILogger Log
-		{
-			get
-			{
-				return _log ?? (_log = UnityConfiguration.Container.Resolve<ILogger>());
-			}
-		}
 
 		[Route]
         // GET: Admin/Capcodes
@@ -216,7 +197,42 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 
 		}
 
-			#endregion
+		#endregion
 
+		#region Delete
+
+		[Route("delete/{id:guid}")]
+		public async Task<ActionResult> Delete(Guid id)
+		{
+
+			// Get the capcode by id
+			Capcode capcode = await CapcodeService.GetById(id);
+
+			// If there is no capcode with this id, return 404
+			if (capcode == null)
+			{
+				throw new HttpException((int)HttpStatusCode.NotFound, "Capcode not found.");
+			}
+
+			// Get all the groups by the capcode to make sure it's not in use
+			IList<Group> groupsWithCapcode = await GroupService.GetGroupsByCapcode(capcode);
+
+			// If there are groups, so show the unable to delete screen
+			if (groupsWithCapcode != null && groupsWithCapcode.Count > 0)
+			{
+				// Create the list of groups with the capcode
+				IList<string> model = groupsWithCapcode.Select(i => i.Name).ToList();
+				return View("CapcodesExist", model);
+			}
+
+			// We don't have any groups assigned to this capcode so we can just delete it
+			await CapcodeService.Remove(id);			
+
+			// Redirect to the capcode index screen.
+			return new RedirectResult("/admin/capcodes?deleted=1");
 		}
+
+		#endregion
+
+	}
 }

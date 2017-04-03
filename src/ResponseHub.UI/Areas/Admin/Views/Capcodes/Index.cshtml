@@ -11,6 +11,8 @@
 
 @Html.SuccessFromQueryString("created", "1", "The capcode has been successfully created.")
 
+@Html.SuccessFromQueryString("deleted", "1", "The capcode has been successfully deleted.")
+
 <a href="/admin/capcodes/create" class="btn btn-primary btn-icon btn-lg top-10"><i class="fa fa-plus"></i> Create capcode</a>
 
 @Html.Partial("~/Views/Shared/SearchControl.cshtml", new Enivate.ResponseHub.UI.Models.SearchViewModel(Model.Count, "capcodes"))
@@ -23,6 +25,7 @@
 			<th>Short Name</th>
 			<th>Service</th>
 			<th>Group only</th>
+			<th>Delete</th>
 		</tr>
 	</thead>
 	<tbody>
@@ -48,6 +51,7 @@
 					{
 						<td>&nbsp;</td>
 					}
+					<td><a href="/admin/capcodes/delete/@capcode.Id" class="text-danger" title="Delete capcode '@capcode.CapcodeAddress'?" onclick="return confirm('Are you sure you wish to delete this capcode?');"><i class="fa fa-fw fa-times"></i></a></td>
 				</tr>
 			}
 		}

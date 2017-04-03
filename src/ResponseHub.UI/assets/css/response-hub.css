@@ -97,6 +97,15 @@ table {
 .btn-link-cta {
   font-weight: bold;
 }
+.btn-link-delete {
+  color: #a94442;
+  padding-left: 0;
+  margin-left: 0;
+  border-left-width: 0;
+}
+.btn-link-delete:hover {
+  color: #a94442;
+}
 .cursor-pointer {
   cursor: pointer;
 }

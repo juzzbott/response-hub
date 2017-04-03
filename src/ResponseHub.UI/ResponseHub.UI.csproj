@@ -575,6 +575,7 @@
     <Content Include="Areas\ControlPanel\Views\Training\View.cshtml" />
     <Content Include="Areas\ControlPanel\Views\Reports\OperationsReport.cshtml" />
     <Content Include="Areas\ControlPanel\Views\ResendActivationEmail\Complete.cshtml" />
+    <Content Include="Areas\Admin\Views\Capcodes\CapcodesExist.cshtml" />
     <None Include="Web.Staging.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
