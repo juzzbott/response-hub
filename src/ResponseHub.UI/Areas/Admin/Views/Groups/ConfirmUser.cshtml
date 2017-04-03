@@ -1,8 +1,8 @@
 ﻿@model Enivate.ResponseHub.UI.Areas.Admin.Models.Groups.ConfirmUserViewModel
 
 @{
-	ViewBag.Title = "Assign group administrators";
-	ViewBag.SubmitButtonTitle = "Create user";
+	ViewBag.Title = Model.UserExists ? "Confirm user" : "Enter user details"; ;
+	ViewBag.SubmitButtonTitle = "Create member";
 	Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
 }
 
@@ -10,7 +10,9 @@
 
 <form action="@Request.Url.LocalPath" method="post">
 
-	@Html.AntiForgeryToken()
+		@Html.AntiForgeryToken()
+
+		@Html.ValidationSummary()
 
 	@Html.HiddenFor(model => model.Role)
 	@Html.HiddenFor(model => model.EmailAddress)
@@ -20,8 +22,9 @@
 		@Html.HiddenFor(model => model.FirstName)
 		@Html.HiddenFor(model => model.Surname)
 		@Html.HiddenFor(model => model.UserExists)
+		@Html.HiddenFor(model => model.MemberNumber)
 
-		<p>A user account with the email address exists. Please confirm that you wish to make the user below the group administrator.</p>
+		<p>A user account with the email address exists. Please confirm the details below.</p>
 		<div class="row">
 			<div class="col-lg-6">
 				
@@ -31,6 +34,7 @@
 							<td><strong>Email address</strong></td>
 							<td><strong>First name</strong></td>
 							<td><strong>Surname</strong></td>
+							<td><strong>Member number</strong></td>
 						</tr>
 					</thead>
 					<tbody>
@@ -38,6 +42,7 @@
 							<td>@Model.EmailAddress</td>
 							<td>@Model.FirstName</td>
 							<td>@Model.Surname</td>
+							<td>@Model.MemberNumber</td>
 						</tr>
 					</tbody>
 				</table>

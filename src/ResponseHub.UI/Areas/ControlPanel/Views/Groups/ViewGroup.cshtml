@@ -75,6 +75,7 @@
 			<th>Member number</th>
 			<th>Email</th>
 			<th>Security</th>
+			<th>Status</th>
 			<th>Actions</th>
 		</tr>
 	</thead>
@@ -95,9 +96,14 @@
 					<td>@user.Profile.MemberNumber</td>
 					<td>@user.EmailAddress</td>
 					<td>@user.GroupRole</td>
+					<td>@Html.EnumDescription(user.Status)</td>
 					<td>
 						<a href="@Request.Url.LocalPath/change-role/@user.Id" class="btn-icon btn-action-icon" title="Change user role"><i class="fa fa-shield"></i></a>
 						<a data-href="/control-panel/groups/@Model.Id/remove-user/@user.Id" data-toggle="modal" data-target="#confirm-delete" data-user-name="@user.FullName" class="cursor-pointer btn-icon btn-action-icon" title="Remove user from group"><i class="fa fa-user-times"></i></a>
+						@if (user.Status == Enivate.ResponseHub.Model.Identity.UserStatus.New)
+						{
+							<a href="/control-panel/resend-activation-email/@user.Id" class="btn-icon btn-action-icon" title="Resend activation email"><i class="fa fa-envelope-o"></i></a>
+						}
 					</td>
 				</tr>
 			}

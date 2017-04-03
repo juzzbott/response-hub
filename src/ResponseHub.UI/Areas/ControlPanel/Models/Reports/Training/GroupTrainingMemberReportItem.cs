@@ -16,6 +16,8 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Models.Reports.Training
 
 		public IDictionary<TrainingType, IList<DateTime>> TrainingDates { get; set; }
 
+		public int AttendancePercent { get; set; }
+
 		public GroupTrainingMemberReportItem()
 		{
 			TrainingSessions = new Dictionary<TrainingType, int>();

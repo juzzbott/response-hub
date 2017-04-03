@@ -12,6 +12,8 @@
 
 	@Html.AntiForgeryToken()
 
+	@Html.ValidationSummary()
+
 	@Html.HiddenFor(model => model.Role)
 	@Html.HiddenFor(model => model.EmailAddress)
 
@@ -21,7 +23,7 @@
 		@Html.HiddenFor(model => model.Surname)
 		@Html.HiddenFor(model => model.UserExists)
 
-		<p>A user account with the email address exists. Please confirm that you wish to make the user below the group administrator.</p>
+		<p>A user account with the email address exists. Please confirm the details below.</p>
 		<div class="row">
 			<div class="col-lg-6">
 				
@@ -31,6 +33,7 @@
 							<td><strong>Email address</strong></td>
 							<td><strong>First name</strong></td>
 							<td><strong>Surname</strong></td>
+							<td><strong>Member number</strong></td>
 						</tr>
 					</thead>
 					<tbody>
@@ -38,6 +41,7 @@
 							<td>@Model.EmailAddress</td>
 							<td>@Model.FirstName</td>
 							<td>@Model.Surname</td>
+							<td>@Model.MemberNumber</td>
 						</tr>
 					</tbody>
 				</table>
@@ -79,6 +83,22 @@
 				</div>
 			</div>
 			@Html.ValidationMessageFor(model => model.MemberNumber)
+		</div>
+
+		<div class="form-group">
+			<div class="row">
+				<div class="col-sm-12 graphic-checkbox">
+					<label class="radio-inline" for="SkipEmailActivation">
+						@Html.CheckBoxFor(model => model.SkipEmailActivation)
+						Skip email activation
+					</label>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-lg-10 col-xl-6">
+					<p class="section-help">You can choose to not send the email activation email for the user. This will create the member for the group, but will not invite the user to activate their account. You can resend the account activation email from the group administration screen.</p>
+				</div>
+			</div>
 		</div>
 	}
 

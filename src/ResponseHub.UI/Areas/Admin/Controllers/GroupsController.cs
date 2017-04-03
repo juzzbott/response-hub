@@ -97,9 +97,7 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 			}
 
 			// Get the service type.
-			int intServiceType;
-			Int32.TryParse(model.Service, out intServiceType);
-			ServiceType serviceType = (ServiceType)intServiceType;
+			ServiceType serviceType = ServiceType.StateEmergencyService;
 
 			// Ensure the group name/service combination is unique
 			bool groupExists = await GroupService.CheckIfGroupExists(model.Name, serviceType);
@@ -150,6 +148,7 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 				model.GroupAdministrator.FirstName = groupAdminUser.FirstName;
 				model.GroupAdministrator.Surname = groupAdminUser.Surname;
 				model.GroupAdministrator.UserExists = true;
+				model.GroupAdministrator.MemberNumber = groupAdminUser.Profile.MemberNumber;
 			}
 
 			return View("ConfirmUser", model.GroupAdministrator);
@@ -201,7 +200,7 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 				};
 
 				// Create the new user
-				groupAdmin = await UserService.CreateAsync(model.EmailAddress, model.FirstName, model.Surname, new List<string>() { RoleTypes.GroupAdministrator, RoleTypes.GeneralUser }, profile);
+				groupAdmin = await UserService.CreateAsync(model.EmailAddress, model.FirstName, model.Surname, new List<string>() { RoleTypes.GroupAdministrator, RoleTypes.GeneralUser }, profile, true);
 
 				// Send the email to the user
 				await MailService.SendAccountActivationEmail(groupAdmin);
@@ -222,9 +221,7 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 			}
 
 			// Get the service type from the model
-			int groupServiceId;
-			Int32.TryParse(createGroupModel.Service, out groupServiceId);
-			ServiceType service = (ServiceType)groupServiceId;
+			ServiceType service = ServiceType.StateEmergencyService;
 
 			// Get the region based on the posted value
 			IList<Region> regions = await GroupService.GetRegions();

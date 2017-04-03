@@ -91,6 +91,21 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 
 
 		}
-		
+
+		/// <summary>
+		/// Gets the sign in entries for the specific job id.
+		/// </summary>
+		/// <param name="jobMessageId">The job id to get the sign in entries for.</param>
+		/// <returns>The list of sign ins that match the job id.</returns>
+		public async Task<IList<SignInEntry>> GetSignInsForJobMessages(IEnumerable<Guid> jobMessageIds)
+		{
+			// Create the filter for operation sign ins and the job id
+			FilterDefinition<SignInEntry> filter = Builders<SignInEntry>.Filter.Eq(i => i.SignInType, SignInType.Operation) & Builders<SignInEntry>.Filter.In(i => i.OperationDetails.JobId, jobMessageIds);
+
+			// return the results
+			return await Collection.Find(filter).ToListAsync();
+		}
+
+
 	}
 }

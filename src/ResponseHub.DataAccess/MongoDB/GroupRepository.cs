@@ -262,6 +262,27 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 
 		}
 
+		/// <summary>
+		/// Gets all the groups by the specified capcode
+		/// </summary>
+		/// <param name="capcodeAddress">The capcode address to get the groups by.</param>
+		/// <returns>All the groups for the capcode.</returns>
+		public async Task<IList<Group>> GetGroupsByCapcode(Capcode capcode, IList<Region> regions)
+		{
+			// Create the filter
+			FilterDefinition<GroupDto> filter = Builders<GroupDto>.Filter.Or(
+				Builders<GroupDto>.Filter.Eq(i => i.Capcode, capcode.CapcodeAddress),
+				Builders<GroupDto>.Filter.AnyEq(i => i.AdditionalCapcodes, capcode.Id)
+				);
+
+			// Find all the groups
+			IList <GroupDto> results = await Collection.Find(filter).ToListAsync();
+
+			// return the results
+			return results.Select(i => MapDtoToModel(i, regions)).ToList();
+
+		}
+
 		#region Object mapping functions
 
 		/// <summary>

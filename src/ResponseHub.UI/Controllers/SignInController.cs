@@ -117,7 +117,7 @@ namespace Enivate.ResponseHub.UI.Controllers
 			};
 
 			// Set the specific 
-			if (model.SignOnType == SignInType.Operations)
+			if (model.SignOnType == SignInType.Operation)
 			{
 				signOn.OperationDetails = new OperationActivity()
 				{

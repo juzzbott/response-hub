@@ -363,7 +363,7 @@ namespace Enivate.ResponseHub.ApplicationServices
 		/// <param name="surname"></param>
 		/// <param name="roles"></param>
 		/// <returns></returns>
-		public async Task<IdentityUser> CreateAsync(string emailAddress, string firstName, string surname, IList<string> roles, UserProfile profile)
+		public async Task<IdentityUser> CreateAsync(string emailAddress, string firstName, string surname, IList<string> roles, UserProfile profile, bool activate)
 		{
 
 			// If the roles list is null, instantiate to empty list
@@ -393,8 +393,9 @@ namespace Enivate.ResponseHub.ApplicationServices
 				Surname = surname,
 				UserName = emailAddress,
 				Claims = claims,
-				ActivationCode = HashGenerator.GetSha256HashString(Guid.NewGuid().ToString(), 1),
-				Profile = profile
+				ActivationCode = (activate ? HashGenerator.GetSha256HashString(Guid.NewGuid().ToString(), 1) : null),
+				Profile = profile,
+				Status = UserStatus.New
 			};
 
 			// Add the user
@@ -402,6 +403,24 @@ namespace Enivate.ResponseHub.ApplicationServices
 
 			// return user
 			return user;
+		}
+
+		/// <summary>
+		/// Sets the activation code for the specific user.
+		/// </summary>
+		/// <param name="userId">The id of the user to set the activation code for.</param>
+		/// <returns></returns>
+		public async Task<string> ResetActivationCode(Guid userId)
+		{
+			// Generate the activation code
+			string activationCode = HashGenerator.GetSha256HashString(Guid.NewGuid().ToString(), 1);
+
+			// Update the activation code
+			await _repository.UpdateActivationCode(userId, activationCode);
+
+			// return the activation code
+			return activationCode;
+
 		}
 
 		/// <summary>

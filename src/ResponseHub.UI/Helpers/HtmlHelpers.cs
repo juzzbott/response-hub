@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -249,7 +248,7 @@ namespace Enivate.ResponseHub.UI.Helpers
 			// If the current action name is index, we just need to return the friendly name of the controller
 			if (helper.ViewContext.RouteData.Values["Action"].ToString().Equals("index", StringComparison.CurrentCultureIgnoreCase))
 			{
-				return new MvcHtmlString(SpaceBeforeCapital(helper.ViewContext.RouteData.Values["Controller"].ToString(), true));
+				return new MvcHtmlString(helper.ViewContext.RouteData.Values["Controller"].ToString().SpaceBeforeCapital(true));
 			}
 			else
 			{
@@ -263,10 +262,17 @@ namespace Enivate.ResponseHub.UI.Helpers
 				int lastIndex = url.LastIndexOf('/');
 				url = url.Substring(0, lastIndex);
 
+				// If there is a /{value} in the url, remove it
+				string urlVariableRegex = "(\\/\\{[\\w]+\\})";
+				if (Regex.IsMatch(url, urlVariableRegex))
+				{
+					url = Regex.Replace(url, urlVariableRegex, "");
+				}
+
 				// Set the url based on the prefix value
-				return new MvcHtmlString(String.Format("<a href=\"/{0}\">{1}</a>",
+					return new MvcHtmlString(String.Format("<a href=\"/{0}\">{1}</a>",
 					url,
-					SpaceBeforeCapital(helper.ViewContext.RouteData.Values["Controller"].ToString(), true)));
+					helper.ViewContext.RouteData.Values["Controller"].ToString().SpaceBeforeCapital(true)));
 
 			}
 			
@@ -290,7 +296,7 @@ namespace Enivate.ResponseHub.UI.Helpers
 			// Set the url based on the prefix value
 			return new MvcHtmlString(String.Format("<a href=\"/{0}\">{1}</a>",
 				areaUrl,
-				SpaceBeforeCapital(helper.ViewContext.RouteData.DataTokens["area"].ToString(), true)));
+				helper.ViewContext.RouteData.DataTokens["area"].ToString().SpaceBeforeCapital(true)));
 		}
 
 		public static MvcHtmlString GetFileSizeDisplayForBytes(this HtmlHelper helper, long bytes)
@@ -310,26 +316,6 @@ namespace Enivate.ResponseHub.UI.Helpers
 				return new MvcHtmlString(String.Format("{0} mb", Math.Round(mb, 2)));
 			}
 		}
-
-		/// <summary>
-		/// Add a space char before each capital letter and trims leading and trailing whitespace
-		/// </summary>
-		/// <param name="str">The string to add spaces to.</param>
-		/// <returns></returns>
-		private static string SpaceBeforeCapital(string str, bool enforceFirstCapital)
-		{
-			str = Regex.Replace(str, "([A-Z])", " $1").Trim();
-
-			// Ensure the first letter is capital
-			if (enforceFirstCapital)
-			{
-				if (Regex.IsMatch(str, "^[a-z].*"))
-				{
-					str = String.Format("{0}{1}", str.Substring(0, 1).ToUpper(), str.Substring(1));
-				}
-			}
-
-			return str;
-		}
+		
 	}
 }

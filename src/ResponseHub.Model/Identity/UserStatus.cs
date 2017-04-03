@@ -4,17 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Enivate.ResponseHub.Model.SignIn
+namespace Enivate.ResponseHub.Model.Identity
 {
-	[Flags]
-	public enum SignInType
+	public enum UserStatus
 	{
 
-		Operation = 1,
+		New = 1,
 
-		Training = 2,
-
-		Other = 4
+		Active = 2
 
 	}
 }

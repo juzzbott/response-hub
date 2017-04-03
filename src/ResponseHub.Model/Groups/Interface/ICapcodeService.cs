@@ -31,5 +31,7 @@ namespace Enivate.ResponseHub.Model.Groups.Interface
 
 		Task<Capcode> GetByCapcodeAddress(string capcodeAddress);
 
+		Task Remove(Guid id);
+
 	}
 }

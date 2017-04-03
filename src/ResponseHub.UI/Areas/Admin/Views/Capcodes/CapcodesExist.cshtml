@@ -1,0 +1,21 @@
+﻿@model List<string>
+@{
+    ViewBag.Title = "Unable to delete capcode";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<h1>@ViewBag.Title</h1>
+
+<div class="alert alert-danger">
+	<p>Unable to delete capcode. Capcode is assigned to one or more groups.</p>
+</div>
+
+<p>The capcode is currently assigned to the following groups:</p>
+<ul>
+	@foreach(var group in Model)
+	{
+		<li>@group</li>
+	}
+</ul>
+
+<p><a href="/admin/capcodes" class="btn btn-primary">Return to capcodes list</a></p>

@@ -16,6 +16,8 @@ using Enivate.ResponseHub.Model.Messages;
 using Enivate.ResponseHub.Model.Messages.Interface;
 using Enivate.ResponseHub.UI.Models.Messages;
 using System.Web;
+using Enivate.ResponseHub.Model.Identity;
+using Enivate.ResponseHub.Model.SignIn;
 
 namespace Enivate.ResponseHub.UI.Controllers
 {
@@ -63,8 +65,14 @@ namespace Enivate.ResponseHub.UI.Controllers
 				// Get the capcode for the message
 				Capcode capcode = await CapcodeService.GetByCapcodeAddress(job.Capcode);
 
+				// Get the sign ins for the job
+				IList<SignInEntry> jobSignIns = await SignInEntryService.GetSignInsForJobMessage(job.Id);
+
+				// Get the list of users who signed in for the job
+				IList<IdentityUser> signInUsers = await UserService.GetUsersByIds(jobSignIns.Select(i => i.UserId));
+
 				// Create the model object.
-				JobMessageViewModel model = await MapJobMessageToViewModel(job, capcode.FormattedName());
+				JobMessageViewModel model = await MapJobMessageToViewModel(job, capcode.FormattedName(), jobSignIns, signInUsers);
 				
 				// return the job view
 				return View(model);

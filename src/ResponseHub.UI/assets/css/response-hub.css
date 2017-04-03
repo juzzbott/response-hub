@@ -97,6 +97,15 @@ table {
 .btn-link-cta {
   font-weight: bold;
 }
+.btn-link-delete {
+  color: #a94442;
+  padding-left: 0;
+  margin-left: 0;
+  border-left-width: 0;
+}
+.btn-link-delete:hover {
+  color: #a94442;
+}
 .cursor-pointer {
   cursor: pointer;
 }
@@ -631,7 +640,8 @@ td .checkbox {
 .graphic-checkbox label input[type="radio"],
 .graphic-radio label input[type="checkbox"],
 .graphic-checkbox label input[type="checkbox"] {
-  display: none;
+  position: absolute;
+  left: -99999px;
 }
 .graphic-radio label i,
 .graphic-checkbox label i {
@@ -953,6 +963,8 @@ i.p-message-admin {
 }
 .wallboard-layout .wallboard-main .job-status {
   font-size: 16px;
+  font-weight: bold;
+  color: #747474;
 }
 .wallboard-layout .wallboard-main .job-status i {
   padding-right: 10px;
@@ -1233,56 +1245,56 @@ i.p-message-admin {
 /**
  * Data Export PDF
  */
-body.data-export-pdf {
+body.pdf-export {
   background-color: #fff;
-  font-size: 13px;
+  font-size: 12px;
   padding-top: 0;
 }
-body.data-export-pdf table {
-  font-size: 13px;
+div.generated-report table {
+  font-size: 12px;
 }
-body.data-export-pdf table td {
+div.generated-report table td {
   padding: 6px 4px;
   line-height: 1.1;
 }
-body.data-export-pdf table th {
+div.generated-report table th {
   padding: 6px 4px;
 }
-body.data-export-pdf table.results-overview .job-number {
+div.generated-report table.results-overview .job-number {
   width: 110px;
 }
-body.data-export-pdf table.results-overview .date-time {
+div.generated-report table.results-overview .date-time {
   width: 150px;
 }
-body.data-export-pdf .job-progress-table thead th {
+div.generated-report .job-progress-table thead th {
   border-bottom: 0px;
 }
-body.data-export-pdf .job-progress-table td {
+div.generated-report .job-progress-table td {
   border-top: 0px;
 }
-body.data-export-pdf .job-progress-table .on-route {
+div.generated-report .job-progress-table .on-route {
   padding-left: 0;
 }
-body.data-export-pdf .job-progress-table h4 {
+div.generated-report .job-progress-table h4 {
   margin-bottom: 0;
 }
-body.data-export-pdf .message-map-image {
+div.generated-report .message-map-image {
   position: relative;
   width: 900px;
   height: 300px;
 }
-body.data-export-pdf .message-map-image img {
+div.generated-report .message-map-image img {
   position: absolute;
   top: 0;
   left: 0;
 }
-body.data-export-pdf .message-map-image span {
+div.generated-report .message-map-image span {
   display: block;
   position: absolute;
   left: 426px;
   top: 102px;
 }
-body.data-export-pdf .notes li {
+div.generated-report .notes li {
   border-left: 3px solid #D6E3E0;
   border-top: 1px solid #e5edeb;
   border-right: 1px solid #e5edeb;
@@ -1293,7 +1305,7 @@ body.data-export-pdf .notes li {
   padding-bottom: 2px;
   margin-bottom: 10px;
 }
-body.data-export-pdf .notes li .wordback-icon {
+div.generated-report .notes li .wordback-icon {
   margin-left: 5px;
 }
 /**

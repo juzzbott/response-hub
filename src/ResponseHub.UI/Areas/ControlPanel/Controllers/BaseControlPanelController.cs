@@ -116,7 +116,8 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 					GroupRole = group.Users.FirstOrDefault(i => i.UserId == groupUser.Id).Role,
 					Id = groupUser.Id,
 					Surname = groupUser.Surname,
-					Profile = groupUser.Profile
+					Profile = groupUser.Profile,
+					Status = groupUser.Status
 				});
 			}
 
@@ -174,7 +175,6 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 			model.Longitude = group.HeadquartersCoordinates.Longitude;
 			model.Name = group.Name;
 			model.Region = group.Region.Id;
-			model.Service = ((int)group.Service).ToString();
 
 			// Set the page title.
 			ViewBag.Title = "Edit group";
@@ -203,9 +203,7 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 			model.AvailableGroupCapcodes = await CapcodeService.GetAllByService(group.Service, true);
 
 			// Get the service type from the model
-			int groupServiceId;
-			Int32.TryParse(model.Service, out groupServiceId);
-			ServiceType service = (ServiceType)groupServiceId;
+			ServiceType service = ServiceType.StateEmergencyService;
 
 			// Get the region based on the posted value
 			IList<Region> regions = await GroupService.GetRegions();
@@ -359,6 +357,7 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 				model.UserExists = true;
 				model.FirstName = newUser.FirstName;
 				model.Surname = newUser.Surname;
+				model.MemberNumber = newUser.Profile.MemberNumber;
 			}
 
 			return View(viewPath, model);
@@ -415,10 +414,13 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 					};
 
 					// Create the new user, and then create the group mapping for the new user.
-					newUser = await UserService.CreateAsync(model.EmailAddress, model.FirstName, model.Surname, new List<string>() { model.Role }, profile);
+					newUser = await UserService.CreateAsync(model.EmailAddress, model.FirstName, model.Surname, new List<string>() { model.Role }, profile, !model.SkipEmailActivation);
 
-					// Send the activation email
-					await MailService.SendAccountActivationEmail(newUser);
+					// Send the activation email, if we don't need to skip it
+					if (!model.SkipEmailActivation)
+					{
+						await MailService.SendAccountActivationEmail(newUser);
+					}
 
 					// Now that we have the newUser, create the user mapping.
 					await GroupService.AddUserToGroup(newUser.Id, model.Role, groupId);
@@ -438,6 +440,26 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 				ModelState.AddModelError("", "There was a system error adding the user to the group.");
 				return View(viewPath, model);
 			}
+		}
+
+		#endregion
+
+		#region Resend Activation Email
+
+		public async Task<ActionResult> ResendActivationEmail(Guid userId)
+		{
+
+			// Update the activation code for the user
+			string newActivationCode = await UserService.ResetActivationCode(userId);
+
+			// Get the identity user related to the specified group admin
+			IdentityUser newUser = await UserService.FindByIdAsync(userId);
+
+			// Resend the activation email
+			await MailService.SendAccountActivationEmail(newUser);
+
+			// Redirect to the complete page
+			return new RedirectResult("/control-panel/resend-activation-email/complete");
 		}
 
 		#endregion

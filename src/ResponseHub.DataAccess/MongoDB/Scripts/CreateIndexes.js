@@ -24,3 +24,6 @@ db.events.createIndex({ Name: "text" }, { background: true, name: "events_text" 
 // Addresses
 db.addresses.createIndex({ "Coordinates": "2dsphere" }, { background: true, name: "Coords_2dsphere" });
 db.addresses.createIndex({ AddressQueryHash: 1 }, { background: true });
+
+// User sign ins
+db.user_sign_ins.createIndex({ "OperationDetails.JobId": 1 }, { background: true, partialFilterExpression: { "OperationDetails.JobId": { $exists: true }, "SignInType": 1 }, name: "SignIn_JobId" });

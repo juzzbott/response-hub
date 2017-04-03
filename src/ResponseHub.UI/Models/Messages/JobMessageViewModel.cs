@@ -52,12 +52,15 @@ namespace Enivate.ResponseHub.UI.Models.Messages
 
 		public IList<Attachment> ImageAttachments { get; set; }
 
+		public IList<JobMessageSignInEntry> SignIns { get; set; }
+
 		public JobMessageViewModel()
 		{
 			Location = new LocationInfo();
 			Notes = new List<JobNoteViewModel>();
 			Attachments = new List<Attachment>();
 			ImageAttachments = new List<Attachment>();
+			SignIns = new List<JobMessageSignInEntry>();
 		}
 	}
 }

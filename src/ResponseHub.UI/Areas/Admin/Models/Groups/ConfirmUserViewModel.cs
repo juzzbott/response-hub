@@ -23,5 +23,7 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Models.Groups
 
 		[Required(ErrorMessage = "Please enter the member number for the user.")]
 		public string MemberNumber { get; set; }
+
+		public bool SkipEmailActivation { get; set; }
 	}
 }

@@ -44,6 +44,7 @@
 	<!-- Nav tabs -->
 	<ul class="nav nav-tabs" role="tablist">
 		<li role="presentation" class="active"><a href="#tab-overview" aria-controls="tab-overview" role="tab" data-toggle="tab" class="btn-icon"><i class="fa fa-fw fa-bar-chart"></i>Overview</a></li>
+		<li role="presentation"><a href="#tab-members" aria-controls="tab-members" role="tab" data-toggle="tab" class="btn-icon" id="tab-header-members"><i class="fa fa-fw fa-address-book-o"></i>Members (<span>@Model.SignIns.Count</span>)</a></li>
 		<li role="presentation"><a href="#tab-attachments" aria-controls="tab-attachments" role="tab" data-toggle="tab" class="btn-icon" id="tab-header-attachments" onclick="responseHub.attachments.preloadAttachments();"><i class="fa fa-fw fa-paperclip"></i>Attachments (<span>@Model.Attachments.Count</span>)</a></li>
 	</ul>
 
@@ -56,6 +57,41 @@
 			@Html.Partial("JobLocation", Model)
 
 			@Html.Partial("JobNotes", Model.Notes)
+
+		</div>
+
+		<div role="tabpanel" class="tab-pane" id="tab-members">
+
+			<h2>Members</h2>
+
+			<table class="table table-striped table-hover">
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Member number</th>
+						<th>Sign in time</th>
+					</tr>
+				</thead>
+				<tbody>
+					@if (Model.SignIns == null || Model.SignIns.Count == 0)
+					{
+						<tr>
+							<td colspan="3">No members have signed in for this job yet.</td>
+						</tr>
+					}
+					else
+					{
+						foreach(var signIn in Model.SignIns)
+						{
+							<tr>
+								<td>@signIn.FullName</td>
+								<td>@signIn.MemberNumber</td>
+								<td>@signIn.SignInTime.ToLocalTime().ToString("yyyy-MM-dd HH:mm")</td>
+							</tr>
+						}
+					}
+				</tbody>
+			</table>
 
 		</div>
 

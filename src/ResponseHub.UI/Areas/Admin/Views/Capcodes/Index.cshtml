@@ -11,6 +11,8 @@
 
 @Html.SuccessFromQueryString("created", "1", "The capcode has been successfully created.")
 
+@Html.SuccessFromQueryString("deleted", "1", "The capcode has been successfully deleted.")
+
 <a href="/admin/capcodes/create" class="btn btn-primary btn-icon btn-lg top-10"><i class="fa fa-plus"></i> Create capcode</a>
 
 @Html.Partial("~/Views/Shared/SearchControl.cshtml", new Enivate.ResponseHub.UI.Models.SearchViewModel(Model.Count, "capcodes"))
@@ -23,6 +25,7 @@
 			<th>Short Name</th>
 			<th>Service</th>
 			<th>Group only</th>
+			<th>Delete</th>
 		</tr>
 	</thead>
 	<tbody>
@@ -48,8 +51,27 @@
 					{
 						<td>&nbsp;</td>
 					}
+					<td><a data-href="/admin/capcodes/delete/@capcode.Id" data-toggle="modal" data-target="#confirm-delete" class="text-danger cursor-pointer btn-icon btn-action-icon" title="Delete capcode '@capcode.CapcodeAddress'?"><i class="fa fa-fw fa-times"></i></a></td>
 				</tr>
 			}
 		}
 	</tbody>
 </table>
+
+<div class="modal fade delete-capcode" tabindex="-1" role="dialog" id="confirm-delete">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h4 class="modal-title">Are you sure?</h4>
+			</div>
+			<div class="modal-body">
+				<p>Are you sure you want to remove the capcode?</p>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-link" data-dismiss="modal">Cancel</button>
+				<a class="btn btn-primary btn-ok">Remove capcode</a>
+			</div>
+		</div><!-- /.modal-content -->
+	</div><!-- /.modal-dialog -->
+</div><!-- /.modal -->

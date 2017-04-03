@@ -209,6 +209,7 @@
     <Compile Include="Areas\Admin\Models\LogViewer\LogViewModel.cs" />
     <Compile Include="Areas\Admin\Models\SystemSettings\CacheDetails.cs" />
     <Compile Include="Areas\Admin\Models\SystemSettings\SystemSettingsViewModel.cs" />
+    <Compile Include="Areas\ControlPanel\Controllers\ResendActivationEmailController.cs" />
     <Compile Include="Areas\ControlPanel\Controllers\TrainingController.cs" />
     <Compile Include="Areas\ControlPanel\Models\Home\GroupSelectionViewModel.cs" />
     <Compile Include="Areas\ControlPanel\Controllers\ReportsController.cs" />
@@ -251,6 +252,7 @@
     <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Models\Events\CreateEventViewModel.cs" />
     <Compile Include="Models\Messages\JobMessageListViewModel.cs" />
+    <Compile Include="Models\Messages\JobMessageSignInEntry.cs" />
     <Compile Include="Models\Messages\JobNoteViewModel.cs" />
     <Compile Include="Models\MyAccount\AccountDetailsViewModel.cs" />
     <Compile Include="Models\MyAccount\ForgottenPasswordViewModel.cs" />
@@ -572,6 +574,8 @@
     <Content Include="Areas\ControlPanel\Views\Training\AddEdit.cshtml" />
     <Content Include="Areas\ControlPanel\Views\Training\View.cshtml" />
     <Content Include="Areas\ControlPanel\Views\Reports\OperationsReport.cshtml" />
+    <Content Include="Areas\ControlPanel\Views\ResendActivationEmail\Complete.cshtml" />
+    <Content Include="Areas\Admin\Views\Capcodes\CapcodesExist.cshtml" />
     <None Include="Web.Staging.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

@@ -42,6 +42,8 @@ namespace Enivate.ResponseHub.DataAccess.Interface
 
 		Task<IDictionary<Guid, UserMapping>> GetUserMappingsForUser(Guid userId);
 
+		Task<IList<Group>> GetGroupsByCapcode(Capcode capcode, IList<Region> regions);
+
 	}
 
 }

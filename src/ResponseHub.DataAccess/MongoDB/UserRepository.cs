@@ -391,7 +391,7 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 		public async Task ActivateAccount(Guid id)
 		{
 			// Update the activation token to null to indicate activated user.
-			await Collection.UpdateOneAsync(Builders<IdentityUserDto>.Filter.Eq(i => i.Id, id), Builders<IdentityUserDto>.Update.Set(i => i.ActivationCode, null));
+			await Collection.UpdateOneAsync(Builders<IdentityUserDto>.Filter.Eq(i => i.Id, id), Builders<IdentityUserDto>.Update.Set(i => i.ActivationCode, null).Set(i => i.Status, UserStatus.Active));
 		}
 
 		/// <summary>
@@ -520,6 +520,24 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 
 		}
 
+		/// <summary>
+		/// Sets the activation code for the specific user.
+		/// </summary>
+		/// <param name="userId">The id of the user to set the activation code for.</param>
+		/// <param name="activationCode">The new activation code</param>
+		/// <returns></returns>
+		public async Task UpdateActivationCode(Guid userId, string activationCode)
+		{
+			// Create the filter to find the user to update
+			FilterDefinition<IdentityUserDto> filter = Builders<IdentityUserDto>.Filter.Eq(i => i.Id, userId);
+
+			// Create the update document
+			UpdateDefinition<IdentityUserDto> update = Builders<IdentityUserDto>.Update.Set(i => i.ActivationCode, activationCode);
+
+			// Perform the update
+			await Collection.UpdateOneAsync(filter, update);
+		}
+
 		#endregion
 
 		#region Mappers
@@ -549,7 +567,8 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 				Surname = dbObject.Surname,
 				UserName = dbObject.UserName,
 				ActivationCode = dbObject.ActivationCode,
-				Profile = dbObject.Profile
+				Profile = dbObject.Profile,
+				Status = dbObject.Status
 			};
 
 			// Map the claims
@@ -586,7 +605,8 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 				Surname = modelObj.Surname,
 				UserName = modelObj.UserName,
 				ActivationCode = modelObj.ActivationCode,
-				Profile = modelObj.Profile
+				Profile = modelObj.Profile,
+				Status = modelObj.Status
 			};
 
 			// Map the claims

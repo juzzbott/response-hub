@@ -19,7 +19,17 @@ namespace Enivate.ResponseHub.ApplicationServices
 		/// </summary>
 		private const string EvoPdfLicenseKey = "SsTXxdDVxdbcxdDL1cXW1MvU18vc3Nzc";
 
-		public byte[] GeneratePdfFromHtml(string htmlContent, bool portraitLayout)
+		public async Task<byte[]> GeneratePdfFromHtml(string htmlContent, bool portraitLayout)
+		{
+
+			// Get the PDF bytes
+			byte[] pdfBytes = await Task.Run(() => GetPdfBytes(htmlContent, portraitLayout));
+
+			// return the pdf bytes
+			return pdfBytes;
+		}
+
+		private byte[] GetPdfBytes(string htmlContent, bool portraitLayout)
 		{
 			// Create the converter
 			HtmlToPdfConverter converter = new HtmlToPdfConverter();

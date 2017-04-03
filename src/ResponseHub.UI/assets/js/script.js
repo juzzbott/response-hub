@@ -988,9 +988,15 @@ responseHub.wallboard = (function () {
 
 		// Set the map reference
 		var mapRef = $(elem).data('map-ref');
+		var address = $(elem).data('address');
 
 		if (mapRef != "") {
-			$('.wallboard-main .map-reference').text(mapRef);
+			if (address != "" && address != "undefined") {
+				$('.wallboard-main .map-reference').text(address);
+				$('.wallboard-main .map-reference').append('<span class="small show">' + mapRef + '</span>');
+			} else {
+				$('.wallboard-main .map-reference').text(mapRef);
+			}
 			$('.wallboard-main .job-location').removeClass('hidden');
 		} else {
 			$('.wallboard-main .job-location').addClass('hidden');
@@ -1110,8 +1116,8 @@ responseHub.wallboard = (function () {
 		var messageHeader = $('<div class="row"></div></div>')
 
 		// Build the h2 elements
-		var h2 = $('<div class="col-sm-5"><h2><i id="message-type"></i><span class="job-number"></span></h2></div>');
-		var h2Date = $('<div class="col-sm-7"><p class="text-right job-date"></p><p class="job-status text-right"></p></div>');
+		var h2 = $('<div class="col-sm-5"><h2><i id="message-type"></i><span class="job-number"></span></h2><p class="job-status"></p></div>');
+		var h2Date = $('<div class="col-sm-7"><p class="text-right job-date"></p></div>');
 
 		messageHeader.append(h2);
 		messageHeader.append(h2Date);
@@ -1258,11 +1264,20 @@ responseHub.wallboard = (function () {
 		var localDateString = jobDate.format('DD-MM-YYYY HH:mm:ss');
 
 		var mapReference = "";
+		var address = "";
 		var lat = 0;
 		var lon = 0;
 
 		if (jobMessage.Location != null)
 		{
+
+			// If there is an address, then set that.
+			if (jobMessage.Location.Address != null && jobMessage.Location.Address.FormattedAddress != "" && jobMessage.Location.Address.FormattedAddress != "undefined")
+			{
+				address = jobMessage.Location.Address.FormattedAddress;
+			}
+
+			// Set the map reference
 			mapReference = jobMessage.Location.MapReference;
 
 			if (jobMessage.Location.Coordinates != null)
@@ -1290,7 +1305,7 @@ responseHub.wallboard = (function () {
 
 		// Creat the list item
 		var listItem = $('<li class="' + (selectedJobIndex == index ? "selected" : "") + '" data-message="' + jobMessage.MessageBody + '" data-job-number="' + jobMessage.JobNumber +
-			'" data-date="' + localDateString + '" data-priority="' + jobMessage.Priority + '" data-map-ref="' + mapReference + '" data-lat="' + lat + '" data-lon="' + lon +
+			'" data-date="' + localDateString + '" data-priority="' + jobMessage.Priority + '" data-map-ref="' + mapReference + '" data-address="' + address + '" data-lat="' + lat + '" data-lon="' + lon +
 			'" data-id="' + jobMessage.Id + '" data-progress="' + latestProgress + '" data-has-notes="' + (hasNotes ? 'true' : 'false') + '">');
 
 		// Add the job name and date
@@ -1327,7 +1342,7 @@ responseHub.wallboard = (function () {
 		} else if (jobMessage.OnRoute != null) {
 			h3.append('<span class="job-status on-route"><i class="fa fa-arrow-circle-o-right"></i></span>');
 		} else {
-			h3.append('<span class="job-status"><i class="fa fa-dot-circle-o"></i></span>');
+			h3.append('<span class="job-status"><i class="fa fa-asterisk"></i></span>');
 		}
 
 		// Add the comments indication
@@ -1843,7 +1858,7 @@ responseHub.search = (function () {
 		}
 		else
 		{
-			return $('<i class="fa fa-dot-circle-o"></i>');
+			return $('<i class="fa fa-asterisk"></i>');
 		}
 
 	}

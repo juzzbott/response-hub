@@ -5,3 +5,6 @@ db.job_messages.update({}, { $set: { "Location.Address": { "AddressId": null, "F
 // Set the MessageType property
 db.job_messages.update({ JobNumber: { $ne: "" } }, { $set: { Type: 1 } }, { multi: 1 })
 db.job_messages.update({ JobNumber: "" }, { $set: { Type: 2 } }, { multi: 1 })
+
+// Set the user status to 2 - Active
+db.users.update({}, { $set: { Status: 2 } }, { multi: true })

@@ -30,5 +30,7 @@ namespace Enivate.ResponseHub.UI.Models.Users
 
 		public UserProfile Profile { get; set; }
 
+		public UserStatus Status { get; set; }
+
 	}
 }

@@ -20,6 +20,8 @@ using Enivate.ResponseHub.Model.Messages;
 using Enivate.ResponseHub.UI.Models.Api.Messages;
 using Enivate.ResponseHub.UI.Models.Messages;
 using Enivate.ResponseHub.UI.Helpers;
+using Enivate.ResponseHub.Model.SignIn;
+using Enivate.ResponseHub.Model.SignIn.Interface;
 
 namespace Enivate.ResponseHub.UI.Controllers.Api
 {
@@ -42,6 +44,7 @@ namespace Enivate.ResponseHub.UI.Controllers.Api
 				return ServiceLocator.Get<ICapcodeService>();
 			}
 		}
+		protected readonly ISignInEntryService SignInEntryService = ServiceLocator.Get<ISignInEntryService>();
 
 		[Route]
 		[HttpGet]
@@ -54,16 +57,28 @@ namespace Enivate.ResponseHub.UI.Controllers.Api
 			// Get the job messages
 			IList<JobMessage> jobMessages = await JobMessageService.GetMostRecent(capcodes, MessageType.Job, 50);
 
+			// Get all the sign ins for the messages
+			IList<SignInEntry> allSignIns = await SignInEntryService.GetSignInsForJobMessages(jobMessages.Select(i => i.Id));
+
+			// Get all the users for the job sign ins
+			IList<IdentityUser> allSignInUsers = await UserService.GetUsersByIds(allSignIns.Select(i => i.UserId));
+
 			// return the mapped view models
 			IList<JobMessageViewModel> models = new List<JobMessageViewModel>();
 			foreach(JobMessage message in jobMessages)
 			{
 
+				// Get the sign ins for the job
+				IList<SignInEntry> messageSignIns = allSignIns.Where(i => i.OperationDetails.JobId == message.Id).ToList();
+
+				// Get the list of users who signed in for the job
+				IList<IdentityUser> signInUsers = allSignInUsers.Where(i => messageSignIns.Select(u => u.UserId).Contains(i.Id)).ToList();
+
 				// Get the capcode
 				string capcodeGroupName = capcodes.FirstOrDefault(i => i.CapcodeAddress == message.Capcode).FormattedName();
 
 				// Add the mapped job message view model
-				models.Add(await BaseJobsMessagesController.MapJobMessageToViewModel(message, capcodeGroupName));
+				models.Add(await BaseJobsMessagesController.MapJobMessageToViewModel(message, capcodeGroupName, messageSignIns, signInUsers));
 			}
 
 			// return the mapped models
@@ -261,6 +276,12 @@ namespace Enivate.ResponseHub.UI.Controllers.Api
 				// Create the list of job message view models
 				IList<JobMessageViewModel> latestMessagesModels = new List<JobMessageViewModel>();
 
+				// Get all the sign ins for the messages
+				IList<SignInEntry> allSignIns = await SignInEntryService.GetSignInsForJobMessages(latestMessages.Select(i => i.Id));
+
+				// Get all the users for the job sign ins
+				IList<IdentityUser> allSignInUsers = await UserService.GetUsersByIds(allSignIns.Select(i => i.UserId));
+
 				// Map the job messages to the JobMesageViewModel type
 				if (latestMessages != null && latestMessages.Count > 0)
 				{
@@ -272,6 +293,12 @@ namespace Enivate.ResponseHub.UI.Controllers.Api
 						Capcode messageCapcode = capcodes.FirstOrDefault(i => i.CapcodeAddress == message.Capcode);
 						string capcodeGroupName = messageCapcode?.FormattedName();
 
+						// Get the sign ins for the job
+						IList<SignInEntry> messageSignIns = allSignIns.Where(i => i.OperationDetails.JobId == message.Id).ToList();
+
+						// Get the list of users who signed in for the job
+						IList<IdentityUser> signInUsers = allSignInUsers.Where(i => messageSignIns.Select(u => u.UserId).Contains(i.Id)).ToList();
+
 						// If there was no group capcode name, just set to unknown
 						if (String.IsNullOrEmpty(capcodeGroupName))
 						{
@@ -279,7 +306,7 @@ namespace Enivate.ResponseHub.UI.Controllers.Api
 						}
 
 						// Map to the JobMessageViewModel
-						latestMessagesModels.Add(await BaseJobsMessagesController.MapJobMessageToViewModel(message, capcodeGroupName));
+						latestMessagesModels.Add(await BaseJobsMessagesController.MapJobMessageToViewModel(message, capcodeGroupName, messageSignIns, signInUsers));
 					}
 
 				}

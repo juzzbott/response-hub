@@ -752,7 +752,7 @@ namespace Enivate.ResponseHub.UI.Controllers
 			}
 
 			// Set the activity
-			if (entry.SignInType == SignInType.Operations)
+			if (entry.SignInType == SignInType.Operation)
 			{
 				// Set the operation activity
 				viewModel.Description = (entry.OperationDetails != null ? entry.OperationDetails.Description : "Operation");
