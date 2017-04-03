@@ -85,10 +85,6 @@
 			@Html.ValidationMessageFor(model => model.MemberNumber)
 		</div>
 
-		<div class="col-lg-10 col-xl-6">
-			<p class="section-help">You can choose to not send the email activation email for the user. This will create the member for the group, but will not invite the user to activate their account. You can resend the account activation email from the group administration screen.</p>
-		</div>
-
 		<div class="form-group">
 			<div class="row">
 				<div class="col-sm-12 graphic-checkbox">
@@ -96,6 +92,11 @@
 						@Html.CheckBoxFor(model => model.SkipEmailActivation)
 						Skip email activation
 					</label>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-lg-10 col-xl-6">
+					<p class="section-help">You can choose to not send the email activation email for the user. This will create the member for the group, but will not invite the user to activate their account. You can resend the account activation email from the group administration screen.</p>
 				</div>
 			</div>
 		</div>

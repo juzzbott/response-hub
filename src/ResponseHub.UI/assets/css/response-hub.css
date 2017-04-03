@@ -640,7 +640,8 @@ td .checkbox {
 .graphic-checkbox label input[type="radio"],
 .graphic-radio label input[type="checkbox"],
 .graphic-checkbox label input[type="checkbox"] {
-  display: none;
+  position: absolute;
+  left: -99999px;
 }
 .graphic-radio label i,
 .graphic-checkbox label i {
