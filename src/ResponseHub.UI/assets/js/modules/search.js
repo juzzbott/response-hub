@@ -138,7 +138,7 @@
 		}
 		else
 		{
-			return $('<i class="fa fa-dot-circle-o"></i>');
+			return $('<i class="fa fa-asterisk"></i>');
 		}
 
 	}

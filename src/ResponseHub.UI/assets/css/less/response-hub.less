@@ -1150,7 +1150,6 @@ i.p-message-admin {
 				padding-left: 15px;
 				padding-right: 15px;
 			}
-
 		}
 
 		.message {
@@ -1197,10 +1196,9 @@ i.p-message-admin {
 				float: right;
 				padding-right: 5px;
 			}
-			
 		}
 
-		.message-meta { 
+		.message-meta {
 			padding: 0 15px;
 
 			.group-heading {
@@ -1212,7 +1210,6 @@ i.p-message-admin {
 				padding-top: 10px;
 			}
 		}
-
 	}
 
 	.wallboard-main .job-date {
@@ -1224,6 +1221,8 @@ i.p-message-admin {
 
 	.wallboard-main .job-status {
 		font-size: 16px;
+		font-weight: bold;
+		color: #747474;
 
 		i {
 			padding-right: 10px;
@@ -1245,7 +1244,6 @@ i.p-message-admin {
 		.job-cancelled i {
 			color: @cancelled-color;
 		}
-
 	}
 
 	#map {
@@ -1257,34 +1255,33 @@ i.p-message-admin {
 	}
 
 	ul.job-notes li {
-			border-left: 3px solid #D6E3E0;
-			border-top: 1px solid lighten(#d6e3e0, 5%);
-			border-right: 1px solid lighten(#d6e3e0, 5%);
-			border-bottom: 1px solid lighten(#d6e3e0, 5%);
-			background-color: #fff;
-			padding-left: 8px;
-			padding-top: 4px;
-			padding-bottom: 2px;
-			.bottom-10;
+		border-left: 3px solid #D6E3E0;
+		border-top: 1px solid lighten(#d6e3e0, 5%);
+		border-right: 1px solid lighten(#d6e3e0, 5%);
+		border-bottom: 1px solid lighten(#d6e3e0, 5%);
+		background-color: #fff;
+		padding-left: 8px;
+		padding-top: 4px;
+		padding-bottom: 2px;
+		.bottom-10;
 
-			&.no-notes-msg {
-				border-width: 0;
-				padding: 0;
-				background-color: #fafafa;
-			}
-			
-			small {
-				padding-bottom: 4px;
-				color: #999;
-				display: block;
+		&.no-notes-msg {
+			border-width: 0;
+			padding: 0;
+			background-color: #fafafa;
+		}
 
-				.wordback-icon,
-				.user-icon {
-					padding-left: 10px;
-				}
+		small {
+			padding-bottom: 4px;
+			color: #999;
+			display: block;
+
+			.wordback-icon,
+			.user-icon {
+				padding-left: 10px;
 			}
+		}
 	}
-
 }
 
 .weather-centre-layout {
