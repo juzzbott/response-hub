@@ -203,7 +203,7 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 			}
 
 			// Determine the percent of members training for this session
-			model.MemberPercentTrained = ((session.Members.Count / users.Count) * 100);
+			model.MemberPercentTrained = (int)(((decimal)session.Members.Count / (decimal)users.Count) * 100);
 
 			return View(model);
 		}
@@ -235,8 +235,8 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 				SessionType = session.SessionType,
 				TrainingType = session.TrainingType,
 				Duration = session.Duration,
-				SelectedMembers = String.Join("|", session.Members),
-				SelectedTrainers = String.Join("|", session.Trainers)
+				SelectedMembers = String.Format("{0}|", String.Join("|", session.Members)),
+				SelectedTrainers = String.Format("{0}|", String.Join("|", session.Trainers))
 			};
 
 			// Load the users for the model

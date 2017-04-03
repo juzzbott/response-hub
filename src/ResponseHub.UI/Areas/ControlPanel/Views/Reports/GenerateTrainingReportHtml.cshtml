@@ -29,7 +29,8 @@
 				@foreach (var trainingType in Model.TrainingTypes)
 				{
 					<th>@trainingType.Value</th>
-			}
+				}
+				<th>Attendance</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -40,7 +41,23 @@
 					@foreach (var trainingSession in memberReport.TrainingSessions)
 					{
 						<td>@trainingSession.Value</td>
-				}
+					}
+					<td>
+						<strong>
+							@if (memberReport.AttendancePercent < 40)
+							{
+								<span class="text-danger">@String.Format("{0}%", memberReport.AttendancePercent)</span>
+							}
+							else if (memberReport.AttendancePercent < 60)
+							{
+								<span class="text-warning">@String.Format("{0}%", memberReport.AttendancePercent)</span>
+							}
+							else
+							{
+								<span class="text-success">@String.Format("{0}%", memberReport.AttendancePercent)</span>
+							}
+						</strong>
+					</td>
 				</tr>
 			}
 		</tbody>
