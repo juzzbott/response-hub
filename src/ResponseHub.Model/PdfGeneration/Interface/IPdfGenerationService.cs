@@ -9,7 +9,7 @@ namespace Enivate.ResponseHub.Model.PdfGeneration.Interface
 	public interface IPdfGenerationService
 	{
 
-		byte[] GeneratePdfFromHtml(string htmlContent, bool portraitLayout);
+		Task<byte[]> GeneratePdfFromHtml(string htmlContent, bool portraitLayout);
 
 	}
 }

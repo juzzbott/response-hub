@@ -50,7 +50,7 @@ namespace Enivate.ResponseHub.ApplicationServices
 			}
 
 			// Return the pdf bytes
-			return _pdfGenerationService.GeneratePdfFromHtml(htmlContent, false);
+			return await _pdfGenerationService.GeneratePdfFromHtml(htmlContent, false);
 
 		}
 		
@@ -90,7 +90,7 @@ namespace Enivate.ResponseHub.ApplicationServices
 			}
 
 			// Return the pdf bytes
-			return _pdfGenerationService.GeneratePdfFromHtml(htmlContent, true);
+			return await _pdfGenerationService.GeneratePdfFromHtml(htmlContent, true);
 
 		}
 
