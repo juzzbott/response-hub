@@ -1,8 +1,8 @@
 ﻿@model Enivate.ResponseHub.UI.Areas.Admin.Models.Groups.ConfirmUserViewModel
 
 @{
-	ViewBag.Title = "Assign group administrators";
-	ViewBag.SubmitButtonTitle = "Create user";
+	ViewBag.Title = Model.UserExists ? "Confirm user" : "Enter user details"; ;
+	ViewBag.SubmitButtonTitle = "Create member";
 	Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
 }
 
@@ -24,7 +24,7 @@
 		@Html.HiddenFor(model => model.UserExists)
 		@Html.HiddenFor(model => model.MemberNumber)
 
-		<p>A user account with the email address exists. Please confirm that you wish to make the user below the group administrator.</p>
+		<p>A user account with the email address exists. Please confirm the details below.</p>
 		<div class="row">
 			<div class="col-lg-6">
 				

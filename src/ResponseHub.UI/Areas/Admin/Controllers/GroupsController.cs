@@ -97,9 +97,7 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 			}
 
 			// Get the service type.
-			int intServiceType;
-			Int32.TryParse(model.Service, out intServiceType);
-			ServiceType serviceType = (ServiceType)intServiceType;
+			ServiceType serviceType = ServiceType.StateEmergencyService;
 
 			// Ensure the group name/service combination is unique
 			bool groupExists = await GroupService.CheckIfGroupExists(model.Name, serviceType);
@@ -223,9 +221,7 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 			}
 
 			// Get the service type from the model
-			int groupServiceId;
-			Int32.TryParse(createGroupModel.Service, out groupServiceId);
-			ServiceType service = (ServiceType)groupServiceId;
+			ServiceType service = ServiceType.StateEmergencyService;
 
 			// Get the region based on the posted value
 			IList<Region> regions = await GroupService.GetRegions();

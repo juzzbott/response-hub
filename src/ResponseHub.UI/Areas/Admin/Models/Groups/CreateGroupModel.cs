@@ -16,9 +16,6 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Models.Groups
 
 		[Required(ErrorMessage = "You must enter a group name.")]
 		public string Name { get; set; }
-
-		[Required(ErrorMessage = "You must select a service the group belongs to.", AllowEmptyStrings = false)]
-		public string Service { get; set; }
 		
 		[Required(ErrorMessage = "You must enter a capcode / pager address for this group.")]
 		public string Capcode { get; set; }
@@ -28,8 +25,6 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Models.Groups
 		public IList<Capcode> AvailableAdditionalCapcodes { get; set; }
 
 		public IList<Capcode> AvailableGroupCapcodes { get; set; }
-
-		public IList<SelectListItem> AvailableServices { get; set; }
 
 		public string Description { get; set; }
 
@@ -62,17 +57,6 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Models.Groups
 
 		public CreateGroupModel()
 		{
-			AvailableServices = new List<SelectListItem>();
-			AvailableServices.Add(new SelectListItem() { Value = "", Text = "Please select" });
-
-			foreach (ServiceType service in Enum.GetValues(typeof(ServiceType)).Cast<ServiceType>())
-			{
-				if (service == ServiceType.AllServices)
-				{
-					continue;
-				}
-				AvailableServices.Add(new SelectListItem() { Value = ((int)service).ToString(), Text = service.GetEnumDescription() });
-			}
 
 			GroupAdministrator = new ConfirmUserViewModel();
 

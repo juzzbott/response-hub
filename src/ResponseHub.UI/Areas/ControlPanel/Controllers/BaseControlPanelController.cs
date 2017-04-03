@@ -175,7 +175,6 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 			model.Longitude = group.HeadquartersCoordinates.Longitude;
 			model.Name = group.Name;
 			model.Region = group.Region.Id;
-			model.Service = ((int)group.Service).ToString();
 
 			// Set the page title.
 			ViewBag.Title = "Edit group";
@@ -204,9 +203,7 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 			model.AvailableGroupCapcodes = await CapcodeService.GetAllByService(group.Service, true);
 
 			// Get the service type from the model
-			int groupServiceId;
-			Int32.TryParse(model.Service, out groupServiceId);
-			ServiceType service = (ServiceType)groupServiceId;
+			ServiceType service = ServiceType.StateEmergencyService;
 
 			// Get the region based on the posted value
 			IList<Region> regions = await GroupService.GetRegions();
