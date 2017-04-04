@@ -275,7 +275,10 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 				IList<TrainingSession> userSessions = trainingSessions.Where(i => i.Members.Contains(user.Id) || i.Trainers.Contains(user.Id)).ToList();
 
 				// Get the percentage of attendance
-				memberTrainingRecord.AttendancePercent = (int)(((decimal)userSessions.Count / (decimal)trainingSessions.Count) * 100);
+				if (trainingSessions.Count > 0)
+				{
+					memberTrainingRecord.AttendancePercent = (int)(((decimal)userSessions.Count / (decimal)trainingSessions.Count) * 100);
+				}
 
 				// Get the training types
 				foreach (TrainingType trainingType in Enum.GetValues(typeof(TrainingType)))
