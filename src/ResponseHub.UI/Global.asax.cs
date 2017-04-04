@@ -22,10 +22,6 @@ namespace Enivate.ResponseHub.UI
 			// Unity configuration loader
 			UnityConfiguration.Container = new UnityContainer().LoadConfiguration();
 
-			// Ensure the user has the right roles
-			UserRepository repo = new UserRepository();
-			repo.SetClaimForDodgyUser();
-
 			// Code that runs on application startup
 			AreaRegistration.RegisterAllAreas();
             GlobalConfiguration.Configure(WebApiConfig.Register);
