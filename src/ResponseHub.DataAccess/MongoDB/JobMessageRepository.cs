@@ -330,6 +330,23 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 			await Collection.UpdateOneAsync(filter, update);
 		}
 
+		/// <summary>
+		/// Removes teh attachment from the job message.
+		/// </summary>
+		/// <param name="jobMessageId">The job message id to remove the attachment from.</param>
+		/// <param name="attachmentId">The id of the attachment to remove from the job.</param>
+		/// <returns></returns>
+		public async Task RemoveAttachmentFromJob(Guid jobMessageId, Guid attachmentId)
+		{
+			FilterDefinition<JobMessageDto> filter = Builders<JobMessageDto>.Filter.Eq(i => i.Id, jobMessageId);
+
+			// Create the update
+			UpdateDefinition<JobMessageDto> update = Builders<JobMessageDto>.Update.Pull(i => i.AttachmentIds, attachmentId);
+
+			// Do the update
+			await Collection.UpdateOneAsync(filter, update);
+		}
+
 		#region Text search
 
 		public async Task<PagedResultSet<JobMessage>> FindByKeyword(string keywords, IEnumerable<string> capcodes, MessageType messageTypes, DateTime dateFrom, DateTime dateTo, int limit, int skip, bool countTotal)

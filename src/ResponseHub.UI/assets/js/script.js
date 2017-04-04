@@ -752,6 +752,17 @@ responseHub.jobLog = (function () {
 			}
 
 		});
+		
+		$('#confirm-delete.delete-attachment').on('show.bs.modal', function (e) {
+
+			// Generate the confirm message
+			var message = $(this).find('.modal-body p').text();
+			message = message.replace('#FILE#', $(e.relatedTarget).data('filename'));
+
+			// Set the confirm message
+			$(this).find('.modal-body p').text(message);
+
+		});
 
 	}
 
@@ -1996,7 +2007,8 @@ responseHub.attachments = (function () {
 
 		// add the link span
 		listItem.append('<span class="btn-icon"><i class="fa fa-fw fa-download"></i><a href="/media/attachment/' + response.id + '">' + file.name + '</a></span>');
-		listItem.append('<span class="attachment-meta"> ' + date + ' <em>(' + file.type + '</em> ' + getFileSizeDisplay(file.size) + ')</span>');
+		listItem.append('<span class="attachment-meta text-muted"> ' + date + ' <em>(' + file.type + '</em> ' + getFileSizeDisplay(file.size) + ')</span>');
+		listItem.append('<span class="pull-right remove-attachment"><a data-href="/jobs/' + response.jobId + '/remove-attachment/' + response.id + '" title="Remove attachment ' + response.filename + '" data-filename="' + response.filename +'" data-toggle="modal" data-target="#confirm-delete"><i class="fa fa-fw fa-times"></i></a></span>');
 
 		$('.attachment-list').prepend(listItem);
 
@@ -2010,10 +2022,10 @@ responseHub.attachments = (function () {
 	{
 
 		// Create the image item
-		var imgDiv = $('<div class="col-sm-4 col-md-3 col-lg-2"><a href="/media/attachment/' + response.id + '" title="' + file.name + '" data-gallery=""><img src="/media/attachment-thumb/' + response.id + '"></a></div>');
+		var imgDiv = $('<div class="image-item"><a href="/media/attachment-resized/' + response.id + '?w=1024&h=768" title="' + file.name + '" data-gallery=""><img src="/media/attachment-resized/' + response.id + '?w=167&h=125"></a></div>');
 
 		// prepend to the links list to be included in the gallery
-		$('#links').prepend(imgDiv);
+		$('#attachment-gallery').prepend(imgDiv);
 
 	}
 

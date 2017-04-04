@@ -27,7 +27,9 @@ namespace Enivate.ResponseHub.UI.Controllers
 
 		protected readonly ICapcodeService CapcodeService = ServiceLocator.Get<ICapcodeService>();
 		protected readonly IJobMessageService JobMessageService = ServiceLocator.Get<IJobMessageService>();
+		protected readonly IGroupService GroupService = ServiceLocator.Get<IGroupService>();
 		protected readonly ISignInEntryService SignInEntryService = ServiceLocator.Get<ISignInEntryService>();
+		protected readonly IAttachmentService AttachmentService = ServiceLocator.Get<IAttachmentService>();
 
 		#region Helpers
 

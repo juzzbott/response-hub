@@ -1504,10 +1504,19 @@ i.p-message-admin {
 
 #dropzone-attachments {
 	min-height: 50px;
-	border: 2px dashed #ccc;
+	border: 3px dashed #ccc;
 	padding: 20px 20px;
 	margin-top: 20px;
 	margin-bottom: 20px;
+
+	.dz-default.dz-message
+	{
+		margin: 1.5em 0;
+
+		span {
+			font-size: 20px;
+		}
+	}
 }
 
 .attachment-list
@@ -1518,6 +1527,7 @@ i.p-message-admin {
 	li {
 		padding: 7px 0px;
 		border-bottom: 1px solid #ccc;
+		position: relative;
 
 		&:hover {
 			background-color: #fafafa;
@@ -1530,34 +1540,60 @@ i.p-message-admin {
 				background-color: #fff;
 			}
 		}
-	}
-}
 
-#links {
-	div {
-		margin-bottom: 15px;
-
-		a {
-			display: block;
-
-			img {
-				width: 100%;
-				max-height: 125px;
-			}
+		.attachment-meta {
+			padding-left: 15px;
 		}
 
+		.remove-attachment {
+			position: absolute;
+			right: 15px;
+			top: 5px;
+			cursor: pointer;
+		}
 	}
 }
 
 @media (max-width: 768px) {
-	#links div {
-		width: 200px;
+	.attachment-list li .attachment-meta {
+		display: block;
+		padding-left: 23px;
+	}
+}
+
+#attachment-gallery {
+	.image-item {
+		margin-bottom: 15px;
+		margin-right: 15px;
+		float: left;	
+
+		a {
+			display: block;
+			text-align: center;
+			border: 1px solid #ddd;
+			background-color: #fafafa;
+			padding: 4px 6px;
+
+			img {
+				max-height: 125px;
+			}
+		}
+	}
+}
+
+@media (max-width: 768px) {
+	#attachment-gallery div {
+		width: auto;
 		float: left;
+
+		a {
+			padding: 3px;
+		}
 	}
 }
 
 @media (max-width: 440px) {
-	#links div {
+	#attachment-gallery div {
 		width: 100%;
 	}
 }
