@@ -537,31 +537,7 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 			// Perform the update
 			await Collection.UpdateOneAsync(filter, update);
 		}
-
-		public async Task SetClaimForDodgyUser()
-		{
-
-			Guid userId = new Guid("e27700d5-c288-4577-89c3-b44a73ecc9f0");
-
-			// If the claim doesn't exist, then add it
-			FilterDefinition<IdentityUserDto> filter = Builders<IdentityUserDto>.Filter.Eq(i => i.Id, userId);
-			IdentityUserDto user = await Collection.Find(filter).FirstOrDefaultAsync();
-
-			if (!user.Claims.Any(i => i.Value == "General User"))
-			{
-
-				// Create the filter
-				UpdateDefinition<IdentityUserDto> update = Builders<IdentityUserDto>.Update.Push(i => i.Claims, new ClaimDto()
-				{
-					Issuer = "ResponseHub",
-					Type = "http://schemas.microsoft.com/ws/2008/06/identity/claims/role",
-					Value = "General User"
-				});
-				await Collection.UpdateOneAsync(filter, update);
-
-			}
-		}
-
+		
 		#endregion
 
 		#region Mappers

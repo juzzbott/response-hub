@@ -413,8 +413,17 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 						MemberNumber = model.MemberNumber
 					};
 
+					// Create the list of roles
+					List<string> roles = new List<string>() { model.Role };
+					
+					// If there is no "General User" role, add it so that they can access the basic site areas
+					if (!roles.Contains(RoleTypes.GeneralUser))
+					{
+						roles.Add(RoleTypes.GeneralUser);
+					}
+
 					// Create the new user, and then create the group mapping for the new user.
-					newUser = await UserService.CreateAsync(model.EmailAddress, model.FirstName, model.Surname, new List<string>() { model.Role }, profile, !model.SkipEmailActivation);
+					newUser = await UserService.CreateAsync(model.EmailAddress, model.FirstName, model.Surname, roles, profile, !model.SkipEmailActivation);
 
 					// Send the activation email, if we don't need to skip it
 					if (!model.SkipEmailActivation)

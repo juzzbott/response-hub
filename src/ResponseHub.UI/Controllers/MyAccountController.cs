@@ -41,15 +41,7 @@ namespace Enivate.ResponseHub.UI.Controllers
 				return _signInManager ?? (_signInManager = HttpContext.GetOwinContext().Get<SignInManager<IdentityUser, Guid>>());
 			}
 		}
-		
-		protected IAuthenticationManager AuthenticationManager
-		{
-			get
-			{
-				return ServiceLocator.Get<IAuthenticationManager>();
-			}
-		}
-		
+				
 		protected IMailService MailService
 		{
 			get
@@ -167,7 +159,8 @@ namespace Enivate.ResponseHub.UI.Controllers
 		[AllowAnonymous]
 		public ActionResult Logout()
 		{
-			AuthenticationManager.SignOut();
+			IAuthenticationManager authenticationManager = HttpContext.GetOwinContext().Authentication;
+			authenticationManager.SignOut();
 			return new RedirectResult("/my-account/login");
 		}
 
