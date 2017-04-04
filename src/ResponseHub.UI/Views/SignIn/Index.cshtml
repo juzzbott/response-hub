@@ -1,10 +1,18 @@
 ﻿@model Enivate.ResponseHub.UI.Models.SignIn.SignInViewModel
 @{
     ViewBag.Title = "Sign in";
-	ViewBag.BodyClass = "sign-on";
+	ViewBag.BodyClass = "sign-in";
 }
 
 <h1>@ViewBag.Title</h1>
+
+@if (Model.SignOutRequired)
+{
+	<div class="alert alert-warning alert-dismissible" role="alert">
+		<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+		<strong>You need to sign out!</strong><br />You have not yet signed out from previous sign ins. <a href="/sign-in/sign-out">Go an sign out now.</a>
+	</div>
+}
 
 <form action="@Request.Url" method="post">
 
@@ -52,7 +60,7 @@
 		<div class="row">
 			<div class="col-sm-8 col-md-6 col-lg-4">
 				<div class="input-group">
-					@Html.TextBoxFor(model => model.StartTime, new { @class = "form-control" })
+					@Html.TextBoxFor(model => model.StartTime, new { @class = "form-control timepicker" })
 					<div class="input-group-addon">
 						<i class="fa fa-fw fa-clock-o"></i>
 					</div>
@@ -68,11 +76,11 @@
 		<div class="row">
 			<div class="col-sm-12 graphic-radio">
 				<label class="radio-inline" for="SignOnType1">
-					<input type="radio" name="SignOnType" id="SignOnType1" value="1" checked="checked" onclick="responseHub.signOn.showOperationDetails();">
+					<input type="radio" name="SignOnType" id="SignOnType1" value="1" checked="checked" onclick="responseHub.signIn.showOperationDetails();">
 					Operation
 				</label>
 				<label class="radio-inline" for="SignOnType2">
-					<input type="radio" name="SignOnType" id="SignOnType2" value="2" onclick="responseHub.signOn.hideOperationDetails();">
+					<input type="radio" name="SignOnType" id="SignOnType2" value="2" onclick="responseHub.signIn.hideOperationDetails();">
 					Training
 				</label>
 			</div>
@@ -94,7 +102,7 @@
 			{
 				<div class="row">
 					<div class="col-lg-10 col-xl-9 radio graphic-radio">
-						<label onclick="responseHub.signOn.setOperationJobNumber('@job.Item3', '@job.Item1');">
+						<label onclick="responseHub.signIn.setOperationJobNumber('@job.Item3', '@job.Item1');">
 							<input type="radio" name="OperationList" id="Operation_@job.Item1" value="@job.Item1">
 							@job.Item2
 						</label>

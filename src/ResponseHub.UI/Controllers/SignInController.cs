@@ -17,6 +17,7 @@ using Enivate.ResponseHub.Model.SignIn;
 using Enivate.ResponseHub.Model.SignIn.Interface;
 using System.Net;
 using Enivate.ResponseHub.Model.Identity;
+using Enivate.ResponseHub.Common.Extensions;
 
 namespace Enivate.ResponseHub.UI.Controllers
 {
@@ -28,7 +29,7 @@ namespace Enivate.ResponseHub.UI.Controllers
 		protected readonly ICapcodeService CapcodeService = ServiceLocator.Get<ICapcodeService>();
 		protected readonly IGroupService GroupService = ServiceLocator.Get<IGroupService>();
 		protected readonly IJobMessageService JobMessageService = ServiceLocator.Get<IJobMessageService>();
-		protected readonly ISignInEntryService SignOnService = ServiceLocator.Get<ISignInEntryService>();
+		protected readonly ISignInEntryService SignInService = ServiceLocator.Get<ISignInEntryService>();
 
 		// GET: Sign-in
 		[Route]
@@ -36,7 +37,7 @@ namespace Enivate.ResponseHub.UI.Controllers
 		{
 			
 			// Get the initial model
-			SignInViewModel model = await GetSignInModel(false);
+			SignInViewModel model = await GetSignInModel(false, true);
 
 			// Set the user id, as we are forcing it to be our current logged in user.
 			model.UserId = UserId;
@@ -59,9 +60,7 @@ namespace Enivate.ResponseHub.UI.Controllers
 			// return the sign in result
 			return await GetSignInResult(model, UserId);
 		}
-
 		
-
 		[Route("complete")]	
 		public ActionResult SignInComplete()
 		{
@@ -73,7 +72,7 @@ namespace Enivate.ResponseHub.UI.Controllers
 		{
 
 			// Get the initial model
-			SignInViewModel model = await GetSignInModel(true);
+			SignInViewModel model = await GetSignInModel(true, false);
 
 			return View("Index", model);
 		}
@@ -92,6 +91,71 @@ namespace Enivate.ResponseHub.UI.Controllers
 
 			// return the sign in result
 			return await GetSignInResult(model, model.GroupId);
+		}
+
+		[Route("sign-out")]
+		public async Task<ActionResult> SignOut()
+		{
+
+			// Cerate the model
+			SignOutViewModel model = new SignOutViewModel()
+			{
+				SignOutDate = DateTime.Now.ToString("yyyy-MM-dd"),
+				SignOutTime = DateTime.Now.ToString("HH:mm")
+			};
+
+			// Get the sign ins for the user where there is no sign outs
+			IList<SignInEntry> signIns = await SignInService.GetSignInsWithoutSignOutsForUser(UserId);
+
+			// Map the sign ins
+			foreach(SignInEntry signIn in signIns)
+			{
+				model.SignIns.Add(new SignInEntryListItemViewModel() {
+					Id = signIn.Id,
+					SignInTime = signIn.SignInTime,
+					SignInType = signIn.SignInType.GetEnumDescription(),
+					Description = (signIn.SignInType == SignInType.Operation ? signIn.OperationDetails.Description : "Training")
+				});
+			}
+
+
+			return View(model);
+		}
+
+		[Route("sign-out/{id:guid}")]
+		public async Task<ActionResult> SignOut(Guid id, SignOutViewModel model)
+		{
+
+			// If the model state is not valid, return
+			if (!ModelState.IsValid)
+			{
+				
+				// Get the sign ins for the user where there is no sign outs
+				IList<SignInEntry> signIns = await SignInService.GetSignInsWithoutSignOutsForUser(UserId);
+
+				// Map the sign ins
+				foreach (SignInEntry signIn in signIns)
+				{
+					model.SignIns.Add(new SignInEntryListItemViewModel()
+					{
+						Id = signIn.Id,
+						SignInTime = signIn.SignInTime,
+						SignInType = signIn.SignInType.GetEnumDescription(),
+						Description = (signIn.SignInType == SignInType.Operation ? signIn.OperationDetails.Description : "Training")
+					});
+				}
+
+				return View("SignOut", model);
+			}
+
+
+			// Get the dateTime from the model
+			DateTime signOutTime = DateTime.ParseExact(String.Format("{0} {1}", model.SignOutDate, model.SignOutTime), "yyyy-MM-dd HH:mm", null).ToUniversalTime();
+
+			// Sign the user out
+			await SignInService.SignUserOut(id, signOutTime);
+
+			return new RedirectResult("/sign-in/sign-out?signed_out=1");
 		}
 
 		#region Helpers
@@ -130,7 +194,7 @@ namespace Enivate.ResponseHub.UI.Controllers
 			{
 
 				// Add the sign in to the database
-				await SignOnService.SignUserIn(signOn);
+				await SignInService.SignUserIn(signOn);
 
 				// Redirect to sign in complete.
 				return new RedirectResult("/sign-in/complete");
@@ -149,7 +213,7 @@ namespace Enivate.ResponseHub.UI.Controllers
 		/// Gets the initial sign in view model
 		/// </summary>
 		/// <returns></returns>
-		public async Task<SignInViewModel> GetSignInModel(bool setAvailableUsers)
+		public async Task<SignInViewModel> GetSignInModel(bool setAvailableUsers, bool checkForSignOuts)
 		{
 			// Get the capcodes for the current user
 			IList<Capcode> capcodes = await CapcodeService.GetCapcodesForUser(UserId);
@@ -207,6 +271,16 @@ namespace Enivate.ResponseHub.UI.Controllers
 
 				// Set the available users
 				model.AvailableUsers = userItems;
+			}
+
+			// If we need to check for sign outs, determine how many sign ins the current user has, where there is no sign out. If > 0, show message to sign out
+			if (checkForSignOuts)
+			{
+				// Count sign ins without sign outs
+				int nonSignedOutCount = await SignInService.CountSignOutsRequiredForUser(UserId);
+
+				// Set the sign outs required flag
+				model.SignOutRequired = nonSignedOutCount > 0;
 			}
 
 			// return the model

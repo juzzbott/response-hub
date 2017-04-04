@@ -106,6 +106,33 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 			return await Collection.Find(filter).ToListAsync();
 		}
 
+		/// <summary>
+		/// Counts how many sign in entries the user has where there is no sign out date recorded.
+		/// </summary>
+		/// <param name="userId">The id of the user to search for.</param>
+		/// <returns>The number of sign in enties where there is no sign out date/time for the specified user.</returns>
+		public async Task<int> CountSignOutsRequiredForUser(Guid userId)
+		{
+			// Create the filter
+			FilterDefinition<SignInEntry> filter = Builders<SignInEntry>.Filter.Eq(i => i.UserId, userId) & Builders<SignInEntry>.Filter.Eq(i => i.SignOutTime, null);
 
+			// return the count of matched documents
+			long results = await Collection.CountAsync(filter);
+			return (int)results;
+		}
+
+		/// <summary>
+		/// Gets sign in entries where the user has no sign out date recorded.
+		/// </summary>
+		/// <param name="userId">The id of the user to search for.</param>
+		/// <returns>The list of sign in enties where there is no sign out date/time for the specified user.</returns>
+		public async Task<IList<SignInEntry>> GetSignInsWithoutSignOutsForUser(Guid userId)
+		{
+			// Create the filter
+			FilterDefinition<SignInEntry> filter = Builders<SignInEntry>.Filter.Eq(i => i.UserId, userId) & Builders<SignInEntry>.Filter.Eq(i => i.SignOutTime, null);
+
+			// return the list of sign ins
+			return await Collection.Find(filter).ToListAsync();
+		}
 	}
 }

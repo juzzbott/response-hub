@@ -19,7 +19,7 @@ namespace Enivate.ResponseHub.Model.SignIn
 
 		public DateTime SignInTime { get; set; }
 
-		public DateTime SignOutTime { get; set; }
+		public DateTime? SignOutTime { get; set; }
 
 		public SignInType SignInType { get; set; }
 

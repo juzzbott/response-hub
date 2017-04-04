@@ -21,5 +21,9 @@ namespace Enivate.ResponseHub.DataAccess.Interface
 
 		Task<IList<SignInEntry>> GetSignInsForJobMessages(IEnumerable<Guid> jobMessageIds);
 
+		Task<int> CountSignOutsRequiredForUser(Guid userId);
+
+		Task<IList<SignInEntry>> GetSignInsWithoutSignOutsForUser(Guid userId);
+
 	}
 }

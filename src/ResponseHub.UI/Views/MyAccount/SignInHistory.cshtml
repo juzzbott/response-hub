@@ -30,7 +30,7 @@
 				<tr>
 					<td>@item.GroupName</td>
 					<td>@item.SignInTime.ToLocalTime().ToString("yyyy-MM-dd HH:mm")</td>
-					<td>@(item.SignOutTime != DateTime.MinValue ? item.SignOutTime.ToLocalTime().ToString("yyyy-MM-dd HH:mm") : "")</td>
+					<td>@(item.SignOutTime.HasValue ? item.SignOutTime.Value.ToLocalTime().ToString("yyyy-MM-dd HH:mm") : "")</td>
 					<td>@item.SignInType</td>
 					<td>@item.Description</td>
 				</tr>

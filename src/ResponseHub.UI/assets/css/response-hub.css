@@ -733,6 +733,9 @@ td .checkbox {
   -webkit-box-shadow: none;
   box-shadow: none;
 }
+.datepicker-dropdown {
+  z-index: 10000;
+}
 /*
 	Login styles
 */
@@ -1316,6 +1319,17 @@ div.generated-report .notes li .wordback-icon {
   padding-bottom: 10px;
   border-bottom: 1px solid #ededed;
 }
+.sign-out-row {
+  border-top: 1px solid #ddd;
+  margin-top: 20px;
+  padding-top: 10px;
+}
+.sign-out-row:last-child {
+  margin-bottom: 20px;
+}
+.sign-out-row .lead {
+  margin-bottom: 5px;
+}
 /**
 	Charts
 */
@@ -1426,6 +1440,39 @@ div.generated-report .notes li .wordback-icon {
 .ct-series-j .ct-slice-pie,
 .ct-series-j .ct-area {
   fill: #053061;
+}
+/*
+	Alert link fixes
+*/
+.alert a {
+  text-decoration: underline;
+}
+.alert a:hover {
+  text-decoration: none;
+}
+.alert-warning a {
+  color: #ae894a;
+}
+.alert-warning a:hover {
+  color: #8a6d3b;
+}
+.alert-danger a {
+  color: #c0605e;
+}
+.alert-danger a:hover {
+  color: #a94442;
+}
+.alert-success a {
+  color: #4d984e;
+}
+.alert-success a:hover {
+  color: #3c763d;
+}
+.alert-info a {
+  color: #3e8eb5;
+}
+.alert-info a:hover {
+  color: #31708f;
 }
 /**
  * Mixins
