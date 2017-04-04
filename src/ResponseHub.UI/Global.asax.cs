@@ -10,6 +10,7 @@ using Microsoft.Practices.Unity;
 using Microsoft.Practices.Unity.Configuration;
 
 using Enivate.ResponseHub.Common;
+using Enivate.ResponseHub.DataAccess.MongoDB;
 
 namespace Enivate.ResponseHub.UI
 {
@@ -20,6 +21,10 @@ namespace Enivate.ResponseHub.UI
 			
 			// Unity configuration loader
 			UnityConfiguration.Container = new UnityContainer().LoadConfiguration();
+
+			// Ensure the user has the right roles
+			UserRepository repo = new UserRepository();
+			repo.SetClaimForDodgyUser();
 
 			// Code that runs on application startup
 			AreaRegistration.RegisterAllAreas();

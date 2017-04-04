@@ -17,6 +17,7 @@ namespace Enivate.ResponseHub.Caching
 		private static volatile MemoryCache _instance;
 		private static volatile Dictionary<string, DateTime> _keysInstance;
 		private static object _lock = new Object();
+		private static object _keysLock = new Object();
 
 		public static MemoryCache Cache
 		{
@@ -30,7 +31,6 @@ namespace Enivate.ResponseHub.Caching
 						if (_instance == null)
 						{
 							_instance = new MemoryCache(CacheName);
-							_keysInstance = new Dictionary<string, DateTime>();
 						}
 					}
 				}
@@ -38,7 +38,27 @@ namespace Enivate.ResponseHub.Caching
 				return _instance;
 			}
 		}
-		
+
+		private static Dictionary<string, DateTime> Keys
+		{
+			get
+			{
+				// Perform a double check lock on the private instance to implement singleton
+				if (_keysInstance == null)
+				{
+					lock (_keysLock)
+					{
+						if (_keysInstance == null)
+						{
+							_keysInstance = new Dictionary<string, DateTime>();
+						}
+					}
+				}
+				// return the cache instance.
+				return _keysInstance;
+			}
+		}
+
 		private const int DefaultTimeoutMinutes = 60;
 
 		#region Add Item
@@ -135,13 +155,13 @@ namespace Enivate.ResponseHub.Caching
 			Cache.Add(cacheItem, policy);
 
 			// If the cache key already exists, remove it
-			if (_keysInstance.ContainsKey(key))
+			if (Keys.ContainsKey(key))
 			{
-				_keysInstance.Remove(key);
+				Keys.Remove(key);
 			}
 
 			// Add the cache key to the lookup keys.
-			_keysInstance.Add(key, policy.AbsoluteExpiration.DateTime);
+			Keys.Add(key, policy.AbsoluteExpiration.DateTime);
 
 		}
 
@@ -256,18 +276,18 @@ namespace Enivate.ResponseHub.Caching
 		public static IList<string> GetCacheKeys()
 		{
 			// If the keys is null, return empty list
-			if (_keysInstance == null)
+			if (Keys == null)
 			{
 				return new List<string>();
 			}
 
 			// Return the list of keys
-			return _keysInstance.Select(i => i.Key).ToList();
+			return Keys.Select(i => i.Key).ToList();
 		}
 
 		public static Dictionary<string, DateTime> GetCacheKeysWithExpiry()
 		{
-			return _keysInstance;
+			return Keys;
 		}
 
 		public static long CacheMemoryLimit()
@@ -290,7 +310,7 @@ namespace Enivate.ResponseHub.Caching
 		#region Remove item callback
 		private static void CacheRemovedCallback(CacheEntryRemovedArguments args)
 		{
-			_keysInstance.Remove(args.CacheItem.Key);
+			Keys.Remove(args.CacheItem.Key);
 		}
 		#endregion
 
