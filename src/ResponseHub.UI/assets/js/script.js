@@ -118,6 +118,22 @@ var responseHub = (function () {
 			return false;
 
 		});
+		
+		// Bind the time picker
+		$('.timepicker').datetimepicker({
+			format: 'HH:mm',
+			icons: {
+				time: 'fa fa-fw fa-clock-o',
+				date: 'fa fa-fw fa-calendar',
+				up: 'fa fa-fw fa-chevron-up',
+				down: 'fa fa-fw fa-chevron-down',
+				previous: 'fa fa-fw fa-chevron-left',
+				next: 'fa fa-fw fa-chevron-right',
+				today: 'fa fa-fw fa-bullseye',
+				clear: 'fa fa-fw fa-trash-o',
+				close: 'fa fa-fw fa-times'
+			}
+		});
 
 		// Set the graphic radioes and checkboxes
 		setGraphicRadiosCheckboxes();
@@ -734,6 +750,17 @@ responseHub.jobLog = (function () {
 			} else {
 				$('#btnAddNote').removeAttr('disabled');
 			}
+
+		});
+		
+		$('#confirm-delete.delete-attachment').on('show.bs.modal', function (e) {
+
+			// Generate the confirm message
+			var message = $(this).find('.modal-body p').text();
+			message = message.replace('#FILE#', $(e.relatedTarget).data('filename'));
+
+			// Set the confirm message
+			$(this).find('.modal-body p').text(message);
 
 		});
 
@@ -1980,7 +2007,8 @@ responseHub.attachments = (function () {
 
 		// add the link span
 		listItem.append('<span class="btn-icon"><i class="fa fa-fw fa-download"></i><a href="/media/attachment/' + response.id + '">' + file.name + '</a></span>');
-		listItem.append('<span class="attachment-meta"> ' + date + ' <em>(' + file.type + '</em> ' + getFileSizeDisplay(file.size) + ')</span>');
+		listItem.append('<span class="attachment-meta text-muted"> ' + date + ' <em>(' + file.type + '</em> ' + getFileSizeDisplay(file.size) + ')</span>');
+		listItem.append('<span class="pull-right remove-attachment"><a data-href="/jobs/' + response.jobId + '/remove-attachment/' + response.id + '" title="Remove attachment ' + response.filename + '" data-filename="' + response.filename +'" data-toggle="modal" data-target="#confirm-delete"><i class="fa fa-fw fa-times"></i></a></span>');
 
 		$('.attachment-list').prepend(listItem);
 
@@ -1994,10 +2022,10 @@ responseHub.attachments = (function () {
 	{
 
 		// Create the image item
-		var imgDiv = $('<div class="col-sm-4 col-md-3 col-lg-2"><a href="/media/attachment/' + response.id + '" title="' + file.name + '" data-gallery=""><img src="/media/attachment-thumb/' + response.id + '"></a></div>');
+		var imgDiv = $('<div class="image-item"><a href="/media/attachment-resized/' + response.id + '?w=1024&h=768" title="' + file.name + '" data-gallery=""><img src="/media/attachment-resized/' + response.id + '?w=167&h=125"></a></div>');
 
 		// prepend to the links list to be included in the gallery
-		$('#links').prepend(imgDiv);
+		$('#attachment-gallery').prepend(imgDiv);
 
 	}
 
@@ -2152,7 +2180,7 @@ responseHub.wallboard = (function () {
 
 })();
 
-responseHub.signOn = (function () {
+responseHub.signIn = (function () {
 
 	// Sets the job number and the job id when selected.
 	function setOperationJobNumber(jobNumber, jobId) {
@@ -2172,50 +2200,26 @@ responseHub.signOn = (function () {
 		$('#operation-task').addClass('hidden');
 	}
 
-	// Binds the UI elements.
-	function bindUI() {
+	// Shows the sign out form for the specific sign in entry
+	function showSignOutForm(elem) {
 
-		// Set the StartTime time picker
-		if ($('body.sign-on').length > 0) {	
-
-			// Bind the time picker
-			$('#StartTime').datetimepicker({
-				format: 'HH:mm',
-				icons: {
-					time: 'fa fa-fw fa-clock-o',
-					date: 'fa fa-fw fa-calendar',
-					up: 'fa fa-fw fa-chevron-up',
-					down: 'fa fa-fw fa-chevron-down',
-					previous: 'fa fa-fw fa-chevron-left',
-					next: 'fa fa-fw fa-chevron-right',
-					today: 'fa fa-fw fa-bullseye',
-					clear: 'fa fa-fw fa-trash-o',
-					close: 'fa fa-fw fa-times'
-				}
-			});
-
-			// Bind the "TrainingOther" option to show the textbox
-			$('#TrainingType').on('change', function () {
-				if ($(this).val() == "99")
-				{
-					$('.training-type-other').removeClass('hidden');
-				}
-				else
-				{
-					$('.training-type-other').addClass('hidden');
-				}
-			});
-		}
+		$(elem).addClass('hidden');
+		$(elem).closest('.sign-out-row').find('form').removeClass('hidden');
 
 	}
 
-	// Bind the UI
-	bindUI();
+	function hideSignOutForm(elem)
+	{
+		$(elem).closest('.sign-out-row').find('form').addClass('hidden');
+		$('.show-sign-out-form').removeClass('hidden');
+	}
 
 	return {
 		setOperationJobNumber: setOperationJobNumber,
 		showOperationDetails: showOperationDetails,
-		hideOperationDetails: hideOperationDetails
+		hideOperationDetails: hideOperationDetails,
+		showSignOutForm: showSignOutForm,
+		hideSignOutForm: hideSignOutForm
 	}
 
 })();

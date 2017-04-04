@@ -118,6 +118,22 @@
 			return false;
 
 		});
+		
+		// Bind the time picker
+		$('.timepicker').datetimepicker({
+			format: 'HH:mm',
+			icons: {
+				time: 'fa fa-fw fa-clock-o',
+				date: 'fa fa-fw fa-calendar',
+				up: 'fa fa-fw fa-chevron-up',
+				down: 'fa fa-fw fa-chevron-down',
+				previous: 'fa fa-fw fa-chevron-left',
+				next: 'fa fa-fw fa-chevron-right',
+				today: 'fa fa-fw fa-bullseye',
+				clear: 'fa fa-fw fa-trash-o',
+				close: 'fa fa-fw fa-times'
+			}
+		});
 
 		// Set the graphic radioes and checkboxes
 		setGraphicRadiosCheckboxes();

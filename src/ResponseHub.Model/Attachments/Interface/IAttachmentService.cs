@@ -19,7 +19,11 @@ namespace Enivate.ResponseHub.Model.Attachments.Interface
 
 		Task<byte[]> GetAllJobAttachments(JobMessage job);
 
-		Task<byte[]> GetThumbnail(Attachment attachment, int width, int height, bool croppedcropImage);
+		Task<byte[]> GetResizedImage(Attachment attachment, int width, int height, bool croppedcropImage);
+
+		void ClearAttachmentCache();
+
+		void ClearAttachmentCache(Guid attachmentId);
 
 	}
 }

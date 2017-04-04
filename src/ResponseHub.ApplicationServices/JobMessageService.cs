@@ -186,9 +186,20 @@ namespace Enivate.ResponseHub.ApplicationServices
 			return await _repository.FindByKeyword(keyword, capcodes, messageTypes, dateFrom, dateTo, limit, skip, countTotal);
 		}
 
+		/// <summary>
+		/// Adds the specified attachment id to the job attachment list.
+		/// </summary>
+		/// <param name="jobMessageId">The ID of the job to store the attachment against.</param>
+		/// <param name="attachmentId">The ID of the attachment to store.</param>
+		/// <returns></returns>
 		public async Task AddAttachmentToJob(Guid jobMessageId, Guid attachmentId)
 		{
 			await _repository.AddAttachmentToJob(jobMessageId, attachmentId);
+		}
+
+		public async Task RemoveAttachmentFromJob(Guid jobMessageId, Guid attachmentId)
+		{
+			await _repository.RemoveAttachmentFromJob(jobMessageId, attachmentId);
 		}
 
 		public async Task<IList<JobMessage>> GetJobMessagesBetweenDates(IEnumerable<string> capcodes, MessageType messageTypes, DateTime dateFrom, DateTime dateTo)

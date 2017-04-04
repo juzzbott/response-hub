@@ -43,6 +43,8 @@ namespace Enivate.ResponseHub.UI.Models.SignIn
 		[Required(ErrorMessage = "Please select a user to sign in.")]
 		public Guid UserId { get; set; }
 
+		public bool SignOutRequired { get; set; }
+
 		public SignInViewModel()
 		{
 			AvailableOperations = new List<Tuple<Guid, string, string>>();

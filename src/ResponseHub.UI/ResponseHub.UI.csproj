@@ -291,6 +291,7 @@
     <Compile Include="Models\Search\SearchViewModel.cs" />
     <Compile Include="Models\SignIn\SignInEntryListItemViewModel.cs" />
     <Compile Include="Models\SignIn\SignInViewModel.cs" />
+    <Compile Include="Models\SignIn\SignOutViewModel.cs" />
     <Compile Include="Models\Users\GroupUserViewModel.cs" />
     <Compile Include="Models\Wallboard\WallboardViewModel.cs" />
     <Compile Include="Models\WeatherCentre\RadarLoopViewModel.cs" />
@@ -576,6 +577,7 @@
     <Content Include="Areas\ControlPanel\Views\Reports\OperationsReport.cshtml" />
     <Content Include="Areas\ControlPanel\Views\ResendActivationEmail\Complete.cshtml" />
     <Content Include="Areas\Admin\Views\Capcodes\CapcodesExist.cshtml" />
+    <Content Include="Views\SignIn\SignOut.cshtml" />
     <None Include="Web.Staging.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

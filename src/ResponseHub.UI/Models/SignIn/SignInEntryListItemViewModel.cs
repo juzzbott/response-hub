@@ -10,6 +10,8 @@ namespace Enivate.ResponseHub.UI.Models.SignIn
 	public class SignInEntryListItemViewModel
 	{
 
+		public Guid Id { get; set; }
+
 		public Guid GroupId { get; set; }
 
 		public string GroupName { get; set; }
@@ -20,7 +22,7 @@ namespace Enivate.ResponseHub.UI.Models.SignIn
 
 		public DateTime SignInTime { get; set; }
 
-		public DateTime SignOutTime { get; set; }
+		public DateTime? SignOutTime { get; set; }
 
 		public string SignInType { get; set; }
 

@@ -1,4 +1,4 @@
-﻿responseHub.signOn = (function () {
+﻿responseHub.signIn = (function () {
 
 	// Sets the job number and the job id when selected.
 	function setOperationJobNumber(jobNumber, jobId) {
@@ -18,50 +18,26 @@
 		$('#operation-task').addClass('hidden');
 	}
 
-	// Binds the UI elements.
-	function bindUI() {
+	// Shows the sign out form for the specific sign in entry
+	function showSignOutForm(elem) {
 
-		// Set the StartTime time picker
-		if ($('body.sign-on').length > 0) {	
-
-			// Bind the time picker
-			$('#StartTime').datetimepicker({
-				format: 'HH:mm',
-				icons: {
-					time: 'fa fa-fw fa-clock-o',
-					date: 'fa fa-fw fa-calendar',
-					up: 'fa fa-fw fa-chevron-up',
-					down: 'fa fa-fw fa-chevron-down',
-					previous: 'fa fa-fw fa-chevron-left',
-					next: 'fa fa-fw fa-chevron-right',
-					today: 'fa fa-fw fa-bullseye',
-					clear: 'fa fa-fw fa-trash-o',
-					close: 'fa fa-fw fa-times'
-				}
-			});
-
-			// Bind the "TrainingOther" option to show the textbox
-			$('#TrainingType').on('change', function () {
-				if ($(this).val() == "99")
-				{
-					$('.training-type-other').removeClass('hidden');
-				}
-				else
-				{
-					$('.training-type-other').addClass('hidden');
-				}
-			});
-		}
+		$(elem).addClass('hidden');
+		$(elem).closest('.sign-out-row').find('form').removeClass('hidden');
 
 	}
 
-	// Bind the UI
-	bindUI();
+	function hideSignOutForm(elem)
+	{
+		$(elem).closest('.sign-out-row').find('form').addClass('hidden');
+		$('.show-sign-out-form').removeClass('hidden');
+	}
 
 	return {
 		setOperationJobNumber: setOperationJobNumber,
 		showOperationDetails: showOperationDetails,
-		hideOperationDetails: hideOperationDetails
+		hideOperationDetails: hideOperationDetails,
+		showSignOutForm: showSignOutForm,
+		hideSignOutForm: hideSignOutForm
 	}
 
 })();

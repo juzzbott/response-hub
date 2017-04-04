@@ -36,5 +36,7 @@ namespace Enivate.ResponseHub.DataAccess.Interface
 
 		Task AddAttachmentToJob(Guid jobMessageId, Guid attachmentId);
 
+		Task RemoveAttachmentFromJob(Guid jobMessageId, Guid attachmentId);
+
 	}
 }

@@ -91,5 +91,25 @@ namespace Enivate.ResponseHub.ApplicationServices
 		{
 			return await _repository.GetSignInsForJobMessages(new Guid[] { jobMessageId });
 		}
+
+		/// <summary>
+		/// Counts how many sign in entries the user has where there is no sign out date recorded.
+		/// </summary>
+		/// <param name="userId">The id of the user to search for.</param>
+		/// <returns>The number of sign in enties where there is no sign out date/time for the specified user.</returns>
+		public async Task<int> CountSignOutsRequiredForUser(Guid userId)
+		{
+			return await _repository.CountSignOutsRequiredForUser(userId);
+		}
+
+		/// <summary>
+		/// Gets sign in entries where the user has no sign out date recorded.
+		/// </summary>
+		/// <param name="userId">The id of the user to search for.</param>
+		/// <returns>The list of sign in enties where there is no sign out date/time for the specified user.</returns>
+		public async Task<IList<SignInEntry>> GetSignInsWithoutSignOutsForUser(Guid userId)
+		{
+			return await _repository.GetSignInsWithoutSignOutsForUser(userId);
+		}
 	}
 }

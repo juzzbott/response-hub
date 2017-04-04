@@ -142,7 +142,7 @@ namespace Enivate.ResponseHub.ApplicationServices
 		/// <param name="width"></param>
 		/// <param name="height"></param>
 		/// <returns></returns>
-		public async Task<byte[]> GetThumbnail(Attachment attachment, int width, int height, bool cropImage)
+		public async Task<byte[]> GetResizedImage(Attachment attachment, int width, int height, bool cropImage)
 		{
 
 			// Generate the thumbnail filename
@@ -150,7 +150,7 @@ namespace Enivate.ResponseHub.ApplicationServices
 			string idString = attachment.Id.ToString();
 			string cachePath = GetConfigurationPath(ConfigurationManager.AppSettings["Attachment.ThumbnailDirectory"]);
 			string thumbnailPath = String.Format("{0}\\{1}\\{2}\\{3}", cachePath, idString[0], idString[1], idString[2]);
-			string thumbnailFilename = String.Format("{0}_thumb{1}{2}", attachment.Id, (cropImage ? "_crop" : ""), ext);
+			string thumbnailFilename = String.Format("{0}_thumb_{1}_{2}{3}{4}", attachment.Id, width, height, (cropImage ? "_crop" : ""), ext);
 			string thumbnailFullPath = String.Format("{0}\\{1}", thumbnailPath, thumbnailFilename);
 
 			// Validate the extension before generating thumbnail
@@ -168,8 +168,9 @@ namespace Enivate.ResponseHub.ApplicationServices
 			Attachment fullAttachment = await GetAttachmentById(attachment.Id, true);
 
 			// Get the byte array
-			byte[] thumbnailBytes = GetThumbnailImageData(fullAttachment.FileData, width, height, cropImage);
-			
+			//byte[] thumbnailBytes = GetThumbnailImageData(fullAttachment.FileData, width, height, cropImage);
+			byte[] thumbnailBytes = ResizeImage(fullAttachment.FileData, width, height);
+
 			// Ensure thumbnail path exists
 			if (!Directory.Exists(thumbnailPath))
 			{
@@ -182,6 +183,48 @@ namespace Enivate.ResponseHub.ApplicationServices
 			// return the thumbnail bytes
 			return thumbnailBytes;
 
+		}
+
+		/// <summary>
+		/// Clears the entire attachment cache
+		/// </summary>
+		public void ClearAttachmentCache()
+		{
+			// Get the cache path
+			string cachePath = GetConfigurationPath(ConfigurationManager.AppSettings["Attachment.ThumbnailDirectory"]);
+
+			// Delete all sub folders in this location
+			foreach (DirectoryInfo subDir in new DirectoryInfo(cachePath).GetDirectories())
+			{
+				subDir.Delete(true);
+			}
+
+		}
+
+		/// <summary>
+		/// Clears the attachment cache for a specific attachment only.
+		/// </summary>
+		/// <param name="attachmentId"></param>
+		public void ClearAttachmentCache(Guid attachmentId)
+		{
+
+			// Get the cache path to the attachment cache
+			string idString = attachmentId.ToString();
+			string cachePath = GetConfigurationPath(ConfigurationManager.AppSettings["Attachment.ThumbnailDirectory"]);
+			string thumbnailPath = String.Format("{0}\\{1}\\{2}\\{3}", cachePath, idString[0], idString[1], idString[2]);
+
+			// Get all the files in this location
+			string[] files = Directory.GetFiles(thumbnailPath);
+
+			// Loop through the files, if the filename contains the id, delete it
+			foreach(string file in files)
+			{
+				if (file.ToLower().Contains(idString.ToLower()))
+				{
+					// File found, so delete it
+					File.Delete(file);
+				}
+			}
 		}
 
 		private byte[] GetThumbnailImageData(byte[] fileData, int width, int height, bool cropImage)
@@ -361,6 +404,82 @@ namespace Enivate.ResponseHub.ApplicationServices
 				}
 
 			}
+		}
+		
+		/// <summary>
+		/// Method that uses the ImageConverter object in .Net Framework to convert a byte array, 
+		/// presumably containing a JPEG or PNG file image, into a Bitmap object, which can also be 
+		/// used as an Image object.
+		/// </summary>
+		/// <param name="byteArray">byte array containing JPEG or PNG file image or similar</param>
+		/// <returns>Bitmap object if it works, else exception is thrown</returns>
+		private Bitmap GetImageFromByteArray(byte[] byteArray)
+		{
+			ImageConverter imageConverter = new ImageConverter();
+			Bitmap bm = (Bitmap)imageConverter.ConvertFrom(byteArray);
+
+			if (bm != null && (bm.HorizontalResolution != (int)bm.HorizontalResolution ||
+							   bm.VerticalResolution != (int)bm.VerticalResolution))
+			{
+				// Correct a strange glitch that has been observed in the test program when converting 
+				//  from a PNG file image created by CopyImageToByteArray() - the dpi value "drifts" 
+				//  slightly away from the nominal integer value
+				bm.SetResolution((int)(bm.HorizontalResolution + 0.5f),
+								 (int)(bm.VerticalResolution + 0.5f));
+			}
+
+			return bm;
+		}
+		
+		/// <summary>
+		/// Resize the image to the specific max width or height (depending on orientation of the image).
+		/// </summary>
+		/// <param name="fileData"></param>
+		/// <param name="maxWidth"></param>
+		/// <param name="maxHeight"></param>
+		/// <returns></returns>
+		private byte[] ResizeImage(byte[] fileData, int maxWidth, int maxHeight)
+		{
+			// Load the image from the stream
+			Bitmap imgOriginal = GetImageFromByteArray(fileData);
+
+			// Values to store the new width and height
+			int destWidth;
+			int destHeight;
+
+			// Get the original width and height
+			int sourceWidth = imgOriginal.Width;
+			int sourceHeight = imgOriginal.Height;
+
+			// If the width is > height, get the ratio from the width otherwise use the height
+			if (sourceWidth > sourceHeight)
+			{
+				// Get the ratio
+				float ratio = ((float)maxWidth / (float)sourceWidth);
+
+				destWidth = (int)(sourceWidth * ratio);
+				destHeight = (int)(sourceHeight * ratio);
+			}
+			else
+			{
+				// Get the ratio
+				float ratio = ((float)maxHeight / (float)sourceHeight);
+
+				destWidth = (int)(sourceWidth * ratio);
+				destHeight = (int)(sourceHeight * ratio);
+			}
+
+			Bitmap resizedBitmap = new Bitmap(destWidth, destHeight);
+			Graphics resizedGraphic = Graphics.FromImage((Image)resizedBitmap);
+			resizedGraphic.InterpolationMode = InterpolationMode.HighQualityBicubic;
+
+			resizedGraphic.DrawImage(imgOriginal, 0, 0, destWidth, destHeight);
+			resizedGraphic.Dispose();
+
+			byte[] fileDataBytes;
+			ImageConverter converter = new ImageConverter();
+			fileDataBytes = (byte[])converter.ConvertTo(resizedBitmap, typeof(byte[]));
+			return fileDataBytes;
 		}
 
 		#endregion
