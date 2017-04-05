@@ -13,7 +13,7 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Models.Training
 
 		public DateTime SessionDate { get; set; }
 
-		public TrainingType TrainingType { get; set; }
+		public IList<TrainingType> TrainingTypes { get; set; }
 
 		public IList<Tuple<Guid, string, string>> Members { get; set; }
 
@@ -33,6 +33,7 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Models.Training
 		{
 			Members = new List<Tuple<Guid, string, string>>();
 			Trainers = new List<Tuple<Guid, string, string>>();
+			TrainingTypes = new List<TrainingType>();
 		}
 
 	}

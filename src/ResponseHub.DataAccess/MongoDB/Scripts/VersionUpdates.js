@@ -77,6 +77,9 @@ while (current_version < schema_version) {
 			break;
 
 		case 3:
+			// Update the training types to lists of training type ids
+			db.training_sessions.update({}, { $unset: { TrainingTypeId: 1 }, $set: { TrainingTypeIds: [BinData(4, "Q6gHw6s3Qne1pwKjx84MDg==")] } }, { multi: true });
+			break;
 			break;
 	}
 

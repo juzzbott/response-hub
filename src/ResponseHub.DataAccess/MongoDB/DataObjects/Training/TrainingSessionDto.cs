@@ -20,7 +20,7 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB.DataObjects.Training
 
 		public DateTime SessionDate { get; set; }
 
-		public Guid TrainingTypeId { get; set; }
+		public IList<Guid> TrainingTypeIds { get; set; }
 
 		public IList<Guid> Members { get; set; }
 
@@ -37,6 +37,7 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB.DataObjects.Training
 			Id = Guid.NewGuid();
 			Members = new List<Guid>();
 			Trainers = new List<Guid>();
+			TrainingTypeIds = new List<Guid>();
 		}
 
 	}

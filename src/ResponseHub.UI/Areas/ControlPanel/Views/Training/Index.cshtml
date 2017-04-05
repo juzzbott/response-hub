@@ -37,7 +37,7 @@ else
 			@foreach (var trainingSession in Model.TrainingSessions)
 			{
 			<tr>
-				<td><a href="/control-panel/training/session/@trainingSession.Id">@trainingSession.TrainingType.Name</a></td>
+				<td><a href="/control-panel/training/session/@trainingSession.Id">UPDATE WITH NAME</a></td>
 				<td>@trainingSession.SessionDate.ToLocalTime().ToString("d MMMM, yyyy")</td>
 				<td>@trainingSession.Duration hour@(trainingSession.Duration == 1 ? "" : "s")</td>
 				<td>@Html.EnumDescription(trainingSession.SessionType)</td>

@@ -214,7 +214,7 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 			IDictionary<string, int> aggregate = new Dictionary<string, int>();
 			foreach (TrainingType trainingType in trainingTypes)
 			{
-				aggregate.Add(trainingType.ShortName, trainingSessions.Count(i => i.TrainingType == trainingType));
+				aggregate.Add(trainingType.ShortName, trainingSessions.Count(i => i.TrainingTypes.Contains(trainingType)));
 			}
 
 			// Build the chart data
@@ -261,10 +261,10 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 				{
 
 					// Get the total amount of training sessions for each session
-					memberTrainingRecord.TrainingSessions.Add(trainingType.ShortName, userSessions.Where(i => i.TrainingType == trainingType).Count());
+					memberTrainingRecord.TrainingSessions.Add(trainingType.ShortName, userSessions.Where(i => i.TrainingTypes.Contains(trainingType)).Count());
 
 					// Get the dates the user was training for.
-					memberTrainingRecord.TrainingDates.Add(trainingType.ShortName, userSessions.Where(i => i.TrainingType == trainingType).Select(i => i.SessionDate).ToList());
+					memberTrainingRecord.TrainingDates.Add(trainingType.ShortName, userSessions.Where(i => i.TrainingTypes.Contains(trainingType)).Select(i => i.SessionDate).ToList());
 				}
 
 				// Add to the list of members

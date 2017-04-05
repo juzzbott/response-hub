@@ -17,7 +17,7 @@ namespace Enivate.ResponseHub.Model.Training
 
 		public DateTime SessionDate { get; set; }
 
-		public TrainingType TrainingType { get; set; }
+		public IList<TrainingType> TrainingTypes { get; set; }
 
 		public IList<Guid> Members { get; set; }
 
@@ -34,6 +34,7 @@ namespace Enivate.ResponseHub.Model.Training
 			Id = Guid.NewGuid();
 			Members = new List<Guid>();
 			Trainers = new List<Guid>();
+			TrainingTypes = new List<TrainingType>();
 		}
 
 	}

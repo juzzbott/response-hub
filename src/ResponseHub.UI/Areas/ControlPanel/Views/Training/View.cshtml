@@ -1,7 +1,7 @@
 ﻿@model Enivate.ResponseHub.UI.Areas.ControlPanel.Models.Training.ViewTrainingSessionViewModel
 
 @{
-    ViewBag.Title = String.Format("{0} training", Model.TrainingType.Name);
+    ViewBag.Title = String.Format("{0} training", "UPDATE WITH NAME");
     Layout = "~/Areas/ControlPanel/Views/Shared/_Layout.cshtml";
 }
 
@@ -20,8 +20,8 @@
 </p>
 
 <p>
-	<strong>Training type:</strong><br />
-	@Model.TrainingType.Name
+	<strong>Training type(s):</strong><br />
+	@String.Join(", ", Model.TrainingTypes.Select(i => i.Name))
 </p>
 
 <p>

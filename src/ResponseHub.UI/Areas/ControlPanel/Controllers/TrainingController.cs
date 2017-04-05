@@ -40,7 +40,7 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 			IList<TrainingType> trainingTypes = await TrainingService.GetAllTrainingTypes();
 			foreach (TrainingType trainingType in trainingTypes)
 			{
-				aggregate.Add(trainingType.ShortName, model.TrainingSessions.Count(i => i.TrainingType.Id == trainingType.Id));
+				aggregate.Add(trainingType.ShortName, model.TrainingSessions.Count(i => i.TrainingTypes.Contains(trainingType)));
 			}
 
 			// Build the chart data
@@ -71,12 +71,8 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 			AddEditTrainingSessionViewModel model = new AddEditTrainingSessionViewModel();
 
 			// Set the available training types
-			model.AvailableTrainingTypes.Add(new SelectListItem() { Text = "Please select...", Value = "" });
-			foreach (TrainingType trainingType in await TrainingService.GetAllTrainingTypes())
-			{
-				model.AvailableTrainingTypes.Add(new SelectListItem() { Value = trainingType.Id.ToString(), Text = trainingType.Name });
-			}
-
+			model.AvailableTrainingTypes = await TrainingService.GetAllTrainingTypes();
+			
 			// Load the users for the model
 			IList<IdentityUser> users = await GroupService.GetUsersForGroup(GetControlPanelGroupId());
 			foreach(IdentityUser user in users)
@@ -100,12 +96,7 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 				IList<TrainingType> trainingTypes = await TrainingService.GetAllTrainingTypes();
 
 				// Set the available training types
-				model.AvailableTrainingTypes.Clear();
-				model.AvailableTrainingTypes.Add(new SelectListItem() { Text = "Please select...", Value = "" });
-				foreach (TrainingType trainingType in trainingTypes)
-				{
-					model.AvailableTrainingTypes.Add(new SelectListItem() { Value = trainingType.Id.ToString(), Text = trainingType.Name });
-				}
+				model.AvailableTrainingTypes = trainingTypes;
 
 				// Load the users for the model
 				IList<IdentityUser> users = await GroupService.GetUsersForGroup(GetControlPanelGroupId());
@@ -121,13 +112,16 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 					return View("AddEdit", model);
 				}
 
+				// Get the list of guids from the selected training types
+				IList<Guid> trainingTypeIds = model.TrainingTypes.Split(new char[] { '|' }, StringSplitOptions.RemoveEmptyEntries).Select(i => new Guid(i)).ToList();
+
 				// Create the training session
 				TrainingSession session = new TrainingSession()
 				{
 					Created = DateTime.UtcNow,
 					GroupId = GetControlPanelGroupId(),
 					SessionDate = model.SessionDate.ToUniversalTime(),
-					TrainingType = trainingTypes.FirstOrDefault(i => i.Id == model.TrainingTypeId),
+					TrainingTypes = trainingTypes.Where(i => trainingTypeIds.Contains(i.Id)).ToList(),
 					Description = model.Description,
 					SessionType = model.SessionType,
 					Duration = model.Duration
@@ -178,7 +172,7 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 				Description = session.Description,
 				SessionDate = session.SessionDate,
 				SessionType = session.SessionType,
-				TrainingType = session.TrainingType,
+				TrainingTypes = session.TrainingTypes,
 				Duration = session.Duration
 			};			
 
@@ -249,18 +243,14 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 				Description = session.Description,
 				SessionDate = session.SessionDate,
 				SessionType = session.SessionType,
-				TrainingTypeId = session.TrainingType.Id,
+				TrainingTypes = String.Format("{0}|", String.Join("|", session.TrainingTypes.Select(i => i.Id))),
 				Duration = session.Duration,
 				SelectedMembers = String.Format("{0}|", String.Join("|", session.Members)),
 				SelectedTrainers = String.Format("{0}|", String.Join("|", session.Trainers))
 			};
 
 			// Set the available training types
-			model.AvailableTrainingTypes.Add(new SelectListItem() { Text = "Please select...", Value = "" });
-			foreach (TrainingType trainingType in await TrainingService.GetAllTrainingTypes())
-			{
-				model.AvailableTrainingTypes.Add(new SelectListItem() { Value = trainingType.Id.ToString(), Text = trainingType.Name });
-			}
+			model.AvailableTrainingTypes = await TrainingService.GetAllTrainingTypes();
 
 			// Load the users for the model
 			IList<IdentityUser> users = await GroupService.GetUsersForGroup(GetControlPanelGroupId());
@@ -298,12 +288,7 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 				IList<TrainingType> trainingTypes = await TrainingService.GetAllTrainingTypes();
 
 				// Set the available training types
-				model.AvailableTrainingTypes.Clear();
-				model.AvailableTrainingTypes.Add(new SelectListItem() { Text = "Please select...", Value = "" });
-				foreach (TrainingType trainingType in trainingTypes)
-				{
-					model.AvailableTrainingTypes.Add(new SelectListItem() { Value = trainingType.Id.ToString(), Text = trainingType.Name });
-				}
+				model.AvailableTrainingTypes = trainingTypes;
 
 				// Load the users for the model
 				IList<IdentityUser> users = await GroupService.GetUsersForGroup(GetControlPanelGroupId());
@@ -319,9 +304,12 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 					return View("AddEdit", model);
 				}
 
+				// Get the list of guids from the selected training types
+				IList<Guid> trainingTypeIds = model.TrainingTypes.Split(new char[] { '|' }, StringSplitOptions.RemoveEmptyEntries).Select(i => new Guid(i)).ToList();
+
 				// Set the session details
 				session.SessionDate = model.SessionDate.ToUniversalTime();
-				session.TrainingType = trainingTypes.FirstOrDefault(i => i.Id == model.TrainingTypeId);
+				session.TrainingTypes = trainingTypes.Where(i => trainingTypeIds.Contains(i.Id)).ToList();
 				session.Description = model.Description;
 				session.SessionType = model.SessionType;
 				session.Duration = model.Duration;
