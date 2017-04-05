@@ -201,6 +201,7 @@
     <Compile Include="Areas\Admin\Controllers\GroupsController.cs" />
     <Compile Include="Areas\Admin\Controllers\TrainingTypesController.cs" />
     <Compile Include="Areas\Admin\Models\TrainingTypes\AddEditTrainingTypeViewModel.cs" />
+    <Compile Include="Areas\Admin\Models\Users\EditUserViewModel.cs" />
     <Compile Include="Areas\ControlPanel\Controllers\GroupSelectionController.cs" />
     <Compile Include="Areas\Admin\Controllers\HomeController.cs" />
     <Compile Include="Areas\Admin\Controllers\LogViewerController.cs" />
@@ -304,6 +305,7 @@
   <ItemGroup>
     <Content Include="App_Data\EmailTemplates\activate_account.html" />
     <Content Include="App_Data\EmailTemplates\base_template.html" />
+    <Content Include="App_Data\EmailTemplates\email_address_changed.html" />
     <Content Include="App_Data\EmailTemplates\forgotten_password.html" />
     <Content Include="App_Data\EmailTemplates\group_created.html" />
     <Content Include="App_Data\EmailTemplates\password_changed.html" />
@@ -582,6 +584,7 @@
     <Content Include="Views\SignIn\SignOut.cshtml" />
     <Content Include="Areas\Admin\Views\TrainingTypes\Index.cshtml" />
     <Content Include="Areas\Admin\Views\TrainingTypes\AddEdit.cshtml" />
+    <Content Include="Areas\Admin\Views\Users\EditUser.cshtml" />
     <None Include="Web.Staging.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

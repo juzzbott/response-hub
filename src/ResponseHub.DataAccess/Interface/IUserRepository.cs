@@ -121,6 +121,8 @@ namespace Enivate.ResponseHub.DataAccess.Interface
 
 		Task UpdateAccountDetails(Guid userId, string firstName, string surname);
 
+		Task UpdateAccountDetails(Guid userId, string firstName, string surname, string emailAddress, UserProfile profile);
+
 		Task UpdateAccountUsername(Guid userId, string newUsername);
 
 		Task<IdentityUser> GetUserByForgottenPasswordToken(string token);
