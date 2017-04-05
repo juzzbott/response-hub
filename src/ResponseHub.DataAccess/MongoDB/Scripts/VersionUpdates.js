@@ -1,17 +1,4 @@
-﻿//
-//
-//// Change LocationInfo to AddressInfo class on the Address property and remove existing AddressInfo string
-//db.job_messages.update({}, { $unset: { "Location.AddressInfo": 1 } }, { multi: true })
-//db.job_messages.update({}, { $set: { "Location.Address": { "AddressId": null, "FormattedAddress": "" } } }, { multi: true })
-//
-//// Set the MessageType property
-//db.job_messages.update({ JobNumber: { $ne: "" } }, { $set: { Type: 1 } }, { multi: 1 })
-//db.job_messages.update({ JobNumber: "" }, { $set: { Type: 2 } }, { multi: 1 })
-//
-//// Set the user status to 2 - Active
-//db.users.update({}, { $set: { Status: 2 } }, { multi: true })
-
-var schema_info_id = ObjectId("58e492e962cb703bc785da68");
+﻿var schema_info_id = ObjectId("58e492e962cb703bc785da68");
 
 var schema_version = 3
 
@@ -78,8 +65,7 @@ while (current_version < schema_version) {
 
 		case 3:
 			// Update the training types to lists of training type ids
-			db.training_sessions.update({}, { $unset: { TrainingTypeId: 1 }, $set: { TrainingTypeIds: [BinData(4, "Q6gHw6s3Qne1pwKjx84MDg==")] } }, { multi: true });
-			break;
+			db.training_sessions.update({}, { $unset: { TrainingTypeId: 1 }, $set: { TrainingTypeIds: [BinData(4, "Q6gHw6s3Qne1pwKjx84MDg==")] }, $set: { Name: "General" } }, { multi: true });
 			break;
 	}
 

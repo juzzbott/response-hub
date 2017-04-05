@@ -17,11 +17,13 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Models.Training
 		[DataType(DataType.Date, ErrorMessage = "Please enter a valid date (dd/mm/yyyy).")]
 		public DateTime SessionDate { get; set; }
 
-		[Required(ErrorMessage = "You must select a training type.", AllowEmptyStrings = false)]
-		[StringLength(99999, MinimumLength = 20, ErrorMessage = "You must select a training type.")]
+		[Required(ErrorMessage = "You must select a training type.")]
 		public string TrainingTypes { get; set; }
 
 		public IList<TrainingType> AvailableTrainingTypes { get; set; }
+
+		[Required(ErrorMessage = "You must enter a name for the session.")]
+		public string Name { get; set; }
 
 		public IList<Tuple<Guid, string, string>> AvailableUsers { get; set; }
 

@@ -152,6 +152,12 @@
 		// Add the current id to the list of training type ids
 		trainingTypeIds += id + "|";
 
+		// If there is no name for the session, then add it here
+		if ($('#Name').val() == "")
+		{
+			$('#Name').val(name);
+		}
+
 		// Remove the hidden tag from the training type tag list and append the training type tag
 		$('#TrainingTypes').val(trainingTypeIds);
 		$('.training-types-list-tags').removeClass('hidden');
@@ -169,6 +175,12 @@
 
 		// Update the training type ids
 		$('#TrainingTypes').val(trainingTypeIds);
+
+		// If there is no training types, then clear the name field
+		if (trainingTypeIds == "")
+		{
+			$('#Name').val('');
+		}
 
 		// Remove the tag from the list
 		$('.training-types-list-tags').find("[data-training-type-id='" + id + "']").remove();

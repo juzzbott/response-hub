@@ -11,6 +11,8 @@ namespace Enivate.ResponseHub.Model.Training
 
 		public Guid Id { get; set; }
 
+		public string Name { get; set; }
+
 		public DateTime Created { get; set; }
 
 		public Guid GroupId { get; set; }

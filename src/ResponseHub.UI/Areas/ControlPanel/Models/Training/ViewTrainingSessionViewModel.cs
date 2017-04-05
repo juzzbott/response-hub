@@ -11,6 +11,8 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Models.Training
 
 		public Guid Id { get; set; }
 
+		public string Name { get; set; }
+
 		public DateTime SessionDate { get; set; }
 
 		public IList<TrainingType> TrainingTypes { get; set; }

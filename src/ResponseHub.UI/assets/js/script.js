@@ -157,11 +157,20 @@ var responseHub = (function () {
 
 	}
 
+	function overrideValidator() {
+		// By default validator ignores hidden fields.
+		// change the setting here to ignore nothing
+		$.validator.setDefaults({ ignore: null });
+	}
+
 	// Bind the modal
 	bindModals();
 
 	// Bind the UI
 	bindUI();
+
+	// Override the validator ignore
+	overrideValidator();
 
 	// return the response hub object
 	return {
@@ -2410,6 +2419,12 @@ responseHub.training = (function () {
 		// Add the current id to the list of training type ids
 		trainingTypeIds += id + "|";
 
+		// If there is no name for the session, then add it here
+		if ($('#Name').val() == "")
+		{
+			$('#Name').val(name);
+		}
+
 		// Remove the hidden tag from the training type tag list and append the training type tag
 		$('#TrainingTypes').val(trainingTypeIds);
 		$('.training-types-list-tags').removeClass('hidden');
@@ -2427,6 +2442,12 @@ responseHub.training = (function () {
 
 		// Update the training type ids
 		$('#TrainingTypes').val(trainingTypeIds);
+
+		// If there is no training types, then clear the name field
+		if (trainingTypeIds == "")
+		{
+			$('#Name').val('');
+		}
 
 		// Remove the tag from the list
 		$('.training-types-list-tags').find("[data-training-type-id='" + id + "']").remove();

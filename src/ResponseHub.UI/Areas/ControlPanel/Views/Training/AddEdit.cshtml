@@ -52,7 +52,7 @@
 						<option value="@trainingType.Id" data-tokens="@trainingType.Name @trainingType.ShortName" data-name="@trainingType.Name">@trainingType.Name</option>
 					}
 				</select>
-				@Html.HiddenFor(model => model.TrainingTypes)
+				@Html.HiddenFor(model => model.TrainingTypes, new { data_force_val = "true" })
 				@Html.ValidationMessageFor(model => model.TrainingTypes)
 			</div>
 		</div>
@@ -78,6 +78,16 @@
 				}
 			</div>
 		</div>
+	</div>
+
+	<div class="form-group">
+		<label for="Service">Name *</label>
+		<div class="row">
+			<div class="col-sm-8 col-md-6 col-lg-4">
+				@Html.TextBoxFor(model => model.Name, new { @class = "form-control", placeholder = "e.g. General Rescue" })
+			</div>
+		</div>
+		@Html.ValidationMessageFor(model => model.Name)
 	</div>
 
 	<div class="form-group">

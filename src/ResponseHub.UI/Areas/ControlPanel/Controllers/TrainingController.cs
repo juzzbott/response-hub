@@ -122,6 +122,7 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 					GroupId = GetControlPanelGroupId(),
 					SessionDate = model.SessionDate.ToUniversalTime(),
 					TrainingTypes = trainingTypes.Where(i => trainingTypeIds.Contains(i.Id)).ToList(),
+					Name = model.Name,
 					Description = model.Description,
 					SessionType = model.SessionType,
 					Duration = model.Duration
@@ -170,6 +171,7 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 				Id = session.Id,
 				Created = session.Created,
 				Description = session.Description,
+				Name = session.Name,
 				SessionDate = session.SessionDate,
 				SessionType = session.SessionType,
 				TrainingTypes = session.TrainingTypes,
@@ -240,6 +242,7 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 			// Create the model
 			AddEditTrainingSessionViewModel model = new AddEditTrainingSessionViewModel()
 			{
+				Name = session.Name,
 				Description = session.Description,
 				SessionDate = session.SessionDate,
 				SessionType = session.SessionType,
@@ -310,6 +313,7 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 				// Set the session details
 				session.SessionDate = model.SessionDate.ToUniversalTime();
 				session.TrainingTypes = trainingTypes.Where(i => trainingTypeIds.Contains(i.Id)).ToList();
+				session.Name = model.Name;
 				session.Description = model.Description;
 				session.SessionType = model.SessionType;
 				session.Duration = model.Duration;
