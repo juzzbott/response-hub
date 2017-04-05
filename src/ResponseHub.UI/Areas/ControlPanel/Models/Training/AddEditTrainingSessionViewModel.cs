@@ -18,7 +18,7 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Models.Training
 		public DateTime SessionDate { get; set; }
 
 		[Required(ErrorMessage = "You must select a training type.")]
-		public TrainingType TrainingType { get; set; }
+		public Guid TrainingTypeId { get; set; }
 
 		public IList<SelectListItem> AvailableTrainingTypes { get; set; }
 
@@ -43,12 +43,6 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Models.Training
 		public AddEditTrainingSessionViewModel()
 		{
 			AvailableTrainingTypes = new List<SelectListItem>();
-			AvailableTrainingTypes.Add(new SelectListItem() { Text = "Please select...", Value="" });
-			foreach (TrainingType trainingType in Enum.GetValues(typeof(TrainingType)))
-			{
-				AvailableTrainingTypes.Add(new SelectListItem() { Value = ((int)trainingType).ToString(), Text = trainingType.GetEnumDescription() });
-			}
-
 			AvailableUsers = new List<Tuple<Guid, string, string>>();
 		}
 	}

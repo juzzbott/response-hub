@@ -7,35 +7,18 @@ using System.Threading.Tasks;
 
 namespace Enivate.ResponseHub.Model.Training
 {
-	public enum TrainingType
+	public class TrainingType : IEntity
 	{
 
-		[Description("General")]
-		General = 1,
+		public Guid Id { get; set; }
 
-		[Description("General rescue")]
-		GeneralRescue = 2,
+		public string Name { get; set; }
 
-		[Description("Road rescue")]
-		RoadRescue = 3,
+		public string ShortName { get; set; }
 
-		[Description("Land search")]
-		LandSearch = 4,
+		public string Description { get; set; }
 
-		[Description("Rescue boat")]
-		RescueBoat = 5,
-
-		[Description("Chainsaws")]
-		Chainsaws = 6,
-
-		[Description("Storm & water")]
-		StormWater = 7,
-
-		[Description("Communications")]
-		Communications = 8,
-
-		[Description("Other")]
-		Other = 99
+		public short SortOrder { get; set; }
 
 	}
 }

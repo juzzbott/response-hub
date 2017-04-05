@@ -1,7 +1,7 @@
 ﻿@model Enivate.ResponseHub.UI.Areas.ControlPanel.Models.Training.ViewTrainingSessionViewModel
 
 @{
-    ViewBag.Title = String.Format("{0} training", Html.EnumDescription(Model.TrainingType));
+    ViewBag.Title = String.Format("{0} training", Model.TrainingType.Name);
     Layout = "~/Areas/ControlPanel/Views/Shared/_Layout.cshtml";
 }
 
@@ -21,7 +21,7 @@
 
 <p>
 	<strong>Training type:</strong><br />
-	@Html.EnumDescription(Model.TrainingType)
+	@Model.TrainingType.Name
 </p>
 
 <p>

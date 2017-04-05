@@ -50,3 +50,20 @@ db.agencies.insert({ _id: UUID("70a5caf80daa44889ee4e752bb287c13"), Name: "Count
 db.agencies.insert({ _id: UUID("0038c291b483471c9096c2236794ef40"), Name: "Parks Victoria" });
 db.agencies.insert({ _id: UUID("d9273f4fe1224ba6bb14f0d88bc9a86d"), Name: "Victoria Police" });
 db.agencies.insert({ _id: UUID("cdaad166ee3a439aa2d3bf52b4fa3f02"), Name: "DELWP" });
+
+
+// Training Types
+db.training_types.remove({});
+db.training_types.insert({ _id: UUID("43a807c3ab374277b5a702a3c7ce0c0e"), Name: "General", ShortName: "General", Description: "", SortOrder: 0 });
+db.training_types.insert({ _id: UUID("758aa005fd70499489df4c44d03c7ed4"), Name: "General Rescue", ShortName: "GR", Description: "", SortOrder: 0 });
+db.training_types.insert({ _id: UUID("de931d1203b34947b5a38cfa953950d9"), Name: "Road Rescue", ShortName: "RCR", Description: "", SortOrder: 0 });
+db.training_types.insert({ _id: UUID("e81c1348135340289d4727b9022dac83"), Name: "Land Search", ShortName: "Land search", Description: "", SortOrder: 0 });
+db.training_types.insert({ _id: UUID("0fb236beec7649308a5aec7e403c5718"), Name: "Crewperson / Coxswain", ShortName: "Rescue boat", Description: "", SortOrder: 0 });
+db.training_types.insert({ _id: UUID("44e1c282d4e14bbd95c8478dce366eee"), Name: "Chainsaw", ShortName: "Chainsaw", Description: "", SortOrder: 0 });
+db.training_types.insert({ _id: UUID("0dab5e17462549f8aa414f7022b27177"), Name: "Storm & Water", ShortName: "Storm", Description: "", SortOrder: 0 });
+db.training_types.insert({ _id: UUID("655acf0c2dd54326b1af4ad10f2bb59c"), Name: "Communications", ShortName: "Comms", Description: "", SortOrder: 0 });
+db.training_types.insert({ _id: UUID("3c651d8b0c7e4bfbbcdd9417b01a30f8"), Name: "Safe Work at Height System", ShortName: "SWAHS", Description: "", SortOrder: 0 });
+db.training_types.insert({ _id: UUID("a67d234998a441ba88dd43a998f0e294"), Name: "First Aid", ShortName: "First aid", Description: "", SortOrder: 0 });
+db.training_types.insert({ _id: UUID("b3146a2793984118b555a3019954e307"), Name: "Casualty Handling", ShortName: "Cas handling", Description: "", SortOrder: 0 });
+db.training_types.insert({ _id: UUID("ea02f1e8bceb49998d807dd99ee49b30"), Name: "Four Wheel Drive", ShortName: "4x4", Description: "", SortOrder: 0 });
+db.training_types.insert({ _id: UUID("ae671d0e0b12459ea218017d10b3e5d8"), Name: "Other", ShortName: "Other", Description: "", SortOrder: 99 });

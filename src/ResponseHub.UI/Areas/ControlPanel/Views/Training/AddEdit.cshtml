@@ -31,10 +31,10 @@
 		<label for="Service">Training type *</label>
 		<div class="row">
 			<div class="col-sm-8 col-md-6 col-lg-4">
-				@Html.DropDownListFor(model => model.TrainingType, Model.AvailableTrainingTypes, new { @class = "form-control" })
+				@Html.DropDownListFor(model => model.TrainingTypeId, Model.AvailableTrainingTypes, new { @class = "form-control" })
 			</div>
 		</div>
-		@Html.ValidationMessageFor(model => model.TrainingType)
+		@Html.ValidationMessageFor(model => model.TrainingTypeId)
 	</div>
 
 	<div class="form-group">

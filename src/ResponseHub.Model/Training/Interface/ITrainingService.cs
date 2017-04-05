@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Enivate.ResponseHub.Model.Training.Interface
 {
-	public interface ITrainingSessionService
+	public interface ITrainingService
 	{
 
 		Task CreateTrainingSession(TrainingSession trainingSession);
@@ -15,9 +15,11 @@ namespace Enivate.ResponseHub.Model.Training.Interface
 
 		Task<IList<TrainingSession>> GetTrainingSessionsForGroup(Guid groupId, int limit);
 
-		Task<TrainingSession> GetById(Guid id);
+		Task<TrainingSession> GetTrainingSessionById(Guid id);
 
 		Task SaveTrainingSession(TrainingSession trainingSession);
+
+		Task<IList<TrainingType>> GetAllTrainingTypes();
 
 	}
 }

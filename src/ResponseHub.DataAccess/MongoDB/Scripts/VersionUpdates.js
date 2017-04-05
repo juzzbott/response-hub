@@ -8,3 +8,6 @@ db.job_messages.update({ JobNumber: "" }, { $set: { Type: 2 } }, { multi: 1 })
 
 // Set the user status to 2 - Active
 db.users.update({}, { $set: { Status: 2 } }, { multi: true })
+
+// Update the training session types - General
+db.training_sessions.update({}, { $unset: { TrainingType: 1 }, $set: { TrainingTypeId: BinData(4, "Q6gHw6s3Qne1pwKjx84MDg==") } }, { multi: true })

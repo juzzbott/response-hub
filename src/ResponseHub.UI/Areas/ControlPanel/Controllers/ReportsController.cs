@@ -33,37 +33,10 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 	public class ReportsController : BaseControlPanelController
 	{
 
-		protected ISignInEntryService SignInService
-		{
-			get
-			{
-				return ServiceLocator.Get<ISignInEntryService>();
-			}
-		}
-
-		protected IReportService ReportService
-		{
-			get
-			{
-				return ServiceLocator.Get<IReportService>();
-			}
-		}
-
-		public ITrainingSessionService TrainingSessionService
-		{
-			get
-			{
-				return ServiceLocator.Get<ITrainingSessionService>();
-			}
-		}
-
-		protected IJobMessageService JobMessageService
-		{
-			get
-			{
-				return ServiceLocator.Get<IJobMessageService>();
-			}
-		}
+		protected ISignInEntryService SignInService = ServiceLocator.Get<ISignInEntryService>();
+		protected IReportService ReportService = ServiceLocator.Get<IReportService>();
+		public ITrainingService TrainingService = ServiceLocator.Get<ITrainingService>();
+		protected IJobMessageService JobMessageService = ServiceLocator.Get<IJobMessageService>();
 
 		[Route]
 		// GET: ControlPanel/DataExport
@@ -229,16 +202,19 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 		private async Task<TrainingReportViewModel> GetTrainingReportModel(Guid groupId, DateTime dateFrom, DateTime dateTo)
 		{
 			// Get the training sessions
-			IList<TrainingSession> trainingSessions = await TrainingSessionService.GetTrainingSessionsForGroup(groupId);
+			IList<TrainingSession> trainingSessions = await TrainingService.GetTrainingSessionsForGroup(groupId);
 
 			// Get the members for the group
 			IList<IdentityUser> groupMembers = await GroupService.GetUsersForGroup(groupId);
 
+			// Get the training types.
+			IList<TrainingType> trainingTypes = await TrainingService.GetAllTrainingTypes();
+
 			// Get the aggregate chart data
 			IDictionary<string, int> aggregate = new Dictionary<string, int>();
-			foreach (TrainingType trainingType in Enum.GetValues(typeof(TrainingType)))
+			foreach (TrainingType trainingType in trainingTypes)
 			{
-				aggregate.Add(trainingType.GetEnumDescription(), trainingSessions.Count(i => i.TrainingType == trainingType));
+				aggregate.Add(trainingType.ShortName, trainingSessions.Count(i => i.TrainingType == trainingType));
 			}
 
 			// Build the chart data
@@ -281,14 +257,14 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 				}
 
 				// Get the training types
-				foreach (TrainingType trainingType in Enum.GetValues(typeof(TrainingType)))
+				foreach (TrainingType trainingType in trainingTypes)
 				{
 
 					// Get the total amount of training sessions for each session
-					memberTrainingRecord.TrainingSessions.Add(trainingType, userSessions.Where(i => i.TrainingType == trainingType).Count());
+					memberTrainingRecord.TrainingSessions.Add(trainingType.ShortName, userSessions.Where(i => i.TrainingType == trainingType).Count());
 
 					// Get the dates the user was training for.
-					memberTrainingRecord.TrainingDates.Add(trainingType, userSessions.Where(i => i.TrainingType == trainingType).Select(i => i.SessionDate).ToList());
+					memberTrainingRecord.TrainingDates.Add(trainingType.ShortName, userSessions.Where(i => i.TrainingType == trainingType).Select(i => i.SessionDate).ToList());
 				}
 
 				// Add to the list of members
@@ -306,9 +282,9 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 			};
 
 			// Get the training types
-			foreach (TrainingType trainingType in Enum.GetValues(typeof(TrainingType)))
+			foreach (TrainingType trainingType in trainingTypes)
 			{
-				model.TrainingTypes.Add(trainingType, trainingType.GetEnumDescription());
+				model.TrainingTypes.Add(trainingType, trainingType.ShortName);
 			}
 
 			return model;

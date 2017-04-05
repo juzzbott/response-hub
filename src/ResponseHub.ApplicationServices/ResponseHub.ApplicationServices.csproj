@@ -108,7 +108,7 @@
     <Compile Include="RadarImageService.cs" />
     <Compile Include="ReportService.cs" />
     <Compile Include="SignInEntryService.cs" />
-    <Compile Include="TrainingSessionService.cs" />
+    <Compile Include="TrainingService.cs" />
     <Compile Include="UserService.cs" />
     <Compile Include="PagerMessageService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
