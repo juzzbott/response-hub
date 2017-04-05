@@ -75,6 +75,8 @@ namespace Enivate.ResponseHub.ApplicationServices
 			await _sessionRepository.Save(trainingSession);
 		}
 
+		#region Training Types
+
 		/// <summary>
 		/// Gets a list of all the training types in the database.
 		/// </summary>
@@ -100,5 +102,33 @@ namespace Enivate.ResponseHub.ApplicationServices
 			// return the training types
 			return trainingTypes;
 		}
+
+		/// <summary>
+		/// Finds the training type based on the id.
+		/// </summary>
+		/// <param name="id">The Id of the training type to find. </param>
+		/// <returns>The training type if found. </returns>
+		public async Task<TrainingType> GetTrainingTypeById(Guid id)
+		{
+			// Find by the id
+			return await _trainingTypeRepository.GetById(id);
+		}
+
+		/// <summary>
+		/// Saves the training type to the database. If the training type does not already exist, it will be created. 
+		/// </summary>
+		/// <param name="trainingType">The training type to save to the database.</param>
+		/// <returns></returns>
+		public async Task SaveTrainingType(TrainingType trainingType)
+		{
+			// save the training type
+			await _trainingTypeRepository.Save(trainingType);
+
+			// Clear the training types from the cache
+			CacheManager.RemoveItem(AllTrainingTypesCacheKey);
+		}
+
+		#endregion
+
 	}
 }

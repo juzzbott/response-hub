@@ -19,7 +19,15 @@ namespace Enivate.ResponseHub.Model.Training.Interface
 
 		Task SaveTrainingSession(TrainingSession trainingSession);
 
+		#region Training Types
+
 		Task<IList<TrainingType>> GetAllTrainingTypes();
+
+		Task<TrainingType> GetTrainingTypeById(Guid id);
+
+		Task SaveTrainingType(TrainingType trainingType);
+
+		#endregion
 
 	}
 }

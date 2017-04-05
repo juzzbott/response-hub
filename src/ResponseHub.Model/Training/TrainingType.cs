@@ -20,5 +20,10 @@ namespace Enivate.ResponseHub.Model.Training
 
 		public short SortOrder { get; set; }
 
+		public TrainingType()
+		{
+			Id = Guid.NewGuid();
+		}
+
 	}
 }

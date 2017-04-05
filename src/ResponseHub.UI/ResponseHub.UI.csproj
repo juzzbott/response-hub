@@ -199,6 +199,8 @@
     <Compile Include="Areas\Admin\Controllers\BaseAdminController.cs" />
     <Compile Include="Areas\Admin\Controllers\CapcodesController.cs" />
     <Compile Include="Areas\Admin\Controllers\GroupsController.cs" />
+    <Compile Include="Areas\Admin\Controllers\TrainingTypesController.cs" />
+    <Compile Include="Areas\Admin\Models\TrainingTypes\AddEditTrainingTypeViewModel.cs" />
     <Compile Include="Areas\ControlPanel\Controllers\GroupSelectionController.cs" />
     <Compile Include="Areas\Admin\Controllers\HomeController.cs" />
     <Compile Include="Areas\Admin\Controllers\LogViewerController.cs" />
@@ -578,6 +580,8 @@
     <Content Include="Areas\ControlPanel\Views\ResendActivationEmail\Complete.cshtml" />
     <Content Include="Areas\Admin\Views\Capcodes\CapcodesExist.cshtml" />
     <Content Include="Views\SignIn\SignOut.cshtml" />
+    <Content Include="Areas\Admin\Views\TrainingTypes\Index.cshtml" />
+    <Content Include="Areas\Admin\Views\TrainingTypes\AddEdit.cshtml" />
     <None Include="Web.Staging.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
