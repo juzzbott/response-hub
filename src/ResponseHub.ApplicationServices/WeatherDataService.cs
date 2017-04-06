@@ -96,7 +96,7 @@ namespace Enivate.ResponseHub.ApplicationServices
 
 			// Find the location info based on the radar code
 			WeatherLocationElement locationElement = null;
-			foreach(WeatherLocationElement element in ConfigurationSettings.WeatherData.Locations)
+			foreach(WeatherLocationElement element in ResponseHubSettings.WeatherData.Locations)
 			{
 				if (element.RainRadarProductId.Equals(productId, StringComparison.CurrentCultureIgnoreCase) || element.WindRadarProductId.Equals(productId, StringComparison.CurrentCultureIgnoreCase))
 				{
@@ -132,7 +132,7 @@ namespace Enivate.ResponseHub.ApplicationServices
 		public void DownloadImageFileFromFtp(string imageFilename, string cacheFilename)
 		{
 			// Get the ftp locaion from the configuration
-			string ftpFileLocation = ConfigurationSettings.WeatherData.RadarFtpLocation;
+			string ftpFileLocation = ResponseHubSettings.WeatherData.RadarFtpLocation;
 			string ftpFilename = String.Format("{0}{1}", ftpFileLocation, imageFilename);
 
 			FtpWebRequest request = (FtpWebRequest)FtpWebRequest.Create(ftpFilename);
@@ -200,7 +200,7 @@ namespace Enivate.ResponseHub.ApplicationServices
 		{
 
 			// Get the ftp locaion from the configuration
-			string observationLocation = ConfigurationSettings.WeatherData.ObservationLocation;
+			string observationLocation = ResponseHubSettings.WeatherData.ObservationLocation;
 			string productId = observationId.Substring(0, observationId.IndexOf('.'));
 			string requestUrl = String.Format("{0}/{1}/{2}.json", observationLocation, productId, observationId);
 
@@ -309,7 +309,7 @@ namespace Enivate.ResponseHub.ApplicationServices
 		{
 
 			// Get the ftp locaion from the configuration
-			string ftpLocation = ConfigurationSettings.WeatherData.RadarFtpLocation;
+			string ftpLocation = ResponseHubSettings.WeatherData.RadarFtpLocation;
 
 			FtpWebRequest request = (FtpWebRequest)FtpWebRequest.Create(ftpLocation);
 			request.Method = WebRequestMethods.Ftp.ListDirectory;
@@ -363,7 +363,7 @@ namespace Enivate.ResponseHub.ApplicationServices
 		private static bool IsCacheFileValid(string filename)
 		{
 			// Get the cache duration
-			TimeSpan cacheDuration = ConfigurationSettings.WeatherData.RadarCacheDuration;
+			TimeSpan cacheDuration = ResponseHubSettings.WeatherData.RadarCacheDuration;
 
 			// If the file exists, and it was created within the cachefile timeout period, then the feedSource should be the file instead
 			if (File.Exists(filename))
@@ -411,7 +411,7 @@ namespace Enivate.ResponseHub.ApplicationServices
 		private string GetCacheDirectory(string locationCode)
 		{
 			// Get the cache directory
-			string cacheDirectory = ConfigurationSettings.WeatherData.RadarCacheDirectory;
+			string cacheDirectory = ResponseHubSettings.WeatherData.RadarCacheDirectory;
 
 			// If the http context exists, use the map path, otherwise use the standard file path mapping
 			if (HttpContext.Current != null)

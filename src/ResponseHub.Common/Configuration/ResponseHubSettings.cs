@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Enivate.ResponseHub.Common.Configuration
 {
-	public class ConfigurationSettings
+	public class ResponseHubSettings
 	{
 
 		private const string WarningSectionKey = "warnings";

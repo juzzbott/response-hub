@@ -76,7 +76,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Configuration\WarningElementCollection.cs" />
-    <Compile Include="Configuration\ConfigurationSettings.cs" />
+    <Compile Include="Configuration\ResponseHubSettings.cs" />
     <Compile Include="Configuration\WarningsConfigurationSection.cs" />
     <Compile Include="Configuration\WarningSourceElement.cs" />
     <Compile Include="Configuration\WeatherDataConfigurationSection.cs" />
