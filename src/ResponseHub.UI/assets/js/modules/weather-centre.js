@@ -73,7 +73,7 @@
 
 		setTimeout(function () {
 			$('.radar-image.radar-loop').css('display', 'block');
-			$('p.radar-loading').remove();
+			$('.radar-loading').remove();
 		}, 2000);
 
 	}

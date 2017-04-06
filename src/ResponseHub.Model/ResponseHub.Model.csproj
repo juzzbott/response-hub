@@ -126,6 +126,7 @@
     <Compile Include="Warnings\Interface\IWarningService.cs" />
     <Compile Include="Warnings\IWarning.cs" />
     <Compile Include="Warnings\WarningSource.cs" />
+    <Compile Include="WeatherData\ObservationData.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

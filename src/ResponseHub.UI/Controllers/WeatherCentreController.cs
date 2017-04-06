@@ -11,6 +11,7 @@ using Enivate.ResponseHub.Model.Warnings.Interface;
 using Enivate.ResponseHub.UI.Models.WeatherCentre;
 using Enivate.ResponseHub.Model.WeatherData.Interface;
 using Enivate.ResponseHub.Common.Configuration;
+using Enivate.ResponseHub.Model.WeatherData;
 
 namespace Enivate.ResponseHub.UI.Controllers
 {
@@ -49,7 +50,7 @@ namespace Enivate.ResponseHub.UI.Controllers
 			{
 				RadarBaseCode = location.BaseRadarProductId,
 				RadarCode = location.RainRadarProductId,
-				RadarImageFiles = WeatherDataService.GetRadarImagesForProduct(location.RainRadarProductId)
+				RadarImageFiles = WeatherDataService.GetRadarImagesForProduct(location.RainRadarProductId, location.Code)
 			};
 			model.RainRadar = rainRadar;
 
@@ -58,10 +59,12 @@ namespace Enivate.ResponseHub.UI.Controllers
 			{
 				RadarBaseCode = location.BaseRadarProductId,
 				RadarCode = location.WindRadarProductId,
-				RadarImageFiles = WeatherDataService.GetRadarImagesForProduct(location.WindRadarProductId)
+				RadarImageFiles = WeatherDataService.GetRadarImagesForProduct(location.WindRadarProductId, location.Code)
 			};
 			model.WindRadar = windRadar;
 
+			// Get the observation data
+			model.ObservationData = WeatherDataService.GetObservationData(location.ObservationId, location.Code).Take(10).ToList();
 
 			return View(model);
         }

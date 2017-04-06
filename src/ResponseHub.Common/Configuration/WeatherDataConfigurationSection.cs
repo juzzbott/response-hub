@@ -13,6 +13,7 @@ namespace Enivate.ResponseHub.Common.Configuration
 		private const string RadarCacheDirectoryKey = "radarCacheDirectory";
 		private const string RadarCacheDurationKey = "radarCacheDuration";
 		private const string RadarFtpLocationKey = "radarFtpLocation";
+		private const string ObservationLocationKey = "observationLocation";
 
 		[ConfigurationProperty("", IsRequired = true, IsDefaultCollection = true)]
 		[ConfigurationCollection(typeof(WeatherLocationElementCollection), AddItemName = AddItemNameKey)]
@@ -64,6 +65,19 @@ namespace Enivate.ResponseHub.Common.Configuration
 			set
 			{
 				base[RadarFtpLocationKey] = value;
+			}
+		}
+
+		[ConfigurationProperty(ObservationLocationKey, IsRequired = true)]
+		public string ObservationLocation
+		{
+			get
+			{
+				return (string)base[ObservationLocationKey];
+			}
+			set
+			{
+				base[ObservationLocationKey] = value;
 			}
 		}
 	}
