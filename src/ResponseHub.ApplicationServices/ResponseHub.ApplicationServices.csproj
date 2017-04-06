@@ -105,7 +105,7 @@
     <Compile Include="JobMessageService.cs" />
     <Compile Include="MailService.cs" />
     <Compile Include="PdfGenerationService.cs" />
-    <Compile Include="RadarImageService.cs" />
+    <Compile Include="WeatherDataService.cs" />
     <Compile Include="ReportService.cs" />
     <Compile Include="SignInEntryService.cs" />
     <Compile Include="TrainingService.cs" />

@@ -17,6 +17,7 @@ using Enivate.ResponseHub.Model.Attachments;
 using Enivate.ResponseHub.Logging;
 using Enivate.ResponseHub.Model.Messages;
 using System.Text.RegularExpressions;
+using Enivate.ResponseHub.Model.WeatherData.Interface;
 
 namespace Enivate.ResponseHub.UI.Controllers
 {
@@ -27,6 +28,7 @@ namespace Enivate.ResponseHub.UI.Controllers
 
 		protected readonly IJobMessageService JobMessageService = ServiceLocator.Get<IJobMessageService>();
 		protected readonly IAttachmentService AttachmentService = ServiceLocator.Get<IAttachmentService>();
+		protected readonly IWeatherDataService WeatherDataService = ServiceLocator.Get<IWeatherDataService>();
 
 		[AllowAnonymous]
 		[Route("mapbox-static/{lat:double},{lng:double},{zoom:int}/{size}")]
@@ -345,5 +347,25 @@ namespace Enivate.ResponseHub.UI.Controllers
 
 		}
 
-    }
+		#region WeatherData 
+
+		[Route("weather-data/radar-image/{filename}")]
+		public ActionResult RadarImage(string filename)
+		{
+			// If the radar image is null or empty, then throw exception
+			if (String.IsNullOrEmpty(filename))
+			{
+				throw new HttpException((int)HttpStatusCode.NotFound, "Media not found.");
+			}
+
+			// Get the radar image bytes
+			byte[] radarImageBytes = WeatherDataService.GetRadarImageBytes(filename);
+
+			// return the file.
+			return File(radarImageBytes, "image/png");
+		}
+
+		#endregion
+
+	}
 }
