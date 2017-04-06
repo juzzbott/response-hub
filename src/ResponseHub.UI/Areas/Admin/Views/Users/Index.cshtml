@@ -41,7 +41,7 @@
 			foreach (var user in Model)
 			{
 				<tr>
-					<td><a href="/profile/@user.Id">@user.FullName</a></td>
+					<td><a href="/admin/users/@user.Id">@user.FullName</a></td>
 					<td>@user.EmailAddress</td>
 					<td>@(user.IsSystemAdmin ? "System Administrator" : (user.IsGroupAdmin ? "Group Administrator" : "General User"))</td>
 					<td>

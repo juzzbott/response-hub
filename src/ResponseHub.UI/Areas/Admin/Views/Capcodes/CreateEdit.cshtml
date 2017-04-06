@@ -32,7 +32,7 @@ else
 	</div>
 
 	<div class="form-group">
-		<label for="Name">Short name *</label>
+		<label for="ShortName">Short name *</label>
 		<div class="row">
 			<div class="col-sm-8 col-md-6 col-lg-4">
 				@Html.TextBoxFor(model => model.ShortName, new { @class = "form-control", placeholder = "e.g. STATE_INFO" })
@@ -42,7 +42,7 @@ else
 	</div>
 
 	<div class="form-group">
-		<label for="Name">Capcode *</label>
+		<label for="CapcodeAddress">Capcode *</label>
 		<div class="row">
 			<div class="col-sm-8 col-md-6 col-lg-4">
 				@Html.TextBoxFor(model => model.CapcodeAddress, new { @class = "form-control", placeholder = "00000xxx", maxlength = "9" })
@@ -62,9 +62,9 @@ else
 	</div>
 
 	<div class="form-group">
-		<label for="Service">Group use only *</label>
+		<label>Group use only *</label>
 		<div class="row">
-			<div class="col-sm-8 col-md-6 col-lg-4">
+			<div class="col-sm-8 col-md-6 col-lg-4 graphic-checkbox">
 				<div class="checkbox">
 					<label>
 						@Html.CheckBoxFor(i => i.IsGroupCapcode) Is group capcode
@@ -101,8 +101,6 @@ else
 	</div>
 
 </form>
-
-
 
 <div class="modal fade delete-capcode" tabindex="-1" role="dialog" id="confirm-delete">
 	<div class="modal-dialog">

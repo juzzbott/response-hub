@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 using Enivate.ResponseHub.Model.Spatial;
+using Enivate.ResponseHub.Model.Attachments;
 
 namespace Enivate.ResponseHub.Model.Messages
 {
@@ -44,6 +45,7 @@ namespace Enivate.ResponseHub.Model.Messages
 
 			Notes = new List<JobNote>();
 			ProgressUpdates = new List<MessageProgress>();
+
 			AttachmentIds = new List<Guid>();
 		}
 

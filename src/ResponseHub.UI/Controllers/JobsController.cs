@@ -25,9 +25,7 @@ namespace Enivate.ResponseHub.UI.Controllers
 
 	[RoutePrefix("jobs")]
     public class JobsController : BaseJobsMessagesController
-	{
-
-		
+	{	
 
 		// GET: Jobs
 		[Route]
@@ -52,8 +50,7 @@ namespace Enivate.ResponseHub.UI.Controllers
 		[Route("{id:guid}")]
 		public async Task<ActionResult> ViewJob(Guid id)
 		{
-
-			
+						
 			// Get the job message from the database
 			JobMessage job = await JobMessageService.GetById(id);
 
@@ -123,6 +120,31 @@ namespace Enivate.ResponseHub.UI.Controllers
 				return View(new object());
 
 			}
+		}
+
+		[Route("{jobId:guid}/remove-attachment/{attachmentId:guid}")]
+		public async Task<ActionResult> RemoveAttachment(Guid jobId, Guid attachmentId)
+		{
+			// Get the job message from the database
+			JobMessage job = await JobMessageService.GetById(jobId);
+
+			// if the job is null, throw 404
+			if (job == null)
+			{
+				throw new HttpException((int)HttpStatusCode.NotFound, "Not found.");
+			}
+
+			// TODO: Ensure the user can delete this attachment
+
+			// Remove the attachment from the job
+			await JobMessageService.RemoveAttachmentFromJob(jobId, attachmentId);
+
+			// Clear the temp attachment files
+			AttachmentService.ClearAttachmentCache(attachmentId);
+
+			// redirect back to the job
+			return new RedirectResult(String.Format("/jobs/{0}?attachment_removed=1", jobId));
+
 		}
 	}
 }

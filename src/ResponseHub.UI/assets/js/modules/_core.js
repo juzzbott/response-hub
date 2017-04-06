@@ -157,11 +157,20 @@
 
 	}
 
+	function overrideValidator() {
+		// By default validator ignores hidden fields.
+		// change the setting here to ignore nothing
+		$.validator.setDefaults({ ignore: null });
+	}
+
 	// Bind the modal
 	bindModals();
 
 	// Bind the UI
 	bindUI();
+
+	// Override the validator ignore
+	overrideValidator();
 
 	// return the response hub object
 	return {

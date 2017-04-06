@@ -1,12 +1,15 @@
-﻿using System;
+﻿	using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Enivate.ResponseHub.Model.Training
+using Enivate.ResponseHub.Model;
+using Enivate.ResponseHub.Model.Training;
+
+namespace Enivate.ResponseHub.DataAccess.MongoDB.DataObjects.Training
 {
-	public class TrainingSession : IEntity
+	public class TrainingSessionDto : IEntity
 	{
 
 		public Guid Id { get; set; }
@@ -19,7 +22,7 @@ namespace Enivate.ResponseHub.Model.Training
 
 		public DateTime SessionDate { get; set; }
 
-		public IList<TrainingType> TrainingTypes { get; set; }
+		public IList<Guid> TrainingTypeIds { get; set; }
 
 		public IList<Guid> Members { get; set; }
 
@@ -31,12 +34,12 @@ namespace Enivate.ResponseHub.Model.Training
 
 		public decimal Duration { get; set; }
 
-		public TrainingSession()
+		public TrainingSessionDto()
 		{
 			Id = Guid.NewGuid();
 			Members = new List<Guid>();
 			Trainers = new List<Guid>();
-			TrainingTypes = new List<TrainingType>();
+			TrainingTypeIds = new List<Guid>();
 		}
 
 	}

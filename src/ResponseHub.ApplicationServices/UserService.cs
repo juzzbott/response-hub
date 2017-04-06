@@ -517,6 +517,20 @@ namespace Enivate.ResponseHub.ApplicationServices
 			ClearUserFromCache(userId);
 		}
 
+		/// <summary>
+		/// Updates the first name and surname for the specified account. 
+		/// </summary>
+		/// <param name="userId">The id of the user to update the first name and surname for. </param>
+		/// <param name="firstName">The new first name. </param>
+		/// <param name="surname">The new surname.</param>
+		public async Task UpdateAccountDetails(Guid userId, string firstName, string surname, string emailAddress, UserProfile profile)
+		{
+			await _repository.UpdateAccountDetails(userId, firstName, surname, emailAddress, profile);
+
+			// Clear the cache object
+			ClearUserFromCache(userId);
+		}
+
 		#endregion
 
 		#region Clear cache methods

@@ -1,0 +1,64 @@
+﻿@model Enivate.ResponseHub.UI.Areas.Admin.Models.TrainingTypes.AddEditTrainingTypeViewModel
+
+@{
+    ViewBag.Title = Model.EditingMode ? "Edit training type" : "Add new training type";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<h1>@ViewBag.Title</h1>
+
+@if (Model.EditingMode)
+{
+	<p>Edit the details of the training type.</p>
+}
+else
+{
+	<p>Create a new training type. Training types can be used for reporting different training sessions.</p>
+}
+
+<form action="@Request.Url.LocalPath" method="post">
+
+	@Html.AntiForgeryToken()
+
+	@Html.ValidationSummary(true)
+
+	<div class="form-group">
+		<label for="Name">Name *</label>
+		<div class="row">
+			<div class="col-sm-8 col-md-6 col-lg-4">
+				@Html.TextBoxFor(model => model.Name, new { @class = "form-control", placeholder = "e.g. Road Crash Rescue" })
+			</div>
+		</div>
+		@Html.ValidationMessageFor(model => model.Name)
+	</div>
+
+	<div class="form-group">
+		<label for="ShortName">Short name *</label>
+		<div class="row">
+			<div class="col-sm-8 col-md-6 col-lg-4">
+				@Html.TextBoxFor(model => model.ShortName, new { @class = "form-control", placeholder = "e.g. RCR" })
+			</div>
+		</div>
+		@Html.ValidationMessageFor(model => model.ShortName)
+	</div>
+
+	<div class="form-group">
+		<label for="Description">Description</label>
+		<div class="row">
+			<div class="col-sm-8 col-md-6 col-lg-4">
+				@Html.TextAreaFor(model => model.Description, new { @class = "form-control", rows = "4" })
+			</div>
+		</div>
+	</div>
+
+	@if (Model.EditingMode)
+	{
+		<button type="submit" class="btn btn-primary">Save training type</button>
+	}
+	else
+	{
+		<button type="submit" class="btn btn-primary">Create training type</button>
+	}
+	<a href="/admin/training-types" class="btn btn-link">Cancel</a>
+
+</form>

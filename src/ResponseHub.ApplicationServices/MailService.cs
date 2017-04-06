@@ -117,5 +117,24 @@ namespace Enivate.ResponseHub.ApplicationServices
 
 		}
 
+		public async Task SendAccountEmailChangedEmail(IdentityUser user, string oldEmailAddress)
+		{
+			// Create the tuple for the to override
+			Tuple<string, string> to = new Tuple<string, string>(user.EmailAddress, user.FullName);
+
+			// Create the replacements
+			IDictionary<string, string> replacements = new Dictionary<string, string>();
+			replacements.Add("#BaseUrl#", _baseUrl);
+			replacements.Add("#FirstName#", user.FirstName);
+			replacements.Add("#NewEmailAddress#", user.EmailAddress);
+			replacements.Add("#OldEmailAddress#", oldEmailAddress);
+			replacements.Add("#DateStamp#", DateTime.Now.ToString("HH:mm d MMMM, yyyy"));
+
+			// Create the mail provider and send the message
+			MailProvider mailProvider = new MailProvider();
+			await mailProvider.SendMailMessage(MailTemplates.EmailAddressChanged, replacements, to, null);
+
+		}
+
 	}
 }
