@@ -27,14 +27,67 @@
 		</div>
 	</div>
 
+	<script language="javascript">
+		var trainingTypes = [
+
+			@for(int i = 0; i < Model.AvailableTrainingTypes.Count; i++)
+			{
+				@Html.Raw(String.Format("{0}{{ \"id\": \"{1}\", \"name\": \"{2}\" }}",
+					 i != 0 ? ", " : "",
+					 Model.AvailableTrainingTypes[i].Id,
+					 Model.AvailableTrainingTypes[i].Name));
+			}
+
+		];
+	</script>
+
 	<div class="form-group">
-		<label for="Service">Training type *</label>
+		<label>Training types *</label>
 		<div class="row">
 			<div class="col-sm-8 col-md-6 col-lg-4">
-				@Html.DropDownListFor(model => model.TrainingType, Model.AvailableTrainingTypes, new { @class = "form-control" })
+				<select id="AvailableTrainingTypes" class="form-control training-types-selection selectpicker" data-live-search="true">
+					<option value="">Select training type...</option>
+					@foreach (var trainingType in Model.AvailableTrainingTypes)
+					{
+						<option value="@trainingType.Id" data-tokens="@trainingType.Name @trainingType.ShortName" data-name="@trainingType.Name">@trainingType.Name</option>
+					}
+				</select>
+				@Html.HiddenFor(model => model.TrainingTypes, new { data_force_val = "true" })
+				@Html.ValidationMessageFor(model => model.TrainingTypes)
 			</div>
 		</div>
-		@Html.ValidationMessageFor(model => model.TrainingType)
+		<div class="row">
+			<div class="col-lg-10">
+				@if (String.IsNullOrEmpty(Model.TrainingTypes) || Model.TrainingTypes == ",")
+				{
+					<div class="training-types-list-tags list-tags hidden">
+					</div>
+				}
+				else
+				{
+					<div class="training-types-list-tags list-tags">
+						@foreach (string trainingTypeId in Model.TrainingTypes.Split(new char[] { '|' }, StringSplitOptions.RemoveEmptyEntries))
+						{
+							var trainingType = Model.AvailableTrainingTypes.FirstOrDefault(i => i.Id.ToString().ToLower() == trainingTypeId.ToLower());
+							if (trainingType != null)
+							{
+								<span class="label label-primary" data-training-type-id="@trainingType.Id">@trainingType.Name<a><i class="fa fa-times"></i></a></span>
+							}
+						}
+					</div>
+				}
+			</div>
+		</div>
+	</div>
+
+	<div class="form-group">
+		<label for="Service">Name *</label>
+		<div class="row">
+			<div class="col-sm-8 col-md-6 col-lg-4">
+				@Html.TextBoxFor(model => model.Name, new { @class = "form-control", placeholder = "e.g. General Rescue" })
+			</div>
+		</div>
+		@Html.ValidationMessageFor(model => model.Name)
 	</div>
 
 	<div class="form-group">
@@ -76,13 +129,13 @@
 
 
 	<script language="javascript">
-		var users = [
-			@for (int i = 0; i < Model.AvailableUsers.Count; i++)
-			{
-				@Html.Raw(String.Format("{0}{{id: \"{1}\", name: \"{2}\", memberNumber: \"{3}\"}}", (i > 0 ? "," : ""), Model.AvailableUsers[i].Item1, Model.AvailableUsers[i].Item2, Model.AvailableUsers[i].Item3));
-				@Html.Raw("\r\n");
-			}
-		];
+	var users = [
+		@for (int i = 0; i < Model.AvailableUsers.Count; i++)
+		{
+			@Html.Raw(String.Format("{0}{{id: \"{1}\", name: \"{2}\", memberNumber: \"{3}\"}}", (i > 0 ? "," : ""), Model.AvailableUsers[i].Item1, Model.AvailableUsers[i].Item2, Model.AvailableUsers[i].Item3));
+			@Html.Raw("\r\n");
+		}
+	];
 	</script>
 
 	<h3>Members</h3>
@@ -112,14 +165,14 @@
 		</thead>
 		<tbody>
 			@if (String.IsNullOrEmpty(Model.SelectedMembers))
-			{
-			<tr>
-				<td colspan="3" class="none-selected">No members have been added to the this training session yet.</td>
-			</tr>
+		{
+				<tr>
+					<td colspan="3" class="none-selected">No members have been added to the this training session yet.</td>
+				</tr>
 			}
 			else
 			{
-				foreach(var strUserId in Model.SelectedMembers.Split(new char[] { '|' }, StringSplitOptions.RemoveEmptyEntries))
+				foreach (var strUserId in Model.SelectedMembers.Split(new char[] { '|' }, StringSplitOptions.RemoveEmptyEntries))
 				{
 					Guid userId = new Guid(strUserId);
 					Tuple<Guid, string, string> user = Model.AvailableUsers.FirstOrDefault(i => i.Item1 == userId);
@@ -130,9 +183,9 @@
 							<td>@user.Item3</td>
 							<td><a href="#" onclick="responseHub.training.removeTrainingMember(this); return false;" title="Remove member"><i class="fa fa-fw fa-times"></i></a></td>
 						</tr>
-					}
 				}
 			}
+		}
 		</tbody>
 	</table>
 
@@ -163,29 +216,29 @@
 		</thead>
 		<tbody>
 			@if (String.IsNullOrEmpty(Model.SelectedTrainers))
-			{
-			<tr>
-				<td colspan="3" class="none-selected">No trainers have been added to the this training session yet.</td>
-			</tr>			
+		{
+				<tr>
+					<td colspan="3" class="none-selected">No trainers have been added to the this training session yet.</td>
+				</tr>
 			}
 			else
 			{
-			foreach(var strUserId in Model.SelectedTrainers.Split(new char[] { '|' }, StringSplitOptions.RemoveEmptyEntries))
-			{
-				Guid userId = new Guid(strUserId);
-				Tuple
-				<Guid, string, string>
-					user = Model.AvailableUsers.FirstOrDefault(i => i.Item1 == userId);
+				foreach (var strUserId in Model.SelectedTrainers.Split(new char[] { '|' }, StringSplitOptions.RemoveEmptyEntries))
+				{
+					Guid userId = new Guid(strUserId);
+					Tuple
+					<Guid, string, string>
+						user = Model.AvailableUsers.FirstOrDefault(i => i.Item1 == userId);
 					if (user != null)
 					{
-					<tr data-user-id="@user.Item1">
-						<td>@user.Item2</td>
-						<td>@user.Item3</td>
-						<td><a href="#" onclick="responseHub.training.removeTrainingMember(this); return false;" title="Remove member"><i class="fa fa-fw fa-times"></i></a></td>
-					</tr>
-					}
+						<tr data-user-id="@user.Item1">
+							<td>@user.Item2</td>
+							<td>@user.Item3</td>
+							<td><a href="#" onclick="responseHub.training.removeTrainingMember(this); return false;" title="Remove member"><i class="fa fa-fw fa-times"></i></a></td>
+						</tr>
 				}
 			}
+		}
 		</tbody>
 	</table>
 

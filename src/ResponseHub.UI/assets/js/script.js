@@ -157,11 +157,20 @@ var responseHub = (function () {
 
 	}
 
+	function overrideValidator() {
+		// By default validator ignores hidden fields.
+		// change the setting here to ignore nothing
+		$.validator.setDefaults({ ignore: null });
+	}
+
 	// Bind the modal
 	bindModals();
 
 	// Bind the UI
 	bindUI();
+
+	// Override the validator ignore
+	overrideValidator();
 
 	// return the response hub object
 	return {
@@ -1590,7 +1599,6 @@ responseHub.capcodes = (function () {
 			source: groupCapcodes,
 			onSelect: function (item) {
 				$("input[data-capcode-autocomplete='true']").val(item.value);
-				console.log();
 			}
 		});
 	}
@@ -2382,6 +2390,85 @@ responseHub.training = (function () {
 
 	}
 
+	/**
+	 * Sets the training type tag from clicking or tabbing the item in the auto-complete box
+	 */
+	function setTrainingTypeTag(name, id) {
+
+		// Get the current training type ids
+		trainingTypeIds = $('#TrainingTypes').val();
+
+		// First, check to ensure the training type doesn't already exist. If it does, then just exist.
+		if (trainingTypeIds.indexOf(id) >= 0) {
+			// Training type already selected
+			return;
+		}
+
+		// Add the training type tag
+		var trainingTypeTag = $('<span class="label label-primary" data-training-type-id="' + id + '">' + name + '<a><i class="fa fa-times"></i></a></span>');
+		trainingTypeTag.find('a').click(function () {
+
+			// Get the id of the training type
+			var trainingTypeId = $(this).parent().data('training-type-id');
+
+			// Remove the training type tag
+			removeTrainingTypeTag(trainingTypeId);
+
+		});
+
+		// Add the current id to the list of training type ids
+		trainingTypeIds += id + "|";
+
+		// If there is no name for the session, then add it here
+		if ($('#Name').val() == "")
+		{
+			$('#Name').val(name);
+		}
+
+		// Remove the hidden tag from the training type tag list and append the training type tag
+		$('#TrainingTypes').val(trainingTypeIds);
+		$('.training-types-list-tags').removeClass('hidden');
+		$('.training-types-list-tags').append(trainingTypeTag);
+
+	}
+
+	function removeTrainingTypeTag(id) {
+
+		// Get the current training type ids
+		trainingTypeIds = $('#TrainingTypes').val();
+		
+		// Remove the training type id
+		trainingTypeIds = trainingTypeIds.replace(id + "|", "");
+
+		// Update the training type ids
+		$('#TrainingTypes').val(trainingTypeIds);
+
+		// If there is no training types, then clear the name field
+		if (trainingTypeIds == "")
+		{
+			$('#Name').val('');
+		}
+
+		// Remove the tag from the list
+		$('.training-types-list-tags').find("[data-training-type-id='" + id + "']").remove();
+
+		if ($('.training-types-list-tags').children().length == 0) {
+			$('.training-types-list-tags').addClass('hidden');
+		}
+
+	}
+
+	function bindTrainingTypeAutocomplete() {
+
+		// Set the autocomplete functionality for training types.
+		$("input[data-training-type-autocomplete='true']").typeahead({
+			source: trainingTypes,
+			onSelect: function (item) {
+				$("input[data-training-type-autocomplete='true']").val(item.value);
+			}
+		});
+	}
+
 	function bindUI() {
 		
 		if ($('#add-training-session').length > 0) {
@@ -2393,12 +2480,52 @@ responseHub.training = (function () {
 		{
 			displayTrainingYearGraph();
 		}
+
+
+
+		$(document).ready(function () {
+			$('#AvailableTrainingTypes').on('changed.bs.select', function (e) {
+
+				// Get the selected id
+				var selectedId = $('#AvailableTrainingTypes').selectpicker('val');
+
+				// If there is no selected id, just return
+				if (selectedId == "") {
+					return;
+				}
+
+				// Get the option that was selected
+				var selectedOpt = $("#AvailableTrainingTypes option[value='" + selectedId + "']");
+
+				// Add the tag to the list
+				if (selectedOpt.length > 0) {
+					setTrainingTypeTag(selectedOpt.data('name'), selectedId);
+				}
+
+			});
+		});
+
+		// Clicke event for training types rendered on the page
+		$('.training-types-list-tags span a').click(function () {
+
+			// Get the id of the training type
+			var trainingTypeId = $(this).parent().data('training-type-id');
+
+			// Remove the training type tag
+			removeTrainingTypeTag(trainingTypeId);
+
+		});
+
+		if ($("input[data-training-type-autocomplete='true']").length > 0) {
+			bindTrainingTypeAutocomplete();
+		}
 	}
 
 	bindUI();
 
 	return {
-		removeTrainingMember: removeTrainingMember
+		removeTrainingMember: removeTrainingMember,
+		setTrainingTypeTag: setTrainingTypeTag
 	}
 
 })();

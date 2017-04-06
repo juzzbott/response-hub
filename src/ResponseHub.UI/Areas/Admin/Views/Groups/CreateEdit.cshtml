@@ -61,12 +61,12 @@
 		<label>Additional capcodes</label>
 		<div class="row">
 			<div class="col-sm-8 col-md-6 col-lg-4">
-				<select id="AvailableCapcodes" class="form-control capcode-selection selectpicker" data-live-search="true" />
+				<select id="AvailableCapcodes" class="form-control capcode-selection selectpicker" data-live-search="true">
 					<option value="">Select capcode...</option>
-				@foreach(var capcode in Model.AvailableAdditionalCapcodes)
-				{
-					<option value="@capcode.Id" data-tokens="@capcode.Name @capcode.ShortName" data-name="@capcode.Name" data-capcode-address="@capcode.CapcodeAddress">@capcode.Name (@capcode.CapcodeAddress)</option>
-				}
+					@foreach(var capcode in Model.AvailableAdditionalCapcodes)
+					{
+						<option value="@capcode.Id" data-tokens="@capcode.Name @capcode.ShortName" data-name="@capcode.Name" data-capcode-address="@capcode.CapcodeAddress">@capcode.Name (@capcode.CapcodeAddress)</option>
+					}
 				</select>
 				@Html.HiddenFor(i => i.AdditionalCapcodes)
 
@@ -76,18 +76,18 @@
 			<div class="col-lg-10">
 				@if (String.IsNullOrEmpty(Model.AdditionalCapcodes) || Model.AdditionalCapcodes == ",")
 				{
-					<div class="capcode-list-tags hidden">
+					<div class="capcode-list-tags list-tags hidden">
 					</div>
 				}
 				else
 				{
-					<div class="capcode-list-tags">
+					<div class="capcode-list-tags list-tags">
 						@foreach (string capcodeId in Model.AdditionalCapcodes.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
 						{
 							var capcode = Model.AvailableAdditionalCapcodes.FirstOrDefault(i => i.Id.ToString().ToLower() == capcodeId.ToLower());
 							if (capcode != null)
 							{
-								<span class="label label-primary" data-capcode-id="@capcode.Id">@capcode.Name (@capcode.CapcodeAddress)<a><i class="fa fa-times-circle-o"></i></a></span>
+								<span class="label label-primary" data-capcode-id="@capcode.Id">@capcode.Name (@capcode.CapcodeAddress)<a><i class="fa fa-times"></i></a></span>
 							}
 						}
 					</div>

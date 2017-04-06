@@ -62,7 +62,6 @@
 			source: groupCapcodes,
 			onSelect: function (item) {
 				$("input[data-capcode-autocomplete='true']").val(item.value);
-				console.log();
 			}
 		});
 	}

@@ -21,5 +21,7 @@ namespace Enivate.ResponseHub.Model
 
 		Task SendPasswordChangedEmail(IdentityUser user);
 
+		Task SendAccountEmailChangedEmail(IdentityUser user, string oldEmailAddress);
+
 	}
 }

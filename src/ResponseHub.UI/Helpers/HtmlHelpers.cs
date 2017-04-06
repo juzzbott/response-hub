@@ -253,25 +253,26 @@ namespace Enivate.ResponseHub.UI.Helpers
 			else
 			{
 
-				// Get the route as a route
-				Route route = (Route)helper.ViewContext.RouteData.Route;
+				// Get the controller type
+				Type controllerType = helper.ViewContext.Controller.GetType();
 
-				string url = route.Url;
+				// Get the RoutePrefix Attribute
+				RoutePrefixAttribute routePrefixAttribute = (RoutePrefixAttribute)Attribute.GetCustomAttribute(controllerType, typeof(RoutePrefixAttribute));
 
-				// Remove the last part of the url
-				int lastIndex = url.LastIndexOf('/');
-				url = url.Substring(0, lastIndex);
+				string areaPrefix = "";
 
-				// If there is a /{value} in the url, remove it
-				string urlVariableRegex = "(\\/\\{[\\w]+\\})";
-				if (Regex.IsMatch(url, urlVariableRegex))
+				// Get the RoutePrefix Attribute
+				RouteAreaAttribute routeAreaAttribute = (RouteAreaAttribute)Attribute.GetCustomAttribute(controllerType, typeof(RouteAreaAttribute));
+
+				if (routeAreaAttribute != null)
 				{
-					url = Regex.Replace(url, urlVariableRegex, "");
+					areaPrefix = String.Format("{0}/", routeAreaAttribute.AreaPrefix);
 				}
 
 				// Set the url based on the prefix value
-					return new MvcHtmlString(String.Format("<a href=\"/{0}\">{1}</a>",
-					url,
+				return new MvcHtmlString(String.Format("<a href=\"/{0}{1}\">{2}</a>",
+					areaPrefix,
+					routePrefixAttribute.Prefix,
 					helper.ViewContext.RouteData.Values["Controller"].ToString().SpaceBeforeCapital(true)));
 
 			}
