@@ -9,10 +9,8 @@
 
 	<!-- Left column -->
 	<div class="col-sm-4">
-
 		<h2>Rain</h2>
 		@Html.Partial("~/Views/WeatherCentre/RadarLoop.cshtml", Model.RainRadar)
-
 	</div>
 	<!-- END Main Body -->
 	<!-- Main Body -->
@@ -27,5 +25,52 @@
 	</div>
 	<!-- END Warnings Panel -->
 
+</div>
+
+<h2>Weather observations</h2>
+
+<div class="row">
+	<div class="col-xs-12">
+		<table class="table table-responsive table-striped table-condensed">
+			<thead>
+				<tr>
+					<th>Timestamp</th>
+					<th>Temperature (°C)</th>
+					<th>Apparent Temp. (°C)</th>
+					<th>Rain since 9am (mm)</th>
+					<th>Wind Speed (km/h)</th>
+					<th>Wind Gust (km/h)</th>
+					<th>Cloud</th>
+					<th>Pressure (hPa)</th>
+					<th>Relative humidity (%)</th>
+				</tr>
+			</thead>
+			<tbody>
+				@if (Model.ObservationData == null || Model.ObservationData.Count == 0)
+				{
+					<tr>
+						<td colspan="8">No observation data available</td>
+					</tr>
+				}
+				else
+				{
+					foreach (var item in Model.ObservationData)
+					{
+						<tr>
+							<td>@item.LocalTime.ToString("HH:mm d MMM")</td>
+							<td>@item.Temperature</td>
+							<td>@item.ApparentTemperature</td>
+							<td>@item.RainTrace</td>
+							<td>@item.WindSpeed (@item.WindDirection)</td>
+							<td>@item.WindGustSpeed</td>
+							<td>@item.Cloud</td>
+							<td>@item.Pressure</td>
+							<td>@item.RelativeHumidity</td>
+						</tr>
+					}
+				}
+			</tbody>
+		</table>
+	</div>
 </div>
 
