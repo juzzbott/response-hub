@@ -1,6 +1,8 @@
-﻿var schema_info_id = ObjectId("58e492e962cb703bc785da68");
+﻿// Define the schema info
+var schema_info_id = ObjectId("58e492e962cb703bc785da68");
 
-var schema_version = 3
+// Define the max schema version
+var schema_version = 4
 
 // Ensure we have a schema to start with
 var schema_count = db.schema_info.count({})
@@ -67,6 +69,22 @@ while (current_version < schema_version) {
 			// Update the training types to lists of training type ids
 			db.training_sessions.update({}, { $unset: { TrainingTypeId: 1 }, $set: { TrainingTypeIds: [BinData(4, "Q6gHw6s3Qne1pwKjx84MDg==")] }, $set: { Name: "General" } }, { multi: true });
 			break;
+
+		case 4:
+			db.training_types.insert({ "_id": BinData(4, "Q6gHw6s3Qne1pwKjx84MDg=="), "Name": "General", "ShortName": "General", "Description": "Useful for recording general, non-specific training sessions.", "SortOrder": NumberInt(0) });
+			db.training_types.insert({ "_id": BinData(4, "dYqgBf1wSZSJ30xE0Dx+1A=="), "Name": "General Rescue", "ShortName": "GR", "Description": "", "SortOrder": NumberInt(0) });
+			db.training_types.insert({ "_id": BinData(4, "3pMdEgOzSUe1o4z6lTlQ2Q=="), "Name": "Road Rescue", "ShortName": "RCR", "Description": "", "SortOrder": NumberInt(0) });
+			db.training_types.insert({ "_id": BinData(4, "6BwTSBNTQCidRye5Ai2sgw=="), "Name": "Land Search", "ShortName": "Land search", "Description": "", "SortOrder": NumberInt(0) });
+			db.training_types.insert({ "_id": BinData(4, "D7I2vux2STCKWux+QDxXGA=="), "Name": "Crewperson / Coxswain", "ShortName": "Rescue boat", "Description": "", "SortOrder": NumberInt(0) });
+			db.training_types.insert({ "_id": BinData(4, "ROHCgtThS72VyEeNzjZu7g=="), "Name": "Chainsaw", "ShortName": "Chainsaw", "Description": "", "SortOrder": NumberInt(0) });
+			db.training_types.insert({ "_id": BinData(4, "DateF0YlSfiqQU9wIrJxdw=="), "Name": "Storm & Water", "ShortName": "Storm", "Description": "", "SortOrder": NumberInt(0) });
+			db.training_types.insert({ "_id": BinData(4, "ZVrPDC3VQyaxr0rRDyu1nA=="), "Name": "Communications", "ShortName": "Comms", "Description": "", "SortOrder": NumberInt(0) });
+			db.training_types.insert({ "_id": BinData(4, "PGUdiwx+S/u83ZQXsBow+A=="), "Name": "Safe Work at Height System", "ShortName": "SWAHS", "Description": "", "SortOrder": NumberInt(0) });
+			db.training_types.insert({ "_id": BinData(4, "pn0jSZikQbqI3UOpmPDilA=="), "Name": "First Aid", "ShortName": "First aid", "Description": "", "SortOrder": NumberInt(0) });
+			db.training_types.insert({ "_id": BinData(4, "sxRqJ5OYQRi1VaMBmVTjBw=="), "Name": "Casualty Handling", "ShortName": "Cas handling", "Description": "", "SortOrder": NumberInt(0) });
+			db.training_types.insert({ "_id": BinData(4, "6gLx6LzrSZmNgH3ZnuSbMA=="), "Name": "Four Wheel Drive", "ShortName": "4x4", "Description": "", "SortOrder": NumberInt(0) });
+			db.training_types.insert({ "_id": BinData(4, "D0c7VLbvRzafARf5t5b9YA=="), "Name": "Map and Navigation", "ShortName": "Map & Nav", "Description": "Reading and interpreting maps", "SortOrder": NumberInt(0) });
+			db.training_types.insert({ "_id": BinData(4, "rmcdDgsSRZ6iGAF9ELPl2A=="), "Name": "Other", "ShortName": "Other", "Description": "", "SortOrder": NumberInt(99) });
 	}
 
 	// Write the new schema version to the database
