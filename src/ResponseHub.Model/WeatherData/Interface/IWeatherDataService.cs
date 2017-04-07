@@ -11,13 +11,16 @@ namespace Enivate.ResponseHub.Model.WeatherData.Interface
 
 		IList<string> GetRadarImagesForProduct(string productId, string locationCode);
 
+		void DownloadRadarImageFileListFromFtp(string productId, string locationCode);
+
 		byte[] GetRadarImageBytes(string radarImageFilename);
 
-		void DownloadImageFileFromFtp(string imageFilename, string cacheFilename);
+		void DownloadImageFileFromFtp(string imageFilename, string locationCode);
 
 		IList<ObservationData> GetObservationData(string observationId, string locationCode);
 
 		void DownloadObservationData(string observationId, string locationCode);
+		string GetCacheDirectory(string locationCode);
 
 	}
 }

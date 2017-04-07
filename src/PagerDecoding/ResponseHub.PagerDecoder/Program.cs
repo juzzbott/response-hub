@@ -66,8 +66,7 @@ namespace Enivate.ResponseHub.PagerDecoder
 
 			// Write the log entry
 			EventLog.WriteEntry(source, eventDesc, EventLogEntryType.Error, 0001);
-
-
+			
 		}
 	}
 }

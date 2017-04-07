@@ -45,33 +45,15 @@ namespace Enivate.ResponseHub.ApplicationServices
 				// Determine if there is a valid cache file, and it's not expired.
 				bool cacheValid = IsCacheFileValid(cacheFileName);
 
-				if (cacheValid)
+				if (!cacheValid)
 				{
-					// Get the image files for the product from the cache file.
-					imageFiles.AddRange(GetImageFilesFromCache(cacheFileName));
+					// Cache file is not valid, so download it
+					DownloadRadarImageFileListFromFtp(productId, locationCode);
 				}
-				else
-				{
 
-					// Get the image files from the FTP location
-					imageFiles.AddRange(GetFileListFromFtp(productId));
-
-					if (!cacheValid)
-					{
-						// Ensure the cache directory exists
-						EnsureCacheDirectoryExists(locationCode);
-
-						// Write the list of image files to disk.
-						using (StreamWriter writer = new StreamWriter(cacheFileName, false))
-						{
-							foreach(string imageFile in imageFiles)
-							{
-								writer.WriteLine(imageFile);
-							}
-						}
-					}
-
-				}
+				// Get the image files for the product from the cache file.
+				imageFiles.AddRange(GetRadarImageImageFilesFromCache(cacheFileName));
+					
 
 			}
 			catch (Exception ex)
@@ -96,24 +78,23 @@ namespace Enivate.ResponseHub.ApplicationServices
 
 			// Find the location info based on the radar code
 			WeatherLocationElement locationElement = null;
-			foreach(WeatherLocationElement element in ConfigurationSettings.WeatherData.Locations)
+			foreach (WeatherLocationElement element in ResponseHubSettings.WeatherData.Locations)
 			{
 				if (element.RainRadarProductId.Equals(productId, StringComparison.CurrentCultureIgnoreCase) || element.WindRadarProductId.Equals(productId, StringComparison.CurrentCultureIgnoreCase))
 				{
 					locationElement = element;
+					break;
 				}
 			}
-			
-			// Get the radar image cache directory and full filename
-			string cacheDirectory = GetCacheDirectory(locationElement.Code);
-			string imageFilename = String.Format("{0}.png", radarImageFilename.Replace("_", "."));
-			string fullCacheImagePath = String.Format("{0}\\{1}", cacheDirectory, imageFilename);
+
+			// Get the full cache image file path
+			string fullCacheImagePath = GetRadarImageCacheFilename(radarImageFilename, locationElement.Code);
 
 			// If the file does not exist, download it from the BoM FTP server
 			if (!File.Exists(fullCacheImagePath))
 			{
 				// Download the image file from the ftp location
-				DownloadImageFileFromFtp(imageFilename, fullCacheImagePath);
+				DownloadImageFileFromFtp(radarImageFilename, locationElement.Code);
 			}
 
 			// load the bytes of the file into a byte array and return it
@@ -129,11 +110,21 @@ namespace Enivate.ResponseHub.ApplicationServices
 		/// </summary>
 		/// <param name="imageFilename"></param>
 		/// <param name="cacheFilename"></param>
-		public void DownloadImageFileFromFtp(string imageFilename, string cacheFilename)
+		public void DownloadImageFileFromFtp(string imageFilename, string locationCode)
 		{
 			// Get the ftp locaion from the configuration
-			string ftpFileLocation = ConfigurationSettings.WeatherData.RadarFtpLocation;
-			string ftpFilename = String.Format("{0}{1}", ftpFileLocation, imageFilename);
+			string ftpFileLocation = ResponseHubSettings.WeatherData.RadarFtpLocation;
+			string ftpFilename = String.Format("{0}{1}", ftpFileLocation, String.Format("{0}.png", imageFilename.Replace("_", ".")));
+
+			// Get the full cache image file path
+			string fullCacheImagePath = GetRadarImageCacheFilename(imageFilename, locationCode);
+
+			// If the cache image file already exists, don't download it
+			if (File.Exists(fullCacheImagePath))
+			{
+				_log.Debug(String.Format("Skipping downloading image file '{0}'. File already exists in cache.", ftpFilename));
+				return;
+			}
 
 			FtpWebRequest request = (FtpWebRequest)FtpWebRequest.Create(ftpFilename);
 			request.Method = WebRequestMethods.Ftp.DownloadFile;
@@ -146,7 +137,7 @@ namespace Enivate.ResponseHub.ApplicationServices
 			using (Stream responseStream = response.GetResponseStream())
 			{
 
-				using (FileStream writer = new FileStream(cacheFilename, FileMode.Create))
+				using (FileStream writer = new FileStream(fullCacheImagePath, FileMode.Create))
 				{
 
 					long length = response.ContentLength;
@@ -200,7 +191,7 @@ namespace Enivate.ResponseHub.ApplicationServices
 		{
 
 			// Get the ftp locaion from the configuration
-			string observationLocation = ConfigurationSettings.WeatherData.ObservationLocation;
+			string observationLocation = ResponseHubSettings.WeatherData.ObservationLocation;
 			string productId = observationId.Substring(0, observationId.IndexOf('.'));
 			string requestUrl = String.Format("{0}/{1}/{2}.json", observationLocation, productId, observationId);
 
@@ -233,7 +224,117 @@ namespace Enivate.ResponseHub.ApplicationServices
 
 		}
 
+		/// <summary>
+		/// Get cache file contents from the BoM FTP location, and returns the radar images as a list of filenames.
+		/// </summary>
+		/// <param name="productId">The product id to get the image files for.</param>
+		/// <returns>The list of image filenames.</returns>
+		public void DownloadRadarImageFileListFromFtp(string productId, string locationCode)
+		{
+
+			// Get the filename of what the cache file would be based on the source type.
+			string cacheFileName = GetImageListCacheFilename(productId, locationCode);
+
+			// Ensure the cache directory exists
+			EnsureCacheDirectoryExists(locationCode);
+
+			// Get the ftp locaion from the configuration
+			string ftpLocation = ResponseHubSettings.WeatherData.RadarFtpLocation;
+
+			FtpWebRequest request = (FtpWebRequest)FtpWebRequest.Create(ftpLocation);
+			request.Method = WebRequestMethods.Ftp.ListDirectory;
+			request.Credentials = new NetworkCredential("anonymous", "anonymous");
+
+			// Get the response
+			FtpWebResponse response = (FtpWebResponse)request.GetResponse();
+
+			// Read the details of the response into a string
+			using (StreamReader reader = new StreamReader(response.GetResponseStream()))
+			{
+				using (StreamWriter writer = new StreamWriter(cacheFileName, false))
+				{
+					// While there is still data to read
+					while (reader.Peek() >= 0)
+					{
+						// Read the filename from the line
+						string filename = reader.ReadLine();
+
+						// If the filename contains the product id, then add to the list, otherwise just continue to next
+						if (filename.ToUpper().Contains(productId.ToUpper() + ".T."))
+						{
+							// Strip the extension and replace . with _ so it can be used in our routes.
+							string actualFiename = filename.Replace(".png", "").Replace(".", "_");
+							writer.WriteLine(actualFiename);
+						}
+					}
+				}
+			}
+		}
+
+		/// <summary>
+		/// Gets the cache directory for the current 
+		/// </summary>
+		/// <param name="locationCode"></param>
+		/// <returns></returns>
+		public string GetCacheDirectory(string locationCode)
+		{
+			// Get the cache directory
+			string cacheDirectory = ResponseHubSettings.WeatherData.RadarCacheDirectory;
+
+			// If the http context exists, use the map path, otherwise use the standard file path mapping
+			if (HttpContext.Current != null)
+			{
+				cacheDirectory = HttpContext.Current.Server.MapPath(cacheDirectory);
+			}
+			else
+			{
+				cacheDirectory = Path.GetFullPath(cacheDirectory);
+			}
+
+			// Now we need to prepend the cache cacheDirectory onto the cacheFile and return it
+			cacheDirectory = String.Format("{0}{1}{2}", cacheDirectory, (cacheDirectory.EndsWith("\\") ? "" : "\\"), locationCode);
+			return cacheDirectory;
+		}
+
 		#region Helpers
+
+		/// <summary>
+		/// Gets the cache location to the radar image.
+		/// </summary>
+		/// <param name="imageFilename">The filename of the image in the cache file.</param>
+		/// <param name="locationCode">The location code to get the files for.</param>
+		/// <returns>The full path to the cache image file.</returns>
+		private string GetRadarImageCacheFilename(string imageFilename, string locationCode)
+		{
+			// Get the radar image cache directory and full filename
+			string cacheDirectory = GetCacheDirectory(locationCode);
+			imageFilename = String.Format("{0}.png", imageFilename.Replace("_", "."));
+			return String.Format("{0}\\{1}", cacheDirectory, imageFilename);
+		}
+
+		/// <summary>
+		/// Gets the list of images from the cache file.
+		/// </summary>
+		/// <param name="cacheFileName">The filename of the cache file.</param>
+		/// <returns>The list of image filenames from cache file.</returns>
+		private IList<string> GetRadarImageImageFilesFromCache(string cacheFileName)
+		{
+
+			// Create the list of filenames
+			IList<string> filenames = new List<string>();
+
+			/// Read the filename list from the cache file into the list of filenames.
+			using (StreamReader reader = new StreamReader(cacheFileName))
+			{
+				while (reader.Peek() >= 0)
+				{
+					filenames.Add(reader.ReadLine());
+				}
+			}
+
+			// return the list of filenames
+			return filenames;
+		}
 
 		/// <summary>
 		/// Maps the Json observation data to a list of observation data items.
@@ -256,23 +357,21 @@ namespace Enivate.ResponseHub.ApplicationServices
 			foreach (JObject dataItem in dataItems)
 			{
 				// Map the observation data
-				ObservationData observationItem = new ObservationData()
-				{
-					Name = dataItem["name"].ToString(),
-					Cloud = dataItem["cloud"].ToString(),
-					Latitude = dataItem["lat"].ToObject<double>(),
-					Longitude = dataItem["lon"].ToObject<double>(),
-					LocalTime = DateTime.ParseExact(dataItem["local_date_time_full"].ToString(), "yyyyMMddHHmmss", CultureInfo.InvariantCulture),
-					Pressure = dataItem["press"].ToObject<double>(),
-					ProductId = dataItem["history_product"].ToString(),
-					RainTrace = dataItem["rain_trace"].ToObject<double>(),
-					RelativeHumidity = dataItem["rel_hum"].ToObject<double>(),
-					Temperature = dataItem["air_temp"].ToObject<double>(),
-					ApparentTemperature = dataItem["apparent_t"].ToObject<double>(),
-					WindDirection = dataItem["wind_dir"].ToString(),
-					WindGustSpeed = dataItem["gust_kmh"].ToObject<double>(),
-					WindSpeed = dataItem["wind_spd_kmh"].ToObject<double>()
-				};
+				ObservationData observationItem = new ObservationData();
+				observationItem.Name = dataItem["name"].ToString();
+				observationItem.Cloud = dataItem["cloud"].ToString();
+				observationItem.Latitude = GetObservationDataItemAsDouble(dataItem["lat"]);
+				observationItem.Longitude = GetObservationDataItemAsDouble(dataItem["lon"]);
+				observationItem.LocalTime = DateTime.ParseExact(dataItem["local_date_time_full"].ToString(), "yyyyMMddHHmmss", CultureInfo.InvariantCulture);
+				observationItem.Pressure = GetObservationDataItemAsDouble(dataItem["press"]);
+				observationItem.ProductId = dataItem["history_product"].ToString();
+				observationItem.RainTrace = GetObservationDataItemAsDouble(dataItem["rain_trace"]);
+				observationItem.RelativeHumidity = GetObservationDataItemAsDouble(dataItem["rel_hum"]);
+				observationItem.Temperature = GetObservationDataItemAsDouble(dataItem["air_temp"]);
+				observationItem.ApparentTemperature = GetObservationDataItemAsDouble(dataItem["apparent_t"]);
+				observationItem.WindDirection = dataItem["wind_dir"].ToString();
+				observationItem.WindGustSpeed = GetObservationDataItemAsDouble(dataItem["gust_kmh"]);
+				observationItem.WindSpeed = GetObservationDataItemAsDouble(dataItem["wind_spd_kmh"]);
 
 				// Add to the list
 				observationList.Add(observationItem);
@@ -284,62 +383,11 @@ namespace Enivate.ResponseHub.ApplicationServices
 
 		}
 
-		/// <summary>
-		/// Gets the list of images from the cache file.
-		/// </summary>
-		/// <param name="cacheFileName"></param>
-		/// <returns></returns>
-		private IEnumerable<string> GetImageFilesFromCache(string cacheFileName)
+		private double GetObservationDataItemAsDouble(JToken dataItem)
 		{
-			using (StreamReader reader = new StreamReader(cacheFileName))
-			{
-				while (reader.Peek() >= 0)
-				{
-					yield return reader.ReadLine();
-				}
-			}
+			return (dataItem.ToString() != "-" ? dataItem.ToObject<double>() : 0);
 		}
 
-		/// <summary>
-		/// Get cache file contents from the BoM FTP location, and returns the radar images as a list of filenames.
-		/// </summary>
-		/// <param name="productId">The product id to get the image files for.</param>
-		/// <returns>The list of image filenames.</returns>
-		private IEnumerable<string> GetFileListFromFtp(string productId)
-		{
-
-			// Get the ftp locaion from the configuration
-			string ftpLocation = ConfigurationSettings.WeatherData.RadarFtpLocation;
-
-			FtpWebRequest request = (FtpWebRequest)FtpWebRequest.Create(ftpLocation);
-			request.Method = WebRequestMethods.Ftp.ListDirectory;
-			request.Credentials = new NetworkCredential("anonymous", "anonymous");
-
-			// Get the response
-			FtpWebResponse response = (FtpWebResponse)request.GetResponse();
-
-			// Read the details of the response into a string
-			using (StreamReader reader = new StreamReader(response.GetResponseStream()))
-			{
-				// While there is still data to read
-				while (reader.Peek() >= 0)
-				{
-					// Read the filename from the line
-					string fileName = reader.ReadLine();
-
-					// If the filename contains the product id, then add to the list, otherwise just continue to next
-					if (fileName.ToUpper().Contains(productId.ToUpper() + ".T."))
-					{
-
-						// Strip the extension and replace . with _ so it can be used in our routes.
-						string actualFiename = fileName.Replace(".png", "").Replace(".", "_");
-
-						yield return actualFiename;
-					}
-				}
-			}
-		}
-		
 		/// <summary>
 		/// Ensures the cache directory exists.
 		/// </summary>
@@ -363,7 +411,7 @@ namespace Enivate.ResponseHub.ApplicationServices
 		private static bool IsCacheFileValid(string filename)
 		{
 			// Get the cache duration
-			TimeSpan cacheDuration = ConfigurationSettings.WeatherData.RadarCacheDuration;
+			TimeSpan cacheDuration = ResponseHubSettings.WeatherData.RadarCacheDuration;
 
 			// If the file exists, and it was created within the cachefile timeout period, then the feedSource should be the file instead
 			if (File.Exists(filename))
@@ -401,31 +449,6 @@ namespace Enivate.ResponseHub.ApplicationServices
 			// Get the cache filename from the warning source
 			return String.Format("{0}\\{1}_cache.txt", GetCacheDirectory(locationCode), productId.ToUpper());
 			
-		}
-
-		/// <summary>
-		/// Gets the cache directory for the current 
-		/// </summary>
-		/// <param name="locationCode"></param>
-		/// <returns></returns>
-		private string GetCacheDirectory(string locationCode)
-		{
-			// Get the cache directory
-			string cacheDirectory = ConfigurationSettings.WeatherData.RadarCacheDirectory;
-
-			// If the http context exists, use the map path, otherwise use the standard file path mapping
-			if (HttpContext.Current != null)
-			{
-				cacheDirectory = HttpContext.Current.Server.MapPath(cacheDirectory);
-			}
-			else
-			{
-				cacheDirectory = Path.GetFullPath(cacheDirectory);
-			}
-
-			// Now we need to prepend the cache cacheDirectory onto the cacheFile and return it
-			cacheDirectory = String.Format("{0}{1}{2}", cacheDirectory, (cacheDirectory.EndsWith("\\") ? "" : "\\"), locationCode);
-			return cacheDirectory;
 		}
 
 		#endregion

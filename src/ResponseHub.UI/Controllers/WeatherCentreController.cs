@@ -43,7 +43,7 @@ namespace Enivate.ResponseHub.UI.Controllers
 			}
 
 			// Get the weather data location
-			WeatherLocationElement location = ConfigurationSettings.WeatherData.Locations[0];
+			WeatherLocationElement location = ResponseHubSettings.WeatherData.Locations[0];
 
 			// Create the rain radar
 			RadarLoopViewModel rainRadar = new RadarLoopViewModel()
