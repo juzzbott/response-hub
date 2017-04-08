@@ -28,7 +28,8 @@
 
 @brand-primary: #7b74a8;
 
-@font-family: 'Ubuntu', sans-serif;
+@font-family: 'Segoe UI', 'Open Sans', sans-serif;
+@heading-font-family: 'Ubuntu', sans-serif;
 
 button:focus,
 button:active {
@@ -40,6 +41,7 @@ body {
 	padding-top: 50px;
 	font-family: @font-family;
 	color: @body-color;
+	font-size: 13px;
 
 }
 
@@ -103,6 +105,11 @@ input[type="date"]::-webkit-input-placeholder{
 
 .dl-horizontal dt {
 	text-align: left;
+}
+
+h1, h2, h3, h4, h5, h6 
+{
+	font-family: @heading-font-family;
 }
 
 h1 i,
@@ -1096,11 +1103,24 @@ i.p-message-admin {
 	Wallboard styles
 */
 
-.wallboard-layout, 
+.wallboard-layout,
 .weather-centre-layout {
 
+	.navbar-subheader {
+		letter-spacing: 2px;
+		text-transform: uppercase;
+		padding-top: 17px;
+		color: #ccc;
+		display: block;
+		float: left;
+	}
+
+	.navbar-brand {
+		padding-right: 10px;
+	}
+
 	.navbar-header {
-		width:  200px !important;
+		width: 400px !important;
 		float: left;
 	}
 
