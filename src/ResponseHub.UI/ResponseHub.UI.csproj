@@ -254,6 +254,7 @@
     <Compile Include="Areas\Admin\Models\Reports\GroupsCapcodesReportViewModel.cs" />
     <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Models\Events\CreateEventViewModel.cs" />
+    <Compile Include="Models\Messages\JobMessageFilter.cs" />
     <Compile Include="Models\Messages\JobMessageListViewModel.cs" />
     <Compile Include="Models\Messages\JobMessageSignInEntry.cs" />
     <Compile Include="Models\Messages\JobNoteViewModel.cs" />
@@ -336,7 +337,7 @@
     <Content Include="assets\js\modules\pager-messages.js" />
     <Content Include="assets\js\modules\capcodes.js" />
     <Content Include="assets\js\modules\groups.js" />
-    <Content Include="assets\js\modules\joblog.js" />
+    <Content Include="assets\js\modules\job-messages.js" />
     <Content Include="assets\js\modules\logviewer.js" />
     <Content Include="assets\js\modules\maps.js" />
     <Content Include="assets\js\modules\password-strength.js" />
@@ -585,6 +586,7 @@
     <Content Include="Areas\Admin\Views\TrainingTypes\Index.cshtml" />
     <Content Include="Areas\Admin\Views\TrainingTypes\AddEdit.cshtml" />
     <Content Include="Areas\Admin\Views\Users\EditUser.cshtml" />
+    <Content Include="Views\Shared\JobMessageFilter.cshtml" />
     <None Include="Web.Staging.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

@@ -22,6 +22,7 @@ using Enivate.ResponseHub.UI.Models.Messages;
 using Enivate.ResponseHub.UI.Helpers;
 using Enivate.ResponseHub.Model.SignIn;
 using Enivate.ResponseHub.Model.SignIn.Interface;
+using System.Globalization;
 
 namespace Enivate.ResponseHub.UI.Controllers.Api
 {
@@ -54,8 +55,64 @@ namespace Enivate.ResponseHub.UI.Controllers.Api
 			// Get the capcodes for the user.
 			IList<Capcode> capcodes = await CapcodeService.GetCapcodesForUser(UserId);
 
-			// Get the job messages
-			IList<JobMessage> jobMessages = await JobMessageService.GetMostRecent(capcodes, MessageType.Job, 50);
+			// Store the skip and count values
+			int count = 50;
+			int skip = 0;
+			MessageType messageType = MessageType.Job;
+
+			// Create the list of job messages
+			IList<JobMessage> jobMessages;
+
+			// Get the query string
+			IEnumerable<KeyValuePair<string, string>> qs = ControllerContext.Request.GetQueryNameValuePairs();
+
+			// if there is a skip value, then get it from the query string
+			if (qs.Any(i => i.Key.ToLower() == "skip"))
+			{
+				Int32.TryParse(qs.FirstOrDefault(i => i.Key.ToLower() == "skip").Value, out skip);
+			}
+
+			// Check to see if the job type is overridden in the query string
+			if (qs.Any(i => i.Key.ToLower() == "msg_type"))
+			{
+				if (qs.FirstOrDefault(i => i.Key.ToLower() == "msg_type").Value == "job")
+				{
+					messageType = MessageType.Job;
+				}
+				else if (qs.FirstOrDefault(i => i.Key.ToLower() == "msg_type").Value == "message")
+				{
+					messageType = MessageType.Message;
+				}
+			}
+
+			// If there is no date values set, then just get the most recent
+			if (qs.Any(i => i.Key.ToLower() == "date_from") && qs.Any(i => i.Key.ToLower() == "date_to"))
+			{
+				// Get the job messages
+				jobMessages = await JobMessageService.GetMostRecent(capcodes, messageType, count, skip);
+			}
+			else
+			{
+
+				// Set the date time values
+				DateTime? dateFrom = null;
+				DateTime? dateTo = null;
+
+				// Get the query string values
+				if (qs.Count(i => i.Key.ToLower() == "date_from") > 0 && !String.IsNullOrEmpty(qs.FirstOrDefault(i => i.Key.ToLower() == "date_from").Value))
+				{
+					dateFrom = DateTime.ParseExact(qs.FirstOrDefault(x => x.Key == "date_from").Value, "dd/MM/yyyy", CultureInfo.CurrentCulture, DateTimeStyles.AssumeLocal);
+				}
+
+				if (qs.Count(i => i.Key.ToLower() == "date_to") > 0 && !String.IsNullOrEmpty(qs.FirstOrDefault(i => i.Key.ToLower() == "date_from").Value))
+				{
+					dateTo = DateTime.ParseExact(qs.FirstOrDefault(x => x.Key == "date_to").Value, "dd/MM/yyyy", CultureInfo.CurrentCulture, DateTimeStyles.AssumeLocal);
+				}
+
+				// Load the job messages between dates
+				jobMessages = await JobMessageService.GetMessagesBetweenDates(capcodes, messageType, count, skip, dateFrom, dateTo);
+
+			}
 
 			// Get all the sign ins for the messages
 			IList<SignInEntry> allSignIns = await SignInEntryService.GetSignInsForJobMessages(jobMessages.Select(i => i.Id));

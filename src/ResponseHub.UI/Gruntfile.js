@@ -45,7 +45,7 @@ module.exports = function(grunt) {
 				src: [
 					'assets/js/modules/_core.js',
 					'assets/js/modules/maps.js',
-					'assets/js/modules/joblog.js',
+					'assets/js/modules/job-messages.js',
 					'assets/js/modules/pager-messages.js',
 					'assets/js/modules/wallboard.js',
 					'assets/js/modules/groups.js',

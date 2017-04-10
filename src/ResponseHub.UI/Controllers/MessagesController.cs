@@ -38,10 +38,11 @@ namespace Enivate.ResponseHub.UI.Controllers
 			IList<Capcode> capcodes = await CapcodeService.GetCapcodesForUser(userId);
 
 			// Get the messages for the capcodes
-			IList<JobMessage> messages = await JobMessageService.GetMostRecent(capcodes, MessageType.Message, 50);
+			IList<JobMessage> messages = await JobMessageService.GetMostRecent(capcodes, MessageType.Message, 50, 0);
 
 			// Create the message list view model.
 			JobMessageListViewModel model = await CreateJobMessageListModel(capcodes, messages);
+			model.MessageType = MessageType.Message;
 
 			return View("~/Views/Jobs/Index.cshtml", model);
 		}

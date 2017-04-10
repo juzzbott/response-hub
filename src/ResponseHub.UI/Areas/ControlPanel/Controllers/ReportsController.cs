@@ -172,9 +172,11 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 			Group group = await GroupService.GetById(groupId);
 
 			// Get the list of messages for the capcode
-			IList<JobMessage> jobMessages = await JobMessageService.GetJobMessagesBetweenDates(
-				new List<string> { group.Capcode },
+			IList<JobMessage> jobMessages = await JobMessageService.GetMessagesBetweenDates(
+				new List<Capcode> { new Capcode() { CapcodeAddress = group.Capcode } },
 				MessageType.Job & MessageType.Message,
+				999999, 
+				0,
 				dateFrom,
 				dateTo);
 
