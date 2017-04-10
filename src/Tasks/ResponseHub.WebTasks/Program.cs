@@ -90,7 +90,7 @@ namespace Enivate.ResponseHub.WebTasks
 				try
 				{
 					Log.Debug(String.Format("Downloading observation data: {0}", location.ObservationId));
-					WeatherDataService.DownloadObservationData(location.ObservationId, location.Code);
+					WeatherDataService.GetObservationData(location.ObservationId, location.Code);
 					Log.Debug(String.Format("Completed downloading observation data: {0}\r\n\r\n", location.ObservationId));
 				}
 				catch (Exception ex)
