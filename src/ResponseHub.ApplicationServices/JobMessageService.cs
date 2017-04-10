@@ -76,14 +76,29 @@ namespace Enivate.ResponseHub.ApplicationServices
 		}
 
 		/// <summary>
+		/// ///  Gets the job messages for the list of capcodes specified between the specific dates. Results are limited to count number of items.
+		/// </summary>
+		/// <param name="capcodes"></param>
+		/// <param name="messageTypes"></param>
+		/// <param name="count"></param>
+		/// <param name="skip"></param>
+		/// <param name="dateFrom"></param>
+		/// <param name="dateTo"></param>
+		/// <returns></returns>
+		public async Task<IList<JobMessage>> GetMessagesBetweenDates(IEnumerable<Capcode> capcodes, MessageType messageTypes, int count, int skip, DateTime? dateFrom, DateTime? dateTo)
+		{
+			return await _repository.GetMessagesBetweenDates(capcodes.Select(i => i.CapcodeAddress), messageTypes, count, skip, dateFrom, dateTo);
+		}
+
+		/// <summary>
 		/// Gets the most recent count capcodes. 
 		/// </summary>
 		/// <param name="capcodes"></param>
 		/// <param name="count"></param>
 		/// <returns></returns>
-		public async Task<IList<JobMessage>> GetMostRecent(IEnumerable<Capcode> capcodes, MessageType messageTypes, int count)
+		public async Task<IList<JobMessage>> GetMostRecent(IEnumerable<Capcode> capcodes, MessageType messageTypes, int count, int skip)
 		{
-			return await _repository.GetMostRecent(capcodes.Select(i => i.CapcodeAddress), messageTypes, count);
+			return await _repository.GetMostRecent(capcodes.Select(i => i.CapcodeAddress), messageTypes, count, skip);
 		}
 
 		/// <summary>
@@ -201,11 +216,6 @@ namespace Enivate.ResponseHub.ApplicationServices
 		{
 			await _repository.RemoveAttachmentFromJob(jobMessageId, attachmentId);
 		}
-
-		public async Task<IList<JobMessage>> GetJobMessagesBetweenDates(IEnumerable<string> capcodes, MessageType messageTypes, DateTime dateFrom, DateTime dateTo)
-		{
-			return await _repository.GetJobMessagesBetweenDates(capcodes, messageTypes, dateFrom, dateTo);
-		}
-
+		
 	}
 }

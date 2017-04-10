@@ -69,6 +69,9 @@ namespace Enivate.ResponseHub.WebTasks
 
 		#region BoM cache downloads
 
+		/// <summary>
+		/// Download the bom file for the locations configured.
+		/// </summary>
 		private static void DownloadBomFilesForLocations()
 		{
 			// Loop through each of the locations in the configuration
@@ -84,9 +87,16 @@ namespace Enivate.ResponseHub.WebTasks
 				DownloadRadarImages(location.RainRadarProductId, location.Code);
 
 				// Download the observation data
-				Log.Debug(String.Format("Downloading observation data: {0}", location.ObservationId));
-				WeatherDataService.DownloadObservationData(location.ObservationId, location.Code);
-				Log.Debug(String.Format("Completed downloading observation data: {0}\r\n\r\n", location.ObservationId));
+				try
+				{
+					Log.Debug(String.Format("Downloading observation data: {0}", location.ObservationId));
+					WeatherDataService.GetObservationData(location.ObservationId, location.Code);
+					Log.Debug(String.Format("Completed downloading observation data: {0}\r\n\r\n", location.ObservationId));
+				}
+				catch (Exception ex)
+				{
+					Log.Error(String.Format("Error downloading observation data. Message: {0}", ex.Message), ex);
+				}
 
 			}
 		}
@@ -97,22 +107,44 @@ namespace Enivate.ResponseHub.WebTasks
 		/// <param name="productId"></param>
 		/// <param name="locationCode"></param>
 		private static void DownloadRadarImages(string productId, string locationCode)
-		{
-			// Get the radar images for the for the specific product
-			Log.Debug(String.Format("Downloading image file list: {0}", productId));
-			IList<string> radarImageFiles = WeatherDataService.GetRadarImagesForProduct(productId, locationCode);
-			Log.Debug(String.Format("Completed downloading image file list: {0}", productId));
+		{ 
+
+			// Store the radar image files.
+			IList<string> radarImageFiles = new List<string>();
+
+			try
+			{
+
+				// Get the radar images for the for the specific product
+				Log.Debug(String.Format("Downloading image file list: {0}", productId));
+				radarImageFiles = WeatherDataService.GetRadarImagesForProduct(productId, locationCode);
+				Log.Debug(String.Format("Completed downloading image file list: {0}", productId));
+			}
+			catch (Exception ex)
+			{
+				Log.Error(String.Format("Error downloading radar image list data. Message: {0}", ex.Message), ex);
+			}
 
 			// Now that we have the list of images, go ahead and download it
 			foreach (string imageFileName in radarImageFiles)
 			{
-				// Download the radar image file
-				Log.Debug(String.Format("Downloading image file: {0}", imageFileName));
-				WeatherDataService.DownloadImageFileFromFtp(imageFileName, locationCode);
-				Log.Debug(String.Format("Completed downloading image file: {0}", imageFileName));
+				try
+				{ 
+					// Download the radar image file
+					Log.Debug(String.Format("Downloading image file: {0}", imageFileName));
+					WeatherDataService.DownloadImageFileFromFtp(imageFileName, locationCode);
+					Log.Debug(String.Format("Completed downloading image file: {0}", imageFileName));
+				}
+				catch (Exception ex)
+				{
+					Log.Error(String.Format("Error downloading radar image. Message: {0}", ex.Message), ex);
+				}
 			}
 		}
 
+		/// <summary>
+		/// Delete the expired cache files.
+		/// </summary>
 		private static void DeleteExpiredBomFiles()
 		{
 
@@ -156,9 +188,17 @@ namespace Enivate.ResponseHub.WebTasks
 						// If not, delete the cache file
 						if (DateTime.UtcNow > createdUtc.Add(cacheDuration))
 						{
-							File.Delete(file);
-							Log.Debug(String.Format("Cache file deleted: {0}", file));
-							filesDeleted++;
+							try
+							{ 
+								File.Delete(file);
+								Log.Debug(String.Format("Cache file deleted: {0}", file));
+								filesDeleted++;
+							}
+							catch (Exception ex)
+							{
+								Log.Error(String.Format("Error deleting cache radar image. Message: {0}", ex.Message), ex);
+							}
+
 						}
 
 					}
@@ -174,8 +214,6 @@ namespace Enivate.ResponseHub.WebTasks
 		#endregion
 
 		#region Helpers
-
-
 
 		/// <summary>
 		/// Writes the unity resolution issues to the event log.

@@ -6,8 +6,9 @@ button:active {
 body {
   background: #f0f0f0;
   padding-top: 50px;
-  font-family: 'Ubuntu', sans-serif;
+  font-family: 'Segoe UI', 'Open Sans', sans-serif;
   color: #333;
+  font-size: 13px;
 }
 .unstyled::-webkit-inner-spin-button,
 .unstyled::-webkit-calendar-picker-indicator {
@@ -55,6 +56,14 @@ input[type="date"]::-webkit-input-placeholder {
 }
 .dl-horizontal dt {
   text-align: left;
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: 'Ubuntu', sans-serif;
 }
 h1 i,
 h2 i,
@@ -863,9 +872,22 @@ i.p-message-admin {
 /**
 	Wallboard styles
 */
+.wallboard-layout .navbar-subheader,
+.weather-centre-layout .navbar-subheader {
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  padding-top: 17px;
+  color: #ccc;
+  display: block;
+  float: left;
+}
+.wallboard-layout .navbar-brand,
+.weather-centre-layout .navbar-brand {
+  padding-right: 10px;
+}
 .wallboard-layout .navbar-header,
 .weather-centre-layout .navbar-header {
-  width: 200px !important;
+  width: 400px !important;
   float: left;
 }
 .wallboard-layout .page-navbar .navbar-right,
@@ -1163,6 +1185,7 @@ i.p-message-admin {
   margin-right: 0;
   padding-left: 10px;
   padding-right: 10px;
+  padding-top: 0;
 }
 .toggle-header a {
   font-size: 40px;
@@ -1273,19 +1296,6 @@ i.p-message-admin {
   top: -99999px;
 }
 /**
- * Filters
- */
-.filter-container {
-  padding-top: 20px;
-  background-color: #fbfbfb;
-  border: 1px solid #eee;
-  margin-bottom: 20px;
-  margin-left: 0;
-  margin-right: 0;
-  padding-left: 10px;
-  padding-right: 10px;
-}
-/**
  * Data Export PDF
  */
 body.pdf-export {
@@ -1376,7 +1386,7 @@ div.generated-report .notes li .wordback-icon {
 .ct-label {
   font-size: 12px;
   color: #878787;
-  font-family: 'Ubuntu', sans-serif;
+  font-family: 'Segoe UI', 'Open Sans', sans-serif;
 }
 .ct-bar {
   stroke-width: 20px;

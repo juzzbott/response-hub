@@ -15,10 +15,15 @@ namespace Enivate.ResponseHub.UI.Models.Messages
 
 		public IList<Capcode> UserCapcodes { get; set; }
 
+		public JobMessageFilter Filter { get; set; }
+
+		public MessageType MessageType { get; set; }
+
 		public JobMessageListViewModel()
 		{
 			Messages = new List<JobMessageViewModel>();
 			UserCapcodes = new List<Capcode>();
+			Filter = new JobMessageFilter();
 		}
 
 	}

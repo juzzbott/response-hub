@@ -42,12 +42,35 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 		/// <param name="capcodes"></param>
 		/// <param name="count"></param>
 		/// <returns></returns>
-		public async Task<IList<JobMessage>> GetMostRecent(IEnumerable<string> capcodes, MessageType messageTypes, int count)
+		public async Task<IList<JobMessage>> GetMostRecent(IEnumerable<string> capcodes, MessageType messageTypes, int count, int skip)
 		{
+			// return the messages without date filters
+			return await GetMessagesBetweenDates(capcodes, messageTypes, count, skip, null, null);
+		}
 
+		/// <summary>
+		///  Gets the job messages for the list of capcodes specified between the specific dates. Results are limited to count number of items.
+		/// </summary>
+		/// <param name="capcodes"></param>
+		/// <param name="count"></param>
+		/// <returns></returns>
+		public async Task<IList<JobMessage>> GetMessagesBetweenDates(IEnumerable<string> capcodes, MessageType messageTypes, int count, int skip, DateTime? dateFrom, DateTime? dateTo)
+		{
+			
 			// Create the filter and sort
 			FilterDefinitionBuilder<JobMessageDto> builder = Builders<JobMessageDto>.Filter;
 			FilterDefinition<JobMessageDto> filter = builder.In(i => i.Capcode, capcodes);
+
+			// If there is dateFrom and dateTo filters, add them
+			if (dateFrom.HasValue)
+			{
+				filter &= builder.Gte(i => i.Timestamp, dateFrom.Value.ToUniversalTime());
+			}
+			if (dateTo.HasValue)
+			{
+				filter &= builder.Lte(i => i.Timestamp, dateTo.Value.ToUniversalTime());
+			}
+
 
 			// Add the message type to the filter.
 			FilterDefinition<JobMessageDto> priorityFilter = builder.Or();
@@ -71,7 +94,7 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 			SortDefinition<JobMessageDto> sort = Builders<JobMessageDto>.Sort.Descending(i => i.Timestamp);
 
 			// Find the job messages by capcode
-			IList<JobMessageDto> results = await Collection.Find(filter).Sort(sort).Limit(count).ToListAsync();
+			IList<JobMessageDto> results = await Collection.Find(filter).Sort(sort).Limit(count).Skip(skip).ToListAsync();
 
 			// Map the dto objects to model objects and return
 			List<JobMessage> messages = new List<JobMessage>();
@@ -79,7 +102,6 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 
 			// return the messages
 			return messages;
-			
 		}
 
 		/// <summary>
@@ -413,49 +435,7 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 		}
 
 		#endregion
-
-		/// <summary>
-		/// Gets the job messages between dates for the specified capcodes and message types.
-		/// </summary>
-		/// <param name="capcodes"></param>
-		/// <param name="messageTypes"></param>
-		/// <param name="dateFrom"></param>
-		/// <param name="dateTo"></param>
-		/// <returns></returns>
-		public async Task<IList<JobMessage>> GetJobMessagesBetweenDates(IEnumerable<string> capcodes, MessageType messageTypes, DateTime dateFrom, DateTime dateTo)
-		{
-			// Create the filter and sort
-			FilterDefinitionBuilder<JobMessageDto> builder = Builders<JobMessageDto>.Filter;
-			FilterDefinition<JobMessageDto> filter = builder.In(i => i.Capcode, capcodes);
-
-			// Add the message type to the filter.
-			if (messageTypes.HasFlag(MessageType.Job))
-			{
-				filter = filter & builder.Ne(i => i.Priority, MessagePriority.Administration);
-			}
-			else if (messageTypes.HasFlag(MessageType.Message))
-			{
-				filter = filter & builder.Eq(i => i.Priority, MessagePriority.Administration);
-			}
-
-			// Add the date filters
-			filter = filter & builder.Gte(i => i.Timestamp, dateFrom);
-			filter = filter & builder.Lte(i => i.Timestamp, dateTo);
-
-			// Create the sort filter
-			SortDefinition<JobMessageDto> sort = Builders<JobMessageDto>.Sort.Descending(i => i.Timestamp);
-
-			// Find the job messages by capcode
-			IList<JobMessageDto> results = await Collection.Find(filter).Sort(sort).Limit(99999).ToListAsync();
-
-			// Map the dto objects to model objects and return
-			List<JobMessage> messages = new List<JobMessage>();
-			messages.AddRange(results.Select(i => MapDbObjectToModel(i)));
-
-			// return the messages
-			return messages;
-		}
-
+		
 		#region Mappers
 
 		/// <summary>

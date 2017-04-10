@@ -172,9 +172,11 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 			Group group = await GroupService.GetById(groupId);
 
 			// Get the list of messages for the capcode
-			IList<JobMessage> jobMessages = await JobMessageService.GetJobMessagesBetweenDates(
-				new List<string> { group.Capcode },
+			IList<JobMessage> jobMessages = await JobMessageService.GetMessagesBetweenDates(
+				new List<Capcode> { new Capcode() { CapcodeAddress = group.Capcode } },
 				MessageType.Job & MessageType.Message,
+				999999, 
+				0,
 				dateFrom,
 				dateTo);
 
@@ -203,6 +205,7 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 		{
 			// Get the training sessions
 			IList<TrainingSession> trainingSessions = await TrainingService.GetTrainingSessionsForGroup(groupId);
+			int trainingSessionDays = trainingSessions.GroupBy(i => i.SessionDate).Count();
 
 			// Get the members for the group
 			IList<IdentityUser> groupMembers = await GroupService.GetUsersForGroup(groupId);
@@ -253,7 +256,7 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 				// Get the percentage of attendance
 				if (trainingSessions.Count > 0)
 				{
-					memberTrainingRecord.AttendancePercent = (int)(((decimal)userSessions.Count / (decimal)trainingSessions.Count) * 100);
+					memberTrainingRecord.AttendancePercent = (int)(((decimal)userSessions.Count / (decimal)trainingSessionDays) * 100);
 				}
 
 				// Get the training types
