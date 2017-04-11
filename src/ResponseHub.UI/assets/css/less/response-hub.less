@@ -927,14 +927,26 @@ td .checkbox {
 	}
 }
 
-.datepicker-dropdown {
+.datepicker-dropdown,
+.bootstrap-datetimepicker-widget {
 	z-index: 10000;
 }
 
+.timepicker-seconds-control,
+.timepicker-control {
+	.input-group-addon {
+		cursor: pointer;
+	}
+}
+
+.datepicker-control input[readonly],
+timepicker-seconds-control input[readonly],
+timepicker-control input[readonly] {
+	background-color: #fff;
+}
 /*
 	Login styles
 */
-
 .login-layout {
 	background-color: @body-bg;
 	color: @body-color;

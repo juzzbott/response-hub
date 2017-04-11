@@ -742,8 +742,18 @@ td .checkbox {
   -webkit-box-shadow: none;
   box-shadow: none;
 }
-.datepicker-dropdown {
+.datepicker-dropdown,
+.bootstrap-datetimepicker-widget {
   z-index: 10000;
+}
+.timepicker-seconds-control .input-group-addon,
+.timepicker-control .input-group-addon {
+  cursor: pointer;
+}
+.datepicker-control input[readonly],
+timepicker-seconds-control input[readonly],
+timepicker-control input[readonly] {
+  background-color: #fff;
 }
 /*
 	Login styles

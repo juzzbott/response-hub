@@ -93,8 +93,8 @@
 				<label for="EditProgressTime">Time *</label>
 				<div class="row">
 					<div class="col-sm-8 col-md-6 col-lg-4">
-						<div class="input-group">
-							@Html.TextBoxFor(model => model.EditProgressTime, new { @class = "form-control timepicker-seconds" })
+						<div class="input-group timepicker-seconds-control">
+							@Html.TextBoxFor(model => model.EditProgressTime, new { @class = "form-control" })
 							<div class="input-group-addon">
 								<i class="fa fa-fw fa-clock-o"></i>
 							</div>
