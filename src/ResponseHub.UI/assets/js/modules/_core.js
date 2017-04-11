@@ -195,6 +195,8 @@
 	// Override the validator ignore
 	overrideValidator();
 
+	alert(isMobile());
+
 	// return the response hub object
 	return {
 		apiPrefix: apiPrefix,
