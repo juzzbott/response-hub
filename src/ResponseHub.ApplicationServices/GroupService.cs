@@ -231,7 +231,7 @@ namespace Enivate.ResponseHub.ApplicationServices
 			}
 
 			// Now that we have the group, get all users for that group
-			IList<IdentityUser> users = await _userRepository.GetUsersByIds(group.Users.Select(i => i.UserId));
+			IList<IdentityUser> users = await _userRepository.GetUsersByIds(group.Users.Select(i => i.UserId), true);
 
 			// return the users
 			return users;

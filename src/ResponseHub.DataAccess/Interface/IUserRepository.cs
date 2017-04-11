@@ -107,7 +107,7 @@ namespace Enivate.ResponseHub.DataAccess.Interface
 
 		#region Response Hub methods
 
-		Task<IList<IdentityUser>> GetUsersByIds(IEnumerable<Guid> userIds);
+		Task<IList<IdentityUser>> GetUsersByIds(IEnumerable<Guid> userIds, bool sort);
 
 		Task<IdentityUser> GetUserByActivationToken(string activationToken);
 
