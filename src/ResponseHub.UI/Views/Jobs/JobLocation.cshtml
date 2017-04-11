@@ -17,6 +17,7 @@
 
 	if (Model.Location.Coordinates.Latitude != 0 && Model.Location.Coordinates.Longitude != 0)
 	{
+		<div id="map-messages"></div>
 		<div id="map-canvas" style="height: 400px;"></div>
 		<script type="text/javascript">
 
@@ -34,9 +35,6 @@
 
 					// Add the current location to the map
 					responseHub.maps.addCurrentLocationToMap();
-
-					// Set timeout to update position every 5 seconds
-					responseHub.maps.updateCurrentLocation();
 				}
 			};
 

@@ -350,57 +350,54 @@ responseHub.maps = (function () {
 		
 		// Get the current location
 		if (navigator.geolocation) {
-			navigator.geolocation.getCurrentPosition(
+			navigator.geolocation.watchPosition(
 				function (pos) {
 
-					var currentLocationMarker = new L.HtmlIcon({
-						html: '<div><i class="fa fa-dot-circle-o fa-2x current-map-location"></i></div>',
-					});	
+					// If there is 2 map markers in the collection, then the current position alredy exists and we just want to update it.
+					// Otherwise we need to create the new map marker
+					if (mapMarkers.length > 1)
+					{
+						mapMarkers[1].setLatLng(new L.LatLng(pos.coords.latitude, pos.coords.longitude));
+					}
+					else
+					{
 
-					// Add the marker to the map
-					mapMarkers.push(L.marker([pos.coords.latitude, pos.coords.longitude], { icon: currentLocationMarker }).addTo(map));
+						// Second location marker doesn exist, so we need to create it
 
-					// Get the group of markers, destination and current location
-					var group = new L.featureGroup([mapMarkers[0], mapMarkers[1]]);
-					map.fitBounds(group.getBounds().pad(0.1));
+						var currentLocationMarker = new L.HtmlIcon({
+							html: '<div><i class="fa fa-dot-circle-o fa-2x current-map-location"></i></div>',
+						});	
+
+						// Add the marker to the map
+						mapMarkers.push(L.marker([pos.coords.latitude, pos.coords.longitude], { icon: currentLocationMarker }).addTo(map));
+
+						// Get the group of markers, destination and current location, and zoom window to fit
+						var group = new L.featureGroup([mapMarkers[0], mapMarkers[1]]);
+						map.fitBounds(group.getBounds().pad(0.1));
+
+						// Set the interval to resize the window every 30 secs.
+						setInterval(function () {
+							
+							// Get the group of markers, destination and current location, and zoom window to fit
+							var group = new L.featureGroup([mapMarkers[0], mapMarkers[1]]);
+							map.fitBounds(group.getBounds().pad(0.1));
+
+						}, 30000)
+
+					}
 
 				},
 				function (error) {
+					$('#map-messages').append('<p>' + error.code + ': ' + error.message + '</p>');
 					console.log(error);
 				},
 				{
 					enableHighAccuracy: true,
 					timeout: 5000,
 					maximumAge: 0
-				});
+				}
+			);
 		}
-
-	}
-
-	/**
-	 * Updates the current location on the map every 5 seconds
-	 */
-	function updateCurrentLocation() {
-
-		var interval = setInterval(function () {
-			// Get the current location
-			if (navigator.geolocation) {
-				navigator.geolocation.getCurrentPosition(
-					function (pos) {
-						if (mapMarkers.length > 1)
-						{
-							mapMarkers[1].setLatLng(new L.LatLng(pos.coords.latitude, pos.coords.longitude));
-						}
-					}, 
-					function (error) { },
-					{
-						enableHighAccuracy: true,
-						timeout: 5000,
-						maximumAge: 0
-					}
-				);
-			}
-		}, 5000);
 
 	}
 
@@ -514,8 +511,7 @@ responseHub.maps = (function () {
 		getCurrentLocation: getCurrentLocation,
 		setMapCenter: setMapCenter,
 		mapExists: mapExists,
-		addCurrentLocationToMap: addCurrentLocationToMap,
-		updateCurrentLocation: updateCurrentLocation
+		addCurrentLocationToMap: addCurrentLocationToMap
 	}
 
 })();
