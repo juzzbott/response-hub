@@ -50,7 +50,7 @@ var responseHub = (function () {
 
 	function bindUI() {
 		
-		alert(responseHub.isMobile());
+		alert(isMobile());
 
 		// Toggle the sidebar menu
 		$(".btn-sidebar-toggle").click(function () {
