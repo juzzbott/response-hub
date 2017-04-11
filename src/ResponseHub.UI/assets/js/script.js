@@ -49,6 +49,8 @@ var responseHub = (function () {
 	}
 
 	function bindUI() {
+		
+		alert(responseHub.isMobile());
 
 		// Toggle the sidebar menu
 		$(".btn-sidebar-toggle").click(function () {
@@ -194,8 +196,6 @@ var responseHub = (function () {
 
 	// Override the validator ignore
 	overrideValidator();
-
-	alert(isMobile());
 
 	// return the response hub object
 	return {
