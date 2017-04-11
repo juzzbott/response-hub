@@ -49,8 +49,6 @@ var responseHub = (function () {
 	}
 
 	function bindUI() {
-		
-		alert(isMobile());
 
 		// Toggle the sidebar menu
 		$(".btn-sidebar-toggle").click(function () {
@@ -156,7 +154,7 @@ var responseHub = (function () {
 		});
 
 		// Add read only to prevent keyboard being shown
-		if (responseHub.isMobile()) {
+		if (isMobile()) {
 			$('.timepicker input, .timepicker-seconds input, .datepicker-control input').attr('readonly', 'readonly');
 		}
 
@@ -991,9 +989,7 @@ responseHub.jobMessages = (function () {
 
 			// If we are on mobile, then scroll to the form
 			if (responseHub.isMobile()) {
-				$('html, body').animate({
-					scrollTop: ($("#edit-progress-update").offset().top - 50)
-				}, 150);
+				$(window).scrollTop($("#edit-progress-update").offset().top - 50);
 			}
 
 		});

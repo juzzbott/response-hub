@@ -434,9 +434,7 @@
 
 			// If we are on mobile, then scroll to the form
 			if (responseHub.isMobile()) {
-				$('html, body').animate({
-					scrollTop: ($("#edit-progress-update").offset().top - 50)
-				}, 150);
+				$(window).scrollTop($("#edit-progress-update").offset().top - 50);
 			}
 
 		});

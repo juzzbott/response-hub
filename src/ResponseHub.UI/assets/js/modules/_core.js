@@ -49,8 +49,6 @@
 	}
 
 	function bindUI() {
-		
-		alert(isMobile());
 
 		// Toggle the sidebar menu
 		$(".btn-sidebar-toggle").click(function () {
@@ -156,7 +154,7 @@
 		});
 
 		// Add read only to prevent keyboard being shown
-		if (responseHub.isMobile()) {
+		if (isMobile()) {
 			$('.timepicker input, .timepicker-seconds input, .datepicker-control input').attr('readonly', 'readonly');
 		}
 
