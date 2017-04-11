@@ -367,6 +367,11 @@ responseHub.maps = (function () {
 				},
 				function (error) {
 					console.log(error);
+				},
+				{
+					enableHighAccuracy: true,
+					timeout: 5000,
+					maximumAge: 0
 				});
 		}
 
@@ -385,8 +390,13 @@ responseHub.maps = (function () {
 						if (mapMarkers.length > 1)
 						{
 							mapMarkers[1].setLatLng(new L.LatLng(pos.coords.latitude, pos.coords.longitude));
-							console.log("position update");
 						}
+					}, 
+					function (error) { },
+					{
+						enableHighAccuracy: true,
+						timeout: 5000,
+						maximumAge: 0
 					}
 				);
 			}
