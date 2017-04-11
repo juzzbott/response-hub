@@ -432,6 +432,13 @@
 			$('#edit-progress-update h4').text(headerText);
 			$('#edit-progress-update').removeClass('hidden');
 
+			// If we are on mobile, then scroll to the form
+			if (responseHub.isMobile()) {
+				$('html, body').animate({
+					scrollTop: ($("#edit-progress-update").offset().top - 50)
+				}, 150);
+			}
+
 		});
 
 		// Bind the 'undo' event
