@@ -17,7 +17,7 @@ namespace Enivate.ResponseHub.UI.Models.SignIn
 		[Required(ErrorMessage = "Please ensure you have selected a date.")]
 		public string StartDate { get; set; }
 
-		[Required(ErrorMessage = "Please ensure a selected a time.")]
+		[Required(ErrorMessage = "Please ensure you have a selected a time.")]
 		public string StartTime { get; set; }
 
 		[Required(ErrorMessage = "You must select a sign on type.")]

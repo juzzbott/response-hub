@@ -168,7 +168,7 @@ namespace Enivate.ResponseHub.ApplicationServices
 		/// <param name="userId">The id of the user who created the progress update.</param>
 		/// <param name="progressType">The type of job progress to add,</param>
 		/// <returns></returns>
-		public async Task<MessageProgress> AddProgress(Guid jobMessageId, Guid userId, MessageProgressType progressType)
+		public async Task<MessageProgress> SaveProgress(Guid jobMessageId, DateTime progressDateTime, Guid userId, MessageProgressType progressType)
 		{
 
 			// Get the job
@@ -184,16 +184,26 @@ namespace Enivate.ResponseHub.ApplicationServices
 			MessageProgress progress = new MessageProgress()
 			{
 				ProgressType = progressType,
-				Timestamp = DateTime.UtcNow,
+				Timestamp = progressDateTime.ToUniversalTime(),
 				UserId = userId
 			};
 
 			// Update the progress in the repository
-			await _repository.AddProgress(jobMessageId, progress);
+			await _repository.SaveProgress(jobMessageId, progress);
 
 			// return the progress.
 			return progress;
 
+		}
+
+		/// <summary>
+		/// Removes the specified progress update type from the job.
+		/// </summary>
+		/// <param name="jobMessageId">The id of the job to remove the progres from.</param>
+		/// <param name="progressType">The progress type to remove.</param>
+		public async Task RemoveProgress(Guid jobMessageId, MessageProgressType progressType)
+		{
+			await _repository.RemoveProgress(jobMessageId, progressType);
 		}
 
 		public async Task<PagedResultSet<JobMessage>> FindByKeyword(string keyword, IEnumerable<string> capcodes, MessageType messageTypes, DateTime dateFrom, DateTime dateTo, int limit, int skip, bool countTotal)

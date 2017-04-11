@@ -135,6 +135,22 @@ var responseHub = (function () {
 			}
 		});
 
+		// Bind the time picker
+		$('.timepicker-seconds').datetimepicker({
+			format: 'HH:mm:ss',
+			icons: {
+				time: 'fa fa-fw fa-clock-o',
+				date: 'fa fa-fw fa-calendar',
+				up: 'fa fa-fw fa-chevron-up',
+				down: 'fa fa-fw fa-chevron-down',
+				previous: 'fa fa-fw fa-chevron-left',
+				next: 'fa fa-fw fa-chevron-right',
+				today: 'fa fa-fw fa-bullseye',
+				clear: 'fa fa-fw fa-trash-o',
+				close: 'fa fa-fw fa-times'
+			}
+		});
+
 		// Set the graphic radioes and checkboxes
 		setGraphicRadiosCheckboxes();
 
@@ -636,29 +652,31 @@ responseHub.jobMessages = (function () {
 	/**
 	 * Sets the job status when the button is clicked.
 	 */
-	function setJobStatusTime(statusType, sender) {
+	function setJobStatusTime(statusType, progressDateTime, sender) {
 
 		var intStatusType;
 
 		switch (statusType) {
 
-			case "on-route":
+			case "on_route":
 				intStatusType = 1;
 				break;
 
-			case "on-scene":
+			case "on_scene":
 				intStatusType = 2;
 				break;
 
-			case "job-clear":
+			case "job_clear":
 				intStatusType = 3;
 				break;
 
 		}
 
 		// Set the spinner
-		$(sender).find('i').removeClass('fa-check-square-o').addClass('fa-refresh fa-spin');
-		$(sender).attr('disabled', 'disabled');
+		if (sender != null) {
+			$(sender).find('i').removeClass('fa-check-square-o').addClass('fa-refresh fa-spin');
+			$(sender).attr('disabled', 'disabled');
+		}
 
 		var jobId = $('#Id').val();
 
@@ -667,7 +685,7 @@ responseHub.jobMessages = (function () {
 			url: responseHub.apiPrefix + '/job-messages/' + jobId + '/progress',
 			type: 'POST',
 			dataType: 'json',
-			data: { '': intStatusType },
+			data: { ProgressType: intStatusType, ProgressDateTime: progressDateTime },
 			success: function (data) {
 
 				// If there is a failed result, display that
@@ -677,27 +695,40 @@ responseHub.jobMessages = (function () {
 
 					switch (statusType) {
 
-						case "on-route":
+						case "on_route":
 							addProgressMarkup($('.progress-on-route'), "On route", progressDate, data.UserFullName);
 							break;
 
-						case "on-scene":
+						case "on_scene":
 							addProgressMarkup($('.progress-on-scene'), "On scene", progressDate, data.UserFullName);
 							break;
 
-						case "job-clear":
+						case "job_clear":
 							addProgressMarkup($('.progress-job-clear'), "Job clear", progressDate, data.UserFullName);
 							break;
 
 					}
 
-					$(sender).remove();
+					if (sender != null) {
+						$(sender).remove();
+					}
+					else {
+						// Sender is null, so sender is actually the edit form, so we want to close the form
+						closeEditProgressForm();
+					}
 
 				} else {
 
 					// Reset the button
-					$(sender).find('i').addClass('fa-check-square-o').removeClass('fa-refresh fa-spin');
-					$(sender).removeAttr('disabled');
+					if (sender != null) {
+						$(sender).find('i').addClass('fa-check-square-o').removeClass('fa-refresh fa-spin');
+						$(sender).removeAttr('disabled');
+					}
+					else 
+					{
+						// Sender is null, so sender is actually the edit form, so we want to close the form
+						closeEditProgressForm();
+					}
 
 					// Clear any existing alerts
 					$(".progess-messages .alert").remove();
@@ -710,8 +741,15 @@ responseHub.jobMessages = (function () {
 			},
 			error: function (jqXHR, textStatus, errorThrown) {
 				// Reset the button
-				$(sender).find('i').addClass('fa-check-square-o').removeClass('fa-refresh fa-spin');
-				$(sender).removeAttr('disabled');
+
+				if (sender != null) {
+					$(sender).find('i').addClass('fa-check-square-o').removeClass('fa-refresh fa-spin');
+					$(sender).removeAttr('disabled');
+				}
+				else {
+					// Sender is null, so sender is actually the edit form, so we want to close the form
+					closeEditProgressForm();
+				}
 
 				// Clear any existing alerts
 				$(".progess-messages .alert").remove();
@@ -728,10 +766,49 @@ responseHub.jobMessages = (function () {
 	 */
 	function addProgressMarkup(elem, progressType, date, userFullName) {
 
+		// empty the current markup to prevent duplicate markup entries
+		$(elem).empty();
+
 		$(elem).append("<h4>" + progressType + "</h4>");
 		$(elem).append('<span class="btn-icon"><i class="fa fa-fw fa-clock-o"></i>' + date.format('YYYY-MM-DD HH:mm:ss') + '</span><br />');
 		$(elem).append('<span class="text-muted btn-icon"><i class="fa fa-fw fa-user"></i>' + userFullName + '</span>');
+		$(elem).append('<div><a class="btn btn-link btn-icon action-edit"><i class="fa fa-fw fa-pencil-square-o"></i>Edit</a><a class="btn btn-link btn-icon action-undo"><i class="fa fa-fw fa-undo"></i>Undo</a></div>');
 
+		// Rebind the edit and undo options
+		bindJobProgressEditUndo();
+
+	}
+
+	/**
+	 * Sends the updated progress type to the server.
+	 */
+	function submitEditProgressTime()
+	{
+
+		// Get the specified time
+		var dateVal = $('#EditProgressDate').val() + " " + $('#EditProgressTime').val();
+
+		// Get the progress type
+		var progressType = $('#ProgressType').val();
+
+		// Set the button sending status
+		$('#edit-progress-update button').addClass('disabled');
+		$('#edit-progress-update button').attr('disabled', 'disabled');
+		$('#edit-progress-update button i').removeClass('fa-check').addClass('fa-spinner fa-spin');
+
+
+		// Submit the details of the update
+		setJobStatusTime(progressType, dateVal, null);
+
+
+	}
+
+	function closeEditProgressForm()
+	{
+		$('#edit-progress-update').addClass('hidden');
+		$('#edit-progress-update button').removeClass('disabled');
+		$('#edit-progress-update button').removeAttr('disabled');
+		$('#edit-progress-update button i').removeClass('fa-spinner').removeClass('fa-spin').addClass('fa-check');
 	}
 
 	/**
@@ -861,21 +938,153 @@ responseHub.jobMessages = (function () {
 	}
 
 	/**
+	 * Binds the job progress actions
+	 */
+	function bindJobProgressEditUndo()
+	{
+
+		// Unbind all click events
+		$('.progress-action .action-edit').off('click');
+		$('.progress-action .action-undo').off('click');
+
+		// Set the click event handler for the progress action
+		$('.progress-action .action-edit').click(function () {
+			
+			// From the undo link, get the progress action container
+			var progressAction = $(this).closest('.progress-action');
+
+			// Get the progress type from the data attribute
+			var progressType = progressAction.data('progress-type');
+
+			// Set the progress type hidden value and the h3 title
+			$('#ProgressType').val(progressType);
+
+			headerText = "Update progress";
+			if (progressType == "on_route")
+			{
+				headerText = "Update on route time";
+			}
+			else if (progressType == "on_scene")
+			{
+				headerText = "Update on scene time";
+			}
+			else if (progressType == "job_clear")
+			{
+				headerText = "Update job clear time";
+			}
+
+			// Show the update form.
+			var currentDate = moment().local();
+			$('#EditProgressDate').val(currentDate.format('YYYY-MM-DD'));
+			$('#EditProgressTime').val(currentDate.format('HH:mm:ss'));
+			$('#edit-progress-update h4').text(headerText);
+			$('#edit-progress-update').removeClass('hidden');
+
+		});
+
+		// Bind the 'undo' event
+		$('.progress-action .action-undo').click(function () {
+
+			// Get the job id
+			var jobId = $('#Id').val();
+
+			// Disable and set spinner
+			$(this).attr('disabled', 'disabled');
+			$(this).addClass('disabled');
+			$(this).find('i').removeClass('fa-undo').addClass('fa-spinner fa-spin');
+
+			// Close the edit form just in case it's for the same type
+			closeEditProgressForm();
+
+			// From the undo link, get the progress action container
+			var progressAction = $(this).closest('.progress-action');
+
+			// Get the progress type from the data attribute
+			var progressType = progressAction.data('progress-type');
+
+			// Create the ajax request
+			$.ajax({
+				url: responseHub.apiPrefix + '/job-messages/' + jobId + '/progress/delete?progress_type=' + progressType,
+				type: 'DELETE',
+				success: function (data) {
+
+					// Remove the progress details
+					progressAction.find('.progress-time').empty();
+
+					// Get the button label
+					var buttonLabel = '';
+					var buttonClass = '';
+					if (progressType == "on_route") {
+						buttonLabel = 'On route';
+						buttonClass = 'btn-on-route';
+					}
+					else if (progressType == "on_scene") {
+						buttonLabel = 'On scene';
+						buttonClass = 'btn-on-scene';
+					}
+					else if (progressType == "job_clear") {
+						buttonLabel = 'Job clear';
+						buttonClass = 'btn-job-clear';
+					}
+
+					// Add the progress button back in
+					progressAction.append('<button class="btn btn-primary btn-icon btn-block btn-lg ' + buttonClass + '"><i class="fa fa-fw fa-check-square-o"></i> ' + buttonLabel + '</button>');
+
+					// Rebind the progress actions
+					bindJobProgressActions();
+
+				}, 
+				error: function (jqXHR, textStatus, errorThrown)
+				{
+					// Re-enable spinner
+					$(progressAction).find('.action-undo').removeAttr('disabled');
+					$(progressAction).find('.action-undo').removeClass('disabled');
+					$(progressAction).find('.action-undo i').removeClass('fa-spinner').removeClass('fa-spin').addClass('fa-undo');
+					
+					// Clear any existing alerts
+					$(".progess-messages .alert").remove();
+
+					// Display the error message
+					$(".progess-messages").append('<div class="alert alert-warning alert-dismissable" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>Sorry, there was an error clearing job progress.</p>');
+
+				}
+			});
+
+		});
+
+	}
+
+	/**
+	 * Bind the job progress button events.
+	 */
+	function bindJobProgressActions()
+	{
+
+		$(".btn-on-route").off('click');
+		$(".btn-on-route").click(function () {
+			setJobStatusTime('on_route', "", this);
+		});
+
+		$(".btn-on-scene").off('click');
+		$(".btn-on-scene").click(function () {
+			setJobStatusTime('on_scene', "", this);
+		});
+
+		$(".btn-job-clear").off('click');
+		$(".btn-job-clear").click(function () {
+			setJobStatusTime('job_clear', "", this);
+		});
+
+	}
+
+	/**
 	 * Binds the UI controls
 	 */
 	function bindUI() {
 
-		$(".btn-on-route").click(function () {
-			setJobStatusTime('on-route', this);
-		});
-
-		$(".btn-on-scene").click(function () {
-			setJobStatusTime('on-scene', this);
-		});
-
-		$(".btn-job-clear").click(function () {
-			setJobStatusTime('job-clear', this);
-		});
+		// Bind the progress update actions
+		bindJobProgressActions();
+		bindJobProgressEditUndo();
 
 		$('#btnAddNote').click(function () {
 			addJobNote();
@@ -917,7 +1126,9 @@ responseHub.jobMessages = (function () {
 	bindUI();
 
 	return {
-		getNextJobMessages: getNextJobMessages
+		getNextJobMessages: getNextJobMessages,
+		submitEditProgressTime: submitEditProgressTime,
+		closeEditProgressForm: closeEditProgressForm
 	};
 
 })();

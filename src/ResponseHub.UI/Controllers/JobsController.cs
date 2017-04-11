@@ -146,8 +146,10 @@ namespace Enivate.ResponseHub.UI.Controllers
 			try
 			{
 
+				DateTime cancelTime = DateTime.Now;
+
 				// Cancel the job
-				await JobMessageService.AddProgress(id, UserId, MessageProgressType.Cancelled);
+				await JobMessageService.SaveProgress(id, cancelTime, UserId, MessageProgressType.Cancelled);
 
 				// Redirect back to the job.
 				return new RedirectResult(String.Format("/jobs/{0}", id));

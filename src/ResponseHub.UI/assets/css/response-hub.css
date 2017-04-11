@@ -819,6 +819,9 @@ td .checkbox {
 .progress-action {
   margin-bottom: 15px;
 }
+.progress-action .action-edit {
+  padding-left: 0;
+}
 #job-notes ul li {
   border-left: 3px solid #D6E3E0;
   border-top: 1px solid #e5edeb;
