@@ -504,7 +504,8 @@ responseHub.maps = (function () {
 		getCurrentLocation: getCurrentLocation,
 		setMapCenter: setMapCenter,
 		mapExists: mapExists,
-		addCurrentLocationToMap: addCurrentLocationToMap
+		addCurrentLocationToMap: addCurrentLocationToMap,
+		updateCurrentLocation: updateCurrentLocation
 	}
 
 })();
