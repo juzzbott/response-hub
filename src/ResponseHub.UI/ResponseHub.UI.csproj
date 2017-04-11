@@ -330,6 +330,7 @@
     <Content Include="assets\js\lib\bootstrap-tabcollapse.js" />
     <Content Include="assets\js\lib\bootstrap-typeahead.min.js" />
     <Content Include="assets\js\lib\fm.scrollator.jquery.js" />
+    <Content Include="assets\js\lib\leaflet-html-icons.js" />
     <Content Include="assets\js\lib\leaflet.js" />
     <Content Include="assets\js\lib\palette.js" />
     <Content Include="assets\js\modules\attachments.js" />

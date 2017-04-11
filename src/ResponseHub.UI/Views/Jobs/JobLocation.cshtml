@@ -29,9 +29,14 @@
 				mapContainer: 'map-canvas',
 				loadCallback: function () {
 
-					//// Add the map marker for the place.
+					// Add the map marker for the place.
 					responseHub.maps.addMarkerToMap(Number(@Model.Location.Coordinates.Latitude), Number(@Model.Location.Coordinates.Longitude));
 
+					// Add the current location to the map
+					responseHub.maps.addCurrentLocationToMap();
+
+					// Set timeout to update position every 5 seconds
+					responseHub.maps.updateCurrentLocation();
 				}
 			};
 

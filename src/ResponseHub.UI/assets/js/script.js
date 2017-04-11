@@ -294,21 +294,21 @@ responseHub.maps = (function () {
 	function buildLeafBaseLayers() {
 
 		// Create the default layers
-		streetMapLayer = L.tileLayer('http://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
+		streetMapLayer = L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
 			attribution: 'Imagery from <a href="http://mapbox.com/about/maps/">MapBox</a> &mdash; Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
 			subdomains: 'abcd',
 			id: 'juzzbott.mn25f8nc',
 			accessToken: 'pk.eyJ1IjoianV6emJvdHQiLCJhIjoiMDlmN2JlMzMxMWI2YmNmNGY2NjFkZGFiYTFiZWVmNTQifQ.iKlZsVrsih0VuiUCzLZ1Lg'
 		});
 
-		topoMapLayer = L.tileLayer('http://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
+		topoMapLayer = L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
 			attribution: 'Imagery from <a href="http://mapbox.com/about/maps/">MapBox</a> &mdash; Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
 			subdomains: 'abcd',
 			id: 'juzzbott.mn24imf3',
 			accessToken: 'pk.eyJ1IjoianV6emJvdHQiLCJhIjoiMDlmN2JlMzMxMWI2YmNmNGY2NjFkZGFiYTFiZWVmNTQifQ.iKlZsVrsih0VuiUCzLZ1Lg'
 		});
 
-		aerialMapLayer = L.tileLayer('http://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
+		aerialMapLayer = L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
 			attribution: 'Imagery from <a href="http://mapbox.com/about/maps/">MapBox</a> &mdash; Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
 			subdomains: 'abcd',
 			id: 'juzzbott.mn74md27',
@@ -339,40 +339,60 @@ responseHub.maps = (function () {
 
 	function addMarkerToMap(lat, lng) {
 
-		L.marker([lat, lng]).addTo(map);
+		mapMarkers.push(L.marker([lat, lng]).addTo(map));
 
 	}
 
-	/*
-	 * Add's a pushpin to the map.
+	/**
+	 * Determines the current location on the map
 	 */
-	//function addMarkerToMap(id, lat, lng, name, description, url, placeType, addPopupWindow) {
-	//
-	//	// Get the marker icon based on the place type name.
-	//	var placeTypeIcon = null;
-	//	if (placeType != null && placeType.IconCssClass != null && placeType.Name.length > 0) {
-	//		for (var i = 0; i < leafIcons.length; i++) {
-	//			if (leafIcons[i].key == placeType.Name.toLowerCase()) {
-	//				placeTypeIcon = leafIcons[i];
-	//				break;
-	//			}
-	//		}
-	//	}
-	//
-	//	// Add the marker to the map.
-	//	var marker = null;
-	//	if (placeTypeIcon !== null) {
-	//		marker = L.marker([lat, lng], { icon: placeTypeIcon }).addTo(map);
-	//		mapMarkers.push(marker);
-	//	}
-	//
-	//	// If we need to add an info window, then do do so on popup for the marker
-	//	if (addPopupWindow && marker != null) {
-	//		var popupContent = createMapPopupContent(name, description, url);
-	//		marker.bindPopup(popupContent);
-	//	}
-	//
-	//}
+	function addCurrentLocationToMap() {
+		
+		// Get the current location
+		if (navigator.geolocation) {
+			navigator.geolocation.getCurrentPosition(
+				function (pos) {
+
+					var currentLocationMarker = new L.HtmlIcon({
+						html: '<div><i class="fa fa-dot-circle-o fa-2x current-map-location"></i></div>',
+					});	
+
+					// Add the marker to the map
+					mapMarkers.push(L.marker([pos.coords.latitude, pos.coords.longitude], { icon: currentLocationMarker }).addTo(map));
+
+					// Get the group of markers, destination and current location
+					var group = new L.featureGroup([mapMarkers[0], mapMarkers[1]]);
+					map.fitBounds(group.getBounds().pad(0.1));
+
+				},
+				function (error) {
+					console.log(error);
+				});
+		}
+
+	}
+
+	/**
+	 * Updates the current location on the map every 5 seconds
+	 */
+	function updateCurrentLocation() {
+
+		var interval = setInterval(function () {
+			// Get the current location
+			if (navigator.geolocation) {
+				navigator.geolocation.getCurrentPosition(
+					function (pos) {
+						if (mapMarkers.length > 1)
+						{
+							mapMarkers[1].setLatLng(new L.LatLng(pos.coords.latitude, pos.coords.longitude));
+							console.log("position update");
+						}
+					}
+				);
+			}
+		}, 5000);
+
+	}
 
 	/**
 	 * Creates the markup for the info window to be displayed.
@@ -459,7 +479,7 @@ responseHub.maps = (function () {
 	function initMap() {
 
 		// Set the default images dir
-		L.Icon.Default.imagePath = '/assets/images/leaflet';
+		L.Icon.Default.imagePath = '/assets/images/leaflet/';
 
 		if (responseHub.isMobile()) {
 			$('#map-canvas').css('height', '450px');
@@ -483,7 +503,8 @@ responseHub.maps = (function () {
 		clearMarkers: clearMarkers,
 		getCurrentLocation: getCurrentLocation,
 		setMapCenter: setMapCenter,
-		mapExists: mapExists
+		mapExists: mapExists,
+		addCurrentLocationToMap: addCurrentLocationToMap
 	}
 
 })();

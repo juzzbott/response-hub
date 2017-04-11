@@ -28,6 +28,7 @@ module.exports = function(grunt) {
 					'assets/js/lib/bootstrap-tabcollapse.js',
 					'assets/js/lib/bootstrap-typeahead.min.js',
 					'assets/js/lib/leaflet.js',
+					'assets/js/lib/leaflet-html-icons.js',
 					'assets/js/lib/palette.js',
 					'assets/js/lib/fm.scrollator.jquery.js',
 					'bower_components/dropzone/dist/min/dropzone.min.js',
