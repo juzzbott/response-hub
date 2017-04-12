@@ -375,6 +375,32 @@ responseHub.maps = (function () {
 						var group = new L.featureGroup([mapMarkers[0], mapMarkers[1]]);
 						map.fitBounds(group.getBounds().pad(0.1));
 
+						var start_loc = mapMarkers[0].getLatLng().lat + ',' + mapMarkers[0].getLatLng().lng;
+						var end_loc = pos.coords.latitude + ',' + pos.coords.longitude;
+
+						// Get the directions to the location
+						$.ajax({
+							url: responseHub.apiPrefix + '/google-api/directions?start_loc=' + start_loc + '&end_loc=' + end_loc,
+							dataType: 'json',
+							success: function (data) {
+
+								if (data.length > 0)
+								{
+									var latlngs = [];
+
+									// Loop through the results and create the LatLng objects to add to the poly line
+									for (var i = 0; i < data.length; i++)
+									{
+										latlngs.push(new L.LatLng(data[i].Latitude, data[i].Longitude))
+									}
+
+									// Now that we have the lat lngs, add the path to the map
+									L.polyline(latlngs, { color: '#3984FF' }).addTo(map);
+								}
+
+							}
+						});
+
 						// Set the interval to resize the window every 30 secs.
 						setInterval(function () {
 							

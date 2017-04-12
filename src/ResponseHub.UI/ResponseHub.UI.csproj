@@ -222,6 +222,7 @@
     <Compile Include="Areas\ControlPanel\Models\Training\AddEditTrainingSessionViewModel.cs" />
     <Compile Include="Areas\ControlPanel\Models\Training\TrainingHomeViewModel.cs" />
     <Compile Include="Areas\ControlPanel\Models\Training\ViewTrainingSessionViewModel.cs" />
+    <Compile Include="Controllers\Api\GoogleApiController.cs" />
     <Compile Include="Controllers\Api\SearchController.cs" />
     <Compile Include="Controllers\PagerMessagesController.cs" />
     <Compile Include="Areas\ControlPanel\Controllers\BaseControlPanelController.cs" />

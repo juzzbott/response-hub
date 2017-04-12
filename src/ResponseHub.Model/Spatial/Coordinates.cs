@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace Enivate.ResponseHub.Model.Spatial
 {
+
 	public class Coordinates
 	{
 
