@@ -34,7 +34,12 @@
 					responseHub.maps.addMarkerToMap(Number(@Model.Location.Coordinates.Latitude), Number(@Model.Location.Coordinates.Longitude));
 
 					// Add the current location to the map
-					responseHub.maps.addCurrentLocationToMap();
+					if (responseHub.isMobile()) {
+						responseHub.maps.addCurrentLocationToMap();
+					}
+
+					// Add the path from lhq
+					responseHub.maps.addPathFromHq(@(Model.LhqCoordinates.Latitude), @(Model.LhqCoordinates.Longitude));
 				}
 			};
 

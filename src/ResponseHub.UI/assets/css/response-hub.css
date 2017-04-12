@@ -1546,6 +1546,8 @@ div.generated-report .notes li .wordback-icon {
  */
 .current-map-location {
   color: #7b74a8;
+  margin-top: -10px;
+  margin-left: -10px;
 }
 /**
  * Mixins

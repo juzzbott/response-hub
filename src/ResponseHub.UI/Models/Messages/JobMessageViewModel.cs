@@ -61,6 +61,8 @@ namespace Enivate.ResponseHub.UI.Models.Messages
 		[Required(ErrorMessage = "Please ensure you a selected a time.")]
 		public string EditProgressTime { get; set; }
 
+		public Coordinates LhqCoordinates { get; set; }
+
 		public JobMessageViewModel()
 		{
 			Location = new LocationInfo();

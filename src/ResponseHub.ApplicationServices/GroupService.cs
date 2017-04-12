@@ -381,5 +381,16 @@ namespace Enivate.ResponseHub.ApplicationServices
 		{
 			return await _repository.GetGroupsByCapcode(capcode, await _regionRepository.GetAll());
 		}
+
+		/// <summary>
+		/// Gets the group by the specified capcode
+		/// </summary>
+		/// <param name="capcodeAddress">The capcode address to get the groups by.</param>
+		/// <returns>The group for the capcode.</returns>
+		public async Task<Group> GetGroupByCapcode(Capcode capcode)
+		{
+			IList<Group> groups = await _repository.GetGroupsByCapcode(capcode, await _regionRepository.GetAll());
+			return groups.FirstOrDefault();
+		}
 	}
 }

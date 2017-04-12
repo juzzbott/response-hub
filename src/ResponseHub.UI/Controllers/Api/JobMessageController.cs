@@ -135,7 +135,7 @@ namespace Enivate.ResponseHub.UI.Controllers.Api
 				string capcodeGroupName = capcodes.FirstOrDefault(i => i.CapcodeAddress == message.Capcode).FormattedName();
 
 				// Add the mapped job message view model
-				models.Add(await BaseJobsMessagesController.MapJobMessageToViewModel(message, capcodeGroupName, messageSignIns, signInUsers));
+				models.Add(await BaseJobsMessagesController.MapJobMessageToViewModel(message, capcodeGroupName, messageSignIns, signInUsers, null));
 			}
 
 			// return the mapped models
@@ -407,7 +407,7 @@ namespace Enivate.ResponseHub.UI.Controllers.Api
 						}
 
 						// Map to the JobMessageViewModel
-						latestMessagesModels.Add(await BaseJobsMessagesController.MapJobMessageToViewModel(message, capcodeGroupName, messageSignIns, signInUsers));
+						latestMessagesModels.Add(await BaseJobsMessagesController.MapJobMessageToViewModel(message, capcodeGroupName, messageSignIns, signInUsers, null));
 					}
 
 				}

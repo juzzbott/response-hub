@@ -45,6 +45,8 @@ namespace Enivate.ResponseHub.Model.Groups.Interface
 
 		Task<IList<Group>> GetGroupsByCapcode(Capcode capcode);
 
+		Task<Group> GetGroupByCapcode(Capcode capcode);
+
 	}
 
 }
