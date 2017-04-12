@@ -120,8 +120,9 @@
 		});
 		
 		// Bind the time picker
-		$('.timepicker').datetimepicker({
+		$('.timepicker-control').datetimepicker({
 			format: 'HH:mm',
+			allowInputToggle: true,
 			icons: {
 				time: 'fa fa-fw fa-clock-o',
 				date: 'fa fa-fw fa-calendar',
@@ -134,6 +135,28 @@
 				close: 'fa fa-fw fa-times'
 			}
 		});
+
+		// Bind the time picker
+		$('.timepicker-seconds-control').datetimepicker({
+			format: 'HH:mm:ss',
+			allowInputToggle: true,
+			icons: {
+				time: 'fa fa-fw fa-clock-o',
+				date: 'fa fa-fw fa-calendar',
+				up: 'fa fa-fw fa-chevron-up',
+				down: 'fa fa-fw fa-chevron-down',
+				previous: 'fa fa-fw fa-chevron-left',
+				next: 'fa fa-fw fa-chevron-right',
+				today: 'fa fa-fw fa-bullseye',
+				clear: 'fa fa-fw fa-trash-o',
+				close: 'fa fa-fw fa-times'
+			}
+		});
+
+		// Add read only to prevent keyboard being shown
+		if (isMobile()) {
+			$('.timepicker input, .timepicker-seconds input, .datepicker-control input').attr('readonly', 'readonly');
+		}
 
 		// Set the graphic radioes and checkboxes
 		setGraphicRadiosCheckboxes();

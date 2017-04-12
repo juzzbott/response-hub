@@ -430,7 +430,7 @@ namespace Enivate.ResponseHub.ApplicationServices
 		/// <returns></returns>
 		public async Task<IList<IdentityUser>> GetUsersByIds(IEnumerable<Guid> userIds)
 		{
-			return await _repository.GetUsersByIds(userIds);
+			return await _repository.GetUsersByIds(userIds, true);
 		}
 
 		/// <summary>

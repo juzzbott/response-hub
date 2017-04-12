@@ -17,6 +17,7 @@
 
 	if (Model.Location.Coordinates.Latitude != 0 && Model.Location.Coordinates.Longitude != 0)
 	{
+		<div id="map-messages"></div>
 		<div id="map-canvas" style="height: 400px;"></div>
 		<script type="text/javascript">
 
@@ -29,9 +30,16 @@
 				mapContainer: 'map-canvas',
 				loadCallback: function () {
 
-					//// Add the map marker for the place.
+					// Add the map marker for the place.
 					responseHub.maps.addMarkerToMap(Number(@Model.Location.Coordinates.Latitude), Number(@Model.Location.Coordinates.Longitude));
 
+					// Add the current location to the map
+					if (responseHub.isMobile()) {
+						responseHub.maps.addCurrentLocationToMap();
+					}
+
+					// Add the path from lhq
+					responseHub.maps.addPathFromHq(@(Model.LhqCoordinates.Latitude), @(Model.LhqCoordinates.Longitude));
 				}
 			};
 

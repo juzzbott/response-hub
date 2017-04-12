@@ -311,27 +311,58 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 		/// <param name="jobMessageId">The id of the job message to add the progress to.</param>
 		/// <param name="progress">The progress to add to the job message.</param>
 		/// <returns></returns>
-		public async Task AddProgress(Guid jobMessageId, MessageProgress progress)
+		public async Task SaveProgress(Guid jobMessageId, MessageProgress progress)
 		{
 
-			// If the progress already exists, then throw exception as we can't re-add progress.
+			// If the progress already exists, then update the timestamp of the existing progress update.
 			FilterDefinition<JobMessageDto> countFilter = Builders<JobMessageDto>.Filter.Eq(i => i.Id, jobMessageId) &
 														  Builders<JobMessageDto>.Filter.ElemMatch(i => i.ProgressUpdates, p => p.ProgressType == progress.ProgressType);
 			long count = await Collection.CountAsync(countFilter);
 
+			// Create the filter and update
+			FilterDefinition<JobMessageDto> filter;
+			UpdateDefinition<JobMessageDto> update;
+
 			// If there is already progress update for the type, then throw exception
 			if (count > 0)
 			{
-				throw new ApplicationException(String.Format("The job message already contains a progress update with type '{0}'.", progress.ProgressType.GetEnumDescription()));
+				// Create the filter
+				filter = Builders<JobMessageDto>.Filter.Eq(i => i.Id, jobMessageId) &
+						 Builders<JobMessageDto>.Filter.ElemMatch(i => i.ProgressUpdates, p => p.ProgressType == progress.ProgressType);
+
+				// Create the update
+				update = Builders<JobMessageDto>.Update.Set("ProgressUpdates.$.Timestamp", progress.Timestamp).Set("ProgressUpdates.$.UserId", progress.UserId);
+			}
+			else
+			{
+
+				// Create the filter
+				filter = Builders<JobMessageDto>.Filter.Eq(i => i.Id, jobMessageId);
+
+				// Create the update
+				update = Builders<JobMessageDto>.Update.Push(i => i.ProgressUpdates, progress);
+
 			}
 
-			// Create the filter
+			// Do the update
+			await Collection.UpdateOneAsync(filter, update);
+		}
+
+		/// <summary>
+		/// Removes the specified progress update type from the job.
+		/// </summary>
+		/// <param name="jobMessageId">The id of the job to remove the progres from.</param>
+		/// <param name="progressType">The progress type to remove.</param>
+		/// <returns></returns>
+		public async Task RemoveProgress(Guid jobMessageId, MessageProgressType progressType)
+		{
+			// If the progress already exists, then throw exception as we can't re-add progress.
 			FilterDefinition<JobMessageDto> filter = Builders<JobMessageDto>.Filter.Eq(i => i.Id, jobMessageId);
 
 			// Create the update
-			UpdateDefinition<JobMessageDto> update = Builders<JobMessageDto>.Update.Push(i => i.ProgressUpdates, progress);
+			UpdateDefinition<JobMessageDto> update = Builders<JobMessageDto>.Update.PullFilter(i => i.ProgressUpdates, x => x.ProgressType == progressType);
 
-			// Do the update
+			// perform the update
 			await Collection.UpdateOneAsync(filter, update);
 		}
 

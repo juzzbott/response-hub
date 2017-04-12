@@ -4,6 +4,7 @@ using Enivate.ResponseHub.Model.Messages;
 using Enivate.ResponseHub.Model.Spatial;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
 
@@ -54,6 +55,14 @@ namespace Enivate.ResponseHub.UI.Models.Messages
 
 		public IList<JobMessageSignInEntry> SignIns { get; set; }
 
+		[Required(ErrorMessage = "Please ensure you have selected a date.")]
+		public string EditProgressDate { get; set; }
+
+		[Required(ErrorMessage = "Please ensure you a selected a time.")]
+		public string EditProgressTime { get; set; }
+
+		public Coordinates LhqCoordinates { get; set; }
+
 		public JobMessageViewModel()
 		{
 			Location = new LocationInfo();
@@ -61,6 +70,10 @@ namespace Enivate.ResponseHub.UI.Models.Messages
 			Attachments = new List<Attachment>();
 			ImageAttachments = new List<Attachment>();
 			SignIns = new List<JobMessageSignInEntry>();
+
+			// Set the default date and time values
+			EditProgressDate = DateTime.Now.ToString("yyyy-MM-dd");
+			EditProgressTime = DateTime.Now.ToString("HH:mm:ss");
 		}
 	}
 }

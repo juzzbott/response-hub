@@ -135,7 +135,7 @@ namespace Enivate.ResponseHub.UI.Controllers.Api
 				string capcodeGroupName = capcodes.FirstOrDefault(i => i.CapcodeAddress == message.Capcode).FormattedName();
 
 				// Add the mapped job message view model
-				models.Add(await BaseJobsMessagesController.MapJobMessageToViewModel(message, capcodeGroupName, messageSignIns, signInUsers));
+				models.Add(await BaseJobsMessagesController.MapJobMessageToViewModel(message, capcodeGroupName, messageSignIns, signInUsers, null));
 			}
 
 			// return the mapped models
@@ -257,7 +257,7 @@ namespace Enivate.ResponseHub.UI.Controllers.Api
 
 		[Route("{id:guid}/progress")]
 		[HttpPost]
-		public async Task<MessageProgressResponseModel> PostProgress(Guid id, [FromBody] MessageProgressType progressType)
+		public async Task<MessageProgressResponseModel> PostProgress(Guid id, PostProgressViewModel model)
 		{
 			
 			// Get the identity user for the current user
@@ -272,8 +272,17 @@ namespace Enivate.ResponseHub.UI.Controllers.Api
 			try
 			{
 
+				// Get the current date time
+				DateTime progressDateTime = DateTime.Now;
+
+				// Get the date from the posted string value if it exists
+				if (!String.IsNullOrEmpty(model.ProgressDateTime))
+				{
+					progressDateTime = DateTime.ParseExact(model.ProgressDateTime, "yyyy-MM-dd HH:mm:ss", CultureInfo.CurrentCulture).ToUniversalTime();
+				}
+
 				// Create the progress object and return it
-				MessageProgress progress = await JobMessageService.AddProgress(id, UserId, progressType);
+				MessageProgress progress = await JobMessageService.SaveProgress(id, progressDateTime, UserId, model.ProgressType);
 				return new MessageProgressResponseModel()
 				{
 					Timestamp = progress.Timestamp,
@@ -312,6 +321,41 @@ namespace Enivate.ResponseHub.UI.Controllers.Api
 			}
 
 
+
+		}
+
+		[Route("{id:guid}/progress/delete")]
+		[HttpDelete]
+		public async Task DeleteProgressType(Guid id)
+		{
+			
+			// Get the query string
+			IEnumerable<KeyValuePair<string, string>> qs = ControllerContext.Request.GetQueryNameValuePairs();
+
+			if (!qs.Any(i => i.Key.ToLower() == "progress_type"))
+			{
+				throw new HttpResponseException(HttpStatusCode.BadRequest);
+			}
+
+			// Get the progress type
+			string rawProgressType = qs.First(i => i.Key.ToLower() == "progress_type").Value;
+			MessageProgressType progressType = MessageProgressType.OnRoute;
+
+			switch (rawProgressType)
+			{
+				case "on_route":
+					progressType = MessageProgressType.OnRoute;
+					break;
+				case "on_scene":
+					progressType = MessageProgressType.OnScene;
+					break;
+				case "job_clear":
+					progressType = MessageProgressType.JobClear;
+					break;
+			}
+
+			// Clear the progress type for the job
+			await JobMessageService.RemoveProgress(id, progressType);
 
 		}
 
@@ -363,7 +407,7 @@ namespace Enivate.ResponseHub.UI.Controllers.Api
 						}
 
 						// Map to the JobMessageViewModel
-						latestMessagesModels.Add(await BaseJobsMessagesController.MapJobMessageToViewModel(message, capcodeGroupName, messageSignIns, signInUsers));
+						latestMessagesModels.Add(await BaseJobsMessagesController.MapJobMessageToViewModel(message, capcodeGroupName, messageSignIns, signInUsers, null));
 					}
 
 				}

@@ -358,12 +358,25 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 		/// <summary>
 		/// Gets the collection of users based on the user ids.
 		/// </summary>
-		/// <param name="userIds"></param>
-		/// <returns></returns>
-		public async Task<IList<IdentityUser>> GetUsersByIds(IEnumerable<Guid> userIds)
+		/// <param name="userIds">The collection of user ids to get the user objects for.</param>
+		/// <param name="sort">If true, the results will be sorted alphabetically by surname.</param>
+		/// <returns>The list of users found.</returns>
+		public async Task<IList<IdentityUser>> GetUsersByIds(IEnumerable<Guid> userIds, bool sort)
 		{
 			// Find the the list of user dtos based on the collection of User Ids.
-			IList<IdentityUserDto> userDtos = await Collection.Find(Builders<IdentityUserDto>.Filter.In(i => i.Id, userIds)).ToListAsync();
+			IFindFluent<IdentityUserDto, IdentityUserDto> find = Collection.Find(Builders<IdentityUserDto>.Filter.In(i => i.Id, userIds));
+
+			// build the sort definition
+			SortDefinition<IdentityUserDto> sortFilter = Builders<IdentityUserDto>.Sort.Ascending(i => i.Surname);
+
+			// if we need to sort, then add it to the find operation
+			if (sort)
+			{
+				find = find.Sort(sortFilter);
+			}
+
+			// Get the results
+			IList<IdentityUserDto> userDtos = await find.ToListAsync();
 
 			return userDtos.Select(i => MapToModel(i)).ToList();
 		}

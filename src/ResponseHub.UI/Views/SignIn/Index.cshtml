@@ -14,6 +14,8 @@
 	</div>
 }
 
+@Html.SuccessFromQueryString("sign_in_complete", "1", "The member has been successfully signed in.")
+
 <form action="@Request.Url" method="post">
 
 	@Html.AntiForgeryToken()
@@ -28,7 +30,13 @@
 			<label for="TrainingType">Member to sign in *</label>
 			<div class="row">
 				<div class="col-sm-8 col-md-6 col-lg-4">
-					@Html.DropDownListFor(model => model.UserId, Model.AvailableUsers, new { @class = "form-control" })
+					<select class="form-control selectpicker" data-live-search="true" id="UserId" name="UserId" title="Select member...">
+						@foreach (var user in Model.AvailableUsers)
+						{
+							<option data-tokens="@user.Text" value="@user.Value">@user.Text</option>
+						}
+					</select>
+						
 				</div>
 			</div>
 			@Html.ValidationMessageFor(model => model.UserId)
@@ -59,8 +67,8 @@
 		<label for="StartTime">Start time *</label>
 		<div class="row">
 			<div class="col-sm-8 col-md-6 col-lg-4">
-				<div class="input-group">
-					@Html.TextBoxFor(model => model.StartTime, new { @class = "form-control timepicker" })
+				<div class="input-group timepicker-control">
+					@Html.TextBoxFor(model => model.StartTime, new { @class = "form-control" })
 					<div class="input-group-addon">
 						<i class="fa fa-fw fa-clock-o"></i>
 					</div>
@@ -98,13 +106,13 @@
 		</div>
 		@Html.HiddenFor(model => model.OperationJobId)
 		<div class="sign-on-operation">
-			@foreach (Tuple<Guid, string, string> job in Model.AvailableOperations)
+			@foreach (var job in Model.AvailableOperations)
 			{
 				<div class="row">
 					<div class="col-lg-10 col-xl-9 radio graphic-radio">
-						<label onclick="responseHub.signIn.setOperationJobNumber('@job.Item3', '@job.Item1');">
-							<input type="radio" name="OperationList" id="Operation_@job.Item1" value="@job.Item1">
-							@job.Item2
+						<label onclick="responseHub.signIn.setOperationJobNumber('@job.JobNumber', '@job.JobId');">
+							<input type="radio" name="OperationList" id="Operation_@job.JobId" value="@job.JobId">
+							@job.Description <br /><span class="sign-in-operation-date small text-muted">@job.Timestamp.ToString("yyyy-MM-dd HH:mm")</span>
 						</label>
 					</div>
 				</div>

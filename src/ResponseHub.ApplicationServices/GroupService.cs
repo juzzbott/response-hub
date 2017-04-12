@@ -231,7 +231,7 @@ namespace Enivate.ResponseHub.ApplicationServices
 			}
 
 			// Now that we have the group, get all users for that group
-			IList<IdentityUser> users = await _userRepository.GetUsersByIds(group.Users.Select(i => i.UserId));
+			IList<IdentityUser> users = await _userRepository.GetUsersByIds(group.Users.Select(i => i.UserId), true);
 
 			// return the users
 			return users;
@@ -380,6 +380,17 @@ namespace Enivate.ResponseHub.ApplicationServices
 		public async Task<IList<Group>> GetGroupsByCapcode(Capcode capcode)
 		{
 			return await _repository.GetGroupsByCapcode(capcode, await _regionRepository.GetAll());
+		}
+
+		/// <summary>
+		/// Gets the group by the specified capcode
+		/// </summary>
+		/// <param name="capcodeAddress">The capcode address to get the groups by.</param>
+		/// <returns>The group for the capcode.</returns>
+		public async Task<Group> GetGroupByCapcode(Capcode capcode)
+		{
+			IList<Group> groups = await _repository.GetGroupsByCapcode(capcode, await _regionRepository.GetAll());
+			return groups.FirstOrDefault();
 		}
 	}
 }

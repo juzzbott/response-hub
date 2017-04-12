@@ -17,7 +17,7 @@ namespace Enivate.ResponseHub.UI.Models.SignIn
 		[Required(ErrorMessage = "Please ensure you have selected a date.")]
 		public string StartDate { get; set; }
 
-		[Required(ErrorMessage = "Please ensure a selected a time.")]
+		[Required(ErrorMessage = "Please ensure you have a selected a time.")]
 		public string StartTime { get; set; }
 
 		[Required(ErrorMessage = "You must select a sign on type.")]
@@ -27,7 +27,7 @@ namespace Enivate.ResponseHub.UI.Models.SignIn
 
 		public Guid? OperationJobId { get; set; }
 
-		public IList<Tuple<Guid, string, string>> AvailableOperations { get; set; }
+		public IList<SignInOperationItem> AvailableOperations { get; set; }
 
 		public IList<SelectListItem> AvailableUsers { get; set; }
 
@@ -41,7 +41,7 @@ namespace Enivate.ResponseHub.UI.Models.SignIn
 
 		public SignInViewModel()
 		{
-			AvailableOperations = new List<Tuple<Guid, string, string>>();
+			AvailableOperations = new List<SignInOperationItem>();
 			AvailableUsers = new List<SelectListItem>();
 
 		}

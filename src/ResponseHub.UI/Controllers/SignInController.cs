@@ -58,7 +58,7 @@ namespace Enivate.ResponseHub.UI.Controllers
 			}
 
 			// return the sign in result
-			return await GetSignInResult(model, UserId);
+			return await GetSignInResult(model, UserId, false);
 		}
 		
 		[Route("complete")]	
@@ -90,7 +90,7 @@ namespace Enivate.ResponseHub.UI.Controllers
 			}
 
 			// return the sign in result
-			return await GetSignInResult(model, model.GroupId);
+			return await GetSignInResult(model, model.UserId, true);
 		}
 
 		[Route("sign-out")]
@@ -166,7 +166,7 @@ namespace Enivate.ResponseHub.UI.Controllers
 		/// <param name="model">The model containing the sign in data.</param>
 		/// <param name="specifiedUserId">The user id to sign in from. This should be either the current user id, or the user id selected from the model.</param>
 		/// <returns></returns>
-		private async Task<ActionResult> GetSignInResult(SignInViewModel model, Guid specifiedUserId)
+		private async Task<ActionResult> GetSignInResult(SignInViewModel model, Guid specifiedUserId, bool redirectBackToGroupSignIn)
 		{
 			// Get the dateTime from the model
 			DateTime signInTime = DateTime.ParseExact(String.Format("{0} {1}", model.StartDate, model.StartTime), "yyyy-MM-dd HH:mm", null).ToUniversalTime();
@@ -197,7 +197,14 @@ namespace Enivate.ResponseHub.UI.Controllers
 				await SignInService.SignUserIn(signOn);
 
 				// Redirect to sign in complete.
-				return new RedirectResult("/sign-in/complete");
+				if (redirectBackToGroupSignIn)
+				{
+					return new RedirectResult("/sign-in/group-sign-in?sign_in_complete=1");
+				}
+				else
+				{
+					return new RedirectResult("/sign-in/complete");
+				}
 
 			}
 			catch (Exception ex)
@@ -222,7 +229,7 @@ namespace Enivate.ResponseHub.UI.Controllers
 			IList<JobMessage> jobMessages = await JobMessageService.GetMostRecent(capcodes, MessageType.Job, 3, 0);
 
 			// Create the dictionary of jobs
-			IList<Tuple<Guid, string, string>> availableOperations = new List<Tuple<Guid, string, string>>();
+			IList<SignInOperationItem> availableOperations = new List<SignInOperationItem>();
 			foreach (JobMessage message in jobMessages)
 			{
 				string description = message.MessageContent;
@@ -233,7 +240,13 @@ namespace Enivate.ResponseHub.UI.Controllers
 					description = String.Format("{0}...", description.Substring(0, 100));
 				}
 				// Add the message to the list.
-				availableOperations.Add(new Tuple<Guid, string, string>(message.Id, description, message.JobNumber));
+				availableOperations.Add(new SignInOperationItem()
+				{
+					JobId = message.Id,
+					Description = description,
+					JobNumber = message.JobNumber,
+					Timestamp = message.Timestamp.ToLocalTime()
+				});
 			}
 			
 			// Get the groups for the user

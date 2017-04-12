@@ -351,6 +351,17 @@ table {
   color: #c8c5ba;
   text-decoration: none;
 }
+/**
+ * Mobile tabs
+*/
+@media (max-width: 768px) {
+  #job-tabs ul.nav-tabs li {
+    font-size: 1.3em;
+  }
+  #job-tabs ul.nav-tabs li .tab-title {
+    display: none;
+  }
+}
 /* Expanded sidebar */
 .btn-sidebar-toggle {
   display: none;
@@ -742,8 +753,18 @@ td .checkbox {
   -webkit-box-shadow: none;
   box-shadow: none;
 }
-.datepicker-dropdown {
+.datepicker-dropdown,
+.bootstrap-datetimepicker-widget {
   z-index: 10000;
+}
+.timepicker-seconds-control .input-group-addon,
+.timepicker-control .input-group-addon {
+  cursor: pointer;
+}
+.datepicker-control input[readonly],
+timepicker-seconds-control input[readonly],
+timepicker-control input[readonly] {
+  background-color: #fff;
 }
 /*
 	Login styles
@@ -818,6 +839,9 @@ td .checkbox {
 }
 .progress-action {
   margin-bottom: 15px;
+}
+.progress-action .action-edit {
+  padding-left: 0;
 }
 #job-notes ul li {
   border-left: 3px solid #D6E3E0;
@@ -1380,6 +1404,10 @@ div.generated-report .notes li .wordback-icon {
 .sign-out-row .lead {
   margin-bottom: 5px;
 }
+.sign-in-operation-date {
+  font-size: 85% !important;
+  padding-left: 22px !important;
+}
 /**
 	Charts
 */
@@ -1523,6 +1551,21 @@ div.generated-report .notes li .wordback-icon {
 }
 .alert-info a:hover {
   color: #31708f;
+}
+/**
+ * Map styles
+ */
+.current-map-location {
+  color: #7b74a8;
+  margin-top: -10px;
+  margin-left: -10px;
+  display: block;
+}
+.lhq-map-location {
+  color: #FF862F;
+  margin-top: -10px;
+  margin-left: -10px;
+  display: block;
 }
 /**
  * Mixins

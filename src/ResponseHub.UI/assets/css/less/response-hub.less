@@ -466,9 +466,20 @@ table {
 
 }
 
+/**
+ * Mobile tabs
+*/
+@media (max-width: 768px) {
+	#job-tabs ul.nav-tabs li {
+		font-size: 1.3em;
+
+		.tab-title {
+			display: none;
+		}
+	}
+}
 
 /* Expanded sidebar */
-
 .btn-sidebar-toggle {
 	display: none;
 }
@@ -927,14 +938,26 @@ td .checkbox {
 	}
 }
 
-.datepicker-dropdown {
+.datepicker-dropdown,
+.bootstrap-datetimepicker-widget {
 	z-index: 10000;
 }
 
+.timepicker-seconds-control,
+.timepicker-control {
+	.input-group-addon {
+		cursor: pointer;
+	}
+}
+
+.datepicker-control input[readonly],
+timepicker-seconds-control input[readonly],
+timepicker-control input[readonly] {
+	background-color: #fff;
+}
 /*
 	Login styles
 */
-
 .login-layout {
 	background-color: @body-bg;
 	color: @body-color;
@@ -1027,6 +1050,10 @@ td .checkbox {
 
 .progress-action {
 	margin-bottom: 15px;
+	
+	.action-edit {
+		padding-left: 0;
+	}
 }
 
 #job-notes {
@@ -1748,6 +1775,12 @@ div.generated-report {
 		margin-bottom: 5px;
 	}
 }
+
+.sign-in-operation-date {
+	font-size: 85% !important;
+	padding-left: 22px !important;
+}
+
 /**
 	Charts
 */
@@ -1883,6 +1916,24 @@ div.generated-report {
 	&:hover {
 		color: #31708f;
 	}
+}
+
+/**
+ * Map styles
+ */
+
+.current-map-location {
+	color: @brand-primary;
+	margin-top: -10px;
+	margin-left: -10px;
+	display: block;
+}
+
+.lhq-map-location {
+	color: @ses-orange;
+	margin-top: -10px;
+	margin-left: -10px;
+	display: block;
 }
 
 /**
