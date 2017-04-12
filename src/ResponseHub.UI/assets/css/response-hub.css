@@ -351,6 +351,17 @@ table {
   color: #c8c5ba;
   text-decoration: none;
 }
+/**
+ * Mobile tabs
+*/
+@media (max-width: 768px) {
+  #job-tabs ul.nav-tabs li {
+    font-size: 1.3em;
+  }
+  #job-tabs ul.nav-tabs li .tab-title {
+    display: none;
+  }
+}
 /* Expanded sidebar */
 .btn-sidebar-toggle {
   display: none;
