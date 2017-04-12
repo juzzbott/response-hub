@@ -1393,6 +1393,10 @@ div.generated-report .notes li .wordback-icon {
 .sign-out-row .lead {
   margin-bottom: 5px;
 }
+.sign-in-operation-date {
+  font-size: 85% !important;
+  padding-left: 22px !important;
+}
 /**
 	Charts
 */

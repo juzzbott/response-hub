@@ -294,6 +294,7 @@
     <Compile Include="Models\MyAccount\LoginViewModel.cs" />
     <Compile Include="Models\Search\SearchViewModel.cs" />
     <Compile Include="Models\SignIn\SignInEntryListItemViewModel.cs" />
+    <Compile Include="Models\SignIn\SignInOperationItem.cs" />
     <Compile Include="Models\SignIn\SignInViewModel.cs" />
     <Compile Include="Models\SignIn\SignOutViewModel.cs" />
     <Compile Include="Models\Users\GroupUserViewModel.cs" />

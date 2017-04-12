@@ -27,7 +27,7 @@ namespace Enivate.ResponseHub.UI.Models.SignIn
 
 		public Guid? OperationJobId { get; set; }
 
-		public IList<Tuple<Guid, string, string>> AvailableOperations { get; set; }
+		public IList<SignInOperationItem> AvailableOperations { get; set; }
 
 		public IList<SelectListItem> AvailableUsers { get; set; }
 
@@ -41,7 +41,7 @@ namespace Enivate.ResponseHub.UI.Models.SignIn
 
 		public SignInViewModel()
 		{
-			AvailableOperations = new List<Tuple<Guid, string, string>>();
+			AvailableOperations = new List<SignInOperationItem>();
 			AvailableUsers = new List<SelectListItem>();
 
 		}
