@@ -1559,6 +1559,13 @@ div.generated-report .notes li .wordback-icon {
   color: #7b74a8;
   margin-top: -10px;
   margin-left: -10px;
+  display: block;
+}
+.lhq-map-location {
+  color: #FF862F;
+  margin-top: -10px;
+  margin-left: -10px;
+  display: block;
 }
 /**
  * Mixins

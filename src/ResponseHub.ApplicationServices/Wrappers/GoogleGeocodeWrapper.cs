@@ -81,13 +81,15 @@ namespace Enivate.ResponseHub.ApplicationServices.Wrappers
 				// if there is no json data, return failed.
 				if (String.IsNullOrEmpty(responseContent))
 				{
-
 					// Log the empty Google API response.
 					await _log.Warn(String.Format("Empty response returned from Google Maps API request. Requested URL: {0} | Response status: {1}", serviceUrl, response.StatusCode));
 
 					// return a null result
 					return null;
 				}
+
+				// Log the response from Google Geocode Service
+				await _log.Debug(String.Format("Found address data for address: {0}", addressQuery));
 
 				// Deserialise the ReverseGeocodeResult object
 				StructuredAddress address = GetStructuredAddressFromGoogleGeocode(responseContent, addressQuery);

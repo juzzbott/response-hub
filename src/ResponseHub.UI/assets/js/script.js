@@ -410,6 +410,16 @@ responseHub.maps = (function () {
 		var start_loc = hqLat + ',' + hqLon;
 		var end_loc = mapMarkers[0].getLatLng().lat + ',' + mapMarkers[0].getLatLng().lng;
 
+		var currentLocationMarker = new L.HtmlIcon({
+			html: '<div><i class="fa fa-life-ring fa-2x lhq-map-location"></i></div>',
+			iconSize: [20, 20], // size of the icon
+			iconAnchor: [-10, -10], // point of the icon which will correspond to marker's location
+		});
+
+		// Add the marker to the map
+		var lhqMarker = L.marker([hqLat, hqLon], { icon: currentLocationMarker }).addTo(map);
+		mapMarkers.push(lhqMarker);
+
 		// Get the directions to the location
 		$.ajax({
 			url: responseHub.apiPrefix + '/google-api/directions?start_loc=' + start_loc + '&end_loc=' + end_loc,
@@ -429,7 +439,7 @@ responseHub.maps = (function () {
 
 					// Get the group of markers, destination and current location, and zoom window to fit
 					if (!responseHub.isMobile()) {
-						var group = new L.featureGroup([mapMarkers[0], L.marker([hqLat, hqLon])]);
+						var group = new L.featureGroup([mapMarkers[0], lhqMarker]);
 						map.fitBounds(group.getBounds().pad(0.1));
 					}
 				}
