@@ -69,7 +69,7 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 			else if (model.ReportFormat.ToLower() == "pdf")
 			{
 				// Get the PDF bytes
-				byte[] pdfBytes = await ReportService.GenerateTrainingReportPdfFile(GetControlPanelGroupId(), dateFrom, dateTo);
+				byte[] pdfBytes = await ReportService.GenerateTrainingReportPdfFile(GetControlPanelGroupId(), dateFrom, dateTo, Request.Cookies);
 
 				FileContentResult result = new FileContentResult(pdfBytes, "application/pdf");
 				result.FileDownloadName = String.Format("training-report-{0}.pdf", DateTime.Now.ToString("yyyy-MM-dd"));
@@ -104,7 +104,7 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 			else if (model.ReportFormat.ToLower() == "pdf")
 			{
 				// Get the PDF bytes
-				byte[] pdfBytes = await ReportService.GenerationOperationsReportPdfFile(GetControlPanelGroupId(), dateFrom, dateTo);
+				byte[] pdfBytes = await ReportService.GenerationOperationsReportPdfFile(GetControlPanelGroupId(), dateFrom, dateTo, Request.Cookies);
 
 				FileContentResult result = new FileContentResult(pdfBytes, "application/pdf");
 				result.FileDownloadName = String.Format("operations-report-{0}.pdf", DateTime.Now.ToString("yyyy-MM-dd"));

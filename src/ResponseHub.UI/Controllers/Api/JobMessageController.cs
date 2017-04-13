@@ -23,6 +23,8 @@ using Enivate.ResponseHub.UI.Helpers;
 using Enivate.ResponseHub.Model.SignIn;
 using Enivate.ResponseHub.Model.SignIn.Interface;
 using System.Globalization;
+using Enivate.ResponseHub.ApplicationServices.Wrappers;
+using Enivate.ResponseHub.Model.Spatial;
 
 namespace Enivate.ResponseHub.UI.Controllers.Api
 {
@@ -422,6 +424,89 @@ namespace Enivate.ResponseHub.UI.Controllers.Api
 				throw new HttpResponseException(new HttpResponseMessage(HttpStatusCode.InternalServerError));
 			}
 
+		}
+
+		[Route("{id:guid}/distance-from-job/{otherJobNumber}")]
+		[HttpGet]
+		public async Task<GetDistanceFromJobModel> GetDistanceFromOtherJob(Guid id, string otherJobNumber)
+		{
+			// Get the current job
+			JobMessage currentJob = await JobMessageService.GetById(id);
+
+			// If the job is null, or there is no location data, then return error result
+			if (currentJob == null)
+			{
+				return new GetDistanceFromJobModel()
+				{
+					Success = false,
+					Error = "Current job cannot be found."
+				};
+			}
+			else if (currentJob.Location == null || currentJob.Location.Coordinates == null)
+			{
+				return new GetDistanceFromJobModel()
+				{
+					Success = false,
+					Error = "Current job does not contain any location information."
+				};
+			}
+
+			// Get the other job
+			JobMessage otherJob = await JobMessageService.GetByJobNumber(otherJobNumber);
+
+			// If the job is null, or there is no location data, then return error result
+			if (otherJob == null)
+			{
+				return new GetDistanceFromJobModel()
+				{
+					Success = false,
+					Error = "Requested job cannot be found."
+				};
+			}
+			else if (otherJob == null || otherJob.Location == null || otherJob.Location.Coordinates == null)
+			{
+				return new GetDistanceFromJobModel()
+				{
+					Success = false,
+					Error = "Requested job does not contain any location information."
+				};
+			}
+
+			// If they are the same job numbers just return 0 distance
+			if (otherJob.JobNumber.Equals(currentJob.JobNumber, StringComparison.CurrentCultureIgnoreCase))
+			{
+				return new GetDistanceFromJobModel()
+				{
+					Success = true,
+					Distance = 0,
+					ReferencedJobId = otherJob.Id,
+					ReferencedJobNumber = otherJob.JobNumber
+				};
+			}
+
+			// return the list of coordinates from the google geocode result
+			GoogleDirectionsWrapper directionsWrapper = new GoogleDirectionsWrapper(Log);
+			DirectionsInfo directions = await directionsWrapper.GetDirectionsCoordinates(currentJob.Location.Coordinates, otherJob.Location.Coordinates);
+
+			// If there is no directions returned, then the directions couldn't be found
+			if (directions == null)
+			{
+				return new GetDistanceFromJobModel()
+				{
+					Success = false,
+					Error = "Distance information could not be found between the two jobs."
+				};
+			}
+			else
+			{
+				return new GetDistanceFromJobModel()
+				{
+					Success = true,
+					Distance = directions.TotalDistance,
+					ReferencedJobId = otherJob.Id,
+					ReferencedJobNumber = otherJob.JobNumber
+				};
+			}
 		}
 
 	}

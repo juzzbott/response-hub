@@ -469,6 +469,9 @@ table {
 /**
  * Mobile tabs
 */
+#job-tabs ul.nav-tabs li i {
+	font-size: 15px;
+}
 @media (max-width: 768px) {
 	#job-tabs ul.nav-tabs li {
 		font-size: 1.3em;
@@ -1126,10 +1129,18 @@ i.p-message-admin {
 	color: #143599;
 }
 
+.dist-from-lhq h3,
+.dist-from-lhq p {
+	float: left;
+}
+
+.dist-from-lhq p {
+	margin-left: 15px;
+	margin-top: 17px;
+}
 /**
 	Wallboard styles
 */
-
 .wallboard-layout,
 .weather-centre-layout {
 
@@ -1947,3 +1958,39 @@ div.generated-report {
 	margin-bottom: @margin;
 }
 
+
+/**
+ * Print only styles
+*/
+
+@media print
+{
+
+	body {
+		padding-top: 0;
+	}
+
+	h1, h2, h3, h4, h5 {
+		color: @brand-primary !important;
+	}
+
+	.body-content {
+
+		.sidebar {
+			display: none;
+		}
+
+		.main-content {
+			margin-left: 0;
+			width: 100%;
+		}
+
+		.breadcrumb {
+			display: none;
+		}
+
+		.content-container {
+			border: none;
+		}
+	}
+}

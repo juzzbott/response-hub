@@ -3,7 +3,7 @@
 	/**
 	 * Contains a dictionary of markers
 	 */
-	mapMarkers = [];
+	mapMarkers = {};
 
 
 	/*
@@ -30,6 +30,11 @@
 	 * Contains the array of icons to display over the map
 	 */
 	leafIcons = [];
+
+	/**
+	 * The fuction to set the map bounds interval to resize the map based on your current location
+	 */
+	mapBoundsInterval = null;
 
 	/**
 	 * Loads the map onto the screen.
@@ -133,7 +138,7 @@
 
 	function addMarkerToMap(lat, lng) {
 
-		mapMarkers.push(L.marker([lat, lng]).addTo(map));
+		mapMarkers["job_location"] = L.marker([lat, lng]).addTo(map);
 
 	}
 
@@ -149,9 +154,9 @@
 
 					// If there is 2 map markers in the collection, then the current position alredy exists and we just want to update it.
 					// Otherwise we need to create the new map marker
-					if (mapMarkers.length > 1)
+					if (mapMarkers["current_location"] != null)
 					{
-						mapMarkers[1].setLatLng(new L.LatLng(pos.coords.latitude, pos.coords.longitude));
+						mapMarkers["current_location"].setLatLng(new L.LatLng(pos.coords.latitude, pos.coords.longitude));
 					}
 					else
 					{
@@ -159,23 +164,26 @@
 						// Second location marker doesn exist, so we need to create it
 
 						var currentLocationMarker = new L.HtmlIcon({
-							html: '<div><i class="fa fa-dot-circle-o fa-2x current-map-location"></i></div>',
+							html: '<div><i class="fa fa-bullseye fa-2x current-map-location"></i></div>',
 							iconSize: [20, 20], // size of the icon
 							iconAnchor: [-10, -10], // point of the icon which will correspond to marker's location
 						});	
 
 						// Add the marker to the map
-						mapMarkers.push(L.marker([pos.coords.latitude, pos.coords.longitude], { icon: currentLocationMarker }).addTo(map));
+						mapMarkers["current_location"] = L.marker([pos.coords.latitude, pos.coords.longitude], { icon: currentLocationMarker }).addTo(map);
+
+						// Add the route from LHQ to the map
+						addPathFromPoint(pos.coords.latitude, pos.coords.longitude, true, '#00B226')
 
 						// Get the group of markers, destination and current location, and zoom window to fit
-						var group = new L.featureGroup([mapMarkers[0], mapMarkers[1]]);
+						var group = new L.featureGroup([mapMarkers["job_location"], mapMarkers["current_location"]]);
 						map.fitBounds(group.getBounds().pad(0.1));
-
+						
 						// Set the interval to resize the window every 30 secs.
-						setInterval(function () {
+						mapBoundsInterval = setInterval(function () {
 							
 							// Get the group of markers, destination and current location, and zoom window to fit
-							var group = new L.featureGroup([mapMarkers[0], mapMarkers[1]]);
+							var group = new L.featureGroup([mapMarkers["job_location"], mapMarkers["current_location"]]);
 							map.fitBounds(group.getBounds().pad(0.1));
 
 						}, 30000)
@@ -197,13 +205,10 @@
 
 	}
 
-	function addPathFromHq(hqLat, hqLon)
+	function addLhqMarker(lat, lon)
 	{
 
-
-		var start_loc = hqLat + ',' + hqLon;
-		var end_loc = mapMarkers[0].getLatLng().lat + ',' + mapMarkers[0].getLatLng().lng;
-
+		// Create the custom marker
 		var currentLocationMarker = new L.HtmlIcon({
 			html: '<div><i class="fa fa-life-ring fa-2x lhq-map-location"></i></div>',
 			iconSize: [20, 20], // size of the icon
@@ -211,8 +216,19 @@
 		});
 
 		// Add the marker to the map
-		var lhqMarker = L.marker([hqLat, hqLon], { icon: currentLocationMarker }).addTo(map);
-		mapMarkers.push(lhqMarker);
+		mapMarkers["lhq_location"] = L.marker([lat, lon], { icon: currentLocationMarker }).addTo(map);
+
+		// Add the route from LHQ to the map
+		addPathFromPoint(lat, lon, true, '#FF862F');
+
+	}
+
+	function addPathFromPoint(lat, lon, isDistanceFromLhq, pathColour)
+	{
+
+
+		var start_loc = lat + ',' + lon;
+		var end_loc = mapMarkers["job_location"].getLatLng().lat + ',' + mapMarkers["job_location"].getLatLng().lng;
 
 		// Get the directions to the location
 		$.ajax({
@@ -220,20 +236,25 @@
 			dataType: 'json',
 			success: function (data) {
 
-				if (data.length > 0) {
+				if (data != null) {
 					var latlngs = [];
 
 					// Loop through the results and create the LatLng objects to add to the poly line
-					for (var i = 0; i < data.length; i++) {
-						latlngs.push(new L.LatLng(data[i].Latitude, data[i].Longitude))
+					for (var i = 0; i < data.Coordinates.length; i++) {
+						latlngs.push(new L.LatLng(data.Coordinates[i].Latitude, data.Coordinates[i].Longitude))
+					}
+
+					if (isDistanceFromLhq == true && $('.lhq-dist-set').length == 0) {
+						$('.dist-from-lhq p').empty();
+						$('.dist-from-lhq p').text((Math.round((data.TotalDistance / 1000) * 10) / 10) + ' km');
 					}
 
 					// Now that we have the lat lngs, add the path to the map
-					L.polyline(latlngs, { color: '#3984FF' }).addTo(map);
+					L.polyline(latlngs, { color: pathColour, weight: 6, opacity: 0.4, clickable: false }).addTo(map);
 
 					// Get the group of markers, destination and current location, and zoom window to fit
 					if (!responseHub.isMobile()) {
-						var group = new L.featureGroup([mapMarkers[0], lhqMarker]);
+						var group = new L.featureGroup([mapMarkers["job_location"], mapMarkers["lhq_location"]]);
 						map.fitBounds(group.getBounds().pad(0.1));
 					}
 				}
@@ -353,7 +374,7 @@
 		setMapCenter: setMapCenter,
 		mapExists: mapExists,
 		addCurrentLocationToMap: addCurrentLocationToMap,
-		addPathFromHq, addPathFromHq
+		addLhqMarker, addLhqMarker
 	}
 
 })();

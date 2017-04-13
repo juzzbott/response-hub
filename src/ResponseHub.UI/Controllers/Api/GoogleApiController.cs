@@ -16,7 +16,7 @@ namespace Enivate.ResponseHub.UI.Controllers.Api
 
 		[Route("directions")]
 		[HttpGet]
-		public async Task<IList<Coordinates>> GetDirections()
+		public async Task<DirectionsInfo> GetDirections()
 		{
 			
 			// Get the query string

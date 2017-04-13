@@ -55,13 +55,18 @@ namespace Enivate.ResponseHub.UI.Models.Messages
 
 		public IList<JobMessageSignInEntry> SignIns { get; set; }
 
-		[Required(ErrorMessage = "Please ensure you have selected a date.")]
+		[Required(ErrorMessage = "Please ensure you have entered a date.")]
 		public string EditProgressDate { get; set; }
 
-		[Required(ErrorMessage = "Please ensure you a selected a time.")]
+		[Required(ErrorMessage = "Please ensure you have entered a time.")]
 		public string EditProgressTime { get; set; }
 
 		public Coordinates LhqCoordinates { get; set; }
+
+		public double? DistanceFromLhq { get; set; }
+
+		[Required(ErrorMessage = "You must enter a job number to get the distance from.")]
+		public string DistanceFromJobNumber { get; set; }
 
 		public JobMessageViewModel()
 		{

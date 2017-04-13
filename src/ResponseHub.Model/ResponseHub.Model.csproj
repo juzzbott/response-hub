@@ -54,6 +54,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -106,6 +107,7 @@
     <Compile Include="SignIn\OperationActivity.cs" />
     <Compile Include="SignIn\TrainingActivity.cs" />
     <Compile Include="SignIn\SignInType.cs" />
+    <Compile Include="Spatial\DirectionsInfo.cs" />
     <Compile Include="Training\Interface\ITrainingService.cs" />
     <Compile Include="Training\TrainingSession.cs" />
     <Compile Include="Training\TrainingSessionType.cs" />

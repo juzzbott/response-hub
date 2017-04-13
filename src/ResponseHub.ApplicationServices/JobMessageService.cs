@@ -123,7 +123,29 @@ namespace Enivate.ResponseHub.ApplicationServices
 			JobMessage message = await _repository.GetById(id);
 
 			// Ensure the notes always come newest first.
-			message.Notes = message.Notes.OrderByDescending(i => i.Created).ToList();
+			if (message != null)
+			{
+				message.Notes = message.Notes.OrderByDescending(i => i.Created).ToList();
+			}
+
+			// return the message
+			return message;
+		}
+
+		/// <summary>
+		/// Gets the specific job message by the job number.
+		/// </summary>
+		/// <param name="id">The number of the job to return.</param>
+		/// <returns>The job message if found, otherwise null.</returns>
+		public async Task<JobMessage> GetByJobNumber(string jobNumber)
+		{
+			JobMessage message = await _repository.GetByJobNumber(jobNumber);
+
+			// Ensure the notes always come newest first.
+			if (message != null)
+			{
+				message.Notes = message.Notes.OrderByDescending(i => i.Created).ToList();
+			}
 
 			// return the message
 			return message;

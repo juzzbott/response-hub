@@ -38,8 +38,8 @@
 						responseHub.maps.addCurrentLocationToMap();
 					}
 
-					// Add the path from lhq
-					responseHub.maps.addPathFromHq(@(Model.LhqCoordinates.Latitude), @(Model.LhqCoordinates.Longitude));
+					// Add the path and distance from lhq
+					responseHub.maps.addLhqMarker(@(Model.LhqCoordinates.Latitude), @(Model.LhqCoordinates.Longitude));
 				}
 			};
 
