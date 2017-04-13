@@ -390,6 +390,66 @@
 	}
 
 	/**
+	 * Gets the distance between two jobs, and displays to the user.
+	 */
+	function getDistanceBetweenJobs()
+	{
+
+		// Ensure the form is valid
+		if (!$('#dist-between-jobs form').valid())
+		{
+			return;
+		}
+		
+		// Disable the button to start with
+		$('#dist-between-jobs button').attr('disabled', 'disabled');
+		$('#dist-between-jobs button').addClass('disabled');
+		$('#dist-between-jobs button i').removeClass('fa-search').addClass('fa-spin fa-spinner');
+
+		// Get the current job id and referenced job number
+		var currentJobId = $('#Id').val();
+		var referencedJobNumber = $('#DistanceFromJobNumber').val();
+
+		// Clear any previous results
+		$('#dist-results').empty();
+
+
+		$.ajax({
+			url: responseHub.apiPrefix + '/job-messages/' + currentJobId + '/distance-from-job/' + referencedJobNumber,
+			dataType: 'json',
+			success: function (data) {
+
+				if (data != null)
+				{
+
+					// Is not successull, then display error message
+					if (!data.Success)
+					{
+						$('#dist-results').append('<div class="alert alert-danger alert-dismissible" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>' + data.Error + '</div>');
+					}
+					else
+					{
+						$('#dist-results').append('<h3>Distance results:</h4>');
+						$('#dist-results').append('<p>Distance to job <strong><a href="/jobs/' + data.ReferencedJobId + '">' + data.ReferencedJobNumber + '</a></strong>: ' + (Math.round((data.Distance / 1000) * 10) / 10) + ' km');
+					}
+
+				}
+
+			}, 
+			error: function (jqXHR, textStatus, errorThrown) {
+				$('#dist-results').append('<div class="alert alert-danger alert-dismissible" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>There was an error determining the distance between jobs.</div>');
+			},
+			complete: function () {
+				// Re-enable the button to start with
+				$('#dist-between-jobs button').removeAttr('disabled');
+				$('#dist-between-jobs button').removeClass('disabled');
+				$('#dist-between-jobs button i').removeClass('fa-spin fa-spinner').addClass('fa-search');
+			}
+		});
+
+	}
+
+	/**
 	 * Binds the job progress actions
 	 */
 	function bindJobProgressEditUndo()
@@ -585,7 +645,8 @@
 	return {
 		getNextJobMessages: getNextJobMessages,
 		submitEditProgressTime: submitEditProgressTime,
-		closeEditProgressForm: closeEditProgressForm
+		closeEditProgressForm: closeEditProgressForm,
+		getDistanceBetweenJobs: getDistanceBetweenJobs
 	};
 
 })();

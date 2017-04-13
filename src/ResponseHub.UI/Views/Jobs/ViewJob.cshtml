@@ -48,6 +48,7 @@
 		<li role="presentation" class="active"><a href="#tab-overview" aria-controls="tab-overview" role="tab" data-toggle="tab" class="btn-icon"><i class="fa fa-fw fa-bar-chart"></i><span class="tab-title">Overview</span></a></li>
 		<li role="presentation"><a href="#tab-members" aria-controls="tab-members" role="tab" data-toggle="tab" class="btn-icon" id="tab-header-members"><i class="fa fa-fw fa-address-book-o"></i><span class="tab-title">Members</span> (<span>@Model.SignIns.Count</span>)</a></li>
 		<li role="presentation"><a href="#tab-attachments" aria-controls="tab-attachments" role="tab" data-toggle="tab" class="btn-icon" id="tab-header-attachments" onclick="responseHub.attachments.preloadAttachments();"><i class="fa fa-fw fa-paperclip"></i><span class="tab-title">Attachments</span> (<span>@Model.Attachments.Count</span>)</a></li>
+		<li role="presentation"><a href="#tab-location-info" aria-controls="tab-location-info" role="tab" data-toggle="tab" class="btn-icon" id="tab-header-location-info"><i class="fa fa-fw fa-location-arrow"></i><span class="tab-title">Location info</span></a></li>
 	</ul>
 
 	<!-- Tab panes -->
@@ -100,6 +101,51 @@
 		<div role="tabpanel" class="tab-pane" id="tab-attachments">
 
 			@Html.Partial("JobAttachments", Model)
+
+		</div>
+
+		<div role="tabpanel" class="tab-pane" id="tab-location-info">
+
+
+			<div class="row">
+				<div class="col-sm-12 dist-from-lhq clearfix">
+					<h3>Distance from LHQ:</h3>
+					@if (Model.DistanceFromLhq.HasValue)
+					{
+
+						<p class="lead lhq-dist-set">@(Model.DistanceFromLhq.Value.ToString("0.0"))km</p>
+					}
+					else
+					{
+
+						<p class="lead"><i class="fa fa-fw fa-spin fa-spinner text-primary"></i></p>
+					}
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-sm-12" id="dist-between-jobs">
+
+					<form id="">
+
+						<h4>Distance from job</h4>
+						<div class="form-group">
+							<label for="Name">Job number *</label>
+							<div class="row">
+								<div class="col-sm-8 col-md-6 col-lg-4">
+									@Html.TextBoxFor(model => model.DistanceFromJobNumber, new { @class = "form-control", placeholder = "S123456789" })
+								</div>
+							</div>
+							@Html.ValidationMessageFor(model => model.DistanceFromJobNumber)
+						</div>
+						<button type="button" class="btn btn-primary btn-icon" onclick="responseHub.jobMessages.getDistanceBetweenJobs();"><i class="fa fa-search"></i>Find distance</button>
+
+					</form>
+
+					<div id="dist-results"></div>
+
+				</div>
+			</div>
 
 		</div>
 	</div>

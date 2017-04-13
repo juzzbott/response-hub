@@ -245,6 +245,7 @@
     <Compile Include="Helpers\JobMessageModelHelper.cs" />
     <Compile Include="Models\Api\Events\AddResourcePostModel.cs" />
     <Compile Include="Models\Api\Events\AddResourceResponseModel.cs" />
+    <Compile Include="Models\Api\Messages\GetDistanceFromJobModel.cs" />
     <Compile Include="Models\Api\Messages\PostGetLatestFromLastModel.cs" />
     <Compile Include="Models\Api\Search\SearchPostModel.cs" />
     <Compile Include="Models\Events\AdditionalResourceViewModel.cs" />

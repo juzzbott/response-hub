@@ -244,6 +244,20 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 		}
 
 		/// <summary>
+		/// Gets a JobMessage based on the job number.
+		/// </summary>
+		/// <param name="jobNumber">The number of the job message to get.</param>
+		/// <returns>The job message if found, otherwise null.</returns>
+		public async Task<JobMessage> GetByJobNumber(string jobNumber)
+		{
+			// Get the data object from the db
+			JobMessageDto message = await Collection.Find(Builders<JobMessageDto>.Filter.Eq(i => i.JobNumber, jobNumber.ToUpper())).FirstOrDefaultAsync();
+
+			// return the mapped job message
+			return MapDbObjectToModel(message);
+		}
+
+		/// <summary>
 		/// Adds a new note to an existing job message. 
 		/// </summary>
 		/// <param name="jobMessageId">The id of the job message to add the note to.</param>

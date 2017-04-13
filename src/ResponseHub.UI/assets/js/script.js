@@ -209,7 +209,7 @@ responseHub.maps = (function () {
 	/**
 	 * Contains a dictionary of markers
 	 */
-	mapMarkers = [];
+	mapMarkers = {};
 
 
 	/*
@@ -339,7 +339,7 @@ responseHub.maps = (function () {
 
 	function addMarkerToMap(lat, lng) {
 
-		mapMarkers.push(L.marker([lat, lng]).addTo(map));
+		mapMarkers["job_location"] = L.marker([lat, lng]).addTo(map);
 
 	}
 
@@ -355,9 +355,9 @@ responseHub.maps = (function () {
 
 					// If there is 2 map markers in the collection, then the current position alredy exists and we just want to update it.
 					// Otherwise we need to create the new map marker
-					if (mapMarkers.length > 1)
+					if (mapMarkers["current_location"] != null)
 					{
-						mapMarkers[1].setLatLng(new L.LatLng(pos.coords.latitude, pos.coords.longitude));
+						mapMarkers["current_location"].setLatLng(new L.LatLng(pos.coords.latitude, pos.coords.longitude));
 					}
 					else
 					{
@@ -365,23 +365,23 @@ responseHub.maps = (function () {
 						// Second location marker doesn exist, so we need to create it
 
 						var currentLocationMarker = new L.HtmlIcon({
-							html: '<div><i class="fa fa-dot-circle-o fa-2x current-map-location"></i></div>',
+							html: '<div><i class="fa fa-bullseye fa-2x current-map-location"></i></div>',
 							iconSize: [20, 20], // size of the icon
 							iconAnchor: [-10, -10], // point of the icon which will correspond to marker's location
 						});	
 
 						// Add the marker to the map
-						mapMarkers.push(L.marker([pos.coords.latitude, pos.coords.longitude], { icon: currentLocationMarker }).addTo(map));
+						mapMarkers["current_location"] = L.marker([pos.coords.latitude, pos.coords.longitude], { icon: currentLocationMarker }).addTo(map);
 
 						// Get the group of markers, destination and current location, and zoom window to fit
-						var group = new L.featureGroup([mapMarkers[0], mapMarkers[1]]);
+						var group = new L.featureGroup([mapMarkers["job_location"], mapMarkers["current_location"]]);
 						map.fitBounds(group.getBounds().pad(0.1));
 
 						// Set the interval to resize the window every 30 secs.
 						setInterval(function () {
 							
 							// Get the group of markers, destination and current location, and zoom window to fit
-							var group = new L.featureGroup([mapMarkers[0], mapMarkers[1]]);
+							var group = new L.featureGroup([mapMarkers["job_location"], mapMarkers["current_location"]]);
 							map.fitBounds(group.getBounds().pad(0.1));
 
 						}, 30000)
@@ -403,13 +403,10 @@ responseHub.maps = (function () {
 
 	}
 
-	function addPathFromHq(hqLat, hqLon)
+	function addLhqMarker(lat, lon)
 	{
 
-
-		var start_loc = hqLat + ',' + hqLon;
-		var end_loc = mapMarkers[0].getLatLng().lat + ',' + mapMarkers[0].getLatLng().lng;
-
+		// Create the custom marker
 		var currentLocationMarker = new L.HtmlIcon({
 			html: '<div><i class="fa fa-life-ring fa-2x lhq-map-location"></i></div>',
 			iconSize: [20, 20], // size of the icon
@@ -417,8 +414,19 @@ responseHub.maps = (function () {
 		});
 
 		// Add the marker to the map
-		var lhqMarker = L.marker([hqLat, hqLon], { icon: currentLocationMarker }).addTo(map);
-		mapMarkers.push(lhqMarker);
+		mapMarkers["lhq_location"] = L.marker([lat, lon], { icon: currentLocationMarker }).addTo(map);
+
+		// Add the route from LHQ to the map
+		addPathDistanceFromPoint(lat, lon, true)
+
+	}
+
+	function addPathDistanceFromPoint(lat, lon, isDistanceFromLhq)
+	{
+
+
+		var start_loc = lat + ',' + lon;
+		var end_loc = mapMarkers["job_location"].getLatLng().lat + ',' + mapMarkers["job_location"].getLatLng().lng;
 
 		// Get the directions to the location
 		$.ajax({
@@ -426,12 +434,17 @@ responseHub.maps = (function () {
 			dataType: 'json',
 			success: function (data) {
 
-				if (data.length > 0) {
+				if (data != null) {
 					var latlngs = [];
 
 					// Loop through the results and create the LatLng objects to add to the poly line
-					for (var i = 0; i < data.length; i++) {
-						latlngs.push(new L.LatLng(data[i].Latitude, data[i].Longitude))
+					for (var i = 0; i < data.Coordinates.length; i++) {
+						latlngs.push(new L.LatLng(data.Coordinates[i].Latitude, data.Coordinates[i].Longitude))
+					}
+
+					if (isDistanceFromLhq == true && $('.lhq-dist-set').length == 0) {
+						$('.dist-from-lhq p').empty();
+						$('.dist-from-lhq p').text((Math.round((data.TotalDistance / 1000) * 10) / 10) + ' km');
 					}
 
 					// Now that we have the lat lngs, add the path to the map
@@ -439,7 +452,7 @@ responseHub.maps = (function () {
 
 					// Get the group of markers, destination and current location, and zoom window to fit
 					if (!responseHub.isMobile()) {
-						var group = new L.featureGroup([mapMarkers[0], lhqMarker]);
+						var group = new L.featureGroup([mapMarkers["job_location"], mapMarkers["lhq_location"]]);
 						map.fitBounds(group.getBounds().pad(0.1));
 					}
 				}
@@ -559,7 +572,8 @@ responseHub.maps = (function () {
 		setMapCenter: setMapCenter,
 		mapExists: mapExists,
 		addCurrentLocationToMap: addCurrentLocationToMap,
-		addPathFromHq, addPathFromHq
+		addPathDistanceFromPoint, addPathDistanceFromPoint,
+		addLhqMarker, addLhqMarker
 	}
 
 })();
@@ -1021,6 +1035,66 @@ responseHub.jobMessages = (function () {
 	}
 
 	/**
+	 * Gets the distance between two jobs, and displays to the user.
+	 */
+	function getDistanceBetweenJobs()
+	{
+
+		// Ensure the form is valid
+		if (!$('#dist-between-jobs form').valid())
+		{
+			return;
+		}
+		
+		// Disable the button to start with
+		$('#dist-between-jobs button').attr('disabled', 'disabled');
+		$('#dist-between-jobs button').addClass('disabled');
+		$('#dist-between-jobs button i').removeClass('fa-search').addClass('fa-spin fa-spinner');
+
+		// Get the current job id and referenced job number
+		var currentJobId = $('#Id').val();
+		var referencedJobNumber = $('#DistanceFromJobNumber').val();
+
+		// Clear any previous results
+		$('#dist-results').empty();
+
+
+		$.ajax({
+			url: responseHub.apiPrefix + '/job-messages/' + currentJobId + '/distance-from-job/' + referencedJobNumber,
+			dataType: 'json',
+			success: function (data) {
+
+				if (data != null)
+				{
+
+					// Is not successull, then display error message
+					if (!data.Success)
+					{
+						$('#dist-results').append('<div class="alert alert-danger alert-dismissible" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>' + data.Error + '</div>');
+					}
+					else
+					{
+						$('#dist-results').append('<h3>Distance results:</h4>');
+						$('#dist-results').append('<p>Distance to job <strong><a href="/jobs/' + data.ReferencedJobId + '">' + data.ReferencedJobNumber + '</a></strong>: ' + (Math.round((data.Distance / 1000) * 10) / 10) + ' km');
+					}
+
+				}
+
+			}, 
+			error: function (jqXHR, textStatus, errorThrown) {
+				$('#dist-results').append('<div class="alert alert-danger alert-dismissible" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>There was an error determining the distance between jobs.</div>');
+			},
+			complete: function () {
+				// Re-enable the button to start with
+				$('#dist-between-jobs button').removeAttr('disabled');
+				$('#dist-between-jobs button').removeClass('disabled');
+				$('#dist-between-jobs button i').removeClass('fa-spin fa-spinner').addClass('fa-search');
+			}
+		});
+
+	}
+
+	/**
 	 * Binds the job progress actions
 	 */
 	function bindJobProgressEditUndo()
@@ -1216,7 +1290,8 @@ responseHub.jobMessages = (function () {
 	return {
 		getNextJobMessages: getNextJobMessages,
 		submitEditProgressTime: submitEditProgressTime,
-		closeEditProgressForm: closeEditProgressForm
+		closeEditProgressForm: closeEditProgressForm,
+		getDistanceBetweenJobs: getDistanceBetweenJobs
 	};
 
 })();

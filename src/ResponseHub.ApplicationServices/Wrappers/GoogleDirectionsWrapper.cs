@@ -47,7 +47,7 @@ namespace Enivate.ResponseHub.ApplicationServices.Wrappers
 			}
 		}
 
-		public async Task<IList<Coordinates>> GetDirectionsCoordinates(Coordinates startLocation, Coordinates endLocation)
+		public async Task<DirectionsInfo> GetDirectionsCoordinates(Coordinates startLocation, Coordinates endLocation)
 		{
 			try
 			{
@@ -77,7 +77,7 @@ namespace Enivate.ResponseHub.ApplicationServices.Wrappers
 				}
 
 				// Deserialise the ReverseGeocodeResult object
-				IList<Coordinates> directionsCoords = GetCoordinatesFromGoogleDirections(responseContent, startLocation);
+				DirectionsInfo directionsCoords = GetDirectionsFromGoogleDirections(responseContent, startLocation);
 
 				// return the result
 				return directionsCoords;
@@ -98,7 +98,7 @@ namespace Enivate.ResponseHub.ApplicationServices.Wrappers
 		/// <param name="directionsJson"></param>
 		/// <param name="startLocation"></param>
 		/// <returns></returns>
-		public IList<Coordinates> GetCoordinatesFromGoogleDirections(string directionsJson, Coordinates startLocation)
+		public DirectionsInfo GetDirectionsFromGoogleDirections(string directionsJson, Coordinates startLocation)
 		{
 			// Load the directions data into JObject for querying
 			JObject directionsData = JObject.Parse(directionsJson);
@@ -109,24 +109,27 @@ namespace Enivate.ResponseHub.ApplicationServices.Wrappers
 				return null;
 			}
 
-			// Create the list of coordinates
-			List<Coordinates> coords = new List<Coordinates>();
+			// Create the directions class
+			DirectionsInfo directions = new DirectionsInfo();
+
+			// Set the total distance
+			directions.TotalDistance = Double.Parse(directionsData["routes"][0]["legs"][0]["distance"]["value"].ToString());
 
 			// Get the route legs
 			JArray routeLegSteps = (JArray)directionsData["routes"][0]["legs"][0]["steps"];
 
-			// return the list of coordinates
+			// Add the coordinates of the directions to the DirectionsInfo class.
 			foreach(JObject step in routeLegSteps)
 			{
 				List<Coordinates> legCoords = MapLegToCoordinates(step);
-				if (coords != null)
+				if (legCoords != null)
 				{
-					coords.AddRange(legCoords);
+					directions.Coordinates.AddRange(legCoords);
 				}
 			}
 
-			// return the list of coordinates
-			return coords;
+			// return the directions
+			return directions;
 
 		}
 
