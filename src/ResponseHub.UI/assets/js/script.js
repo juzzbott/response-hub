@@ -2596,7 +2596,7 @@ responseHub.attachments = (function () {
 		var attachments = $('<div id="attachment-preload"></div>');
 
 		// Loop through each image attachment
-		$('#links a').each(function () {
+		$('#attachment-gallery a').each(function () {
 
 			// Get the url to the img
 			var imgUrl = $(this).attr('href');
