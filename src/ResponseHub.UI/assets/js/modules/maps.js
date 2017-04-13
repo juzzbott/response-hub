@@ -32,6 +32,11 @@
 	leafIcons = [];
 
 	/**
+	 * The fuction to set the map bounds interval to resize the map based on your current location
+	 */
+	mapBoundsInterval = null;
+
+	/**
 	 * Loads the map onto the screen.
 	 */
 	function displayMap(mapConfig) {
@@ -167,12 +172,15 @@
 						// Add the marker to the map
 						mapMarkers["current_location"] = L.marker([pos.coords.latitude, pos.coords.longitude], { icon: currentLocationMarker }).addTo(map);
 
+						// Add the route from LHQ to the map
+						addPathFromPoint(pos.coords.latitude, pos.coords.longitude, true, '#00B226')
+
 						// Get the group of markers, destination and current location, and zoom window to fit
 						var group = new L.featureGroup([mapMarkers["job_location"], mapMarkers["current_location"]]);
 						map.fitBounds(group.getBounds().pad(0.1));
-
+						
 						// Set the interval to resize the window every 30 secs.
-						setInterval(function () {
+						mapBoundsInterval = setInterval(function () {
 							
 							// Get the group of markers, destination and current location, and zoom window to fit
 							var group = new L.featureGroup([mapMarkers["job_location"], mapMarkers["current_location"]]);
@@ -211,11 +219,11 @@
 		mapMarkers["lhq_location"] = L.marker([lat, lon], { icon: currentLocationMarker }).addTo(map);
 
 		// Add the route from LHQ to the map
-		addPathDistanceFromPoint(lat, lon, true)
+		addPathFromPoint(lat, lon, true, '#FF862F');
 
 	}
 
-	function addPathDistanceFromPoint(lat, lon, isDistanceFromLhq)
+	function addPathFromPoint(lat, lon, isDistanceFromLhq, pathColour)
 	{
 
 
@@ -242,7 +250,7 @@
 					}
 
 					// Now that we have the lat lngs, add the path to the map
-					L.polyline(latlngs, { color: '#3984FF' }).addTo(map);
+					L.polyline(latlngs, { color: pathColour, weight: 6, opacity: 0.4, clickable: false }).addTo(map);
 
 					// Get the group of markers, destination and current location, and zoom window to fit
 					if (!responseHub.isMobile()) {
@@ -366,7 +374,6 @@
 		setMapCenter: setMapCenter,
 		mapExists: mapExists,
 		addCurrentLocationToMap: addCurrentLocationToMap,
-		addPathDistanceFromPoint, addPathDistanceFromPoint,
 		addLhqMarker, addLhqMarker
 	}
 
