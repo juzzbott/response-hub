@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web;
 
 using Enivate.ResponseHub.Model.PdfGeneration.Interface;
 using Enivate.ResponseHub.Model.Reports.Interface;
@@ -24,7 +25,7 @@ namespace Enivate.ResponseHub.ApplicationServices
 			_pdfGenerationService = pdfGenerationService;
 		}
 
-		public async Task<byte[]> GenerateTrainingReportPdfFile(Guid groupId, DateTime dateFrom, DateTime dateTo)
+		public async Task<byte[]> GenerateTrainingReportPdfFile(Guid groupId, DateTime dateFrom, DateTime dateTo, HttpCookieCollection cookies)
 		{
 			// Get the web response for the report
 			// To force a page break: style="page-break-before: always"
@@ -50,7 +51,7 @@ namespace Enivate.ResponseHub.ApplicationServices
 			}
 
 			// Return the pdf bytes
-			return await _pdfGenerationService.GeneratePdfFromHtml(htmlContent, false);
+			return await _pdfGenerationService.GeneratePdfFromHtml(htmlContent, false, cookies);
 
 		}
 		
@@ -61,7 +62,7 @@ namespace Enivate.ResponseHub.ApplicationServices
 		/// <param name="dateFrom"></param>
 		/// <param name="dateTo"></param>
 		/// <returns></returns>
-		public async Task<byte[]> GenerationOperationsReportPdfFile(Guid groupId, DateTime dateFrom, DateTime dateTo)
+		public async Task<byte[]> GenerationOperationsReportPdfFile(Guid groupId, DateTime dateFrom, DateTime dateTo, HttpCookieCollection cookies)
 		{
 
 			// Get the web response for the report
@@ -90,7 +91,7 @@ namespace Enivate.ResponseHub.ApplicationServices
 			}
 
 			// Return the pdf bytes
-			return await _pdfGenerationService.GeneratePdfFromHtml(htmlContent, true);
+			return await _pdfGenerationService.GeneratePdfFromHtml(htmlContent, true, cookies);
 
 		}
 
