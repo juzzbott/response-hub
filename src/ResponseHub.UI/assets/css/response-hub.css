@@ -970,6 +970,9 @@ i.p-message-admin {
   padding-left: 15px;
   padding-right: 15px;
 }
+.wallboard-layout .message-list li h3 {
+  padding-top: 10px;
+}
 .wallboard-layout .message-list .message {
   clear: both;
   position: relative;
@@ -1005,15 +1008,9 @@ i.p-message-admin {
   float: right;
   padding-right: 5px;
 }
-.wallboard-layout .message-list .message-meta {
-  padding: 0 15px;
-}
-.wallboard-layout .message-list .message-meta .group-heading {
-  float: left;
-}
 .wallboard-layout .message-list .message-meta .message-date {
-  float: right;
-  padding-top: 10px;
+  font-size: 14px;
+  margin-bottom: 0;
 }
 .wallboard-layout .wallboard-main .job-date {
   margin-top: 15px;
@@ -1048,6 +1045,9 @@ i.p-message-admin {
 .wallboard-layout .job-notes-container {
   height: 250px;
 }
+.wallboard-layout .job-notes-container .no-notes-msg {
+  font-size: 15px;
+}
 .wallboard-layout ul.job-notes li {
   border-left: 3px solid #D6E3E0;
   border-top: 1px solid #e5edeb;
@@ -1058,11 +1058,6 @@ i.p-message-admin {
   padding-top: 4px;
   padding-bottom: 2px;
   margin-bottom: 10px;
-}
-.wallboard-layout ul.job-notes li.no-notes-msg {
-  border-width: 0;
-  padding: 0;
-  background-color: #fafafa;
 }
 .wallboard-layout ul.job-notes li small {
   padding-bottom: 4px;

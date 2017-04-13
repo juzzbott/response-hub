@@ -1613,6 +1613,7 @@ responseHub.wallboard = (function () {
 
 		// Clear the loading notes
 		$("ul.job-notes").empty();
+		$('.no-notes-msg').remove();
 
 		// Hide the loading
 		$(".notes-loading").addClass("hidden");
@@ -1624,7 +1625,7 @@ responseHub.wallboard = (function () {
 				
 				if (data == null || data.length == 0) {
 
-					$("ul.job-notes").append('<li class="no-notes-msg"><p>No notes available.</p></li>');
+					$(".job-notes-container").append('<p class="no-notes-msg">No notes available.</p>');
 
 				} else {
 
@@ -1867,9 +1868,6 @@ responseHub.wallboard = (function () {
 			'" data-date="' + localDateString + '" data-priority="' + jobMessage.Priority + '" data-map-ref="' + mapReference + '" data-address="' + address + '" data-lat="' + lat + '" data-lon="' + lon +
 			'" data-id="' + jobMessage.Id + '" data-progress="' + latestProgress + '" data-has-notes="' + (hasNotes ? 'true' : 'false') + '">');
 
-		// Add the job name and date
-		listItem.append('<div class="message-meta"><h4 class="group-heading">' + jobMessage.CapcodeGroupName + '</h4><p class="text-info message-date">' + localDateString + '</p></div>');
-
 		// Build the h3 tag
 		var h3 = $('<h3></h3>');
 
@@ -1914,6 +1912,11 @@ responseHub.wallboard = (function () {
 		// Create the message element
 		var messageElem = $('<div class="message"></div>');
 		messageElem.append(h3);
+
+		// Add the job date
+		messageElem.append('<div class="message-meta"><p class="text-info message-date">' + localDateString + '</p></div>');
+
+		// Add the message body
 		messageElem.append('<small class="text-muted">' + jobMessage.MessageBodyTruncated + '</small>');
 		
 		listItem.append(messageElem);
