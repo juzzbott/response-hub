@@ -1958,3 +1958,39 @@ div.generated-report {
 	margin-bottom: @margin;
 }
 
+
+/**
+ * Print only styles
+*/
+
+@media print
+{
+
+	body {
+		padding-top: 0;
+	}
+
+	h1, h2, h3, h4, h5 {
+		color: @brand-primary !important;
+	}
+
+	.body-content {
+
+		.sidebar {
+			display: none;
+		}
+
+		.main-content {
+			margin-left: 0;
+			width: 100%;
+		}
+
+		.breadcrumb {
+			display: none;
+		}
+
+		.content-container {
+			border: none;
+		}
+	}
+}

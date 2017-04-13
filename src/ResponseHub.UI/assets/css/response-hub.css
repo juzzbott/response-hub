@@ -1581,3 +1581,31 @@ div.generated-report .notes li .wordback-icon {
 /**
  * Mixins
  */
+/**
+ * Print only styles
+*/
+@media print {
+  body {
+    padding-top: 0;
+  }
+  h1,
+  h2,
+  h3,
+  h4,
+  h5 {
+    color: #7b74a8 !important;
+  }
+  .body-content .sidebar {
+    display: none;
+  }
+  .body-content .main-content {
+    margin-left: 0;
+    width: 100%;
+  }
+  .body-content .breadcrumb {
+    display: none;
+  }
+  .body-content .content-container {
+    border: none;
+  }
+}
