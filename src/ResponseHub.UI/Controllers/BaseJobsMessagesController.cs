@@ -94,7 +94,8 @@ namespace Enivate.ResponseHub.UI.Controllers
 				MessageBody = job.MessageContent,
 				Notes = jobNotesModels,
 				Priority = job.Priority,
-				Timestamp = job.Timestamp.ToLocalTime()
+				Timestamp = job.Timestamp.ToLocalTime(),
+				Version = job.Version
 			};
 
 			// Set the on route, on scene, job clear values

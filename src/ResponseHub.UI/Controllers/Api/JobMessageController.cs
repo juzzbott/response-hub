@@ -274,6 +274,19 @@ namespace Enivate.ResponseHub.UI.Controllers.Api
 			try
 			{
 
+				// Get the job based on the id
+				JobMessage job = await JobMessageService.GetById(id);
+
+				// Ensure the version matches, otherwise return version mismatch error
+				if (job.Version != model.Version)
+				{
+					return new MessageProgressResponseModel()
+					{
+						Success = false,
+						ErrorMessage = "Someone else has changed this job since you loaded it. Reload the job to view changes."
+					};
+				}
+
 				// Get the current date time
 				DateTime progressDateTime = DateTime.Now;
 
@@ -290,7 +303,8 @@ namespace Enivate.ResponseHub.UI.Controllers.Api
 					Timestamp = progress.Timestamp,
 					UserId = UserId,
 					UserFullName = user.FullName,
-					Success = true
+					Success = true,
+					NewVersion = model.Version + 1
 				};
 
 			} 
@@ -327,37 +341,46 @@ namespace Enivate.ResponseHub.UI.Controllers.Api
 		}
 
 		[Route("{id:guid}/progress/delete")]
-		[HttpDelete]
-		public async Task DeleteProgressType(Guid id)
+		[HttpPost]
+		public async Task<MessageProgressResponseModel> DeleteProgressType(Guid id, PostProgressViewModel model)
 		{
-			
-			// Get the query string
-			IEnumerable<KeyValuePair<string, string>> qs = ControllerContext.Request.GetQueryNameValuePairs();
 
-			if (!qs.Any(i => i.Key.ToLower() == "progress_type"))
+			try
 			{
-				throw new HttpResponseException(HttpStatusCode.BadRequest);
+
+				// Get the job based on the id
+				JobMessage job = await JobMessageService.GetById(id);
+
+				// Ensure the version matches, otherwise return version mismatch error
+				if (job.Version != model.Version)
+				{
+					return new MessageProgressResponseModel()
+					{
+						Success = false,
+						ErrorMessage = "Someone else has changed this job since you loaded it. Reload the job to view changes."
+					};
+				}
+
+				// Clear the progress type for the job
+				await JobMessageService.RemoveProgress(id, model.ProgressType);
+
+				// return a success value.
+				return new MessageProgressResponseModel()
+				{
+					Success = true,
+					NewVersion = model.Version + 1
+				};
+
 			}
-
-			// Get the progress type
-			string rawProgressType = qs.First(i => i.Key.ToLower() == "progress_type").Value;
-			MessageProgressType progressType = MessageProgressType.OnRoute;
-
-			switch (rawProgressType)
+			catch (Exception ex)
 			{
-				case "on_route":
-					progressType = MessageProgressType.OnRoute;
-					break;
-				case "on_scene":
-					progressType = MessageProgressType.OnScene;
-					break;
-				case "job_clear":
-					progressType = MessageProgressType.JobClear;
-					break;
+				await Log.Error(String.Format("Cannot remove progress from cancelled job.", ex.Message), ex);
+				return new MessageProgressResponseModel()
+				{
+					Success = false,
+					ErrorMessage = "Error removing progress from the job message."
+				};
 			}
-
-			// Clear the progress type for the job
-			await JobMessageService.RemoveProgress(id, progressType);
 
 		}
 

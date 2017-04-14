@@ -14,5 +14,7 @@ namespace Enivate.ResponseHub.UI.Models.Api.Messages
 
 		public string ProgressDateTime { get; set; }
 
+		public int Version { get; set; }
+
 	}
 }

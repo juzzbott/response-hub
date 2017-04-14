@@ -14,5 +14,7 @@ namespace Enivate.ResponseHub.UI.Models.Api.Messages
 
 		public string ErrorMessage { get; set; }
 
+		public int NewVersion { get; set; }
+
 	}
 }
