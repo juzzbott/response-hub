@@ -89,7 +89,7 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 
 		[Route("operations-report")]
 		[HttpPost]
-		public async Task<ActionResult> OperationsReport(ReportFilterViewModel model)
+		public async Task<ActionResult> OperationsReport(OperationsFilterViewModel model)
 		{
 			// Get the list of jobs between the start and end dates
 			DateTime dateFrom = model.DateFrom.Date;
@@ -97,14 +97,14 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 
 			if (model.ReportFormat.ToLower() == "display")
 			{
-				OperationsReportViewModel reportViewModel = await GetOperationsReportModel(GetControlPanelGroupId(), dateFrom, dateTo);
+				OperationsReportViewModel reportViewModel = await GetOperationsReportModel(GetControlPanelGroupId(), dateFrom, dateTo, model.IncludeAdditionalCapcodes);
 				reportViewModel.UseStandardLayout = true;
 				return View("GenerateOperationsReportHtml", reportViewModel);
 			}
 			else if (model.ReportFormat.ToLower() == "pdf")
 			{
 				// Get the PDF bytes
-				byte[] pdfBytes = await ReportService.GenerationOperationsReportPdfFile(GetControlPanelGroupId(), dateFrom, dateTo, Request.Cookies);
+				byte[] pdfBytes = await ReportService.GenerationOperationsReportPdfFile(GetControlPanelGroupId(), dateFrom, dateTo, model.IncludeAdditionalCapcodes, Request.Cookies);
 
 				FileContentResult result = new FileContentResult(pdfBytes, "application/pdf");
 				result.FileDownloadName = String.Format("operations-report-{0}.pdf", DateTime.Now.ToString("yyyy-MM-dd"));
@@ -144,6 +144,7 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 			Guid groupId = new Guid(Request.QueryString["group_id"]);
 			DateTime dateFrom = DateTime.ParseExact(Request.QueryString["date_from"], "yyyyMMddHHmmss", CultureInfo.CurrentCulture);
 			DateTime dateTo = DateTime.ParseExact(Request.QueryString["date_to"], "yyyyMMddHHmmss", CultureInfo.CurrentCulture);
+			bool includeAdditionalCapcodes = Boolean.Parse(Request.QueryString["additional_capcodes"]);
 
 			// Get the group by the id
 			Group group = await GroupService.GetById(groupId);
@@ -151,7 +152,7 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 			// Ensure the user is a group administrator of the specific group, otherwise 403 forbidden.
 			
 			// Get the operations report model
-			OperationsReportViewModel model = await GetOperationsReportModel(group.Id, dateFrom, dateTo);
+			OperationsReportViewModel model = await GetOperationsReportModel(group.Id, dateFrom, dateTo, includeAdditionalCapcodes);
 
 			// return the model
 			return View(model);
@@ -165,15 +166,26 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 		/// <param name="dateTo"></param>
 		/// <param name="group"></param>
 		/// <returns></returns>
-		private async Task<OperationsReportViewModel> GetOperationsReportModel(Guid groupId, DateTime dateFrom, DateTime dateTo)
+		private async Task<OperationsReportViewModel> GetOperationsReportModel(Guid groupId, DateTime dateFrom, DateTime dateTo, bool includeAllCapcodes)
 		{
 
 			// Get the group by the id
 			Group group = await GroupService.GetById(groupId);
 
+			// Create the list of capcodes
+			List<Capcode> selectedCapcodes = new List<Capcode> { new Capcode() { CapcodeAddress = group.Capcode } };
+
+			// Get all the capcodes for the group if we are to include additional capcodes
+			if (includeAllCapcodes)
+			{
+				// Get all the capcodes and select the group additional capcodes for the group
+				IList<Capcode> allCapcodes = await CapcodeService.GetAll();
+				selectedCapcodes.AddRange(allCapcodes.Where(i => group.AdditionalCapcodes.Contains(i.Id)));
+			}
+
 			// Get the list of messages for the capcode
 			IList<JobMessage> jobMessages = await JobMessageService.GetMessagesBetweenDates(
-				new List<Capcode> { new Capcode() { CapcodeAddress = group.Capcode } },
+				selectedCapcodes,
 				MessageType.Job & MessageType.Message,
 				999999, 
 				0,
