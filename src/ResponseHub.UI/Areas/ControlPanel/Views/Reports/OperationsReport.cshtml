@@ -1,4 +1,4 @@
-﻿@model Enivate.ResponseHub.UI.Areas.ControlPanel.Models.Reports.ReportFilterViewModel
+﻿@model Enivate.ResponseHub.UI.Areas.ControlPanel.Models.Reports.Operations.OperationsFilterViewModel
 
 @{
 	ViewBag.Title = "Operations report";
@@ -39,6 +39,22 @@
 				</div>
 				@Html.ValidationMessageFor(model => model.DateTo)
 				<div class="text-muted"><em>Date format should be dd/MM/yyyy.</em></div>
+			</div>
+		</div>
+	</div>
+
+	<div class="form-group">
+		<div class="row">
+			<div class="col-sm-12 graphic-checkbox">
+				<label class="radio-inline">
+					@Html.CheckBoxFor(model => model.IncludeAdditionalCapcodes)
+					Include all capcodes
+				</label>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-lg-10 col-xl-6">
+				<p class="section-help">Including all capcodes will include all jobs and messages for all capcodes assigned to the group.</p>
 			</div>
 		</div>
 	</div>

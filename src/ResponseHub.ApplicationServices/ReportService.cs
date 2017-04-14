@@ -62,16 +62,17 @@ namespace Enivate.ResponseHub.ApplicationServices
 		/// <param name="dateFrom"></param>
 		/// <param name="dateTo"></param>
 		/// <returns></returns>
-		public async Task<byte[]> GenerationOperationsReportPdfFile(Guid groupId, DateTime dateFrom, DateTime dateTo, HttpCookieCollection cookies)
+		public async Task<byte[]> GenerationOperationsReportPdfFile(Guid groupId, DateTime dateFrom, DateTime dateTo, bool includeAdditionalCapcodes, HttpCookieCollection cookies)
 		{
 
 			// Get the web response for the report
 			// To force a page break: style="page-break-before: always"
-			HttpWebRequest request = HttpWebRequest.CreateHttp(String.Format("{0}/control-panel/reports/generate-operations-report-html?group_id={1}&date_from={2}&date_to={3}",
+			HttpWebRequest request = HttpWebRequest.CreateHttp(String.Format("{0}/control-panel/reports/generate-operations-report-html?group_id={1}&date_from={2}&date_to={3}&additional_capcodes={4}",
 				ConfigurationManager.AppSettings[ConfigurationKeys.BaseWebsiteUrl],
 				groupId,
 				dateFrom.ToString("yyyyMMddHHmmss"),
-				dateTo.ToString("yyyyMMddHHmmss")));
+				dateTo.ToString("yyyyMMddHHmmss"),
+				includeAdditionalCapcodes));
 
 			HttpWebResponse response = (HttpWebResponse)await request.GetResponseAsync();
 
