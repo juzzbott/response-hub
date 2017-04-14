@@ -68,6 +68,8 @@ namespace Enivate.ResponseHub.UI.Models.Messages
 		[Required(ErrorMessage = "You must enter a job number to get the distance from.")]
 		public string DistanceFromJobNumber { get; set; }
 
+		public int Version { get; set; }
+
 		public JobMessageViewModel()
 		{
 			Location = new LocationInfo();

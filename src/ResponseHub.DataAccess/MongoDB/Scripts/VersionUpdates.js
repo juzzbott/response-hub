@@ -2,7 +2,7 @@
 var schema_info_id = ObjectId("58e492e962cb703bc785da68");
 
 // Define the max schema version
-var schema_version = 4
+var schema_version = 5
 
 // Ensure we have a schema to start with
 var schema_count = db.schema_info.count({})
@@ -85,6 +85,10 @@ while (current_version < schema_version) {
 			db.training_types.insert({ "_id": BinData(4, "6gLx6LzrSZmNgH3ZnuSbMA=="), "Name": "Four Wheel Drive", "ShortName": "4x4", "Description": "", "SortOrder": NumberInt(0) });
 			db.training_types.insert({ "_id": BinData(4, "D0c7VLbvRzafARf5t5b9YA=="), "Name": "Map and Navigation", "ShortName": "Map & Nav", "Description": "Reading and interpreting maps", "SortOrder": NumberInt(0) });
 			db.training_types.insert({ "_id": BinData(4, "rmcdDgsSRZ6iGAF9ELPl2A=="), "Name": "Other", "ShortName": "Other", "Description": "", "SortOrder": NumberInt(99) });
+
+		case 5:
+			db.job_messages.update({}, { $set: { Version: NumberInt(1) } }, { multi: true });
+			break;
 	}
 
 	// Write the new schema version to the database

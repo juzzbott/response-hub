@@ -789,7 +789,7 @@ responseHub.jobMessages = (function () {
 			url: responseHub.apiPrefix + '/job-messages/' + jobId + '/progress',
 			type: 'POST',
 			dataType: 'json',
-			data: { ProgressType: intStatusType, ProgressDateTime: progressDateTime },
+			data: { ProgressType: intStatusType, ProgressDateTime: progressDateTime, Version: parseInt($('#Version').val()) },
 			success: function (data) {
 
 				// If there is a failed result, display that
@@ -812,6 +812,9 @@ responseHub.jobMessages = (function () {
 							break;
 
 					}
+
+					// Update the version
+					$('#Version').val(data.NewVersion);
 
 					if (sender != null) {
 						$(sender).remove();
@@ -1154,53 +1157,99 @@ responseHub.jobMessages = (function () {
 		// Bind the 'undo' event
 		$('.progress-action .action-undo').click(function () {
 
-			// Get the job id
-			var jobId = $('#Id').val();
-
-			// Disable and set spinner
-			$(this).attr('disabled', 'disabled');
-			$(this).addClass('disabled');
-			$(this).find('i').removeClass('fa-undo').addClass('fa-spinner fa-spin');
-
-			// Close the edit form just in case it's for the same type
-			closeEditProgressForm();
-
+			var intStatusType;
+			
 			// From the undo link, get the progress action container
 			var progressAction = $(this).closest('.progress-action');
 
 			// Get the progress type from the data attribute
 			var progressType = progressAction.data('progress-type');
 
+			switch (progressType) {
+
+				case "on_route":
+					intStatusType = 1;
+					break;
+
+				case "on_scene":
+					intStatusType = 2;
+					break;
+
+				case "job_clear":
+					intStatusType = 3;
+					break;
+
+			}
+
+			// Get the job id
+			var jobId = $('#Id').val();
+
+			// Get the element from the curret click event
+			var elem = $(this);
+
+			// Disable and set spinner
+			$(elem).attr('disabled', 'disabled');
+			$(elem).addClass('disabled');
+			$(elem).find('i').removeClass('fa-undo').addClass('fa-spinner fa-spin');
+
+			// Close the edit form just in case it's for the same type
+			closeEditProgressForm();
+
 			// Create the ajax request
 			$.ajax({
-				url: responseHub.apiPrefix + '/job-messages/' + jobId + '/progress/delete?progress_type=' + progressType,
-				type: 'DELETE',
+				url: responseHub.apiPrefix + '/job-messages/' + jobId + '/progress/delete',
+				type: 'POST',
+				dataType: 'json',
+				data: { ProgressType: intStatusType, Version: parseInt($('#Version').val()) },
 				success: function (data) {
 
-					// Remove the progress details
-					progressAction.find('.progress-time').empty();
+					// If there is a failed result, display that
+					if (data.Success == true) {
 
-					// Get the button label
-					var buttonLabel = '';
-					var buttonClass = '';
-					if (progressType == "on_route") {
-						buttonLabel = 'On route';
-						buttonClass = 'btn-on-route';
-					}
-					else if (progressType == "on_scene") {
-						buttonLabel = 'On scene';
-						buttonClass = 'btn-on-scene';
-					}
-					else if (progressType == "job_clear") {
-						buttonLabel = 'Job clear';
-						buttonClass = 'btn-job-clear';
-					}
+						// Remove the progress details
+						progressAction.find('.progress-time').empty();
 
-					// Add the progress button back in
-					progressAction.append('<button class="btn btn-primary btn-icon btn-block btn-lg ' + buttonClass + '"><i class="fa fa-fw fa-check-square-o"></i> ' + buttonLabel + '</button>');
+						// Get the button label
+						var buttonLabel = '';
+						var buttonClass = '';
+						if (progressType == "on_route") {
+							buttonLabel = 'On route';
+							buttonClass = 'btn-on-route';
+						}
+						else if (progressType == "on_scene") {
+							buttonLabel = 'On scene';
+							buttonClass = 'btn-on-scene';
+						}
+						else if (progressType == "job_clear") {
+							buttonLabel = 'Job clear';
+							buttonClass = 'btn-job-clear';
+						}
 
-					// Rebind the progress actions
-					bindJobProgressActions();
+						// Add the progress button back in
+						progressAction.append('<button class="btn btn-primary btn-icon btn-block btn-lg ' + buttonClass + '"><i class="fa fa-fw fa-check-square-o"></i> ' + buttonLabel + '</button>');
+
+						// Rebind the progress actions
+						bindJobProgressActions();
+
+						// Update the version
+						$('#Version').val(data.NewVersion);
+
+					}
+					else
+					{
+
+						// Reset the button
+						$(elem).removeAttr('disabled');
+						$(elem).removeClass('disabled');
+						$(elem).find('i').removeClass('fa-spinner fa-spin').addClass('fa-undo');
+
+						// Clear any existing alerts
+						$(".progess-messages .alert").remove();
+
+						// Display the error message
+						$(".progess-messages").append('<div class="alert alert-warning alert-dismissable" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>' + data.ErrorMessage + '</p>');
+
+					}
 
 				}, 
 				error: function (jqXHR, textStatus, errorThrown)

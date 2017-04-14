@@ -345,7 +345,7 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 						 Builders<JobMessageDto>.Filter.ElemMatch(i => i.ProgressUpdates, p => p.ProgressType == progress.ProgressType);
 
 				// Create the update
-				update = Builders<JobMessageDto>.Update.Set("ProgressUpdates.$.Timestamp", progress.Timestamp).Set("ProgressUpdates.$.UserId", progress.UserId);
+				update = Builders<JobMessageDto>.Update.Set("ProgressUpdates.$.Timestamp", progress.Timestamp).Set("ProgressUpdates.$.UserId", progress.UserId).Inc(i => i.Version, 1);
 			}
 			else
 			{
@@ -354,7 +354,7 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 				filter = Builders<JobMessageDto>.Filter.Eq(i => i.Id, jobMessageId);
 
 				// Create the update
-				update = Builders<JobMessageDto>.Update.Push(i => i.ProgressUpdates, progress);
+				update = Builders<JobMessageDto>.Update.Push(i => i.ProgressUpdates, progress).Inc(i => i.Version, 1);
 
 			}
 
@@ -374,7 +374,7 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 			FilterDefinition<JobMessageDto> filter = Builders<JobMessageDto>.Filter.Eq(i => i.Id, jobMessageId);
 
 			// Create the update
-			UpdateDefinition<JobMessageDto> update = Builders<JobMessageDto>.Update.PullFilter(i => i.ProgressUpdates, x => x.ProgressType == progressType);
+			UpdateDefinition<JobMessageDto> update = Builders<JobMessageDto>.Update.PullFilter(i => i.ProgressUpdates, x => x.ProgressType == progressType).Inc(i => i.Version, 1);
 
 			// perform the update
 			await Collection.UpdateOneAsync(filter, update);
@@ -508,7 +508,8 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 				Notes = dbObject.Notes,
 				ProgressUpdates = dbObject.ProgressUpdates,
 				AttachmentIds = dbObject.AttachmentIds,
-				Type = dbObject.Type
+				Type = dbObject.Type,
+				Version = dbObject.Version
 				
 			};
 
@@ -547,7 +548,8 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 				Notes = modelObject.Notes,
 				ProgressUpdates = modelObject.ProgressUpdates,
 				AttachmentIds = modelObject.AttachmentIds,
-				Type = modelObject.Type
+				Type = modelObject.Type,
+				Version = modelObject.Version
 			};
 
 			// Map the location property

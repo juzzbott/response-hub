@@ -35,11 +35,16 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB.DataObjects.Messages
 
 		public MessageType Type { get; set; }
 
+		public int Version { get; set; }
+
 		public JobMessageDto()
 		{
 
 			// Instantiate the id
 			Id = Guid.NewGuid();
+
+			// Default to version
+			Version = 1;
 
 			// Default to administration.
 			Priority = MessagePriority.Administration;

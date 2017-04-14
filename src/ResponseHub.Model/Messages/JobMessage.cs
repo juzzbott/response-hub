@@ -34,11 +34,16 @@ namespace Enivate.ResponseHub.Model.Messages
 
 		public MessageType Type { get; set; }
 
+		public int Version { get; set; }
+
 		public JobMessage()
 		{
 
 			// Instantiate the id
 			Id = Guid.NewGuid();
+
+			// Default to version 1
+			Version = 1;
 
 			// Default to administration.
 			Priority = MessagePriority.Administration;
