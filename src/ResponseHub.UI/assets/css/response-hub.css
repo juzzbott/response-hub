@@ -1376,6 +1376,8 @@ div.generated-report .message-map-image span {
   position: absolute;
   left: 426px;
   top: 102px;
+  width: 48px;
+  height: 48px;
 }
 div.generated-report .notes li {
   border-left: 3px solid #D6E3E0;

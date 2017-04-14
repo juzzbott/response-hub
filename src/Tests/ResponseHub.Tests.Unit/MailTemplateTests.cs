@@ -21,7 +21,7 @@ namespace Enivate.ResponseHub.Tests.Unit
 
 		private readonly string _outputDir;
 
-		private readonly string _baseUrl = "http://dev.responsehub.com.au";
+		private readonly string _baseUrl = "https://dev.responsehub.com.au";
 
 
 		public MailTemplateTests()
