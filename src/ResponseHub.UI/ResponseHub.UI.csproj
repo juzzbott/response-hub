@@ -202,7 +202,7 @@
     <Compile Include="Areas\Admin\Controllers\TrainingTypesController.cs" />
     <Compile Include="Areas\Admin\Models\TrainingTypes\AddEditTrainingTypeViewModel.cs" />
     <Compile Include="Areas\Admin\Models\Users\EditUserViewModel.cs" />
-    <Compile Include="Areas\ControlPanel\Controllers\GroupSelectionController.cs" />
+    <Compile Include="Areas\ControlPanel\Controllers\UnitSelectionController.cs" />
     <Compile Include="Areas\Admin\Controllers\HomeController.cs" />
     <Compile Include="Areas\Admin\Controllers\LogViewerController.cs" />
     <Compile Include="Areas\Admin\Controllers\ReportsController.cs" />
@@ -218,7 +218,7 @@
     <Compile Include="Areas\ControlPanel\Controllers\ReportsController.cs" />
     <Compile Include="Areas\ControlPanel\Models\Reports\Operations\OperationsFilterViewModel.cs" />
     <Compile Include="Areas\ControlPanel\Models\Reports\ReportFilterViewModel.cs" />
-    <Compile Include="Areas\ControlPanel\Models\Reports\Training\GroupTrainingMemberReportItem.cs" />
+    <Compile Include="Areas\ControlPanel\Models\Reports\Training\UnitTrainingMemberReportItem.cs" />
     <Compile Include="Areas\ControlPanel\Models\Reports\Training\TrainingReportViewModel.cs" />
     <Compile Include="Areas\ControlPanel\Models\Training\AddEditTrainingSessionViewModel.cs" />
     <Compile Include="Areas\ControlPanel\Models\Training\TrainingHomeViewModel.cs" />
@@ -254,7 +254,7 @@
     <Compile Include="Models\Events\EventViewModel.cs" />
     <Compile Include="Areas\Admin\Models\Units\ChangeUserRoleViewModel.cs" />
     <Compile Include="Areas\Admin\Models\Units\CreateUnitModel.cs" />
-    <Compile Include="Areas\Admin\Models\Reports\GroupsCapcodesReportViewModel.cs" />
+    <Compile Include="Areas\Admin\Models\Reports\UnitsCapcodesReportViewModel.cs" />
     <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Models\Events\CreateEventViewModel.cs" />
     <Compile Include="Models\Messages\JobMessageFilter.cs" />
@@ -374,7 +374,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Areas\Admin\Views\BaseAdmin\" />
-    <Folder Include="Areas\Admin\Views\GroupSelection\" />
+    <Folder Include="Areas\Admin\Views\UnitSelection\" />
     <Folder Include="Areas\ControlPanel\Views\BaseControlPanel\" />
     <Folder Include="Views\Base\" />
     <Folder Include="Views\Media\" />
@@ -530,7 +530,7 @@
     <Content Include="Areas\Admin\Views\Reports\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Areas\Admin\Views\Reports\GroupsCapcodes.cshtml" />
+    <Content Include="Areas\Admin\Views\Reports\UnitsCapcodes.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Jobs\JobNotes.cshtml" />
@@ -570,7 +570,7 @@
     <Content Include="Areas\ControlPanel\Views\Reports\GenerateOperationsReportHtml.cshtml" />
     <Content Include="Areas\ControlPanel\Views\Shared\HtmlExportLayout.cshtml" />
     <Content Include="Areas\ControlPanel\Views\Units\Edit.cshtml" />
-    <Content Include="Areas\ControlPanel\Views\Units\ViewGroup.cshtml" />
+    <Content Include="Areas\ControlPanel\Views\Units\ViewUnit.cshtml" />
     <Content Include="Areas\ControlPanel\Views\Units\ChangeUserRole.cshtml" />
     <Content Include="Areas\ControlPanel\Views\Units\ConfirmUser.cshtml" />
     <Content Include="Views\Profile\ViewProfile.cshtml" />

@@ -2,7 +2,7 @@
 var schema_info_id = ObjectId("58e492e962cb703bc785da68");
 
 // Define the max schema version
-var schema_version = 5
+var schema_version = 6
 
 // Ensure we have a schema to start with
 var schema_count = db.schema_info.count({})
@@ -89,6 +89,28 @@ while (current_version < schema_version) {
 		case 5:
 			db.job_messages.update({}, { $set: { Version: NumberInt(1) } }, { multi: true });
 			break;
+
+		case 6:
+			// Rename groups collection
+			db.groups.renameCollection('units');
+
+			// rename capcodes fields
+			db.capcodes.updateMany({}, { $rename: { "IsGroupCapcode": "IsUnitCapcode" } });
+
+			// rename events field
+			db.events.updateMany({}, { $rename: { "GroupId": "UnitId" } });
+			db.events.dropIndex({ "GroupId": 1 });
+			db.events.createIndex({ "unit_id": 1 }, { background: true });
+
+			// rename training_sessions field
+			db.training_sessions.updateMany({}, { $rename: { "GroupId": "UnitId" } });
+
+			// rename user_sign_ins field
+			db.user_sign_ins.updateMany({}, { $rename: { "GroupId": "UnitId" } });
+
+			// Update 'Group Administrator' to 'Unit Administrator'
+			db.units.updateMany({ "Users.Role": "Group Administrator" }, { $set: { "Users.$.Role": "Unit Administrator" } });
+			db.users.updateMany({ "Claims.Value": "Group Administrator" }, { $set: { "Claims.$.Value": "Unit Administrator" } });
 	}
 
 	// Write the new schema version to the database
