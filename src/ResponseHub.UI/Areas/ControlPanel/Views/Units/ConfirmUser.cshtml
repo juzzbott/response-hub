@@ -1,0 +1,108 @@
+﻿@model Enivate.ResponseHub.UI.Areas.Admin.Models.Units.ConfirmUserViewModel
+
+@{
+	ViewBag.Title = Model.UserExists ? "Confirm user" : "Enter user details";
+	ViewBag.SubmitButtonTitle = "Create member";
+	Layout = "~/Areas/ControlPanel/Views/Shared/_Layout.cshtml";
+}
+
+<h2>@ViewBag.Title</h2>
+
+<form action="@Request.Url.LocalPath" method="post">
+
+	@Html.AntiForgeryToken()
+
+	@Html.ValidationSummary()
+
+	@Html.HiddenFor(model => model.Role)
+	@Html.HiddenFor(model => model.EmailAddress)
+
+	@if (Model.UserExists)
+	{
+		@Html.HiddenFor(model => model.FirstName)
+		@Html.HiddenFor(model => model.Surname)
+		@Html.HiddenFor(model => model.UserExists)
+
+		<p>A user account with the email address exists. Please confirm the details below.</p>
+		<div class="row">
+			<div class="col-lg-6">
+				
+				<table class="table table-responsive">
+					<thead>
+						<tr>
+							<td><strong>Email address</strong></td>
+							<td><strong>First name</strong></td>
+							<td><strong>Surname</strong></td>
+							<td><strong>Member number</strong></td>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>@Model.EmailAddress</td>
+							<td>@Model.FirstName</td>
+							<td>@Model.Surname</td>
+							<td>@Model.MemberNumber</td>
+						</tr>
+					</tbody>
+				</table>
+
+			</div>
+		</div>
+
+	}
+	else
+	{
+		<p>There is no user account registered with the email address you supplied.</p>
+		<p>Enter the users details below, and an email will be sent to them with instructions on completing thier account registration.</p>
+
+		<div class="form-group">
+			<label for="Name">First name *</label>
+			<div class="row">
+				<div class="col-sm-8 col-md-6 col-lg-4">
+					@Html.TextBoxFor(model => model.FirstName, new { @class = "form-control", placeholder = "John" })
+				</div>
+			</div>
+			@Html.ValidationMessageFor(model => model.FirstName)
+		</div>
+
+		<div class="form-group">
+			<label for="Name">Surname *</label>
+			<div class="row">
+				<div class="col-sm-8 col-md-6 col-lg-4">
+					@Html.TextBoxFor(model => model.Surname, new { @class = "form-control", placeholder = "Smith" })
+				</div>
+			</div>
+			@Html.ValidationMessageFor(model => model.Surname)
+		</div>
+
+		<div class="form-group">
+			<label for="Name">Member number *</label>
+			<div class="row">
+				<div class="col-sm-8 col-md-6 col-lg-4">
+					@Html.TextBoxFor(model => model.MemberNumber, new { @class = "form-control", placeholder = "6xxxx" })
+				</div>
+			</div>
+			@Html.ValidationMessageFor(model => model.MemberNumber)
+		</div>
+
+		<div class="form-group">
+			<div class="row">
+				<div class="col-sm-12 graphic-checkbox">
+					<label class="radio-inline" for="SkipEmailActivation">
+						@Html.CheckBoxFor(model => model.SkipEmailActivation)
+						Skip email activation
+					</label>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-lg-10 col-xl-6">
+					<p class="section-help">You can choose to not send the email activation email for the user. This will create the member for the unit, but will not invite the user to activate their account. You can resend the account activation email from the unit administration screen.</p>
+				</div>
+			</div>
+		</div>
+	}
+
+	<button type="submit" class="btn btn-primary">@ViewBag.SubmitButtonTitle</button>
+	<a href="@Request.Url.LocalPath.ToLower().Replace("/confirm-member", "")" class="btn btn-link">Cancel</a>
+
+</form>

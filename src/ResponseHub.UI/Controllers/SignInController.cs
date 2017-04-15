@@ -8,8 +8,8 @@ using System.Web.Mvc;
 using Microsoft.AspNet.Identity;
 
 using Enivate.ResponseHub.Common;
-using Enivate.ResponseHub.Model.Groups;
-using Enivate.ResponseHub.Model.Groups.Interface;
+using Enivate.ResponseHub.Model.Units;
+using Enivate.ResponseHub.Model.Units.Interface;
 using Enivate.ResponseHub.Model.Messages;
 using Enivate.ResponseHub.Model.Messages.Interface;
 using Enivate.ResponseHub.UI.Models.SignIn;
@@ -27,7 +27,7 @@ namespace Enivate.ResponseHub.UI.Controllers
 	{
 
 		protected readonly ICapcodeService CapcodeService = ServiceLocator.Get<ICapcodeService>();
-		protected readonly IGroupService GroupService = ServiceLocator.Get<IGroupService>();
+		protected readonly IUnitService UnitService = ServiceLocator.Get<IUnitService>();
 		protected readonly IJobMessageService JobMessageService = ServiceLocator.Get<IJobMessageService>();
 		protected readonly ISignInEntryService SignInService = ServiceLocator.Get<ISignInEntryService>();
 
@@ -67,8 +67,8 @@ namespace Enivate.ResponseHub.UI.Controllers
 			return View();
 		}
 
-		[Route("group-sign-in")]
-		public async Task<ActionResult> GroupSignIn()
+		[Route("unit-sign-in")]
+		public async Task<ActionResult> UnitSignIn()
 		{
 
 			// Get the initial model
@@ -77,10 +77,10 @@ namespace Enivate.ResponseHub.UI.Controllers
 			return View("Index", model);
 		}
 
-		[Route("group-sign-in")]
+		[Route("unit-sign-in")]
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		public async Task<ActionResult> GroupSignIn(SignInViewModel model)
+		public async Task<ActionResult> UnitSignIn(SignInViewModel model)
 		{
 			
 			// Ensure the model state is valid before proceeding
@@ -166,7 +166,7 @@ namespace Enivate.ResponseHub.UI.Controllers
 		/// <param name="model">The model containing the sign in data.</param>
 		/// <param name="specifiedUserId">The user id to sign in from. This should be either the current user id, or the user id selected from the model.</param>
 		/// <returns></returns>
-		private async Task<ActionResult> GetSignInResult(SignInViewModel model, Guid specifiedUserId, bool redirectBackToGroupSignIn)
+		private async Task<ActionResult> GetSignInResult(SignInViewModel model, Guid specifiedUserId, bool redirectBackToUnitSignIn)
 		{
 			// Get the dateTime from the model
 			DateTime signInTime = DateTime.ParseExact(String.Format("{0} {1}", model.StartDate, model.StartTime), "yyyy-MM-dd HH:mm", null).ToUniversalTime();
@@ -175,7 +175,7 @@ namespace Enivate.ResponseHub.UI.Controllers
 			SignInEntry signOn = new SignInEntry()
 			{
 				UserId = specifiedUserId,
-				GroupId = model.GroupId,
+				UnitId = model.UnitId,
 				SignInTime = signInTime,
 				SignInType = model.SignOnType
 			};
@@ -197,9 +197,9 @@ namespace Enivate.ResponseHub.UI.Controllers
 				await SignInService.SignUserIn(signOn);
 
 				// Redirect to sign in complete.
-				if (redirectBackToGroupSignIn)
+				if (redirectBackToUnitSignIn)
 				{
-					return new RedirectResult("/sign-in/group-sign-in?sign_in_complete=1");
+					return new RedirectResult("/sign-in/unit-sign-in?sign_in_complete=1");
 				}
 				else
 				{
@@ -249,13 +249,13 @@ namespace Enivate.ResponseHub.UI.Controllers
 				});
 			}
 			
-			// Get the groups for the user
-			IList<Group> userGroups = await GroupService.GetGroupsForUser(UserId);
+			// Get the units for the user
+			IList<Unit> userUnits = await UnitService.GetUnitsForUser(UserId);
 
-			// If there is no groups, then return error
-			if (userGroups == null || userGroups.Count == 0)
+			// If there is no units, then return error
+			if (userUnits == null || userUnits.Count == 0)
 			{
-				throw new HttpException((int)HttpStatusCode.InternalServerError, "No groups available for the user.");
+				throw new HttpException((int)HttpStatusCode.InternalServerError, "No units available for the user.");
 			}
 
 			// build the model object
@@ -264,7 +264,7 @@ namespace Enivate.ResponseHub.UI.Controllers
 				StartDate = DateTime.Now.ToString("yyyy-MM-dd"),
 				StartTime = DateTime.Now.ToString("HH:mm"),
 				AvailableOperations = availableOperations,
-				GroupId = userGroups.First().Id
+				UnitId = userUnits.First().Id
 			};
 
 			// If we need to set the available users, then do so
@@ -272,8 +272,8 @@ namespace Enivate.ResponseHub.UI.Controllers
 			{
 
 
-				// Get the first group id and get all the users in that group
-				IList<IdentityUser> users = await GroupService.GetUsersForGroup(model.GroupId);
+				// Get the first unit id and get all the users in that unit
+				IList<IdentityUser> users = await UnitService.GetUsersForUnit(model.UnitId);
 
 				// Add the users to the select list
 				IList<SelectListItem> userItems = new List<SelectListItem>();

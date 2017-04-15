@@ -8,7 +8,7 @@
 
 @if (Model.Id == Guid.Empty)
 {
-	<p>Create a new capcode that can be selected by groups so that members can also recieve messages from the capcode.</p>
+	<p>Create a new capcode that can be selected by units so that members can also recieve messages from the capcode.</p>
 }
 else
 {
@@ -62,19 +62,19 @@ else
 	</div>
 
 	<div class="form-group">
-		<label>Group use only *</label>
+		<label>Unit use only *</label>
 		<div class="row">
 			<div class="col-sm-8 col-md-6 col-lg-4 graphic-checkbox">
 				<div class="checkbox">
 					<label>
-						@Html.CheckBoxFor(i => i.IsGroupCapcode) Is group capcode
+						@Html.CheckBoxFor(i => i.IsUnitCapcode) Is unit capcode
 					</label>
 				</div>
 			</div>
 		</div>
 		<div class="row">
 			<div class="col-lg-10 col-xl-6">
-				<p class="section-help">Capcodes that are specified as "group use only" can only be selected for a group as the primary capcode. They are not available for use in the additional capcodes field.</p>
+				<p class="section-help">Capcodes that are specified as "unit use only" can only be selected for a unit as the primary capcode. They are not available for use in the additional capcodes field.</p>
 			</div>
 		</div>
 	</div>

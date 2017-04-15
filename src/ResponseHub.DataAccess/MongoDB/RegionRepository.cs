@@ -1,7 +1,7 @@
 ﻿using Enivate.ResponseHub.DataAccess.Interface;
 using Enivate.ResponseHub.Logging;
 using Enivate.ResponseHub.Model;
-using Enivate.ResponseHub.Model.Groups;
+using Enivate.ResponseHub.Model.Units;
 using System;
 using System.Collections.Generic;
 using System.Linq;

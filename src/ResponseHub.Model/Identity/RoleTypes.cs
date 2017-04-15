@@ -13,7 +13,7 @@ namespace Enivate.ResponseHub.Model.Identity
 
 		public const string GeneralUser = "General User";
 
-		public const string GroupAdministrator = "Group Administrator";
+		public const string UnitAdministrator = "Unit Administrator";
 
 		public const string SystemAdministrator = "System Administrator";
 

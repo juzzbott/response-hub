@@ -9,7 +9,7 @@
 <table class="table table-striped">
 	<thead>
 		<tr>
-			<th>Group</th>
+			<th>Unit</th>
 			<th>Sign in</th>
 			<th>Sign out</th>
 			<th>Type</th>
@@ -28,7 +28,7 @@
 			foreach (var item in Model)
 			{
 				<tr>
-					<td>@item.GroupName</td>
+					<td>@item.UnitName</td>
 					<td>@item.SignInTime.ToLocalTime().ToString("yyyy-MM-dd HH:mm")</td>
 					<td>@(item.SignOutTime.HasValue ? item.SignOutTime.Value.ToLocalTime().ToString("yyyy-MM-dd HH:mm") : "")</td>
 					<td>@item.SignInType</td>

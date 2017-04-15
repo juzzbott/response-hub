@@ -46,22 +46,22 @@ namespace Enivate.ResponseHub.ApplicationServices
 
 		}
 
-		public async Task SendGroupCreatedEmail(IdentityUser groupAdmin, string groupName, ServiceType service, string capcode)
+		public async Task SendUnitCreatedEmail(IdentityUser unitAdmin, string unitName, ServiceType service, string capcode)
 		{
 			// Create the tuple for the to override
-			Tuple<string, string> to = new Tuple<string, string>(groupAdmin.EmailAddress, groupAdmin.FullName);
+			Tuple<string, string> to = new Tuple<string, string>(unitAdmin.EmailAddress, unitAdmin.FullName);
 
 			// Create the replacements
 			IDictionary<string, string> replacements = new Dictionary<string, string>();
 			replacements.Add("#BaseUrl#", _baseUrl);
-			replacements.Add("#GroupAdministratorName#", groupAdmin.FullName);
-			replacements.Add("#GroupName#", groupName);
+			replacements.Add("#UnitAdministratorName#", unitAdmin.FullName);
+			replacements.Add("#UnitName#", unitName);
 			replacements.Add("#ServiceType#", service.GetEnumDescription());
 			replacements.Add("#Capcode#", capcode);
 
 			// Create the mail provider and send the message
 			MailProvider mailProvider = new MailProvider();
-			await mailProvider.SendMailMessage(MailTemplates.GroupCreated, replacements, to, null);
+			await mailProvider.SendMailMessage(MailTemplates.UnitCreated, replacements, to, null);
 
 		}
 

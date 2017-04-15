@@ -1026,8 +1026,8 @@ responseHub.jobMessages = (function () {
 		// Add the job status span to the metadata container
 		metaContainer.append(statusSpan);
 
-		// Add the group capcode name
-		metaContainer.append('<span class="capcode-group-name">' + jobMessage.CapcodeGroupName + '</span>');
+		// Add the unit capcode name
+		metaContainer.append('<span class="capcode-unit-name">' + jobMessage.CapcodeUnitName + '</span>');
 
 		// Append the job message meta
 		listItem.append(metaContainer);
@@ -2008,7 +2008,7 @@ responseHub.wallboard = (function () {
 
 })();
 
-responseHub.groups = (function () {
+responseHub.units = (function () {
 
 	function bindUI() {
 		// Bind the use current location
@@ -2171,7 +2171,7 @@ responseHub.capcodes = (function () {
 
 		// Set the autocomplete functionality for capcodes.
 		$("input[data-capcode-autocomplete='true']").typeahead({
-			source: groupCapcodes,
+			source: unitCapcodes,
 			onSelect: function (item) {
 				$("input[data-capcode-autocomplete='true']").val(item.value);
 			}
@@ -2235,7 +2235,7 @@ responseHub.capcodes = (function () {
 responseHub.resources = (function () {
 
 	/** 
-	 * Adds a resource to the system for the specified group. 
+	 * Adds a resource to the system for the specified unit. 
 	 */
 	function addResource() {
 
@@ -2245,7 +2245,7 @@ responseHub.resources = (function () {
 		buttonCtl.find('i').removeClass('fa-plus').addClass('fa-refresh fa-spin');
 		buttonCtl.attr('disabled', 'disabled');
 
-		// Get the group id
+		// Get the unit id
 		var eventId = $("#EventId").val();
 
 		// Create the post data object
@@ -2391,7 +2391,7 @@ responseHub.search = (function () {
 		// Create the message meta
 		var messageMeta = $('<p class="job-message-meta text-muted"></p>');
 		messageMeta.append(getProgessMarkup(result));
-		messageMeta.append($('<span class="capcode-group-name">' + result.CapcodeGroupName + '</span>'));
+		messageMeta.append($('<span class="capcode-unit-name">' + result.CapcodeUnitName + '</span>'));
 		li.append(messageMeta);
 
 		// Add the message text

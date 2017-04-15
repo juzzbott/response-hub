@@ -22,14 +22,14 @@ using Enivate.ResponseHub.Model.Training.Interface;
 using Enivate.ResponseHub.Model.Messages;
 using Enivate.ResponseHub.Model.Messages.Interface;
 using Enivate.ResponseHub.UI.Areas.ControlPanel.Models.Reports.Operations;
-using Enivate.ResponseHub.Model.Groups;
+using Enivate.ResponseHub.Model.Units;
 
 namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 {
 
 	[RouteArea("ControlPanel", AreaPrefix = "control-panel")]
 	[RoutePrefix("reports")]
-	[ClaimsAuthorize(Roles = RoleTypes.GroupAdministrator)]
+	[ClaimsAuthorize(Roles = RoleTypes.UnitAdministrator)]
 	public class ReportsController : BaseControlPanelController
 	{
 
@@ -62,14 +62,14 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 
 			if (model.ReportFormat.ToLower() == "display")
 			{
-				TrainingReportViewModel reportViewModel = await GetTrainingReportModel(GetControlPanelGroupId(), dateFrom, dateTo);
+				TrainingReportViewModel reportViewModel = await GetTrainingReportModel(GetControlPanelUnitId(), dateFrom, dateTo);
 				reportViewModel.UseStandardLayout = true;
 				return View("GenerateTrainingReportHtml", reportViewModel);
 			}
 			else if (model.ReportFormat.ToLower() == "pdf")
 			{
 				// Get the PDF bytes
-				byte[] pdfBytes = await ReportService.GenerateTrainingReportPdfFile(GetControlPanelGroupId(), dateFrom, dateTo, Request.Cookies);
+				byte[] pdfBytes = await ReportService.GenerateTrainingReportPdfFile(GetControlPanelUnitId(), dateFrom, dateTo, Request.Cookies);
 
 				FileContentResult result = new FileContentResult(pdfBytes, "application/pdf");
 				result.FileDownloadName = String.Format("training-report-{0}.pdf", DateTime.Now.ToString("yyyy-MM-dd"));
@@ -97,14 +97,14 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 
 			if (model.ReportFormat.ToLower() == "display")
 			{
-				OperationsReportViewModel reportViewModel = await GetOperationsReportModel(GetControlPanelGroupId(), dateFrom, dateTo, model.IncludeAdditionalCapcodes);
+				OperationsReportViewModel reportViewModel = await GetOperationsReportModel(GetControlPanelUnitId(), dateFrom, dateTo, model.IncludeAdditionalCapcodes);
 				reportViewModel.UseStandardLayout = true;
 				return View("GenerateOperationsReportHtml", reportViewModel);
 			}
 			else if (model.ReportFormat.ToLower() == "pdf")
 			{
 				// Get the PDF bytes
-				byte[] pdfBytes = await ReportService.GenerationOperationsReportPdfFile(GetControlPanelGroupId(), dateFrom, dateTo, model.IncludeAdditionalCapcodes, Request.Cookies);
+				byte[] pdfBytes = await ReportService.GenerationOperationsReportPdfFile(GetControlPanelUnitId(), dateFrom, dateTo, model.IncludeAdditionalCapcodes, Request.Cookies);
 
 				FileContentResult result = new FileContentResult(pdfBytes, "application/pdf");
 				result.FileDownloadName = String.Format("operations-report-{0}.pdf", DateTime.Now.ToString("yyyy-MM-dd"));
@@ -123,12 +123,12 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 		{
 
 			// Get the parameters from the query string
-			Guid groupId = new Guid(Request.QueryString["group_id"]);
+			Guid unitId = new Guid(Request.QueryString["unit_id"]);
 			DateTime dateFrom = DateTime.ParseExact(Request.QueryString["date_from"], "yyyyMMddHHmmss", CultureInfo.CurrentCulture);
 			DateTime dateTo = DateTime.ParseExact(Request.QueryString["date_to"], "yyyyMMddHHmmss", CultureInfo.CurrentCulture);
 
 			// Get the training report model
-			TrainingReportViewModel model = await GetTrainingReportModel(groupId, dateFrom, dateTo);
+			TrainingReportViewModel model = await GetTrainingReportModel(unitId, dateFrom, dateTo);
 
 			return View(model);
 
@@ -141,18 +141,18 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 		{
 
 			// Get the parameters from the query string
-			Guid groupId = new Guid(Request.QueryString["group_id"]);
+			Guid unitId = new Guid(Request.QueryString["unit_id"]);
 			DateTime dateFrom = DateTime.ParseExact(Request.QueryString["date_from"], "yyyyMMddHHmmss", CultureInfo.CurrentCulture);
 			DateTime dateTo = DateTime.ParseExact(Request.QueryString["date_to"], "yyyyMMddHHmmss", CultureInfo.CurrentCulture);
 			bool includeAdditionalCapcodes = Boolean.Parse(Request.QueryString["additional_capcodes"]);
 
-			// Get the group by the id
-			Group group = await GroupService.GetById(groupId);
+			// Get the unit by the id
+			Unit unit = await UnitService.GetById(unitId);
 
-			// Ensure the user is a group administrator of the specific group, otherwise 403 forbidden.
+			// Ensure the user is an administrator of the specific unit, otherwise 403 forbidden.
 			
 			// Get the operations report model
-			OperationsReportViewModel model = await GetOperationsReportModel(group.Id, dateFrom, dateTo, includeAdditionalCapcodes);
+			OperationsReportViewModel model = await GetOperationsReportModel(unit.Id, dateFrom, dateTo, includeAdditionalCapcodes);
 
 			// return the model
 			return View(model);
@@ -164,23 +164,23 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 		/// </summary>
 		/// <param name="dateFrom"></param>
 		/// <param name="dateTo"></param>
-		/// <param name="group"></param>
+		/// <param name="unit"></param>
 		/// <returns></returns>
-		private async Task<OperationsReportViewModel> GetOperationsReportModel(Guid groupId, DateTime dateFrom, DateTime dateTo, bool includeAllCapcodes)
+		private async Task<OperationsReportViewModel> GetOperationsReportModel(Guid unitId, DateTime dateFrom, DateTime dateTo, bool includeAllCapcodes)
 		{
 
-			// Get the group by the id
-			Group group = await GroupService.GetById(groupId);
+			// Get the unit by the id
+			Unit unit = await UnitService.GetById(unitId);
 
 			// Create the list of capcodes
-			List<Capcode> selectedCapcodes = new List<Capcode> { new Capcode() { CapcodeAddress = group.Capcode } };
+			List<Capcode> selectedCapcodes = new List<Capcode> { new Capcode() { CapcodeAddress = unit.Capcode } };
 
-			// Get all the capcodes for the group if we are to include additional capcodes
+			// Get all the capcodes for the unit if we are to include additional capcodes
 			if (includeAllCapcodes)
 			{
-				// Get all the capcodes and select the group additional capcodes for the group
+				// Get all the capcodes and select the unit additional capcodes for the unit
 				IList<Capcode> allCapcodes = await CapcodeService.GetAll();
-				selectedCapcodes.AddRange(allCapcodes.Where(i => group.AdditionalCapcodes.Contains(i.Id)));
+				selectedCapcodes.AddRange(allCapcodes.Where(i => unit.AdditionalCapcodes.Contains(i.Id)));
 			}
 
 			// Get the list of messages for the capcode
@@ -209,18 +209,18 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 		/// <summary>
 		/// Gets the training report model to display to the page.
 		/// </summary>
-		/// <param name="groupId"></param>
+		/// <param name="unitId"></param>
 		/// <param name="dateFrom"></param>
 		/// <param name="dateTo"></param>
 		/// <returns></returns>
-		private async Task<TrainingReportViewModel> GetTrainingReportModel(Guid groupId, DateTime dateFrom, DateTime dateTo)
+		private async Task<TrainingReportViewModel> GetTrainingReportModel(Guid unitId, DateTime dateFrom, DateTime dateTo)
 		{
 			// Get the training sessions
-			IList<TrainingSession> trainingSessions = await TrainingService.GetTrainingSessionsForGroup(groupId);
+			IList<TrainingSession> trainingSessions = await TrainingService.GetTrainingSessionsForUnit(unitId);
 			int trainingSessionDays = trainingSessions.GroupBy(i => i.SessionDate).Count();
 
-			// Get the members for the group
-			IList<IdentityUser> groupMembers = await GroupService.GetUsersForGroup(groupId);
+			// Get the members for the unit
+			IList<IdentityUser> unitMembers = await UnitService.GetUsersForUnit(unitId);
 
 			// Get the training types.
 			IList<TrainingType> trainingTypes = await TrainingService.GetAllTrainingTypes();
@@ -251,13 +251,13 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 			StringBuilder sbChartOptionsJs = new StringBuilder();
 
 			// Build the member reports
-			IList<GroupTrainingMemberReportItem> groupMemberReports = new List<GroupTrainingMemberReportItem>();
+			IList<UnitTrainingMemberReportItem> unitMemberReports = new List<UnitTrainingMemberReportItem>();
 
 			// Create the member report items
-			foreach (IdentityUser user in groupMembers)
+			foreach (IdentityUser user in unitMembers)
 			{
 				// Create the training item
-				GroupTrainingMemberReportItem memberTrainingRecord = new GroupTrainingMemberReportItem()
+				UnitTrainingMemberReportItem memberTrainingRecord = new UnitTrainingMemberReportItem()
 				{
 					Name = user.FullName
 				};
@@ -283,7 +283,7 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 				}
 
 				// Add to the list of members
-				groupMemberReports.Add(memberTrainingRecord);
+				unitMemberReports.Add(memberTrainingRecord);
 			}
 
 			// Create the model
@@ -291,7 +291,7 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 			{
 				ChartDataJs = sbChartData.ToString(),
 				ChartOptionsJs = sbChartOptionsJs.ToString(),
-				MemberReports = groupMemberReports,
+				MemberReports = unitMemberReports,
 				DateFrom = dateFrom,
 				DateTo = dateTo
 			};

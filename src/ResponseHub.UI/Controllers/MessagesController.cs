@@ -10,8 +10,8 @@ using Microsoft.Practices.Unity;
 
 using Enivate.ResponseHub.Common;
 using Enivate.ResponseHub.Logging;
-using Enivate.ResponseHub.Model.Groups;
-using Enivate.ResponseHub.Model.Groups.Interface;
+using Enivate.ResponseHub.Model.Units;
+using Enivate.ResponseHub.Model.Units.Interface;
 using Enivate.ResponseHub.Model.Messages;
 using Enivate.ResponseHub.Model.Messages.Interface;
 using Enivate.ResponseHub.UI.Models.Messages;

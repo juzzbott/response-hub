@@ -9,7 +9,7 @@ using Enivate.ResponseHub.Model;
 using Enivate.ResponseHub.Model.Messages;
 using Enivate.ResponseHub.Model.Messages.Interface;
 using Enivate.ResponseHub.DataAccess.Interface;
-using Enivate.ResponseHub.Model.Groups;
+using Enivate.ResponseHub.Model.Units;
 
 namespace Enivate.ResponseHub.ApplicationServices
 {

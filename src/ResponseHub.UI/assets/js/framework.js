@@ -11640,13 +11640,13 @@ Za.fn=Ia.prototype;var Xd=bb(1,"add"),Yd=bb(-1,"subtract");a.defaultFormat="YYYY
 	TabCollapse.DEFAULTS = {
 		accordionClass: 'visible-xs',
 		tabsClass: 'hidden-xs',
-		accordionTemplate: function (heading, groupId, parentId, active) {
+		accordionTemplate: function (heading, unitId, parentId, active) {
 			return '<div class="panel panel-default">' +
                     '   <div class="panel-heading">' +
                     '      <h4 class="panel-title">' +
                     '      </h4>' +
                     '   </div>' +
-                    '   <div id="' + groupId + '" class="panel-collapse collapse ' + (active ? 'in' : '') + '">' +
+                    '   <div id="' + unitId + '" class="panel-collapse collapse ' + (active ? 'in' : '') + '">' +
                     '       <div class="panel-body js-tabcollapse-panel-body">' +
                     '       </div>' +
                     '   </div>' +
@@ -11771,12 +11771,12 @@ Za.fn=Ia.prototype;var Xd=bb(1,"add"),Yd=bb(-1,"subtract");a.defaultFormat="YYYY
 		return $heading;
 	};
 
-	TabCollapse.prototype._tabHeadingToPanelHeading = function ($heading, groupId, parentId, active) {
+	TabCollapse.prototype._tabHeadingToPanelHeading = function ($heading, unitId, parentId, active) {
 		$heading.addClass('js-tabcollapse-panel-heading ' + (active ? '' : 'collapsed'));
 		$heading.attr({
 			'data-toggle': 'collapse',
 			'data-parent': '#' + parentId,
-			'href': '#' + groupId
+			'href': '#' + unitId
 		});
 		return $heading;
 	};
@@ -11821,9 +11821,9 @@ Za.fn=Ia.prototype;var Xd=bb(1,"add"),Yd=bb(-1,"subtract");a.defaultFormat="YYYY
 		}
 
 		var $tabPane = $(tabSelector),
-            groupId = $tabPane.attr('id') + '-collapse',
-            $panel = $(this.options.accordionTemplate($heading, groupId, parentId, active));
-		$panel.find('.panel-heading > .panel-title').append(this._tabHeadingToPanelHeading($heading, groupId, parentId, active));
+            unitId = $tabPane.attr('id') + '-collapse',
+            $panel = $(this.options.accordionTemplate($heading, unitId, parentId, active));
+		$panel.find('.panel-heading > .panel-title').append(this._tabHeadingToPanelHeading($heading, unitId, parentId, active));
 		$panel.find('.panel-body').append($tabPane.contents().detach())
             .data('bs.tabcollapse.tabpane', $tabPane);
 

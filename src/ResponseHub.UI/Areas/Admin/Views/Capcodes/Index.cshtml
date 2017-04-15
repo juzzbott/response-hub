@@ -1,4 +1,4 @@
-﻿@model IList<Enivate.ResponseHub.Model.Groups.Capcode>
+﻿@model IList<Enivate.ResponseHub.Model.Units.Capcode>
 
 @{
     ViewBag.Title = "Capcodes";
@@ -24,7 +24,7 @@
 			<th>Capcode Address</th>
 			<th>Short Name</th>
 			<th>Service</th>
-			<th>Group only</th>
+			<th>Unit only</th>
 			<th>Delete</th>
 		</tr>
 	</thead>
@@ -44,7 +44,7 @@
 					<td>@capcode.CapcodeAddress</td>
 					<td>@capcode.ShortName</td>
 					<td>@Html.EnumDescription(capcode.Service)</td>
-					@if (capcode.IsGroupCapcode)
+					@if (capcode.IsUnitCapcode)
 					{
 						<td><i class="fa fa-fw fa-check"></i></td>
 					} else

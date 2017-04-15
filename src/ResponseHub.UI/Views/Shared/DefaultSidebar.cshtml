@@ -16,7 +16,7 @@
 					<a href="/sign-in/sign-out">Sign out</a>
 				</li>
 				<li>
-					<a href="/sign-in/group-sign-in">Group sign in</a>
+					<a href="/sign-in/unit-sign-in">Unit sign in</a>
 				</li>
 			</ul>
 		}
@@ -52,10 +52,10 @@
 		</ul>
 		}
 	</li>
-	@if (Html.IsGroupAdminUser())
+	@if (Html.IsUnitAdminUser())
 	{
 		<li class="muted-nav">
-			<a href="/control-panel"><i class="fa fa-fw fa-cogs"></i>Group administration</a>
+			<a href="/control-panel"><i class="fa fa-fw fa-cogs"></i>Unit administration</a>
 		</li>
 	}
 </ul>

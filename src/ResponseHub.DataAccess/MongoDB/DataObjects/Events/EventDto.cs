@@ -15,7 +15,7 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB.DataObjects.Events
 
 		public string Name { get; set; }
 
-		public Guid GroupId { get; set; }
+		public Guid UnitId { get; set; }
 
 		public DateTime Created { get; set; }
 

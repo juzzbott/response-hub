@@ -1,0 +1,43 @@
+﻿@model IList<Enivate.ResponseHub.Model.Units.Unit>
+
+@{
+    ViewBag.Title = "Units";
+}
+<h1>@ViewBag.Title</h1>
+
+<a href="/admin/units/create" class="btn btn-primary btn-icon btn-lg top-10"><i class="fa fa-plus"></i> Create unit</a>
+
+@Html.Partial("~/Views/Shared/SearchControl.cshtml", new Enivate.ResponseHub.UI.Models.SearchViewModel(Model.Count, "units"))
+
+<table class="table table-striped table-hover">
+	<thead>
+		<tr>
+			<th>Name</th>
+			<th>Capcode</th>
+			<th>Service</th>
+			<th>Created</th>
+			<th>Actions</th>
+		</tr>
+	</thead>
+	<tbody>
+		@if (Model == null || Model.Count == 0)
+		{
+			<tr>
+				<td colspan="5">No units found.</td>
+			</tr>
+		}
+		else
+		{
+			foreach(var unit in Model)
+			{
+				<tr>
+					<td><a href="/admin/units/@unit.Id">@unit.Name</a></td>
+					<td>@unit.Capcode</td>
+					<td>@Html.EnumDescription(unit.Service)</td>
+					<td>@unit.Created.ToString("yyyy-MM-dd")</td>
+					<td><a href="/admin/units/@unit.Id/edit" title="Edit unit" class="btn-icon btn-action-icon"><i class="fa fa-pencil-square-o"></i></a></td>
+				</tr>
+			}
+		}
+	</tbody>
+</table>

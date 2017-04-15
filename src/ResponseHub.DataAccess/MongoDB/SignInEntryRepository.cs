@@ -65,17 +65,17 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 		}
 
 		/// <summary>
-		/// Gets the sign in entries for the specific group, based on the type of sign in types.
+		/// Gets the sign in entries for the specific unit, based on the type of sign in types.
 		/// </summary>
-		/// <param name="groupId">The group id to get the results for.</param>
+		/// <param name="unitId">The unit id to get the results for.</param>
 		/// <param name="signInTypes">The sign in flag types to return.</param>
-		/// <returns>The list of sign in types for the group.</returns>
-		public async Task<IList<SignInEntry>> GetSignInsForGroup(Guid groupId, DateTime from, DateTime to, SignInType signInTypes)
+		/// <returns>The list of sign in types for the unit.</returns>
+		public async Task<IList<SignInEntry>> GetSignInsForUnit(Guid unitId, DateTime from, DateTime to, SignInType signInTypes)
 		{
 			
 			// Create the filter
 			FilterDefinitionBuilder<SignInEntry> builder = Builders<SignInEntry>.Filter;
-			FilterDefinition<SignInEntry> filter = builder.Eq(i => i.GroupId, groupId);
+			FilterDefinition<SignInEntry> filter = builder.Eq(i => i.UnitId, unitId);
 
 			// Set the date range
 			filter = filter & builder.Gte(i => i.SignInTime, from) & builder.Lte(i => i.SignInTime, to);

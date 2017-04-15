@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using Enivate.ResponseHub.Model.Groups;
+using Enivate.ResponseHub.Model.Units;
 
 namespace Enivate.ResponseHub.DataAccess.Interface
 {
@@ -19,7 +19,7 @@ namespace Enivate.ResponseHub.DataAccess.Interface
 
 		Task<IList<Capcode>> GetSharedCapcodes();
 
-		Task<IList<Capcode>> GetAllByGroupOnly(bool groupOnly);
+		Task<IList<Capcode>> GetAllByUnitOnly(bool unitOnly);
 
 		Task<Capcode> GetByCapcodeAddress(string capcodeAddress);
 

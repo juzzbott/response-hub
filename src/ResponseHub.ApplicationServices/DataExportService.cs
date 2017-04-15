@@ -10,11 +10,11 @@ using System.Threading.Tasks;
 using Enivate.ResponseHub.Common;
 using Enivate.ResponseHub.Common.Constants;
 using Enivate.ResponseHub.Model.DataExport.Interface;
-using Enivate.ResponseHub.Model.Groups;
+using Enivate.ResponseHub.Model.Units;
 using Enivate.ResponseHub.Model.Messages;
 using Enivate.ResponseHub.Model.Messages.Interface;
 using Enivate.ResponseHub.Model.Spatial;
-using Enivate.ResponseHub.Model.Groups.Interface;
+using Enivate.ResponseHub.Model.Units.Interface;
 using Enivate.ResponseHub.Model.PdfGeneration.Interface;
 
 namespace Enivate.ResponseHub.ApplicationServices
@@ -23,25 +23,25 @@ namespace Enivate.ResponseHub.ApplicationServices
 	{
 
 		private IJobMessageService _jobMessageService;
-		private IGroupService _groupService;
+		private IUnitService _unitService;
 		private IPdfGenerationService _pdfGenerationService;
 
-		public DataExportService(IJobMessageService jobMessageService, IGroupService groupService, IPdfGenerationService pdfGenerationService)
+		public DataExportService(IJobMessageService jobMessageService, IUnitService unitService, IPdfGenerationService pdfGenerationService)
 		{
 			_jobMessageService = jobMessageService;
-			_groupService = groupService;
+			_unitService = unitService;
 			_pdfGenerationService = pdfGenerationService;
 		}
 		
-		public async Task<string> BuildCsvExportFile(Guid groupId, DateTime dateFrom, DateTime dateTo)
+		public async Task<string> BuildCsvExportFile(Guid unitId, DateTime dateFrom, DateTime dateTo)
 		{
 
-			// Get the group by the id
-			Group group = await _groupService.GetById(groupId);
+			// Get the unit by the id
+			Unit unit = await _unitService.GetById(unitId);
 
 			// Get the list of messages for the capcode
 			IList<JobMessage> messages = await _jobMessageService.GetMessagesBetweenDates(
-				new List<Capcode> { new Capcode() { CapcodeAddress = group.Capcode } },
+				new List<Capcode> { new Capcode() { CapcodeAddress = unit.Capcode } },
 				MessageType.Job & MessageType.Message,
 				999999,
 				0,

@@ -36,23 +36,23 @@ namespace Enivate.ResponseHub.ApplicationServices
 		}
 
 		/// <summary>
-		/// Gets the list of training sessions for the specific group.
+		/// Gets the list of training sessions for the specific unit.
 		/// </summary>
-		/// <param name="groupId">The id of the group to get the training sessions for.</param>
+		/// <param name="unitId">The id of the unit to get the training sessions for.</param>
 		/// <returns>The list of training sessions.</returns>
-		public async Task<IList<TrainingSession>> GetTrainingSessionsForGroup(Guid groupId)
+		public async Task<IList<TrainingSession>> GetTrainingSessionsForUnit(Guid unitId)
 		{
-			return await _sessionRepository.GetTrainingSessionsForGroup(groupId, await GetAllTrainingTypes());
+			return await _sessionRepository.GetTrainingSessionsForUnit(unitId, await GetAllTrainingTypes());
 		}
 
 		/// <summary>
-		/// Gets the list of training sessions for the specific group.
+		/// Gets the list of training sessions for the specific unit.
 		/// </summary>
-		/// <param name="groupId">The id of the group to get the training sessions for.</param>
+		/// <param name="unitId">The id of the unit to get the training sessions for.</param>
 		/// <returns>The list of training sessions.</returns>
-		public async Task<IList<TrainingSession>> GetTrainingSessionsForGroup(Guid groupId, int limit)
+		public async Task<IList<TrainingSession>> GetTrainingSessionsForUnit(Guid unitId, int limit)
 		{
-			return await _sessionRepository.GetTrainingSessionsForGroup(groupId, await GetAllTrainingTypes());
+			return await _sessionRepository.GetTrainingSessionsForUnit(unitId, await GetAllTrainingTypes());
 		}
 
 		/// <summary>

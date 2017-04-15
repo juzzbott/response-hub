@@ -8,11 +8,11 @@ using System.Web.Mvc;
 
 using Enivate.ResponseHub.UI.Controllers;
 using Enivate.ResponseHub.Common;
-using Enivate.ResponseHub.Model.Groups.Interface;
-using Enivate.ResponseHub.Model.Groups;
+using Enivate.ResponseHub.Model.Units.Interface;
+using Enivate.ResponseHub.Model.Units;
 using Enivate.ResponseHub.Model.Identity;
 using Enivate.ResponseHub.UI.Models.Users;
-using Enivate.ResponseHub.UI.Areas.Admin.Models.Groups;
+using Enivate.ResponseHub.UI.Areas.Admin.Models.Units;
 using Enivate.ResponseHub.Common.Extensions;
 using Enivate.ResponseHub.Model;
 using Enivate.ResponseHub.Model.Spatial;
@@ -26,11 +26,11 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 		
 		protected const string AddMemberViewModelSessionKey = "NewUserViewModel";
 
-		protected IGroupService GroupService
+		protected IUnitService UnitService
 		{
 			get
 			{
-				return ServiceLocator.Get<IGroupService>();
+				return ServiceLocator.Get<IUnitService>();
 			}
 		}
 		
@@ -58,42 +58,42 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 			}
 		}
 
-		public async Task<bool> CurrentUserIsAdminOfGroup(Guid groupId)
+		public async Task<bool> CurrentUserIsAdminOfUnit(Guid unitId)
 		{
 
 			// Get the user mappings for the current user
-			IDictionary<Guid, UserMapping> userGroupMappings = await GroupService.GetUserMappingsForUser(UserId);
+			IDictionary<Guid, UserMapping> userUnitMappings = await UnitService.GetUserMappingsForUser(UserId);
 
-			// determine if the user is a group admin of the specified group id
-			return userGroupMappings.Any(i => i.Key == groupId && i.Value.Role == RoleTypes.GroupAdministrator);
+			// determine if the user is a unit admin of the specified unit id
+			return userUnitMappings.Any(i => i.Key == unitId && i.Value.Role == RoleTypes.UnitAdministrator);
 
 		}
 
-		#region View Group
+		#region View Unit
 
 		/// <summary>
-		/// Gets the ViewResult for the ViewGroup action.
+		/// Gets the ViewResult for the ViewUnit action.
 		/// </summary>
 		/// <param name="id"></param>
 		/// <returns></returns>
-		public async Task<ActionResult> GetViewGroupViewResult(Guid id, string viewPath)
+		public async Task<ActionResult> GetViewUnitViewResult(Guid id, string viewPath)
 		{
-			// Get the group
-			Group group = await GroupService.GetById(id);
+			// Get the unit
+			Unit unit = await UnitService.GetById(id);
 
-			// If the group is null, throw 404
-			if (group == null)
+			// If the unit is null, throw 404
+			if (unit == null)
 			{
 				throw new HttpException((int)HttpStatusCode.NotFound, "The requested page cannot be found.");
 			}
 
-			// Get the list of users in the group from the Users property of the group
-			List<IdentityUser> groupUsers = new List<IdentityUser>();
+			// Get the list of users in the unit from the Users property of the unit
+			List<IdentityUser> unitUsers = new List<IdentityUser>();
 
 			if (String.IsNullOrEmpty(Request.QueryString["q"]))
 			{
-				// Get all the users for the group
-				groupUsers.AddRange(await GroupService.GetUsersForGroup(id));
+				// Get all the users for the unit
+				unitUsers.AddRange(await UnitService.GetUsersForUnit(id));
 			}
 			else
 			{
@@ -101,42 +101,42 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 				// Get the search results
 				IList<IdentityUser> searchResults = await UserService.SearchUsers(Request.QueryString["q"]);
 
-				// Only add the users that have a user id in the group
-				groupUsers.AddRange(searchResults.Where(i => group.Users.Select(u => u.UserId).Contains(i.Id)));
+				// Only add the users that have a user id in the unit
+				unitUsers.AddRange(searchResults.Where(i => unit.Users.Select(u => u.UserId).Contains(i.Id)));
 			}
 
-			// Create the list of GroupUserViewModels for the users in the group
-			IList<GroupUserViewModel> groupUserModels = new List<GroupUserViewModel>();
-			foreach (IdentityUser groupUser in groupUsers)
+			// Create the list of UnitUserViewModels for the users in the unit
+			IList<UnitUserViewModel> unitUserModels = new List<UnitUserViewModel>();
+			foreach (IdentityUser unitUser in unitUsers)
 			{
-				groupUserModels.Add(new GroupUserViewModel()
+				unitUserModels.Add(new UnitUserViewModel()
 				{
-					EmailAddress = groupUser.EmailAddress,
-					FirstName = groupUser.FirstName,
-					GroupRole = group.Users.FirstOrDefault(i => i.UserId == groupUser.Id).Role,
-					Id = groupUser.Id,
-					Surname = groupUser.Surname,
-					Profile = groupUser.Profile,
-					Status = groupUser.Status
+					EmailAddress = unitUser.EmailAddress,
+					FirstName = unitUser.FirstName,
+					UnitRole = unit.Users.FirstOrDefault(i => i.UserId == unitUser.Id).Role,
+					Id = unitUser.Id,
+					Surname = unitUser.Surname,
+					Profile = unitUser.Profile,
+					Status = unitUser.Status
 				});
 			}
 
 			// Get the list of additional capcodes
 			IList<Capcode> allCapcodes = await CapcodeService.GetAll();
-			IList<Capcode> additionalCapcodes = allCapcodes.Where(i => group.AdditionalCapcodes.Contains(i.Id)).ToList();
+			IList<Capcode> additionalCapcodes = allCapcodes.Where(i => unit.AdditionalCapcodes.Contains(i.Id)).ToList();
 
 			// Create the model for the single view
-			SingleGroupViewModel model = new SingleGroupViewModel()
+			SingleUnitViewModel model = new SingleUnitViewModel()
 			{
-				Id = group.Id,
-				Name = group.Name,
-				Description = group.Description,
-				Service = EnumExtensions.GetEnumDescription(group.Service),
-				Capcode = group.Capcode,
+				Id = unit.Id,
+				Name = unit.Name,
+				Description = unit.Description,
+				Service = EnumExtensions.GetEnumDescription(unit.Service),
+				Capcode = unit.Capcode,
 				AdditionalCapcodes = additionalCapcodes,
-				Users = groupUserModels,
-				Region = group.Region.Name,
-				HeadquartersCoordinates = group.HeadquartersCoordinates
+				Users = unitUserModels,
+				Region = unit.Region.Name,
+				HeadquartersCoordinates = unit.HeadquartersCoordinates
 			};
 
 			return View(viewPath, model);
@@ -144,76 +144,76 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 
 		#endregion
 
-		#region Edit Group
+		#region Edit Unit
 
 		/// <summary>
-		/// Gets the ViewResult for the Edit group GET request.
+		/// Gets the ViewResult for the Edit unit GET request.
 		/// </summary>
 		/// <param name="id"></param>
 		/// <returns></returns>
-		public async Task<ActionResult> GetEditGroupViewResult(Guid id, string viewPath)
+		public async Task<ActionResult> GetEditUnitViewResult(Guid id, string viewPath)
 		{
 
-			// Get the group based on the id
-			Group group = await GroupService.GetById(id);
+			// Get the unit based on the id
+			Unit unit = await UnitService.GetById(id);
 
-			// If the group is null, throw not found exception
-			if (group == null)
+			// If the unit is null, throw not found exception
+			if (unit == null)
 			{
 				throw new HttpException((int)HttpStatusCode.NotFound, "The requested page cannot be found.");
 			}
 
 			// Create and populate the model
-			CreateGroupModel model = new CreateGroupModel();
+			CreateUnitModel model = new CreateUnitModel();
 			model.AvailableRegions = await GetAvailableRegions();
-			model.Capcode = group.Capcode;
-			model.AvailableGroupCapcodes = await CapcodeService.GetAllByService(group.Service, true);
-			model.AvailableAdditionalCapcodes = await CapcodeService.GetAllByService(group.Service, false);
-			model.AdditionalCapcodes = String.Format("{0},", String.Join(",", group.AdditionalCapcodes));
-			model.Description = group.Description;
-			model.Latitude = group.HeadquartersCoordinates.Latitude;
-			model.Longitude = group.HeadquartersCoordinates.Longitude;
-			model.Name = group.Name;
-			model.Region = group.Region.Id;
+			model.Capcode = unit.Capcode;
+			model.AvailableUnitCapcodes = await CapcodeService.GetAllByService(unit.Service, true);
+			model.AvailableAdditionalCapcodes = await CapcodeService.GetAllByService(unit.Service, false);
+			model.AdditionalCapcodes = String.Format("{0},", String.Join(",", unit.AdditionalCapcodes));
+			model.Description = unit.Description;
+			model.Latitude = unit.HeadquartersCoordinates.Latitude;
+			model.Longitude = unit.HeadquartersCoordinates.Longitude;
+			model.Name = unit.Name;
+			model.Region = unit.Region.Id;
 
 			// Set the page title.
-			ViewBag.Title = "Edit group";
+			ViewBag.Title = "Edit unit";
 
 			return View(viewPath, model);
 
 		}
 
-		public async Task<ActionResult> PostEditGroupViewResult(Guid id, CreateGroupModel model, string viewPath, bool adminEdit)
+		public async Task<ActionResult> PostEditUnitViewResult(Guid id, CreateUnitModel model, string viewPath, bool adminEdit)
 		{
 			// Set the form action and the page title.
-			ViewBag.Title = "Edit group";
+			ViewBag.Title = "Edit unit";
 
-			// Get the group based on the id
-			Group group = await GroupService.GetById(id);
+			// Get the unit based on the id
+			Unit unit = await UnitService.GetById(id);
 
-			// If the group is null, throw not found exception
-			if (group == null)
+			// If the unit is null, throw not found exception
+			if (unit == null)
 			{
 				throw new HttpException((int)HttpStatusCode.NotFound, "The requested page cannot be found.");
 			}
 
 			// Set the available options
 			model.AvailableRegions = await GetAvailableRegions();
-			model.AvailableAdditionalCapcodes = await CapcodeService.GetAllByService(group.Service, false);
-			model.AvailableGroupCapcodes = await CapcodeService.GetAllByService(group.Service, true);
+			model.AvailableAdditionalCapcodes = await CapcodeService.GetAllByService(unit.Service, false);
+			model.AvailableUnitCapcodes = await CapcodeService.GetAllByService(unit.Service, true);
 
 			// Get the service type from the model
 			ServiceType service = ServiceType.StateEmergencyService;
 
 			// Get the region based on the posted value
-			IList<Region> regions = await GroupService.GetRegions();
+			IList<Region> regions = await UnitService.GetRegions();
 			Region region = regions.FirstOrDefault(i => i.Id == model.Region);
 
 			// If the region is null, log the error and return error message
 			if (region == null)
 			{
-				await Log.Error(String.Format("Unable to update group. Region '{0}' does not exist.", model.Region));
-				ModelState.AddModelError("", "There was a system error updating the group.");
+				await Log.Error(String.Format("Unable to update unit. Region '{0}' does not exist.", model.Region));
+				ModelState.AddModelError("", "There was a system error updating the unit.");
 				return View(viewPath, model);
 			}
 
@@ -225,33 +225,33 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 			try
 			{
 
-				// Update the values of the group
-				group.Name = model.Name;
-				group.Description = model.Description;
-				group.Updated = DateTime.UtcNow;
-				group.HeadquartersCoordinates = coords;
-				group.Region = region;
+				// Update the values of the unit
+				unit.Name = model.Name;
+				unit.Description = model.Description;
+				unit.Updated = DateTime.UtcNow;
+				unit.HeadquartersCoordinates = coords;
+				unit.Region = region;
 
 				if (adminEdit)
 				{
-					group.Capcode = model.Capcode;
-					group.AdditionalCapcodes = GetCapcodeIdsFromHiddenValue(model.AdditionalCapcodes);
-					group.Service = service;
+					unit.Capcode = model.Capcode;
+					unit.AdditionalCapcodes = GetCapcodeIdsFromHiddenValue(model.AdditionalCapcodes);
+					unit.Service = service;
 				}
 
 				// Create the capcode if it doesn't exist.
 				await CheckAndCreateCapcode(model.Capcode, model.Name, service);
 
-				// Save the group to the database
-				await GroupService.UpdateGroup(group);
+				// Save the unit to the database
+				await UnitService.UpdateUnit(unit);
 
-				return new RedirectResult(String.Format("/{0}/groups/{1}?saved=1", AreaPrefix, id));
+				return new RedirectResult(String.Format("/{0}/units/{1}?saved=1", AreaPrefix, id));
 
 			}
 			catch (Exception ex)
 			{
-				await Log.Error(String.Format("Unable to update group. System exception: {0}", ex.Message), ex);
-				ModelState.AddModelError("", "There was a system error updating the group.");
+				await Log.Error(String.Format("Unable to update unit. System exception: {0}", ex.Message), ex);
+				ModelState.AddModelError("", "There was a system error updating the unit.");
 				return View(viewPath, model);
 			}
 		}
@@ -260,31 +260,31 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 
 		#region New user
 
-		public async Task<ActionResult> GetAddMemberViewResult(Guid groupId)
+		public async Task<ActionResult> GetAddMemberViewResult(Guid unitId)
 		{
 
-			// Get the group
-			Group group = await GroupService.GetById(groupId);
+			// Get the unit
+			Unit unit = await UnitService.GetById(unitId);
 
-			// If the group is null, return 404 not found error
-			if (group == null)
+			// If the unit is null, return 404 not found error
+			if (unit == null)
 			{
 				throw new HttpException((int)HttpStatusCode.NotFound, "The requested page cannot be found.");
 			}
 
 			NewUserViewModel model = new NewUserViewModel();
 			model.AvailableRoles = GetAvailableRoles();
-			return View("~/Areas/Admin/Views/Groups/NewUser.cshtml", model);
+			return View("~/Areas/Admin/Views/Units/NewUser.cshtml", model);
 
 		}
 
-		public async Task<ActionResult> PostAddMemberViewResult(Guid groupId, NewUserViewModel model)
+		public async Task<ActionResult> PostAddMemberViewResult(Guid unitId, NewUserViewModel model)
 		{
-			// Get the group
-			Group group = await GroupService.GetById(groupId);
+			// Get the unit
+			Unit unit = await UnitService.GetById(unitId);
 
-			// If the group is null, return 404 not found error
-			if (group == null)
+			// If the unit is null, return 404 not found error
+			if (unit == null)
 			{
 				throw new HttpException((int)HttpStatusCode.NotFound, "The requested page cannot be found.");
 			}
@@ -295,53 +295,53 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 			// If the model is not valid, return view.
 			if (!ModelState.IsValid)
 			{
-				return View("~/Areas/Admin/Views/Groups/NewUser.cshtml", model);
+				return View("~/Areas/Admin/Views/Units/NewUser.cshtml", model);
 			}
 
 			// If there is "System Administrator" in the role list, show error message
 			if (model.Role.Equals(RoleTypes.SystemAdministrator, StringComparison.CurrentCultureIgnoreCase))
 			{
 				ModelState.AddModelError("", "There was an error setting the role for the user.");
-				return View("~/Areas/Admin/Views/Groups/NewUser.cshtml", model);
+				return View("~/Areas/Admin/Views/Units/NewUser.cshtml", model);
 			}
 
-			// Get the identity user related to the specified group admin
+			// Get the identity user related to the specified unit admin
 			IdentityUser newUser = await UserService.FindByEmailAsync(model.EmailAddress);
 
-			// If the user exists, and there is already a user mapping in the group for this user, show error message
-			if (newUser != null && group.Users.Any(i => i.UserId == newUser.Id))
+			// If the user exists, and there is already a user mapping in the unit for this user, show error message
+			if (newUser != null && unit.Users.Any(i => i.UserId == newUser.Id))
 			{
-				ModelState.AddModelError("", "The email address you have entered is already a member of this group.");
-				return View("~/Areas/Admin/Views/Groups/NewUser.cshtml", model);
+				ModelState.AddModelError("", "The email address you have entered is already a member of this unit.");
+				return View("~/Areas/Admin/Views/Units/NewUser.cshtml", model);
 			}
 
 			// Add the model to the session for the next screen
 			Session[AddMemberViewModelSessionKey] = model;
 
-			return new RedirectResult(String.Format("/{0}/groups/{1}/confirm-member", AreaPrefix, groupId));
+			return new RedirectResult(String.Format("/{0}/units/{1}/confirm-member", AreaPrefix, unitId));
 		}
 
-		public async Task<ActionResult> GetConfirmMemberViewResult(Guid groupId, string viewPath)
+		public async Task<ActionResult> GetConfirmMemberViewResult(Guid unitId, string viewPath)
 		{
-			// Get the group
-			Group group = await GroupService.GetById(groupId);
+			// Get the unit
+			Unit unit = await UnitService.GetById(unitId);
 
-			// If the group is null, return 404 not found error
-			if (group == null)
+			// If the unit is null, return 404 not found error
+			if (unit == null)
 			{
 				throw new HttpException((int)HttpStatusCode.NotFound, "The requested page cannot be found.");
 			}
 
-			// Get the CreateGroupViewModel from session
+			// Get the CreateUnitViewModel from session
 			NewUserViewModel newUserModel = (NewUserViewModel)Session[AddMemberViewModelSessionKey];
 
-			// If the view model is null, redirect back to the Group home screen
+			// If the view model is null, redirect back to the Unit home screen
 			if (newUserModel == null)
 			{
-				return new RedirectResult(String.Format("/{0}/groups/{1}", AreaPrefix, groupId));
+				return new RedirectResult(String.Format("/{0}/units/{1}", AreaPrefix, unitId));
 			}
 
-			// Get the identity user related to the specified group admin
+			// Get the identity user related to the specified unit admin
 			IdentityUser newUser = await UserService.FindByEmailAsync(newUserModel.EmailAddress);
 
 			// Create the model
@@ -363,16 +363,16 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 			return View(viewPath, model);
 		}
 
-		public async Task<ActionResult> PostConfirmMemberViewResult(Guid groupId, ConfirmUserViewModel model, string viewPath)
+		public async Task<ActionResult> PostConfirmMemberViewResult(Guid unitId, ConfirmUserViewModel model, string viewPath)
 		{
 			try
 			{
 
-				// Get the group
-				Group group = await GroupService.GetById(groupId);
+				// Get the unit
+				Unit unit = await UnitService.GetById(unitId);
 
-				// If the group is null, return 404 not found error
-				if (group == null)
+				// If the unit is null, return 404 not found error
+				if (unit == null)
 				{
 					throw new HttpException((int)HttpStatusCode.NotFound, "The requested page cannot be found.");
 				}
@@ -390,19 +390,19 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 					return View(viewPath, model);
 				}
 
-				// Get the identity user related to the specified group admin
+				// Get the identity user related to the specified unit admin
 				IdentityUser newUser = await UserService.FindByEmailAsync(model.EmailAddress);
 
-				// If the user exists, and there is already a user mapping in the group for this user, show error message
-				if (newUser != null && group.Users.Any(i => i.UserId == newUser.Id))
+				// If the user exists, and there is already a user mapping in the unit for this user, show error message
+				if (newUser != null && unit.Users.Any(i => i.UserId == newUser.Id))
 				{
-					ModelState.AddModelError("", "The email address you have entered is already a member of this group.");
+					ModelState.AddModelError("", "The email address you have entered is already a member of this unit.");
 					return View(viewPath, model);
 				}
 				else if (newUser != null)
 				{
 					// Create the user mapping for the existing user
-					await GroupService.AddUserToGroup(newUser.Id, model.Role, groupId);
+					await UnitService.AddUserToUnit(newUser.Id, model.Role, unitId);
 				}
 				else
 				{
@@ -422,7 +422,7 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 						roles.Add(RoleTypes.GeneralUser);
 					}
 
-					// Create the new user, and then create the group mapping for the new user.
+					// Create the new user, and then create the unit mapping for the new user.
 					newUser = await UserService.CreateAsync(model.EmailAddress, model.FirstName, model.Surname, roles, profile, !model.SkipEmailActivation);
 
 					// Send the activation email, if we don't need to skip it
@@ -432,21 +432,21 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 					}
 
 					// Now that we have the newUser, create the user mapping.
-					await GroupService.AddUserToGroup(newUser.Id, model.Role, groupId);
+					await UnitService.AddUserToUnit(newUser.Id, model.Role, unitId);
 
 				}
 
 				// remove the newUserModel from the session
 				Session.Remove(AddMemberViewModelSessionKey);
 
-				// redirect back to group view page
-				return new RedirectResult(String.Format("/{0}/groups/{1}?member_added=1", AreaPrefix, groupId));
+				// redirect back to unit view page
+				return new RedirectResult(String.Format("/{0}/units/{1}?member_added=1", AreaPrefix, unitId));
 
 			}
 			catch (Exception ex)
 			{
-				await Log.Error("Error adding new user to group. Message: " + ex.Message, ex);
-				ModelState.AddModelError("", "There was a system error adding the user to the group.");
+				await Log.Error("Error adding new user to unit. Message: " + ex.Message, ex);
+				ModelState.AddModelError("", "There was a system error adding the user to the unit.");
 				return View(viewPath, model);
 			}
 		}
@@ -461,7 +461,7 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 			// Update the activation code for the user
 			string newActivationCode = await UserService.ResetActivationCode(userId);
 
-			// Get the identity user related to the specified group admin
+			// Get the identity user related to the specified unit admin
 			IdentityUser newUser = await UserService.FindByIdAsync(userId);
 
 			// Resend the activation email
@@ -475,23 +475,23 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 
 		#region Change User Role 
 
-		public ActionResult GetChangeUserRoleViewResult(Guid groupId, Guid userId, string viewPath)
+		public ActionResult GetChangeUserRoleViewResult(Guid unitId, Guid userId, string viewPath)
 		{
 			// Create the model
 			ChangeUserRoleViewModel model = new ChangeUserRoleViewModel();
 			model.AvailableRoles = GetAvailableRoles();
-			model.GroupId = groupId;
+			model.UnitId = unitId;
 
 			// return the view
 			return View(viewPath, model);
 		}
 
-		public async Task<ActionResult> ViewChangeUserRoleViewResult(Guid groupId, Guid userId, ChangeUserRoleViewModel model, string viewPath, string urlPart)
+		public async Task<ActionResult> ViewChangeUserRoleViewResult(Guid unitId, Guid userId, ChangeUserRoleViewModel model, string viewPath, string urlPart)
 		{
 
 			// Create the model
 			model.AvailableRoles = GetAvailableRoles();
-			model.GroupId = groupId;
+			model.UnitId = unitId;
 
 			// If the model has errors, return
 			if (!ModelState.IsValid)
@@ -502,36 +502,36 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 			try
 			{
 
-				// Get the group so that we can validate the group not getting < 1 group administrator
-				Group group = await GroupService.GetById(groupId);
+				// Get the unit so that we can validate the unit not getting < 1 unit administrator
+				Unit unit = await UnitService.GetById(unitId);
 
-				if (group == null)
+				if (unit == null)
 				{
-					await Log.Error("Unable to change user role for group. Group cannot be found.  ");
-					ModelState.AddModelError("", "Unable to change role for user. The group cannot be found.");
+					await Log.Error("Unable to change user role for unit. Unit cannot be found.  ");
+					ModelState.AddModelError("", "Unable to change role for user. The unit cannot be found.");
 					return View(viewPath, model);
 				}
 
-				// If there is only 1 group administrator, and it's the current user, and the new role is general user, hen show error message stating you must hace one administrator account
-				if (group.Users.Count(i => i.Role.ToUpper() == RoleTypes.GroupAdministrator.ToUpper()) == 1 &&
-					group.Users.First(i => i.Role.ToUpper() == RoleTypes.GroupAdministrator.ToUpper()).UserId == userId &&
+				// If there is only 1 unit administrator, and it's the current user, and the new role is general user, hen show error message stating you must hace one administrator account
+				if (unit.Users.Count(i => i.Role.ToUpper() == RoleTypes.UnitAdministrator.ToUpper()) == 1 &&
+					unit.Users.First(i => i.Role.ToUpper() == RoleTypes.UnitAdministrator.ToUpper()).UserId == userId &&
 					model.Role.ToUpper() == RoleTypes.GeneralUser.ToUpper())
 				{
-					ModelState.AddModelError("", "You cannot change the role for this user to General User. Your group must always have at least one Group Administrator.");
+					ModelState.AddModelError("", "You cannot change the role for this user to General User. Your unit must always have at least one Unit Administrator.");
 					return View(viewPath, model);
 				}
 
 
 				// Update the role for the user
-				await GroupService.ChangeUserRoleInGroup(groupId, userId, model.Role);
+				await UnitService.ChangeUserRoleInUnit(unitId, userId, model.Role);
 
 				// return the view
-				return new RedirectResult(String.Format("/{0}/groups/{1}?role_changed=1", urlPart.ToLower(), groupId));
+				return new RedirectResult(String.Format("/{0}/units/{1}?role_changed=1", urlPart.ToLower(), unitId));
 
 			}
 			catch (Exception ex)
 			{
-				await Log.Error(String.Format("Unable to change role for user in group. Message: {0}", ex.Message), ex);
+				await Log.Error(String.Format("Unable to change role for user in unit. Message: {0}", ex.Message), ex);
 				ModelState.AddModelError("", "Sorry, there was an error changing the role for the user.");
 				return View(viewPath, model);
 			}
@@ -540,25 +540,25 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 
 		#endregion
 
-		#region Remove User From Group
+		#region Remove User From Unit
 
-		public async Task<ActionResult> GetRemoveUserFromGroup(Guid groupId, Guid userId, string urlPart)
+		public async Task<ActionResult> GetRemoveUserFromUnit(Guid unitId, Guid userId, string urlPart)
 		{
 			try
 			{
 				// Remover the user
-				await GroupService.RemoveUserFromGroup(userId, groupId);
+				await UnitService.RemoveUserFromUnit(userId, unitId);
 
-				// return to the view group screen
-				return new RedirectResult(String.Format("/{0}/groups/{1}?user_removed=1", urlPart, groupId));
+				// return to the view unit screen
+				return new RedirectResult(String.Format("/{0}/units/{1}?user_removed=1", urlPart, unitId));
 			} 
 			catch (Exception ex)
 			{
 				// Log the error and redirect with error query string
-				await Log.Error(String.Format("Unable to remove user '{0}' from group '{1}'.", userId, groupId), ex);
+				await Log.Error(String.Format("Unable to remove user '{0}' from unit '{1}'.", userId, unitId), ex);
 
-				// return to the view group screen
-				return new RedirectResult(String.Format("/{0}/groups/{1}?remove_user_error=1", urlPart, groupId));
+				// return to the view unit screen
+				return new RedirectResult(String.Format("/{0}/units/{1}?remove_user_error=1", urlPart, unitId));
 			}
 		}
 
@@ -573,7 +573,7 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 		protected async Task<IList<SelectListItem>> GetAvailableRegions()
 		{
 
-			IList<Region> regions = await GroupService.GetRegions();
+			IList<Region> regions = await UnitService.GetRegions();
 
 			// Create the list of select items
 			IList<SelectListItem> items = new List<SelectListItem>();
@@ -631,10 +631,10 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 		/// Checks to see if the capcode exists. If it doesn't exist, then it's created. 
 		/// </summary>
 		/// <param name="capcode">The capcode to check or create.</param>
-		/// <param name="groupName">The name of the group to create the capcode for.</param>
+		/// <param name="unitName">The name of the unit to create the capcode for.</param>
 		/// <param name="service">The service the capcode is associated with.</param>
 		/// <returns></returns>
-		protected async Task CheckAndCreateCapcode(string capcode, string groupName, ServiceType service)
+		protected async Task CheckAndCreateCapcode(string capcode, string unitName, ServiceType service)
 		{
 
 			// Check if the capcode exists 
@@ -645,7 +645,7 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 			{
 
 				// Create the capcode
-				await CapcodeService.Create(groupName, capcode, "", service, true);
+				await CapcodeService.Create(unitName, capcode, "", service, true);
 
 			}
 
@@ -660,21 +660,21 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 			IList<SelectListItem> availableRoles = new List<SelectListItem>();
 			availableRoles.Add(new SelectListItem() { Text = "Select role", Value = "" });
 			availableRoles.Add(new SelectListItem() { Text = RoleTypes.GeneralUser, Value = RoleTypes.GeneralUser });
-			availableRoles.Add(new SelectListItem() { Text = RoleTypes.GroupAdministrator, Value = RoleTypes.GroupAdministrator });
+			availableRoles.Add(new SelectListItem() { Text = RoleTypes.UnitAdministrator, Value = RoleTypes.UnitAdministrator });
 
 			// return the available roles
 			return availableRoles;
 		}
 
 		/// <summary>
-		/// Gets the current context group id for the control panel.
+		/// Gets the current context unit id for the control panel.
 		/// </summary>
 		/// <returns></returns>
-		protected Guid GetControlPanelGroupId()
+		protected Guid GetControlPanelUnitId()
 		{
-			if (Session[SessionConstants.ControlPanelContextGroupId] != null)
+			if (Session[SessionConstants.ControlPanelContextUnitId] != null)
 			{
-				return (Guid)Session[SessionConstants.ControlPanelContextGroupId];
+				return (Guid)Session[SessionConstants.ControlPanelContextUnitId];
 			}
 			else
 			{

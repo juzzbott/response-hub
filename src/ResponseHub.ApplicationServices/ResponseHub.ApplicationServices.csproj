@@ -101,7 +101,7 @@
     <Compile Include="DataExportService.cs" />
     <Compile Include="EventService.cs" />
     <Compile Include="AddressService.cs" />
-    <Compile Include="GroupService.cs" />
+    <Compile Include="UnitService.cs" />
     <Compile Include="JobMessageService.cs" />
     <Compile Include="MailService.cs" />
     <Compile Include="PdfGenerationService.cs" />

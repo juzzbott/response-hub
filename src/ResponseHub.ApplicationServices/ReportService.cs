@@ -25,13 +25,13 @@ namespace Enivate.ResponseHub.ApplicationServices
 			_pdfGenerationService = pdfGenerationService;
 		}
 
-		public async Task<byte[]> GenerateTrainingReportPdfFile(Guid groupId, DateTime dateFrom, DateTime dateTo, HttpCookieCollection cookies)
+		public async Task<byte[]> GenerateTrainingReportPdfFile(Guid unitId, DateTime dateFrom, DateTime dateTo, HttpCookieCollection cookies)
 		{
 			// Get the web response for the report
 			// To force a page break: style="page-break-before: always"
-			HttpWebRequest request = HttpWebRequest.CreateHttp(String.Format("{0}/control-panel/reports/generate-training-report-html?group_id={1}&date_from={2}&date_to={3}",
+			HttpWebRequest request = HttpWebRequest.CreateHttp(String.Format("{0}/control-panel/reports/generate-training-report-html?unit_id={1}&date_from={2}&date_to={3}",
 				ConfigurationManager.AppSettings[ConfigurationKeys.BaseWebsiteUrl],
-				groupId,
+				unitId,
 				dateFrom.ToString("yyyyMMddHHmmss"),
 				dateTo.ToString("yyyyMMddHHmmss")));
 
@@ -58,18 +58,18 @@ namespace Enivate.ResponseHub.ApplicationServices
 		/// <summary>
 		/// Builds the operations report pdf file.
 		/// </summary>
-		/// <param name="groupId"></param>
+		/// <param name="unitId"></param>
 		/// <param name="dateFrom"></param>
 		/// <param name="dateTo"></param>
 		/// <returns></returns>
-		public async Task<byte[]> GenerationOperationsReportPdfFile(Guid groupId, DateTime dateFrom, DateTime dateTo, bool includeAdditionalCapcodes, HttpCookieCollection cookies)
+		public async Task<byte[]> GenerationOperationsReportPdfFile(Guid unitId, DateTime dateFrom, DateTime dateTo, bool includeAdditionalCapcodes, HttpCookieCollection cookies)
 		{
 
 			// Get the web response for the report
 			// To force a page break: style="page-break-before: always"
-			HttpWebRequest request = HttpWebRequest.CreateHttp(String.Format("{0}/control-panel/reports/generate-operations-report-html?group_id={1}&date_from={2}&date_to={3}&additional_capcodes={4}",
+			HttpWebRequest request = HttpWebRequest.CreateHttp(String.Format("{0}/control-panel/reports/generate-operations-report-html?unit_id={1}&date_from={2}&date_to={3}&additional_capcodes={4}",
 				ConfigurationManager.AppSettings[ConfigurationKeys.BaseWebsiteUrl],
-				groupId,
+				unitId,
 				dateFrom.ToString("yyyyMMddHHmmss"),
 				dateTo.ToString("yyyyMMddHHmmss"),
 				includeAdditionalCapcodes));

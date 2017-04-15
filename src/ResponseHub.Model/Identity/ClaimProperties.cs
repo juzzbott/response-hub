@@ -9,7 +9,7 @@ namespace Enivate.ResponseHub.Model.Identity
 	public class ClaimProperties
 	{
 
-		public const string GroupId = "GroupId";
+		public const string UnitId = "UnitId";
 
 	}
 }

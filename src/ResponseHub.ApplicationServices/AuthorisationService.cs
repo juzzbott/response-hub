@@ -7,19 +7,19 @@ using System.Threading.Tasks;
 using Enivate.ResponseHub.Common;
 using Enivate.ResponseHub.Model;
 using Enivate.ResponseHub.Model.Events;
-using Enivate.ResponseHub.Model.Groups;
-using Enivate.ResponseHub.Model.Groups.Interface;
+using Enivate.ResponseHub.Model.Units;
+using Enivate.ResponseHub.Model.Units.Interface;
 
 namespace Enivate.ResponseHub.ApplicationServices
 {
 	public class AuthorisationService : IAuthorisationService
 	{
 		
-		IGroupService GroupService
+		IUnitService UnitService
 		{
 			get
 			{
-				return ServiceLocator.Get<IGroupService>();
+				return ServiceLocator.Get<IUnitService>();
 			}
 		}
 
@@ -42,17 +42,17 @@ namespace Enivate.ResponseHub.ApplicationServices
 				throw new Exception("User id must be a non-empty guid.");
 			}
 
-			// Get the group for the event
-			Group eventGroup = await GroupService.GetById(eventObj.GroupId);
+			// Get the unit for the event
+			Unit eventUnit = await UnitService.GetById(eventObj.UnitId);
 
-			// If the group is null, throw ex as we can't validate the user
-			if (eventGroup == null)
+			// If the unit is null, throw ex as we can't validate the user
+			if (eventUnit == null)
 			{
-				throw new Exception("Cannot check security for null group.");
+				throw new Exception("Cannot check security for null unit.");
 			}
 
-			// Finally, check the user is a member of the group
-			return eventGroup.Users.Any(i => i.UserId == userId);
+			// Finally, check the user is a member of the unit
+			return eventUnit.Users.Any(i => i.UserId == userId);
 
 		}
 	}

@@ -13,7 +13,7 @@ namespace Enivate.ResponseHub.Model
 
 		Task SendAccountActivationEmail(IdentityUser newUser);
 
-		Task SendGroupCreatedEmail(IdentityUser groupAdmin, string groupName, ServiceType service, string capcode);
+		Task SendUnitCreatedEmail(IdentityUser unitAdmin, string groupName, ServiceType service, string capcode);
 
 		Task SendForgottenPasswordToken(IdentityUser user, string token);
 

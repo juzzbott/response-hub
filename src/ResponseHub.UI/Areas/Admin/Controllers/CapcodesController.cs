@@ -12,10 +12,10 @@ using Enivate.ResponseHub.Model;
 using Enivate.ResponseHub.Model.Identity;
 using Enivate.ResponseHub.UI.Filters;
 using Enivate.ResponseHub.UI.Areas.Admin.Models.Capcodes;
-using Enivate.ResponseHub.Model.Groups.Interface;
+using Enivate.ResponseHub.Model.Units.Interface;
 using Enivate.ResponseHub.Logging;
 using Enivate.ResponseHub.Common;
-using Enivate.ResponseHub.Model.Groups;
+using Enivate.ResponseHub.Model.Units;
 
 namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 {
@@ -37,7 +37,7 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 			// If there is no search term, return all results, otherwise return only those that match the search results.
 			if (String.IsNullOrEmpty(Request.QueryString["q"]))
 			{
-				// Get the most recent groups
+				// Get the most recent units
 				capcodes.AddRange(await CapcodeService.GetAll());
 				capcodes = capcodes.OrderByDescending(i => i.Created).Take(30).ToList();
 			}
@@ -89,7 +89,7 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 				ServiceType serviceType = (ServiceType)intServiceType;
 
 				// Create the capcode
-				await CapcodeService.Create(model.Name, model.CapcodeAddress, model.ShortName, serviceType, model.IsGroupCapcode);
+				await CapcodeService.Create(model.Name, model.CapcodeAddress, model.ShortName, serviceType, model.IsUnitCapcode);
 
 				// return the to the list screen
 				return new RedirectResult("/admin/capcodes?created=1");
@@ -131,7 +131,7 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 				Name = capcode.Name,
 				Service = ((int)capcode.Service).ToString(),
 				ShortName = capcode.ShortName,
-				IsGroupCapcode = capcode.IsGroupCapcode
+				IsUnitCapcode = capcode.IsUnitCapcode
 			};
 
 			// return the view
@@ -177,7 +177,7 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 				capcode.Name = model.Name;
 				capcode.ShortName = model.ShortName;
 				capcode.Service = serviceType;
-				capcode.IsGroupCapcode = model.IsGroupCapcode;
+				capcode.IsUnitCapcode = model.IsUnitCapcode;
 
 				// Save the capcode
 				await CapcodeService.Save(capcode);
@@ -214,18 +214,18 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 				throw new HttpException((int)HttpStatusCode.NotFound, "Capcode not found.");
 			}
 
-			// Get all the groups by the capcode to make sure it's not in use
-			IList<Group> groupsWithCapcode = await GroupService.GetGroupsByCapcode(capcode);
+			// Get all the units by the capcode to make sure it's not in use
+			IList<Unit> unitsWithCapcode = await UnitService.GetUnitsByCapcode(capcode);
 
-			// If there are groups, so show the unable to delete screen
-			if (groupsWithCapcode != null && groupsWithCapcode.Count > 0)
+			// If there are units, so show the unable to delete screen
+			if (unitsWithCapcode != null && unitsWithCapcode.Count > 0)
 			{
-				// Create the list of groups with the capcode
-				IList<string> model = groupsWithCapcode.Select(i => i.Name).ToList();
+				// Create the list of units with the capcode
+				IList<string> model = unitsWithCapcode.Select(i => i.Name).ToList();
 				return View("CapcodesExist", model);
 			}
 
-			// We don't have any groups assigned to this capcode so we can just delete it
+			// We don't have any units assigned to this capcode so we can just delete it
 			await CapcodeService.Remove(id);			
 
 			// Redirect to the capcode index screen.

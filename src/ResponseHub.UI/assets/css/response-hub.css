@@ -455,7 +455,7 @@ footer p {
     width: 16.66666667%;
   }
 }
-.breadcrumb-select-group {
+.breadcrumb-select-unit {
   margin-top: 13px;
   border: 1px solid #ddd;
   border-radius: 2px;
@@ -463,13 +463,13 @@ footer p {
   background-color: #fff;
   float: right;
 }
-.breadcrumb-select-group:hover {
+.breadcrumb-select-unit:hover {
   background-color: #fff;
   border: 1px solid #ddd;
   text-decoration: none;
 }
 @media (max-width: 992px) {
-  .breadcrumb-select-group {
+  .breadcrumb-select-unit {
     display: none;
   }
 }
@@ -879,7 +879,7 @@ timepicker-control input[readonly] {
 .job-list .job-message-meta i {
   padding-right: 19px;
 }
-.job-list .capcode-group-name {
+.job-list .capcode-unit-name {
   margin-bottom: 5px;
 }
 .job-list .message-date {
@@ -1136,7 +1136,7 @@ i.p-message-admin {
   border-color: #26a880;
 }
 /**
-	ADMIN - Create Group Styles
+	ADMIN - Create Unit Styles
 */
 @media (min-width: 992px) {
   .hq-location-buttons span {
@@ -1153,23 +1153,23 @@ i.p-message-admin {
     margin-top: 15px;
   }
 }
-.search-group-form {
+.search-unit-form {
   margin-top: 20px;
 }
 /**
-	View Group Page styles
+	View Unit Page styles
 */
-.group-hq-map {
+.unit-hq-map {
   position: relative;
   width: 350px;
   height: 200px;
 }
-.group-hq-map img {
+.unit-hq-map img {
   position: absolute;
   top: 0;
   left: 0;
 }
-.group-hq-map span {
+.unit-hq-map span {
   display: block;
   position: absolute;
   left: 148px;

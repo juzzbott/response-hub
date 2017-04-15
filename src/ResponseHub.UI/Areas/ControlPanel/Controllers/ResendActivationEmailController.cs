@@ -12,7 +12,7 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 {
 	[RouteArea("ControlPanel", AreaPrefix = "control-panel")]
 	[RoutePrefix("resend-activation-email")]
-	[ClaimsAuthorize(Roles = RoleTypes.GroupAdministrator)]
+	[ClaimsAuthorize(Roles = RoleTypes.UnitAdministrator)]
 	public class ResendActivationEmailController : BaseControlPanelController
 	{
 

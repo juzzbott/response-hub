@@ -17,8 +17,8 @@ using Enivate.ResponseHub.ApplicationServices;
 using Enivate.ResponseHub.Common;
 using Enivate.ResponseHub.Common.Extensions;
 using Enivate.ResponseHub.Model;
-using Enivate.ResponseHub.Model.Groups;
-using Enivate.ResponseHub.Model.Groups.Interface;
+using Enivate.ResponseHub.Model.Units;
+using Enivate.ResponseHub.Model.Units.Interface;
 using Enivate.ResponseHub.Model.Identity;
 using Enivate.ResponseHub.Model.SignIn.Interface;
 using Enivate.ResponseHub.Model.SignIn;
@@ -58,11 +58,11 @@ namespace Enivate.ResponseHub.UI.Controllers
 			}
 		}
 
-		protected IGroupService GroupService
+		protected IUnitService UnitService
 		{
 			get
 			{
-				return ServiceLocator.Get<IGroupService>();
+				return ServiceLocator.Get<IUnitService>();
 			}
 		}
 
@@ -718,30 +718,30 @@ namespace Enivate.ResponseHub.UI.Controllers
 			// Get the sign ins for the user
 			IList<SignInEntry> signIns = await SignInService.GetSignInsForUser(UserId);
 
-			// Get the groups for the user
-			IList<Group> userGroups = await GroupService.GetGroupsForUser(UserId);
+			// Get the units for the user
+			IList<Unit> userUnits = await UnitService.GetUnitsForUser(UserId);
 
 			// Map the sign ins to the SignInEntryListItemViewModel class
-			IList<SignInEntryListItemViewModel> model = signIns.Select(i => MapToSignInListItemViewModel(i, userGroups)).ToList();
+			IList<SignInEntryListItemViewModel> model = signIns.Select(i => MapToSignInListItemViewModel(i, userUnits)).ToList();
 
 			return View(model);
 		}
 
-		private SignInEntryListItemViewModel MapToSignInListItemViewModel(SignInEntry entry, IList<Group> userGroups)
+		private SignInEntryListItemViewModel MapToSignInListItemViewModel(SignInEntry entry, IList<Unit> userUnits)
 		{
 			SignInEntryListItemViewModel viewModel = new SignInEntryListItemViewModel()
 			{
-				GroupId = entry.GroupId,
+				UnitId = entry.UnitId,
 				SignInTime = entry.SignInTime,
 				SignOutTime = entry.SignOutTime,
 				SignInType = entry.SignInType.GetEnumDescription()
 			};
 
-			// Find the group and add the group name if it exists
-			Group group = userGroups.FirstOrDefault(i => i.Id == entry.GroupId);
-			if (group != null)
+			// Find the unit and add the unit name if it exists
+			Unit unit = userUnits.FirstOrDefault(i => i.Id == entry.UnitId);
+			if (unit != null)
 			{
-				viewModel.GroupName = group.Name;
+				viewModel.UnitName = unit.Name;
 			}
 
 			// Set the activity

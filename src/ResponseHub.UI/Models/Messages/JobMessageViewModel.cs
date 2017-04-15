@@ -31,9 +31,9 @@ namespace Enivate.ResponseHub.UI.Models.Messages
 
 		public string Capcode { get; set; }
 
-		public string CapcodeGroupName { get; set; }
+		public string CapcodeUnitName { get; set; }
 
-		public Guid CapcodeGroupId { get; set; }
+		public Guid CapcodeUnitId { get; set; }
 
 		public MessagePriority Priority { get; set; }
 

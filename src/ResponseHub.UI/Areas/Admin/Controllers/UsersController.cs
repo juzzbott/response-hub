@@ -65,7 +65,7 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 
 			if (String.IsNullOrEmpty(Request.QueryString["q"]))
 			{
-				// Get all the users for the group
+				// Get all the users for the unit
 				users.AddRange(await UserService.GetAll());
 			}
 			else
@@ -90,7 +90,7 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 					FirstName = user.FirstName,
 					FullName = user.FullName,
 					Id = user.Id,
-					IsGroupAdmin = user.Claims.Any(i => i.Type == ClaimTypes.Role && i.Value.Equals(RoleTypes.GroupAdministrator, StringComparison.CurrentCultureIgnoreCase)),
+					IsUnitAdmin = user.Claims.Any(i => i.Type == ClaimTypes.Role && i.Value.Equals(RoleTypes.UnitAdministrator, StringComparison.CurrentCultureIgnoreCase)),
 					IsSystemAdmin = user.Claims.Any(i => i.Type == ClaimTypes.Role && i.Value.Equals(RoleTypes.SystemAdministrator, StringComparison.CurrentCultureIgnoreCase)),
 					Surname = user.Surname
 				};
@@ -128,7 +128,7 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 				// If the email address exists, show the error to the user
 				if (emailExists)
 				{
-					ModelState.AddModelError("", "Sorry, there is already an account with this email address. System administrators cannot also be group members. Please try a different email address.");
+					ModelState.AddModelError("", "Sorry, there is already an account with this email address. System administrators cannot also be unit members. Please try a different email address.");
 					return View(model);
 				}
 
