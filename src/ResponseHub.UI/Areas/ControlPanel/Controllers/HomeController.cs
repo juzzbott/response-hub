@@ -9,7 +9,7 @@ using Enivate.ResponseHub.Common.Constants;
 using Enivate.ResponseHub.UI.Controllers;
 using Enivate.ResponseHub.Model.Identity;
 using Enivate.ResponseHub.UI.Filters;
-using Enivate.ResponseHub.Model.Groups;
+using Enivate.ResponseHub.Model.Units;
 using Enivate.ResponseHub.UI.Areas.ControlPanel.Models.Home;
 
 namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
@@ -20,24 +20,24 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 	{
 
 		[Route]
-		[ClaimsAuthorize(Roles = RoleTypes.GroupAdministrator)]
+		[ClaimsAuthorize(Roles = RoleTypes.UnitAdministrator)]
 		// GET: ControlPanel/Home
 		public async Task<ActionResult> Index()
 		{
 
-			// Get the group ids that the user is a group administrator of
-			IList<Guid> groupIds = await GroupService.GetGroupIdsUserIsGroupAdminOf(UserId);
+			// Get the unit ids that the user is a unit administrator of
+			IList<Guid> unitIds = await UnitService.GetUnitIdsUserIsUnitAdminOf(UserId);
 
-			// If there is 1 group, add the context group id to the session
-			if (groupIds.Count == 1)
+			// If there is 1 unit, add the context unit id to the session
+			if (unitIds.Count == 1)
 			{
-				Guid groupId = groupIds.First();
-				Session[SessionConstants.ControlPanelContextGroupId] = groupId;
-				return new RedirectResult(String.Format("/control-panel/groups/{0}", groupId));
+				Guid unitId = unitIds.First();
+				Session[SessionConstants.ControlPanelContextUnitId] = unitId;
+				return new RedirectResult(String.Format("/control-panel/units/{0}", unitId));
 			}
 			else
 			{
-				return new RedirectResult("/control-panel/group-selection");
+				return new RedirectResult("/control-panel/unit-selection");
 			}
 
 		}

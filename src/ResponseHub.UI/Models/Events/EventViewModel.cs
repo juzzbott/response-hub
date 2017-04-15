@@ -17,11 +17,11 @@ namespace Enivate.ResponseHub.UI.Models.Events
 
 		public DateTime EventFinished { get; set; }
 
-		public Guid GroupId { get; set; }
+		public Guid UnitId { get; set; }
 
-		public string GroupName { get; set; }
+		public string UnitName { get; set; }
 
-		public IList<EventResource> GroupResources { get; set; }
+		public IList<EventResource> UnitResources { get; set; }
 		
 		public IList<EventResource> AdditionalResources { get; set; }
 
@@ -29,7 +29,7 @@ namespace Enivate.ResponseHub.UI.Models.Events
 
 		public EventViewModel()
 		{
-			GroupResources = new List<EventResource>();
+			UnitResources = new List<EventResource>();
 			AdditionalResources = new List<EventResource>();
 			AdditionalResourceModel = new AdditionalResourceViewModel();
 		}

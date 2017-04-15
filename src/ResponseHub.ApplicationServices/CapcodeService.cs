@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 using Enivate.ResponseHub.DataAccess.Interface;
 using Enivate.ResponseHub.Logging;
-using Enivate.ResponseHub.Model.Groups.Interface;
-using Enivate.ResponseHub.Model.Groups;
+using Enivate.ResponseHub.Model.Units.Interface;
+using Enivate.ResponseHub.Model.Units;
 using Enivate.ResponseHub.Caching;
 using Enivate.ResponseHub.Model;
 
@@ -26,9 +26,9 @@ namespace Enivate.ResponseHub.ApplicationServices
 		private ICapcodeRepository _repository;
 
 		/// <summary>
-		/// THe service for handling groups.
+		/// THe service for handling units.
 		/// </summary>
-		private IGroupService _groupService;
+		private IUnitService _unitService;
 
 		private const string AllCapcodesCacheKey = "AllCapcodes";
 
@@ -37,15 +37,15 @@ namespace Enivate.ResponseHub.ApplicationServices
 		/// </summary>
 		/// <param name="repository"></param>
 		/// <param name="log"></param>
-		public CapcodeService(IGroupService groupService, ICapcodeRepository repository, ILogger log)
+		public CapcodeService(IUnitService unitService, ICapcodeRepository repository, ILogger log)
 		{
-			_groupService = groupService;
+			_unitService = unitService;
 			_repository = repository;
 			_log = log;
 		}
 
 		/// <summary>
-		/// Gets a list of all the cap codes available in the system, not including individual group capcodes.
+		/// Gets a list of all the cap codes available in the system, not including individual unit capcodes.
 		/// </summary>
 		/// <returns></returns>
 		public async Task<IList<Capcode>> GetAll()
@@ -59,7 +59,7 @@ namespace Enivate.ResponseHub.ApplicationServices
 			{
 				capcodes = await _repository.GetAll();
 
-				// If the capcodes are not null and there is at least one in the group, then add to the cache
+				// If the capcodes are not null and there is at least one in the unit, then add to the cache
 				if (capcodes != null && capcodes.Any())
 				{
 					CacheManager.AddItem(AllCapcodesCacheKey, capcodes);
@@ -79,7 +79,7 @@ namespace Enivate.ResponseHub.ApplicationServices
 		/// <param name="shortName">The short name for the address.</param>
 		/// <param name="service">The servic type the capcode belongs to.</param>
 		/// <returns>The newly created capcode object.</returns>
-		public async Task<Capcode> Create(string name, string capcodeAddress, string shortName, ServiceType service, bool isGroupOnly)
+		public async Task<Capcode> Create(string name, string capcodeAddress, string shortName, ServiceType service, bool isUnitOnly)
 		{
 
 			// Create the capcode
@@ -90,7 +90,7 @@ namespace Enivate.ResponseHub.ApplicationServices
 				ShortName = shortName,
 				Service = service,
 				Created = DateTime.UtcNow,
-				IsGroupCapcode = isGroupOnly
+				IsUnitCapcode = isUnitOnly
 			};
 
 			// Create the capcode
@@ -134,13 +134,13 @@ namespace Enivate.ResponseHub.ApplicationServices
 		/// </summary>
 		/// <param name="service">The service to get the capcodes for.</param>
 		/// <returns></returns>
-		public async Task<IList<Capcode>> GetAllByService(ServiceType service, bool isGroupCapcode)
+		public async Task<IList<Capcode>> GetAllByService(ServiceType service, bool isUnitCapcode)
 		{
 			// Get all the capcodes
 			IList<Capcode> allCapcodes = await GetAll();
 
 			// Return all capcodes for the specified service.
-			return allCapcodes.Where(i => (i.Service == service || i.Service == ServiceType.AllServices) && i.IsGroupCapcode == isGroupCapcode).ToList();
+			return allCapcodes.Where(i => (i.Service == service || i.Service == ServiceType.AllServices) && i.IsUnitCapcode == isUnitCapcode).ToList();
 
 		}
 
@@ -215,28 +215,28 @@ namespace Enivate.ResponseHub.ApplicationServices
 		public async Task<IList<Capcode>> GetCapcodesForUser(Guid userId)
 		{
 
-			// Get the groups for the user
-			IList<Group> userGroups = await _groupService.GetGroupsForUser(userId);
+			// Get the units for the user
+			IList<Unit> userUnits = await _unitService.GetUnitsForUser(userId);
 
-			// If there are no groups for the user, then return
-			if (userGroups == null || !userGroups.Any())
+			// If there are no units for the user, then return
+			if (userUnits == null || !userUnits.Any())
 			{
 				return new List<Capcode>();
 			}
 
 			// Select the capcode ids
-			IList<Guid> capcodeIds = userGroups.SelectMany(i => i.AdditionalCapcodes).Distinct().ToList();
+			IList<Guid> capcodeIds = userUnits.SelectMany(i => i.AdditionalCapcodes).Distinct().ToList();
 
 			// Get the list of capcodes based on the id
 			IList<Capcode> capcodes = await _repository.GetCapcodesById(capcodeIds);
 
-			// Get the list of group capcode objects
-			IList<Capcode> groupCapcodes = await _repository.GetCapcodes(userGroups.Select(i => i.Capcode).ToList());
+			// Get the list of unit capcode objects
+			IList<Capcode> unitCapcodes = await _repository.GetCapcodes(userUnits.Select(i => i.Capcode).ToList());
 
-			// Add the group capcodes to the list of capcodes to return.
-			foreach(Capcode groupCapcode in groupCapcodes)
+			// Add the unit capcodes to the list of capcodes to return.
+			foreach(Capcode unitCapcode in unitCapcodes)
 			{
-				capcodes.Add(groupCapcode);
+				capcodes.Add(unitCapcode);
 			}
 
 			// return the list of capcodes for the user
@@ -245,21 +245,21 @@ namespace Enivate.ResponseHub.ApplicationServices
 		}
 		
 		/// <summary>
-		/// Gets the capcodes that are not specified as Group capcodes.
+		/// Gets the capcodes that are not specified as Unit capcodes.
 		/// </summary>
-		/// <returns>The list of capcodes where IsGroupCapcode is false.</returns>
+		/// <returns>The list of capcodes where IsUnitCapcode is false.</returns>
 		public async Task<IList<Capcode>> GetSharedCapcodes()
 		{
 			return await _repository.GetSharedCapcodes();
 		}
 
 		/// <summary>
-		/// Gets the capcodes that are only specified for use as Group capcodes or not based on the groupOnly parameter.
+		/// Gets the capcodes that are only specified for use as Unit capcodes or not based on the unitOnly parameter.
 		/// </summary>
-		/// <returns>The list of capcodes where IsGroupCapcode is false.</returns>
-		public async Task<IList<Capcode>> GetAllByGroupOnly(bool groupOnly)
+		/// <returns>The list of capcodes where IsUnitCapcode is false.</returns>
+		public async Task<IList<Capcode>> GetAllByUnitOnly(bool unitOnly)
 		{
-			return await _repository.GetAllByGroupOnly(groupOnly);
+			return await _repository.GetAllByUnitOnly(unitOnly);
 		}
 
 		/// <summary>

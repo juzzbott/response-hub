@@ -20,7 +20,7 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Models.Users
 
 		public bool IsSystemAdmin { get; set; }
 
-		public bool IsGroupAdmin { get; set; }
+		public bool IsUnitAdmin { get; set; }
 
 	}
 }

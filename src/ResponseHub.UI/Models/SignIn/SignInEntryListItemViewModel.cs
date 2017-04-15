@@ -12,9 +12,9 @@ namespace Enivate.ResponseHub.UI.Models.SignIn
 
 		public Guid Id { get; set; }
 
-		public Guid GroupId { get; set; }
+		public Guid UnitId { get; set; }
 
-		public string GroupName { get; set; }
+		public string UnitName { get; set; }
 
 		public string UserId { get; set; }
 

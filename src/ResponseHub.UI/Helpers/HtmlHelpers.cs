@@ -12,7 +12,7 @@ using Enivate.ResponseHub.Model.Identity;
 using System.Web.Routing;
 using Enivate.ResponseHub.Common.Constants;
 using Microsoft.AspNet.Identity;
-using Enivate.ResponseHub.Model.Groups.Interface;
+using Enivate.ResponseHub.Model.Units.Interface;
 using Enivate.ResponseHub.Common;
 using System.Threading.Tasks;
 
@@ -110,11 +110,11 @@ namespace Enivate.ResponseHub.UI.Helpers
 		}
 
 		/// <summary>
-		/// Determines if the currenly logged in user an group administrator user.
+		/// Determines if the currenly logged in user an unit administrator user.
 		/// </summary>
 		/// <param name="helper"></param>
 		/// <returns></returns>
-		public static bool IsGroupAdminUser(this HtmlHelper helper)
+		public static bool IsUnitAdminUser(this HtmlHelper helper)
 		{
 			// If the user is null or not authenticated, then just return false
 			if (HttpContext.Current == null)
@@ -130,11 +130,11 @@ namespace Enivate.ResponseHub.UI.Helpers
 			// Get the identity as a claims identity
 			ClaimsIdentity identity = (ClaimsIdentity)HttpContext.Current.User.Identity;
 
-			return identity.Claims.Any(i => i.Type.Equals(ClaimTypes.Role, StringComparison.CurrentCultureIgnoreCase) && i.Value.Equals(RoleTypes.GroupAdministrator, StringComparison.CurrentCultureIgnoreCase));
+			return identity.Claims.Any(i => i.Type.Equals(ClaimTypes.Role, StringComparison.CurrentCultureIgnoreCase) && i.Value.Equals(RoleTypes.UnitAdministrator, StringComparison.CurrentCultureIgnoreCase));
 
 		}
 
-		public static bool IsGroupAdminUserOfMultipleGroups(this HtmlHelper helper)
+		public static bool IsUnitAdminUserOfMultipleUnits(this HtmlHelper helper)
 		{
 			// If the user is null or not authenticated, then just return false
 			if (HttpContext.Current == null)
@@ -153,19 +153,19 @@ namespace Enivate.ResponseHub.UI.Helpers
 			// Get the user id from the claim
 			Guid userId = new Guid(identity.GetUserId());
 
-			// Get the group service
-			IGroupService groupService = ServiceLocator.Get<IGroupService>();
+			// Get the unit service
+			IUnitService unitService = ServiceLocator.Get<IUnitService>();
 
-			IList<Guid> userGroupIds = null;
-			int groupCount = 0;
+			IList<Guid> userUnitIds = null;
+			int unitCount = 0;
 			Task t = Task.Run(async () =>
 			{
-				userGroupIds = await groupService.GetGroupIdsUserIsGroupAdminOf(userId);
-				groupCount = userGroupIds.Count;
+				userUnitIds = await unitService.GetUnitIdsUserIsUnitAdminOf(userId);
+				unitCount = userUnitIds.Count;
 			});
 			t.Wait();
 
-			return groupCount > 1;
+			return unitCount > 1;
 		}
 
 		/// <summary>

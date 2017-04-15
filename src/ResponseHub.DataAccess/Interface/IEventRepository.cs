@@ -15,9 +15,9 @@ namespace Enivate.ResponseHub.DataAccess.Interface
 
 		Task<Event> GetById(Guid id);
 
-		Task<IList<Event>> GetEventsByGroup(IEnumerable<Guid> groupIds);
+		Task<IList<Event>> GetEventsByUnit(IEnumerable<Guid> unitIds);
 
-		Task<IList<Event>> FindByKeywords(string keywords, IEnumerable<Guid> groupIds);
+		Task<IList<Event>> FindByKeywords(string keywords, IEnumerable<Guid> unitIds);
 
 		Task<bool> AddResourceToEvent(Guid eventId, EventResource resource);
 

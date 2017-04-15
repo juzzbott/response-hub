@@ -67,7 +67,7 @@
 			<li>
 				<span class="btn-icon"><i class="fa fa-fw fa-download"></i><a href="/media/attachment/@attachment.Id">@attachment.Filename</a></span>
 				<span class="attachment-meta text-muted">@attachment.Created.ToLocalTime().ToString("dd/MM/yyyy HH:mm") <em>(@attachment.MimeType</em> @Html.GetFileSizeDisplayForBytes(attachment.FileLength))</span>
-				@if (Html.IsGroupAdminUser())
+				@if (Html.IsUnitAdminUser())
 				{
 				<span class="pull-right remove-attachment"><a data-href="/jobs/@Model.Id/remove-attachment/@attachment.Id" title="Remove attachment '@attachment.Filename'" data-filename="@attachment.Filename" data-toggle="modal" data-target="#confirm-delete"><i class="fa fa-fw fa-times"></i></a></span>
 				}	

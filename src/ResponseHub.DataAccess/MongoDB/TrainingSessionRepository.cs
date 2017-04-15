@@ -18,13 +18,13 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 	{
 
 		/// <summary>
-		/// Gets the list of training sessions for the specific group.
+		/// Gets the list of training sessions for the specific unit.
 		/// </summary>
-		/// <param name="groupId">The id of the group to get the training sessions for.</param>
+		/// <param name="unitId">The id of the unit to get the training sessions for.</param>
 		/// <returns>The list of training sessions.</returns>
-		public async Task<IList<TrainingSession>> GetTrainingSessionsForGroup(Guid groupId, IEnumerable<TrainingType> trainingTypes)
+		public async Task<IList<TrainingSession>> GetTrainingSessionsForUnit(Guid unitId, IEnumerable<TrainingType> trainingTypes)
 		{
-			FilterDefinition<TrainingSessionDto> filter = Builders<TrainingSessionDto>.Filter.Eq(i => i.GroupId, groupId);
+			FilterDefinition<TrainingSessionDto> filter = Builders<TrainingSessionDto>.Filter.Eq(i => i.UnitId, unitId);
 			SortDefinition<TrainingSessionDto> sort = Builders<TrainingSessionDto>.Sort.Descending(i => i.SessionDate);
 
 			// Get the results from the db
@@ -35,13 +35,13 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 		}
 
 		/// <summary>
-		/// Gets the list of training sessions for the specific group.
+		/// Gets the list of training sessions for the specific unit.
 		/// </summary>
-		/// <param name="groupId">The id of the group to get the training sessions for.</param>
+		/// <param name="unitId">The id of the unit to get the training sessions for.</param>
 		/// <returns>The list of training sessions.</returns>
-		public async Task<IList<TrainingSession>> GetTrainingSessionsForGroup(Guid groupId, int limit, IEnumerable<TrainingType> trainingTypes)
+		public async Task<IList<TrainingSession>> GetTrainingSessionsForUnit(Guid unitId, int limit, IEnumerable<TrainingType> trainingTypes)
 		{
-			FilterDefinition<TrainingSessionDto> filter = Builders<TrainingSessionDto>.Filter.Eq(i => i.GroupId, groupId);
+			FilterDefinition<TrainingSessionDto> filter = Builders<TrainingSessionDto>.Filter.Eq(i => i.UnitId, unitId);
 			SortDefinition<TrainingSessionDto> sort = Builders<TrainingSessionDto>.Sort.Descending(i => i.SessionDate);
 
 			// Get the results from the db
@@ -120,7 +120,7 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 				Created = dbObject.Created,
 				Description = dbObject.Description,
 				Duration = dbObject.Duration,
-				GroupId = dbObject.GroupId,
+				UnitId = dbObject.UnitId,
 				Id = dbObject.Id,
 				Members = dbObject.Members,
 				Name = dbObject.Name,
@@ -151,7 +151,7 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 				Created = modelObject.Created,
 				Description = modelObject.Description,
 				Duration = modelObject.Duration,
-				GroupId = modelObject.GroupId,
+				UnitId = modelObject.UnitId,
 				Id = modelObject.Id,
 				Members = modelObject.Members,
 				Name = modelObject.Name,

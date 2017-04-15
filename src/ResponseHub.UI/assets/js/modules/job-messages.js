@@ -374,8 +374,8 @@
 		// Add the job status span to the metadata container
 		metaContainer.append(statusSpan);
 
-		// Add the group capcode name
-		metaContainer.append('<span class="capcode-group-name">' + jobMessage.CapcodeGroupName + '</span>');
+		// Add the unit capcode name
+		metaContainer.append('<span class="capcode-unit-name">' + jobMessage.CapcodeUnitName + '</span>');
 
 		// Append the job message meta
 		listItem.append(metaContainer);

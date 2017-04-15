@@ -20,14 +20,14 @@
 		@Html.ValidationMessageFor(model => model.Name)
 	</div>
 
-	@if (Model.AvailableGroups.Count == 2) // 2 is actuall only 1 group, as first item is please select.
+	@if (Model.AvailableUnits.Count == 2) // 2 is actuall only 1 unit, as first item is please select.
 	{
 		<div class="form-group">
-			<label>Managing group *</label>
+			<label>Managing unit *</label>
 			<div class="row">
 				<div class="col-sm-8 col-md-6 col-lg-4">
-					<input type="text" class="form-control" disabled="disabled" value="@Model.AvailableGroups[1].Text" />
-					@Html.HiddenFor(i => i.GroupId, new { @value = Model.AvailableGroups[1].Value })
+					<input type="text" class="form-control" disabled="disabled" value="@Model.AvailableUnits[1].Text" />
+					@Html.HiddenFor(i => i.UnitId, new { @value = Model.AvailableUnits[1].Value })
 				</div>
 			</div>
 		</div>
@@ -35,13 +35,13 @@
 	else
 	{
 		<div class="form-group">
-			<label for="GroupId">Managing group *</label>
+			<label for="UnitId">Managing unit *</label>
 			<div class="row">
 				<div class="col-sm-8 col-md-6 col-lg-4">
-					@Html.DropDownListFor(model => model.GroupId, Model.AvailableGroups, new { @class = "form-control" })
+					@Html.DropDownListFor(model => model.UnitId, Model.AvailableUnits, new { @class = "form-control" })
 				</div>
 			</div>
-			@Html.ValidationMessageFor(model => model.GroupId)
+			@Html.ValidationMessageFor(model => model.UnitId)
 		</div>
 	}
 

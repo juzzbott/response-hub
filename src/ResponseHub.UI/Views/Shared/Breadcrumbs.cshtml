@@ -14,10 +14,10 @@
 		</ul>
 	</div>
 
-	@if (ViewContext.RouteData.DataTokens["area"] != null && ViewContext.RouteData.DataTokens["area"].ToString().ToLower() == "controlpanel" && Html.IsGroupAdminUserOfMultipleGroups())
+	@if (ViewContext.RouteData.DataTokens["area"] != null && ViewContext.RouteData.DataTokens["area"].ToString().ToLower() == "controlpanel" && Html.IsUnitAdminUserOfMultipleUnits())
 	{
 		<div class="col-md-2">
-			<a href="/control-panel/group-selection" class="breadcrumb-select-group btn btn-link btn-icon"><i class="fa fa-fw fa-users"></i>Select group context</a>
+			<a href="/control-panel/unit-selection" class="breadcrumb-select-unit btn btn-link btn-icon"><i class="fa fa-fw fa-users"></i>Select unit context</a>
 		</div>
 	}
 

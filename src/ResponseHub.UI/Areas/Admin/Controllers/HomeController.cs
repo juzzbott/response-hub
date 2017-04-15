@@ -19,7 +19,7 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 		[Route]
         public ActionResult Index()
         {
-			return new RedirectResult("/admin/groups");
+			return new RedirectResult("/admin/units");
         }
     }
 }

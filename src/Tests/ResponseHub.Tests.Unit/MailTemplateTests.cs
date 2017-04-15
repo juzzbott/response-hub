@@ -88,26 +88,26 @@ namespace Enivate.ResponseHub.Tests.Unit
 
 		}
 
-		[Fact(DisplayName = "Can generate mail template - Group created")]
+		[Fact(DisplayName = "Can generate mail template - Unit created")]
 		[Trait("Category", "Mail Template Tests")]
-		public void CanGenerate_MailTemplate_GroupCreated()
+		public void CanGenerate_MailTemplate_UnitCreated()
 		{
 
 			// Create the mail config object
 			MailTemplateElement mailConfig = new MailTemplateElement()
 			{
-				Name = "GroupCreated",
-				Subject = "New ResponseHub group created",
+				Name = "UnitCreated",
+				Subject = "New ResponseHub unit created",
 				BaseTemplateFile = "base_template.html",
-				TemplateFile = "group_created.html"
+				TemplateFile = "unit_created.html"
 			};
 
 			// Create the replacements
 			IDictionary<string, string> replacements = new Dictionary<string, string>();
 			replacements.Add("#BaseUrl#", _baseUrl);
 			replacements.Add("#FirstName#", "Justin");
-			replacements.Add("#GroupAdministratorName#", "Justin McKay");
-			replacements.Add("#GroupName#", "Bacchus Marsh SES");
+			replacements.Add("#UnitAdministratorName#", "Justin McKay");
+			replacements.Add("#UnitName#", "Bacchus Marsh SES");
 			replacements.Add("#ServiceType#", "State Emergency Service");
 			replacements.Add("#Capcode#", "0024789");
 

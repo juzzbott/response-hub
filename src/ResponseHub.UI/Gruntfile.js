@@ -49,7 +49,7 @@ module.exports = function(grunt) {
 					'assets/js/modules/job-messages.js',
 					'assets/js/modules/pager-messages.js',
 					'assets/js/modules/wallboard.js',
-					'assets/js/modules/groups.js',
+					'assets/js/modules/units.js',
 					'assets/js/modules/password-strength.js',
 					'assets/js/modules/capcodes.js',
 					'assets/js/modules/resources.js',

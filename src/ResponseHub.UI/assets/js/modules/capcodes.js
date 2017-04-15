@@ -59,7 +59,7 @@
 
 		// Set the autocomplete functionality for capcodes.
 		$("input[data-capcode-autocomplete='true']").typeahead({
-			source: groupCapcodes,
+			source: unitCapcodes,
 			onSelect: function (item) {
 				$("input[data-capcode-autocomplete='true']").val(item.value);
 			}

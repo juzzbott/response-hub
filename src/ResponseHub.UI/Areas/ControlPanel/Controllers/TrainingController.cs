@@ -20,7 +20,7 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 
 	[RouteArea("ControlPanel", AreaPrefix = "control-panel")]
 	[RoutePrefix("training")]
-	[ClaimsAuthorize(Roles = RoleTypes.GroupAdministrator)]
+	[ClaimsAuthorize(Roles = RoleTypes.UnitAdministrator)]
 	public class TrainingController : BaseControlPanelController
     {
 
@@ -33,7 +33,7 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 
 			// Create the model
 			TrainingHomeViewModel model = new TrainingHomeViewModel();
-			model.TrainingSessions = await TrainingService.GetTrainingSessionsForGroup(GetControlPanelGroupId());
+			model.TrainingSessions = await TrainingService.GetTrainingSessionsForUnit(GetControlPanelUnitId());
 
 			// Get the aggregate chart data
 			IDictionary<string, int> aggregate = new Dictionary<string, int>();
@@ -74,7 +74,7 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 			model.AvailableTrainingTypes = await TrainingService.GetAllTrainingTypes();
 			
 			// Load the users for the model
-			IList<IdentityUser> users = await GroupService.GetUsersForGroup(GetControlPanelGroupId());
+			IList<IdentityUser> users = await UnitService.GetUsersForUnit(GetControlPanelUnitId());
 			foreach(IdentityUser user in users)
 			{
 				model.AvailableUsers.Add(new Tuple<Guid, string, string>(user.Id, user.FullName, user.Profile.MemberNumber));
@@ -99,7 +99,7 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 				model.AvailableTrainingTypes = trainingTypes;
 
 				// Load the users for the model
-				IList<IdentityUser> users = await GroupService.GetUsersForGroup(GetControlPanelGroupId());
+				IList<IdentityUser> users = await UnitService.GetUsersForUnit(GetControlPanelUnitId());
 				model.AvailableUsers.Clear();
 				foreach (IdentityUser user in users)
 				{
@@ -119,7 +119,7 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 				TrainingSession session = new TrainingSession()
 				{
 					Created = DateTime.UtcNow,
-					GroupId = GetControlPanelGroupId(),
+					UnitId = GetControlPanelUnitId(),
 					SessionDate = model.SessionDate.ToUniversalTime(),
 					TrainingTypes = trainingTypes.Where(i => trainingTypeIds.Contains(i.Id)).ToList(),
 					Name = model.Name,
@@ -159,8 +159,8 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 				throw new HttpException((int)HttpStatusCode.NotFound, "Content not found.");
 			}
 
-			// If the training session is not the groups current session, 403 forbidden
-			if (session.GroupId != GetControlPanelGroupId())
+			// If the training session is not the units current session, 403 forbidden
+			if (session.UnitId != GetControlPanelUnitId())
 			{
 				throw new HttpException((int)HttpStatusCode.Forbidden, "Forbidden.");
 			}
@@ -179,7 +179,7 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 			};			
 
 			// Load the users for the model
-			IList<IdentityUser> users = await GroupService.GetUsersForGroup(GetControlPanelGroupId());
+			IList<IdentityUser> users = await UnitService.GetUsersForUnit(GetControlPanelUnitId());
 
 			// Add the members trained
 			foreach (Guid userId in session.Members)
@@ -233,8 +233,8 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 				throw new HttpException((int)HttpStatusCode.NotFound, "Content not found.");
 			}
 
-			// If the training session is not the groups current session, 403 forbidden
-			if (session.GroupId != GetControlPanelGroupId())
+			// If the training session is not the units current session, 403 forbidden
+			if (session.UnitId != GetControlPanelUnitId())
 			{
 				throw new HttpException((int)HttpStatusCode.Forbidden, "Forbidden.");
 			}
@@ -256,7 +256,7 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 			model.AvailableTrainingTypes = await TrainingService.GetAllTrainingTypes();
 
 			// Load the users for the model
-			IList<IdentityUser> users = await GroupService.GetUsersForGroup(GetControlPanelGroupId());
+			IList<IdentityUser> users = await UnitService.GetUsersForUnit(GetControlPanelUnitId());
 			foreach (IdentityUser user in users)
 			{
 				model.AvailableUsers.Add(new Tuple<Guid, string, string>(user.Id, user.FullName, user.Profile.MemberNumber));
@@ -279,8 +279,8 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 				throw new HttpException((int)HttpStatusCode.NotFound, "Content not found.");
 			}
 
-			// If the training session is not the groups current session, 403 forbidden
-			if (session.GroupId != GetControlPanelGroupId())
+			// If the training session is not the units current session, 403 forbidden
+			if (session.UnitId != GetControlPanelUnitId())
 			{
 				throw new HttpException((int)HttpStatusCode.Forbidden, "Forbidden.");
 			}
@@ -294,7 +294,7 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 				model.AvailableTrainingTypes = trainingTypes;
 
 				// Load the users for the model
-				IList<IdentityUser> users = await GroupService.GetUsersForGroup(GetControlPanelGroupId());
+				IList<IdentityUser> users = await UnitService.GetUsersForUnit(GetControlPanelUnitId());
 				model.AvailableUsers.Clear();
 				foreach (IdentityUser user in users)
 				{

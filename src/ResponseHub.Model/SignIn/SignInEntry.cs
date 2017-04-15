@@ -13,7 +13,7 @@ namespace Enivate.ResponseHub.Model.SignIn
 
 		public DateTime Created { get; set; }
 
-		public Guid GroupId { get; set; }
+		public Guid UnitId { get; set; }
 
 		public Guid UserId { get; set; }
 

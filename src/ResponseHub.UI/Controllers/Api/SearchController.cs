@@ -7,11 +7,11 @@ using System.Threading.Tasks;
 using System.Web.Http;
 
 using Enivate.ResponseHub.Common;
-using Enivate.ResponseHub.Model.Groups.Interface;
+using Enivate.ResponseHub.Model.Units.Interface;
 using Enivate.ResponseHub.Model.Messages.Interface;
 using Enivate.ResponseHub.UI.Models.Api.Search;
 using Enivate.ResponseHub.UI.Models.Search;
-using Enivate.ResponseHub.Model.Groups;
+using Enivate.ResponseHub.Model.Units;
 
 using Microsoft.AspNet.Identity;
 using System.Globalization;
@@ -137,7 +137,7 @@ namespace Enivate.ResponseHub.UI.Controllers.Api
 			return model;
 		}
 
-		public async Task<JobMessageViewModel> MapJobMessageToViewModel(JobMessage job, string capcodeGroupName)
+		public async Task<JobMessageViewModel> MapJobMessageToViewModel(JobMessage job, string capcodeUnitName)
 		{
 
 
@@ -147,7 +147,7 @@ namespace Enivate.ResponseHub.UI.Controllers.Api
 			JobMessageViewModel model = new JobMessageViewModel()
 			{
 				Capcode = job.Capcode,
-				CapcodeGroupName = capcodeGroupName,
+				CapcodeUnitName = capcodeUnitName,
 				Id = job.Id,
 				JobNumber = job.JobNumber,
 				Location = job.Location,

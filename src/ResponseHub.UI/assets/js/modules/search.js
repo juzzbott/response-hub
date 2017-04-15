@@ -61,7 +61,7 @@
 		// Create the message meta
 		var messageMeta = $('<p class="job-message-meta text-muted"></p>');
 		messageMeta.append(getProgessMarkup(result));
-		messageMeta.append($('<span class="capcode-group-name">' + result.CapcodeGroupName + '</span>'));
+		messageMeta.append($('<span class="capcode-unit-name">' + result.CapcodeUnitName + '</span>'));
 		li.append(messageMeta);
 
 		// Add the message text

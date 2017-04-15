@@ -52,24 +52,24 @@ namespace Enivate.ResponseHub.ApplicationServices
 		}
 
 		/// <summary>
-		/// Gets all the sign in entries for the specific group
+		/// Gets all the sign in entries for the specific unit
 		/// </summary>
-		/// <param name="groupId">The group id to get the results for.</param>
-		/// <returns>The list of sign in types for the group.</returns>
-		public async Task<IList<SignInEntry>> GetSignInsForGroup(Guid groupId, DateTime dateFrom, DateTime dateTo)
+		/// <param name="unitId">The unit id to get the results for.</param>
+		/// <returns>The list of sign in types for the unit.</returns>
+		public async Task<IList<SignInEntry>> GetSignInsForUnit(Guid unitId, DateTime dateFrom, DateTime dateTo)
 		{
-			return await GetSignInsForGroup(groupId, dateFrom, dateTo, SignInType.Operation | SignInType.Training | SignInType.Other);
+			return await GetSignInsForUnit(unitId, dateFrom, dateTo, SignInType.Operation | SignInType.Training | SignInType.Other);
 		}
 
 		/// <summary>
-		/// Gets the sign in entries for the specific group, based on the type of sign in types.
+		/// Gets the sign in entries for the specific unit, based on the type of sign in types.
 		/// </summary>
-		/// <param name="groupId">The group id to get the results for.</param>
+		/// <param name="unitId">The unit id to get the results for.</param>
 		/// <param name="signInTypes">The sign in flag types to return.</param>
-		/// <returns>The list of sign in types for the group.</returns>
-		public async Task<IList<SignInEntry>> GetSignInsForGroup(Guid groupId, DateTime dateFrom, DateTime dateTo, SignInType signInTypes)
+		/// <returns>The list of sign in types for the unit.</returns>
+		public async Task<IList<SignInEntry>> GetSignInsForUnit(Guid unitId, DateTime dateFrom, DateTime dateTo, SignInType signInTypes)
 		{
-			return await _repository.GetSignInsForGroup(groupId, dateFrom, dateTo, signInTypes);
+			return await _repository.GetSignInsForUnit(unitId, dateFrom, dateTo, signInTypes);
 		}
 
 		/// <summary>

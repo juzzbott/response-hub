@@ -12,8 +12,8 @@ using Microsoft.AspNet.Identity;
 using Microsoft.Practices.Unity;
 
 using Enivate.ResponseHub.Common;
-using Enivate.ResponseHub.Model.Groups;
-using Enivate.ResponseHub.Model.Groups.Interface;
+using Enivate.ResponseHub.Model.Units;
+using Enivate.ResponseHub.Model.Units.Interface;
 using Enivate.ResponseHub.Model.Identity;
 using Enivate.ResponseHub.Model.Messages.Interface;
 using Enivate.ResponseHub.Model.Messages;
@@ -134,10 +134,10 @@ namespace Enivate.ResponseHub.UI.Controllers.Api
 				IList<IdentityUser> signInUsers = allSignInUsers.Where(i => messageSignIns.Select(u => u.UserId).Contains(i.Id)).ToList();
 
 				// Get the capcode
-				string capcodeGroupName = capcodes.FirstOrDefault(i => i.CapcodeAddress == message.Capcode).FormattedName();
+				string capcodeUnitName = capcodes.FirstOrDefault(i => i.CapcodeAddress == message.Capcode).FormattedName();
 
 				// Add the mapped job message view model
-				models.Add(await BaseJobsMessagesController.MapJobMessageToViewModel(message, capcodeGroupName, messageSignIns, signInUsers, null));
+				models.Add(await BaseJobsMessagesController.MapJobMessageToViewModel(message, capcodeUnitName, messageSignIns, signInUsers, null));
 			}
 
 			// return the mapped models
@@ -415,9 +415,9 @@ namespace Enivate.ResponseHub.UI.Controllers.Api
 					// Iterate through each message and add to the list
 					foreach(JobMessage message in latestMessages)
 					{
-						// Get the capcode group name from the list of capcodes
+						// Get the capcode unit name from the list of capcodes
 						Capcode messageCapcode = capcodes.FirstOrDefault(i => i.CapcodeAddress == message.Capcode);
-						string capcodeGroupName = messageCapcode?.FormattedName();
+						string capcodeUnitName = messageCapcode?.FormattedName();
 
 						// Get the sign ins for the job
 						IList<SignInEntry> messageSignIns = allSignIns.Where(i => i.OperationDetails.JobId == message.Id).ToList();
@@ -425,14 +425,14 @@ namespace Enivate.ResponseHub.UI.Controllers.Api
 						// Get the list of users who signed in for the job
 						IList<IdentityUser> signInUsers = allSignInUsers.Where(i => messageSignIns.Select(u => u.UserId).Contains(i.Id)).ToList();
 
-						// If there was no group capcode name, just set to unknown
-						if (String.IsNullOrEmpty(capcodeGroupName))
+						// If there was no unit capcode name, just set to unknown
+						if (String.IsNullOrEmpty(capcodeUnitName))
 						{
-							capcodeGroupName = "Unknown";
+							capcodeUnitName = "Unknown";
 						}
 
 						// Map to the JobMessageViewModel
-						latestMessagesModels.Add(await BaseJobsMessagesController.MapJobMessageToViewModel(message, capcodeGroupName, messageSignIns, signInUsers, null));
+						latestMessagesModels.Add(await BaseJobsMessagesController.MapJobMessageToViewModel(message, capcodeUnitName, messageSignIns, signInUsers, null));
 					}
 
 				}

@@ -130,7 +130,7 @@
     <Content Include="App_Data\EmailTemplates\forgotten_password.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="App_Data\EmailTemplates\group_created.html">
+    <Content Include="App_Data\EmailTemplates\unit_created.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="App_Data\EmailTemplates\password_reset.html">
