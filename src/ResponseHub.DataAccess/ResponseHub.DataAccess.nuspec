@@ -11,8 +11,8 @@
 		<requireLicenseAcceptance>false</requireLicenseAcceptance>
 		<description>Contains the version updates for data access changes.</description>
 		<releaseNotes>Contains the version updates for data access changes.</releaseNotes>
-		<files>
-			<file src="MongoDB\VersionUpdates.js" target="Content" />
-		</files>
 	</metadata>
+	<files>
+		<file src="MongoDB\VersionUpdates.js" target="Content" />
+	</files>
 </package>
