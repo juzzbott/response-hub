@@ -141,6 +141,7 @@
   <ItemGroup>
     <None Include="app.config" />
     <None Include="packages.config" />
+    <None Include="ResponseHub.DataAccess.nuspec" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="MongoDB\Scripts\AdminUser.js" />

@@ -1,0 +1,18 @@
+﻿<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+	<metadata>
+		<id>ResponseHub.DataAccess</id>
+		<title>ResponseHub database updates</title>
+		<version>$version$</version>
+		<authors>Justin McKay</authors>
+		<owners>Justin McKay</owners>
+		<licenseUrl>http://yourcompany.com</licenseUrl>
+		<projectUrl>http://yourcompany.com</projectUrl>
+		<requireLicenseAcceptance>false</requireLicenseAcceptance>
+		<description>Contains the version updates for data access changes.</description>
+		<releaseNotes>Contains the version updates for data access changes.</releaseNotes>
+		<files>
+			<file src="MongoDB\VersionUpdates.js" target="Content" />
+		</files>
+	</metadata>
+</package>
