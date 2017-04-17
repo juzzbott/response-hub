@@ -592,12 +592,12 @@
     <Content Include="Areas\Admin\Views\TrainingTypes\AddEdit.cshtml" />
     <Content Include="Areas\Admin\Views\Users\EditUser.cshtml" />
     <Content Include="Views\Shared\JobMessageFilter.cshtml" />
-    <None Include="Web.Staging.config">
+    <Content Include="Web.Staging.config">
       <DependentUpon>Web.config</DependentUpon>
-    </None>
-    <None Include="Web.Test.config">
+    </Content>
+    <Content Include="Web.Test.config">
       <DependentUpon>Web.config</DependentUpon>
-    </None>
+    </Content>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
