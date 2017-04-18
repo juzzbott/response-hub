@@ -198,11 +198,11 @@
     <Compile Include="Areas\Admin\AdminAreaRegistration.cs" />
     <Compile Include="Areas\Admin\Controllers\BaseAdminController.cs" />
     <Compile Include="Areas\Admin\Controllers\CapcodesController.cs" />
-    <Compile Include="Areas\Admin\Controllers\GroupsController.cs" />
+    <Compile Include="Areas\Admin\Controllers\UnitsController.cs" />
     <Compile Include="Areas\Admin\Controllers\TrainingTypesController.cs" />
     <Compile Include="Areas\Admin\Models\TrainingTypes\AddEditTrainingTypeViewModel.cs" />
     <Compile Include="Areas\Admin\Models\Users\EditUserViewModel.cs" />
-    <Compile Include="Areas\ControlPanel\Controllers\GroupSelectionController.cs" />
+    <Compile Include="Areas\ControlPanel\Controllers\UnitSelectionController.cs" />
     <Compile Include="Areas\Admin\Controllers\HomeController.cs" />
     <Compile Include="Areas\Admin\Controllers\LogViewerController.cs" />
     <Compile Include="Areas\Admin\Controllers\ReportsController.cs" />
@@ -214,11 +214,11 @@
     <Compile Include="Areas\Admin\Models\SystemSettings\SystemSettingsViewModel.cs" />
     <Compile Include="Areas\ControlPanel\Controllers\ResendActivationEmailController.cs" />
     <Compile Include="Areas\ControlPanel\Controllers\TrainingController.cs" />
-    <Compile Include="Areas\ControlPanel\Models\Home\GroupSelectionViewModel.cs" />
+    <Compile Include="Areas\ControlPanel\Models\Home\UnitSelectionViewModel.cs" />
     <Compile Include="Areas\ControlPanel\Controllers\ReportsController.cs" />
     <Compile Include="Areas\ControlPanel\Models\Reports\Operations\OperationsFilterViewModel.cs" />
     <Compile Include="Areas\ControlPanel\Models\Reports\ReportFilterViewModel.cs" />
-    <Compile Include="Areas\ControlPanel\Models\Reports\Training\GroupTrainingMemberReportItem.cs" />
+    <Compile Include="Areas\ControlPanel\Models\Reports\Training\UnitTrainingMemberReportItem.cs" />
     <Compile Include="Areas\ControlPanel\Models\Reports\Training\TrainingReportViewModel.cs" />
     <Compile Include="Areas\ControlPanel\Models\Training\AddEditTrainingSessionViewModel.cs" />
     <Compile Include="Areas\ControlPanel\Models\Training\TrainingHomeViewModel.cs" />
@@ -228,7 +228,7 @@
     <Compile Include="Controllers\PagerMessagesController.cs" />
     <Compile Include="Areas\ControlPanel\Controllers\BaseControlPanelController.cs" />
     <Compile Include="Areas\ControlPanel\Controllers\DataExportController.cs" />
-    <Compile Include="Areas\ControlPanel\Controllers\GroupsController.cs" />
+    <Compile Include="Areas\ControlPanel\Controllers\UnitsController.cs" />
     <Compile Include="Areas\ControlPanel\Controllers\HomeController.cs" />
     <Compile Include="Areas\ControlPanel\ControlPanelAreaRegistration.cs" />
     <Compile Include="Areas\ControlPanel\Models\DataExport\DataExportFilterViewModel.cs" />
@@ -240,7 +240,7 @@
     <Compile Include="Controllers\SearchController.cs" />
     <Compile Include="Controllers\SignInController.cs" />
     <Compile Include="Controllers\WeatherCentreController.cs" />
-    <Compile Include="Filters\EnforceControlPanelGroupSelectionAttribute.cs" />
+    <Compile Include="Filters\EnforceControlPanelUnitSelectionAttribute.cs" />
     <Compile Include="Filters\ExceptionLogFilter.cs" />
     <Compile Include="Filters\SystemAdminUserRedirectAttribute.cs" />
     <Compile Include="Helpers\JobMessageModelHelper.cs" />
@@ -252,9 +252,9 @@
     <Compile Include="Models\Events\AdditionalResourceViewModel.cs" />
     <Compile Include="Models\Events\EventListItemViewModel.cs" />
     <Compile Include="Models\Events\EventViewModel.cs" />
-    <Compile Include="Areas\Admin\Models\Groups\ChangeUserRoleViewModel.cs" />
-    <Compile Include="Areas\Admin\Models\Groups\CreateGroupModel.cs" />
-    <Compile Include="Areas\Admin\Models\Reports\GroupsCapcodesReportViewModel.cs" />
+    <Compile Include="Areas\Admin\Models\Units\ChangeUserRoleViewModel.cs" />
+    <Compile Include="Areas\Admin\Models\Units\CreateUnitModel.cs" />
+    <Compile Include="Areas\Admin\Models\Reports\UnitsCapcodesReportViewModel.cs" />
     <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Models\Events\CreateEventViewModel.cs" />
     <Compile Include="Models\Messages\JobMessageFilter.cs" />
@@ -268,9 +268,9 @@
     <Compile Include="Models\MyAccount\UpdateEmailViewModel.cs" />
     <Compile Include="Models\Profile\ProfileViewModel.cs" />
     <Compile Include="Models\SearchViewModel.cs" />
-    <Compile Include="Areas\Admin\Models\Groups\ConfirmUserViewModel.cs" />
-    <Compile Include="Areas\Admin\Models\Groups\NewUserViewModel.cs" />
-    <Compile Include="Areas\Admin\Models\Groups\SingleGroupViewModel.cs" />
+    <Compile Include="Areas\Admin\Models\Units\ConfirmUserViewModel.cs" />
+    <Compile Include="Areas\Admin\Models\Units\NewUserViewModel.cs" />
+    <Compile Include="Areas\Admin\Models\Units\SingleUnitViewModel.cs" />
     <Compile Include="Areas\Admin\Models\Users\NewAdminUserViewModel.cs" />
     <Compile Include="Areas\Admin\Models\Users\UserViewModel.cs" />
     <Compile Include="Controllers\Api\BaseApiController.cs" />
@@ -300,7 +300,7 @@
     <Compile Include="Models\SignIn\SignInOperationItem.cs" />
     <Compile Include="Models\SignIn\SignInViewModel.cs" />
     <Compile Include="Models\SignIn\SignOutViewModel.cs" />
-    <Compile Include="Models\Users\GroupUserViewModel.cs" />
+    <Compile Include="Models\Users\UnitUserViewModel.cs" />
     <Compile Include="Models\Wallboard\WallboardViewModel.cs" />
     <Compile Include="Models\WeatherCentre\RadarLoopViewModel.cs" />
     <Compile Include="Models\WeatherCentre\WeatherCentreViewModel.cs" />
@@ -312,7 +312,7 @@
     <Content Include="App_Data\EmailTemplates\base_template.html" />
     <Content Include="App_Data\EmailTemplates\email_address_changed.html" />
     <Content Include="App_Data\EmailTemplates\forgotten_password.html" />
-    <Content Include="App_Data\EmailTemplates\group_created.html" />
+    <Content Include="App_Data\EmailTemplates\unit_created.html" />
     <Content Include="App_Data\EmailTemplates\password_changed.html" />
     <Content Include="App_Data\EmailTemplates\password_reset.html" />
     <Content Include="assets\css\framework.css" />
@@ -341,7 +341,7 @@
     <Content Include="assets\js\modules\gallery.js" />
     <Content Include="assets\js\modules\pager-messages.js" />
     <Content Include="assets\js\modules\capcodes.js" />
-    <Content Include="assets\js\modules\groups.js" />
+    <Content Include="assets\js\modules\units.js" />
     <Content Include="assets\js\modules\job-messages.js" />
     <Content Include="assets\js\modules\logviewer.js" />
     <Content Include="assets\js\modules\maps.js" />
@@ -374,7 +374,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Areas\Admin\Views\BaseAdmin\" />
-    <Folder Include="Areas\Admin\Views\GroupSelection\" />
+    <Folder Include="Areas\Admin\Views\UnitSelection\" />
     <Folder Include="Areas\ControlPanel\Views\BaseControlPanel\" />
     <Folder Include="Views\Base\" />
     <Folder Include="Views\Media\" />
@@ -443,13 +443,13 @@
     <Content Include="assets\fonts\FontAwesome.otf" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Areas\Admin\Views\Groups\Index.cshtml" />
+    <Content Include="Areas\Admin\Views\Units\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Areas\Admin\Views\Groups\CreateEdit.cshtml" />
+    <Content Include="Areas\Admin\Views\Units\CreateEdit.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Areas\Admin\Views\Groups\ViewGroup.cshtml" />
+    <Content Include="Areas\Admin\Views\Units\ViewUnit.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\MyAccount\Login.cshtml" />
@@ -461,10 +461,10 @@
     <Content Include="Views\Shared\LoginLayout.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Areas\Admin\Views\Groups\ConfirmUser.cshtml" />
+    <Content Include="Areas\Admin\Views\Units\ConfirmUser.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Areas\Admin\Views\Groups\NewUser.cshtml" />
+    <Content Include="Areas\Admin\Views\Units\NewUser.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Home\Index.cshtml" />
@@ -503,7 +503,7 @@
     <Content Include="Views\MyAccount\ActivateAccountComplete.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Areas\Admin\Views\Groups\ChangeUserRole.cshtml" />
+    <Content Include="Areas\Admin\Views\Units\ChangeUserRole.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Areas\Admin\Views\Capcodes\Index.cshtml" />
@@ -530,7 +530,7 @@
     <Content Include="Areas\Admin\Views\Reports\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Areas\Admin\Views\Reports\GroupsCapcodes.cshtml" />
+    <Content Include="Areas\Admin\Views\Reports\UnitsCapcodes.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Jobs\JobNotes.cshtml" />
@@ -569,12 +569,12 @@
     <Content Include="Areas\ControlPanel\Views\DataExport\Index.cshtml" />
     <Content Include="Areas\ControlPanel\Views\Reports\GenerateOperationsReportHtml.cshtml" />
     <Content Include="Areas\ControlPanel\Views\Shared\HtmlExportLayout.cshtml" />
-    <Content Include="Areas\ControlPanel\Views\Groups\Edit.cshtml" />
-    <Content Include="Areas\ControlPanel\Views\Groups\ViewGroup.cshtml" />
-    <Content Include="Areas\ControlPanel\Views\Groups\ChangeUserRole.cshtml" />
-    <Content Include="Areas\ControlPanel\Views\Groups\ConfirmUser.cshtml" />
+    <Content Include="Areas\ControlPanel\Views\Units\Edit.cshtml" />
+    <Content Include="Areas\ControlPanel\Views\Units\ViewUnit.cshtml" />
+    <Content Include="Areas\ControlPanel\Views\Units\ChangeUserRole.cshtml" />
+    <Content Include="Areas\ControlPanel\Views\Units\ConfirmUser.cshtml" />
     <Content Include="Views\Profile\ViewProfile.cshtml" />
-    <Content Include="Areas\ControlPanel\Views\GroupSelection\Index.cshtml" />
+    <Content Include="Areas\ControlPanel\Views\UnitSelection\Index.cshtml" />
     <Content Include="Views\SignIn\Index.cshtml" />
     <Content Include="Views\SignIn\SignInComplete.cshtml" />
     <Content Include="Views\MyAccount\SignInHistory.cshtml" />
@@ -592,12 +592,12 @@
     <Content Include="Areas\Admin\Views\TrainingTypes\AddEdit.cshtml" />
     <Content Include="Areas\Admin\Views\Users\EditUser.cshtml" />
     <Content Include="Views\Shared\JobMessageFilter.cshtml" />
-    <None Include="Web.Staging.config">
+    <Content Include="Web.Staging.config">
       <DependentUpon>Web.config</DependentUpon>
-    </None>
-    <None Include="Web.Test.config">
+    </Content>
+    <Content Include="Web.Test.config">
       <DependentUpon>Web.config</DependentUpon>
-    </None>
+    </Content>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
@@ -681,5 +681,7 @@
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\Microsoft.Net.Compilers.2.0.1\build\Microsoft.Net.Compilers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Net.Compilers.2.0.1\build\Microsoft.Net.Compilers.props'))" />
     <Error Condition="!Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.3\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.3\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props'))" />
+    <Error Condition="!Exists('..\packages\OctoPack.3.5.2\build\OctoPack.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\OctoPack.3.5.2\build\OctoPack.targets'))" />
   </Target>
+  <Import Project="..\packages\OctoPack.3.5.2\build\OctoPack.targets" Condition="Exists('..\packages\OctoPack.3.5.2\build\OctoPack.targets')" />
 </Project>

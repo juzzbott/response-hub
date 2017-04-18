@@ -18,7 +18,7 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB.DataObjects.Training
 
 		public DateTime Created { get; set; }
 
-		public Guid GroupId { get; set; }
+		public Guid UnitId { get; set; }
 
 		public DateTime SessionDate { get; set; }
 

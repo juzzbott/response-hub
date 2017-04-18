@@ -2,7 +2,7 @@
 var schema_info_id = ObjectId("58e492e962cb703bc785da68");
 
 // Define the max schema version
-var schema_version = 5
+var schema_version = 6
 
 // Ensure we have a schema to start with
 var schema_count = db.schema_info.count({})
@@ -36,10 +36,10 @@ while (current_version < schema_version) {
 			// Capcodes
 			db.capcodes.createIndex({ Name: "text", ShortName: "text" }, { background: true, name: "capcodes_text" });
 
-			// Groups
-			db.groups.createIndex({ Name: "text" }, { background: true });
-			db.groups.createIndex({ HeadquartersCoordinates: "2dsphere" }, { background: true, name: "HQ_Coords_2dsphere" });
-			db.groups.createIndex({ "Users.UserId": 1 }, { background: true, name: "Users_UserId" });
+			// Units
+			db.units.createIndex({ Name: "text" }, { background: true });
+			db.units.createIndex({ HeadquartersCoordinates: "2dsphere" }, { background: true, name: "HQ_Coords_2dsphere" });
+			db.units.createIndex({ "Users.UserId": 1 }, { background: true, name: "Users_UserId" });
 
 			// Job Messages
 			db.job_messages.createIndex({ "Location.Coordinates": "2dsphere" }, { background: true, name: "Loc_Coords_2dsphere" });
@@ -49,7 +49,7 @@ while (current_version < schema_version) {
 			db.users.createIndex({ FirstName: "text", Surname: "text", EmailAddress: "text" }, { background: true, name: "users_text" });
 
 			// Events
-			db.events.createIndex({ "GroupId": 1 }, { background: true });
+			db.events.createIndex({ "UnitId": 1 }, { background: true });
 			db.events.createIndex({ Name: "text" }, { background: true, name: "events_text" });
 
 			// Addresses
@@ -89,6 +89,28 @@ while (current_version < schema_version) {
 		case 5:
 			db.job_messages.update({}, { $set: { Version: NumberInt(1) } }, { multi: true });
 			break;
+
+		case 6:
+			// Rename groups collection
+			db.groups.renameCollection('units');
+
+			// rename capcodes fields
+			db.capcodes.updateMany({}, { $rename: { "IsGroupCapcode": "IsUnitCapcode" } });
+
+			// rename events field
+			db.events.updateMany({}, { $rename: { "GroupId": "UnitId" } });
+			db.events.dropIndex({ "GroupId": 1 });
+			db.events.createIndex({ "unit_id": 1 }, { background: true });
+
+			// rename training_sessions field
+			db.training_sessions.updateMany({}, { $rename: { "GroupId": "UnitId" } });
+
+			// rename user_sign_ins field
+			db.user_sign_ins.updateMany({}, { $rename: { "GroupId": "UnitId" } });
+
+			// Update 'Group Administrator' to 'Unit Administrator'
+			db.units.updateMany({ "Users.Role": "Group Administrator" }, { $set: { "Users.$.Role": "Unit Administrator" } });
+			db.users.updateMany({ "Claims.Value": "Group Administrator" }, { $set: { "Claims.$.Value": "Unit Administrator" } });
 	}
 
 	// Write the new schema version to the database

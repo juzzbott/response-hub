@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 using Enivate.ResponseHub.DataAccess.Interface;
 using Enivate.ResponseHub.Model;
-using Enivate.ResponseHub.Model.Groups;
+using Enivate.ResponseHub.Model.Units;
 
 using MongoDB.Driver;
 
@@ -28,7 +28,7 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 			// Get the results of the text search.
 			PagedResultSet<Capcode> results = await TextSearch(name, Int32.MaxValue, 0, false);
 			
-			// return the mapped groups.
+			// return the mapped capcodes.
 			return results.Items;
 		}
 		
@@ -63,21 +63,21 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 		}
 
 		/// <summary>
-		/// Gets the capcodes that are not specified as Group capcodes.
+		/// Gets the capcodes that are not specified as Unit capcodes.
 		/// </summary>
-		/// <returns>The list of capcodes where IsGroupCapcode is false.</returns>
+		/// <returns>The list of capcodes where IsUnitCapcode is false.</returns>
 		public async Task<IList<Capcode>> GetSharedCapcodes()
 		{
-			return await Collection.Find(Builders<Capcode>.Filter.Eq(i => i.IsGroupCapcode, false)).ToListAsync();
+			return await Collection.Find(Builders<Capcode>.Filter.Eq(i => i.IsUnitCapcode, false)).ToListAsync();
 		}
 
 		/// <summary>
-		/// Gets the capcodes that are only specified for use as Group capcodes or not based on the groupOnly parameter.
+		/// Gets the capcodes that are only specified for use as Unit capcodes or not based on the unitOnly parameter.
 		/// </summary>
-		/// <returns>The list of capcodes where IsGroupCapcode is false.</returns>
-		public async Task<IList<Capcode>> GetAllByGroupOnly(bool groupOnly)
+		/// <returns>The list of capcodes where IsUnitCapcode is false.</returns>
+		public async Task<IList<Capcode>> GetAllByUnitOnly(bool unitOnly)
 		{
-			return await Collection.Find(Builders<Capcode>.Filter.Eq(i => i.IsGroupCapcode, groupOnly)).ToListAsync();
+			return await Collection.Find(Builders<Capcode>.Filter.Eq(i => i.IsUnitCapcode, unitOnly)).ToListAsync();
 		}
 
 	}

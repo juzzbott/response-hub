@@ -9,13 +9,13 @@ namespace Enivate.ResponseHub.Model.Events.Interface
 	public interface IEventService
 	{
 
-		Task<Event> CreateEvent(string name, Guid groupId, Guid userId, DateTime startDate);
+		Task<Event> CreateEvent(string name, Guid unitId, Guid userId, DateTime startDate);
 
 		Task<Event> GetById(Guid id);
 
-		Task<IList<Event>> GetEventsByGroup(IEnumerable<Guid> groupIds);
+		Task<IList<Event>> GetEventsByUnit(IEnumerable<Guid> unitIds);
 
-		Task<IList<Event>> FindByKeywords(string keywords, IEnumerable<Guid> groupIds);
+		Task<IList<Event>> FindByKeywords(string keywords, IEnumerable<Guid> unitIds);
 
 		Task<EventResource> AddResourceToEvent(Guid eventId, string name, Guid agency, Guid? userId, ResourceType resourceType);
 

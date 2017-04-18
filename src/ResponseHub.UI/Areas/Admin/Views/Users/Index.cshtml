@@ -13,7 +13,7 @@
 
 <div class="row">
 	<div class="col-lg-10 col-xl-6">
-		<p class="section-help">You can only create new system administrators from the link above. To create new users for groups, you must add a new member from the group detail page.</p>
+		<p class="section-help">You can only create new system administrators from the link above. To create new users for units, you must add a new member from the unit detail page.</p>
 	</div>
 </div>
 
@@ -43,7 +43,7 @@
 				<tr>
 					<td><a href="/admin/users/@user.Id">@user.FullName</a></td>
 					<td>@user.EmailAddress</td>
-					<td>@(user.IsSystemAdmin ? "System Administrator" : (user.IsGroupAdmin ? "Group Administrator" : "General User"))</td>
+					<td>@(user.IsSystemAdmin ? "System Administrator" : (user.IsUnitAdmin ? "Unit Administrator" : "General User"))</td>
 					<td>
 						<a data-href="/admin/users/@user.Id/delete" data-toggle="modal" data-target="#confirm-delete" class="cursor-pointer btn-icon btn-action-icon" title="Delete user from ResponseHub"><i class="fa fa-user-times"></i></a>
 					</td>

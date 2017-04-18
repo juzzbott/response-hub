@@ -10,8 +10,8 @@ using Microsoft.AspNet.Identity;
 using Microsoft.Practices.Unity;
 
 using Enivate.ResponseHub.Common;
-using Enivate.ResponseHub.Model.Groups.Interface;
-using Enivate.ResponseHub.Model.Groups;
+using Enivate.ResponseHub.Model.Units.Interface;
+using Enivate.ResponseHub.Model.Units;
 using Enivate.ResponseHub.Model.Messages.Interface;
 using Enivate.ResponseHub.Model.Messages;
 using Enivate.ResponseHub.Logging;
@@ -107,8 +107,8 @@ namespace Enivate.ResponseHub.UI.Controllers
 				// Get the capcode for the message
 				Capcode capcode = await CapcodeService.GetByCapcodeAddress(job.Capcode);
 
-				// Get the groups based on the capcode
-				Group group = await GroupService.GetGroupByCapcode(capcode);
+				// Get the units based on the capcode
+				Unit unit = await UnitService.GetUnitByCapcode(capcode);
 
 				// Get the sign ins for the job
 				IList<SignInEntry> jobSignIns = await SignInEntryService.GetSignInsForJobMessage(job.Id);
@@ -117,7 +117,7 @@ namespace Enivate.ResponseHub.UI.Controllers
 				IList<IdentityUser> signInUsers = await UserService.GetUsersByIds(jobSignIns.Select(i => i.UserId));
 
 				// Create the model object.
-				JobMessageViewModel model = await MapJobMessageToViewModel(job, capcode.FormattedName(), jobSignIns, signInUsers, group);
+				JobMessageViewModel model = await MapJobMessageToViewModel(job, capcode.FormattedName(), jobSignIns, signInUsers, unit);
 
 				// return the job view
 				return View(model);

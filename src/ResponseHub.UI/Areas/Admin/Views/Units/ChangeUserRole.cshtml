@@ -1,0 +1,36 @@
+﻿@model Enivate.ResponseHub.UI.Areas.Admin.Models.Units.ChangeUserRoleViewModel
+
+@{
+	ViewBag.Title = "Change security role for user";
+	Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<h1>@ViewBag.Title</h1>
+
+<p>Change the permissions within the unit for this user. You can have unlimited unit administrators, but you must have at least one unit administrator.</p>
+
+<form action="@Request.Path" method="post">
+
+	@Html.AntiForgeryToken()
+
+	<div class="row">
+		<div class="col-lg-10 col-xl-6">
+			@Html.ValidationSummary(true)
+		</div>
+	</div>
+	
+	<div class="form-group">
+		<label for="Service">Role *</label>
+		<div class="row">
+			<div class="col-sm-8 col-md-6 col-lg-4">
+				@Html.DropDownListFor(model => model.Role, Model.AvailableRoles, new { @class = "form-control" })
+			</div>
+		</div>
+		@Html.ValidationMessageFor(model => model.Role)
+	</div>
+
+	<button type="submit" class="btn btn-default">Change role</button>
+	<a href="/admin/units/@Model.UnitId" class="btn btn-link">Cancel</a>
+
+</form>
+

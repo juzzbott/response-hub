@@ -10,8 +10,8 @@ namespace Enivate.ResponseHub.Model.Events
 	public enum ResourceType
 	{
 
-		[Description("Group member")]
-		GroupMember = 1, 
+		[Description("Unit member")]
+		UnitMember = 1, 
 
 		[Description("Additional resource")]
 		AdditionalResource = 2

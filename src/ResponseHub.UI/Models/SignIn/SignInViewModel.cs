@@ -31,8 +31,8 @@ namespace Enivate.ResponseHub.UI.Models.SignIn
 
 		public IList<SelectListItem> AvailableUsers { get; set; }
 
-		[Required(ErrorMessage = "Please ensure you have selected a group to sign in for.")]
-		public Guid GroupId { get; set; }
+		[Required(ErrorMessage = "Please ensure you have selected a unit to sign in for.")]
+		public Guid UnitId { get; set; }
 
 		[Required(ErrorMessage = "Please select a user to sign in.")]
 		public Guid UserId { get; set; }

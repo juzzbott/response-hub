@@ -421,16 +421,16 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 			// Order by first name
 			results.Items = results.Items.OrderBy(i => i.FirstName).ToList();
 
-			// Create the list of groups
+			// Create the list of units
 			List<IdentityUser> mappedUsers = new List<IdentityUser>();
 
-			// For each result, map to a Group model object.
+			// For each result, map to a unit model object.
 			foreach (IdentityUserDto result in results.Items)
 			{
 				mappedUsers.Add(MapToModel(result));
 			}
 
-			// return the mapped groups.
+			// return the mapped units.
 			return mappedUsers;
 		}
 

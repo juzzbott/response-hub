@@ -4,7 +4,7 @@ using System.Linq;
 using System.Web;
 
 using Enivate.ResponseHub.Model.Messages;
-using Enivate.ResponseHub.Model.Groups;
+using Enivate.ResponseHub.Model.Units;
 
 namespace Enivate.ResponseHub.UI.Models.Messages
 {

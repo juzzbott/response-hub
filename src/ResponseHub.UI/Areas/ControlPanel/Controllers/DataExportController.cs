@@ -9,7 +9,7 @@ using System.Web.Mvc;
 using Enivate.ResponseHub.Model.Identity;
 using Enivate.ResponseHub.UI.Filters;
 using Enivate.ResponseHub.UI.Areas.ControlPanel.Models.DataExport;
-using Enivate.ResponseHub.Model.Groups;
+using Enivate.ResponseHub.Model.Units;
 using Enivate.ResponseHub.Model.Messages;
 using Enivate.ResponseHub.Model.Messages.Interface;
 using Enivate.ResponseHub.Common;
@@ -21,7 +21,7 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 
 	[RouteArea("ControlPanel", AreaPrefix = "control-panel")]
 	[RoutePrefix("data-export")]
-	[ClaimsAuthorize(Roles = RoleTypes.GroupAdministrator)]
+	[ClaimsAuthorize(Roles = RoleTypes.UnitAdministrator)]
 	public class DataExportController : BaseControlPanelController
     {
 
@@ -54,15 +54,15 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 		public async Task<ActionResult> Index(DataExportFilterViewModel model)
 		{
 
-			// Get the current group id
-			Guid groupId = GetControlPanelGroupId();
+			// Get the current unit id
+			Guid unitId = GetControlPanelUnitId();
 
 			// Get the list of jobs between the start and end dates
 			DateTime dateFrom = model.DateFrom.Date;
 			DateTime dateTo = new DateTime(model.DateTo.Year, model.DateTo.Month, model.DateTo.Day, 23, 59, 59);
 
 			// Now that we have the messages, get the export type from the model, and return
-			string export = await DataExportService.BuildCsvExportFile(groupId, dateFrom, dateTo);
+			string export = await DataExportService.BuildCsvExportFile(unitId, dateFrom, dateTo);
 
 			// return the file as a download
 			FileContentResult result = new FileContentResult(Encoding.UTF8.GetBytes(export), "text/csv");

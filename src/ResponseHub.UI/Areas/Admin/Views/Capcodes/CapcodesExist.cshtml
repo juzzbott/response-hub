@@ -7,14 +7,14 @@
 <h1>@ViewBag.Title</h1>
 
 <div class="alert alert-danger">
-	<p>Unable to delete capcode. Capcode is assigned to one or more groups.</p>
+	<p>Unable to delete capcode. Capcode is assigned to one or more units.</p>
 </div>
 
-<p>The capcode is currently assigned to the following groups:</p>
+<p>The capcode is currently assigned to the following units:</p>
 <ul>
-	@foreach(var group in Model)
+	@foreach(var unit in Model)
 	{
-		<li>@group</li>
+		<li>@unit</li>
 	}
 </ul>
 

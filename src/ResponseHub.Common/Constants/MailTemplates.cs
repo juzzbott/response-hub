@@ -11,7 +11,7 @@ namespace Enivate.ResponseHub.Common.Constants
 
 		public const string ActivateAccount = "ActivateAccount";
 
-		public const string GroupCreated = "GroupCreated";
+		public const string UnitCreated = "UnitCreated";
 
 		public const string ForgottenPassword = "ForgottenPassword";
 

@@ -12,7 +12,7 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Models.Reports.Training
 
 		public IDictionary<TrainingType, string> TrainingTypes { get; set; }
 
-		public IList<GroupTrainingMemberReportItem> MemberReports { get; set; }
+		public IList<UnitTrainingMemberReportItem> MemberReports { get; set; }
 
 		public string ChartDataJs { get; set; }
 
@@ -27,7 +27,7 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Models.Reports.Training
 		public TrainingReportViewModel()
 		{
 			TrainingTypes = new Dictionary<TrainingType, string>();
-			MemberReports = new List<GroupTrainingMemberReportItem>();
+			MemberReports = new List<UnitTrainingMemberReportItem>();
 		}
 	}
 }

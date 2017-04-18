@@ -11,6 +11,8 @@
     <AssemblyName>ResponseHub.DataAccess</AssemblyName>
     <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -84,7 +86,7 @@
     <Compile Include="Interface\ICapcodeRepository.cs" />
     <Compile Include="Interface\IDecoderStatusRepository.cs" />
     <Compile Include="Interface\IEventRepository.cs" />
-    <Compile Include="Interface\IGroupRepository.cs" />
+    <Compile Include="Interface\IUnitRepository.cs" />
     <Compile Include="Interface\IJobMessageRepository.cs" />
     <Compile Include="Interface\IMapIndexRepository.cs" />
     <Compile Include="Interface\IPagerMessageRepository.cs" />
@@ -100,7 +102,7 @@
     <Compile Include="MongoDB\CapcodeRepository.cs" />
     <Compile Include="MongoDB\DataObjects\Attachments\AttachmentDto.cs" />
     <Compile Include="MongoDB\DataObjects\Events\EventDto.cs" />
-    <Compile Include="MongoDB\DataObjects\Groups\GroupDto.cs" />
+    <Compile Include="MongoDB\DataObjects\Units\UnitDto.cs" />
     <Compile Include="MongoDB\DataObjects\Messages\JobMessageDto.cs" />
     <Compile Include="MongoDB\DataObjects\Spatial\MapGridReferenceInfoDto.cs" />
     <Compile Include="MongoDB\DataObjects\Spatial\LocationInfoDto.cs" />
@@ -111,7 +113,7 @@
     <Compile Include="MongoDB\DataObjects\Users\IdentityUserDto.cs" />
     <Compile Include="MongoDB\DecoderStatusRepository.cs" />
     <Compile Include="MongoDB\EventRepository.cs" />
-    <Compile Include="MongoDB\GroupRepository.cs" />
+    <Compile Include="MongoDB\UnitRepository.cs" />
     <Compile Include="MongoCollectionNameAttribute.cs" />
     <Compile Include="MongoDB\JobMessageRepository.cs" />
     <Compile Include="MongoDB\MapIndexRepository.cs" />
@@ -141,6 +143,7 @@
   <ItemGroup>
     <None Include="app.config" />
     <None Include="packages.config" />
+    <None Include="ResponseHub.DataAccess.nuspec" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="MongoDB\Scripts\AdminUser.js" />
@@ -149,6 +152,13 @@
     <Content Include="MongoDB\Scripts\VersionUpdates.js" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="..\packages\OctoPack.3.5.2\build\OctoPack.targets" Condition="Exists('..\packages\OctoPack.3.5.2\build\OctoPack.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\OctoPack.3.5.2\build\OctoPack.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\OctoPack.3.5.2\build\OctoPack.targets'))" />
+  </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

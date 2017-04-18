@@ -11,9 +11,9 @@ namespace Enivate.ResponseHub.Model.Training.Interface
 
 		Task CreateTrainingSession(TrainingSession trainingSession);
 
-		Task<IList<TrainingSession>> GetTrainingSessionsForGroup(Guid groupId);
+		Task<IList<TrainingSession>> GetTrainingSessionsForUnit(Guid unitId);
 
-		Task<IList<TrainingSession>> GetTrainingSessionsForGroup(Guid groupId, int limit);
+		Task<IList<TrainingSession>> GetTrainingSessionsForUnit(Guid unitId, int limit);
 
 		Task<TrainingSession> GetTrainingSessionById(Guid id);
 

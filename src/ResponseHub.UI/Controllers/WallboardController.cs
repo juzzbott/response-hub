@@ -6,8 +6,8 @@ using System.Web;
 using System.Web.Mvc;
 
 using Enivate.ResponseHub.Common;
-using Enivate.ResponseHub.Model.Groups;
-using Enivate.ResponseHub.Model.Groups.Interface;
+using Enivate.ResponseHub.Model.Units;
+using Enivate.ResponseHub.Model.Units.Interface;
 using Enivate.ResponseHub.Model.Messages;
 using Enivate.ResponseHub.UI.Models.Messages;
 using Enivate.ResponseHub.UI.Models.Wallboard;

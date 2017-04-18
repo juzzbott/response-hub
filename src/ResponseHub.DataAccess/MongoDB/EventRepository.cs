@@ -48,15 +48,15 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 		}
 
 		/// <summary>
-		/// Gets the collection of events based on the group id.
+		/// Gets the collection of events based on the unit id.
 		/// </summary>
-		/// <param name="groupId">The id of the group to get the events for.</param>
-		/// <returns>The colection of events for the group.</returns>
-		public async Task<IList<Event>> GetEventsByGroup(IEnumerable<Guid> groupIds)
+		/// <param name="unitId">The id of the unit to get the events for.</param>
+		/// <returns>The colection of events for the unit.</returns>
+		public async Task<IList<Event>> GetEventsByUnit(IEnumerable<Guid> unitIds)
 		{
 
 			// Define the 'in' filter
-			FilterDefinition<EventDto> filter = Builders<EventDto>.Filter.In(i => i.GroupId, groupIds);
+			FilterDefinition<EventDto> filter = Builders<EventDto>.Filter.In(i => i.UnitId, unitIds);
 
 			// Find the event data objects
 			IList<EventDto> dbEvents = await Collection.Find(filter).ToListAsync();
@@ -71,14 +71,14 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 		/// <summary>
 		/// Finds the events that match the keywords entered.
 		/// </summary>
-		/// <param name="name">The name to find the group by.</param>
-		/// <returns>The list of groups matching the result.</returns>
-		public async Task<IList<Event>> FindByKeywords(string keywords, IEnumerable<Guid> groupIds)
+		/// <param name="name">The name to find the unit by.</param>
+		/// <returns>The list of units matching the result.</returns>
+		public async Task<IList<Event>> FindByKeywords(string keywords, IEnumerable<Guid> unitIds)
 		{
 
 			// Build the query
 			FilterDefinition<EventDto> filter = Builders<EventDto>.Filter.Text(keywords) &
-												Builders<EventDto>.Filter.In(i => i.GroupId, groupIds);
+												Builders<EventDto>.Filter.In(i => i.UnitId, unitIds);
 
 			// Get the results of the text search.
 			IList<EventDto> results = await Collection.Find(filter).ToListAsync();
@@ -92,7 +92,7 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 				mappedEvents.Add(MapDbObjectToModel(result));
 			}
 
-			// return the mapped groups.
+			// return the mapped units.
 			return mappedEvents;
 		}
 
@@ -139,7 +139,7 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 				Created = dbObject.Created,
 				EventFinished = dbObject.EventFinished,
 				EventStarted = dbObject.EventStarted,
-				GroupId = dbObject.GroupId,
+				UnitId = dbObject.UnitId,
 				Id = dbObject.Id,
 				Name = dbObject.Name,
 				Resources = dbObject.Resources
@@ -168,7 +168,7 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 				Created = modelObject.Created,
 				EventFinished = modelObject.EventFinished,
 				EventStarted = modelObject.EventStarted,
-				GroupId = modelObject.GroupId,
+				UnitId = modelObject.UnitId,
 				Id = modelObject.Id,
 				Name = modelObject.Name,
 				Resources = modelObject.Resources
