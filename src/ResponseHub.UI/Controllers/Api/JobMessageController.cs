@@ -12,14 +12,19 @@ using Microsoft.AspNet.Identity;
 using Microsoft.Practices.Unity;
 
 using Enivate.ResponseHub.Common;
-using Enivate.ResponseHub.Model.Groups;
-using Enivate.ResponseHub.Model.Groups.Interface;
+using Enivate.ResponseHub.Model.Units;
+using Enivate.ResponseHub.Model.Units.Interface;
 using Enivate.ResponseHub.Model.Identity;
 using Enivate.ResponseHub.Model.Messages.Interface;
 using Enivate.ResponseHub.Model.Messages;
 using Enivate.ResponseHub.UI.Models.Api.Messages;
 using Enivate.ResponseHub.UI.Models.Messages;
 using Enivate.ResponseHub.UI.Helpers;
+using Enivate.ResponseHub.Model.SignIn;
+using Enivate.ResponseHub.Model.SignIn.Interface;
+using System.Globalization;
+using Enivate.ResponseHub.ApplicationServices.Wrappers;
+using Enivate.ResponseHub.Model.Spatial;
 
 namespace Enivate.ResponseHub.UI.Controllers.Api
 {
@@ -42,6 +47,7 @@ namespace Enivate.ResponseHub.UI.Controllers.Api
 				return ServiceLocator.Get<ICapcodeService>();
 			}
 		}
+		protected readonly ISignInEntryService SignInEntryService = ServiceLocator.Get<ISignInEntryService>();
 
 		[Route]
 		[HttpGet]
@@ -51,19 +57,87 @@ namespace Enivate.ResponseHub.UI.Controllers.Api
 			// Get the capcodes for the user.
 			IList<Capcode> capcodes = await CapcodeService.GetCapcodesForUser(UserId);
 
-			// Get the job messages
-			IList<JobMessage> jobMessages = await JobMessageService.GetMostRecent(capcodes, MessageType.Job, 50);
+			// Store the skip and count values
+			int count = 50;
+			int skip = 0;
+			MessageType messageType = MessageType.Job;
+
+			// Create the list of job messages
+			IList<JobMessage> jobMessages;
+
+			// Get the query string
+			IEnumerable<KeyValuePair<string, string>> qs = ControllerContext.Request.GetQueryNameValuePairs();
+
+			// if there is a skip value, then get it from the query string
+			if (qs.Any(i => i.Key.ToLower() == "skip"))
+			{
+				Int32.TryParse(qs.FirstOrDefault(i => i.Key.ToLower() == "skip").Value, out skip);
+			}
+
+			// Check to see if the job type is overridden in the query string
+			if (qs.Any(i => i.Key.ToLower() == "msg_type"))
+			{
+				if (qs.FirstOrDefault(i => i.Key.ToLower() == "msg_type").Value == "job")
+				{
+					messageType = MessageType.Job;
+				}
+				else if (qs.FirstOrDefault(i => i.Key.ToLower() == "msg_type").Value == "message")
+				{
+					messageType = MessageType.Message;
+				}
+			}
+
+			// If there is no date values set, then just get the most recent
+			if (qs.Any(i => i.Key.ToLower() == "date_from") && qs.Any(i => i.Key.ToLower() == "date_to"))
+			{
+				// Get the job messages
+				jobMessages = await JobMessageService.GetMostRecent(capcodes, messageType, count, skip);
+			}
+			else
+			{
+
+				// Set the date time values
+				DateTime? dateFrom = null;
+				DateTime? dateTo = null;
+
+				// Get the query string values
+				if (qs.Count(i => i.Key.ToLower() == "date_from") > 0 && !String.IsNullOrEmpty(qs.FirstOrDefault(i => i.Key.ToLower() == "date_from").Value))
+				{
+					dateFrom = DateTime.ParseExact(qs.FirstOrDefault(x => x.Key == "date_from").Value, "dd/MM/yyyy", CultureInfo.CurrentCulture, DateTimeStyles.AssumeLocal);
+				}
+
+				if (qs.Count(i => i.Key.ToLower() == "date_to") > 0 && !String.IsNullOrEmpty(qs.FirstOrDefault(i => i.Key.ToLower() == "date_from").Value))
+				{
+					dateTo = DateTime.ParseExact(qs.FirstOrDefault(x => x.Key == "date_to").Value, "dd/MM/yyyy", CultureInfo.CurrentCulture, DateTimeStyles.AssumeLocal);
+				}
+
+				// Load the job messages between dates
+				jobMessages = await JobMessageService.GetMessagesBetweenDates(capcodes, messageType, count, skip, dateFrom, dateTo);
+
+			}
+
+			// Get all the sign ins for the messages
+			IList<SignInEntry> allSignIns = await SignInEntryService.GetSignInsForJobMessages(jobMessages.Select(i => i.Id));
+
+			// Get all the users for the job sign ins
+			IList<IdentityUser> allSignInUsers = await UserService.GetUsersByIds(allSignIns.Select(i => i.UserId));
 
 			// return the mapped view models
 			IList<JobMessageViewModel> models = new List<JobMessageViewModel>();
 			foreach(JobMessage message in jobMessages)
 			{
 
+				// Get the sign ins for the job
+				IList<SignInEntry> messageSignIns = allSignIns.Where(i => i.OperationDetails.JobId == message.Id).ToList();
+
+				// Get the list of users who signed in for the job
+				IList<IdentityUser> signInUsers = allSignInUsers.Where(i => messageSignIns.Select(u => u.UserId).Contains(i.Id)).ToList();
+
 				// Get the capcode
-				string capcodeGroupName = capcodes.FirstOrDefault(i => i.CapcodeAddress == message.Capcode).FormattedName();
+				string capcodeUnitName = capcodes.FirstOrDefault(i => i.CapcodeAddress == message.Capcode).FormattedName();
 
 				// Add the mapped job message view model
-				models.Add(await BaseJobsMessagesController.MapJobMessageToViewModel(message, capcodeGroupName));
+				models.Add(await BaseJobsMessagesController.MapJobMessageToViewModel(message, capcodeUnitName, messageSignIns, signInUsers, null));
 			}
 
 			// return the mapped models
@@ -185,7 +259,7 @@ namespace Enivate.ResponseHub.UI.Controllers.Api
 
 		[Route("{id:guid}/progress")]
 		[HttpPost]
-		public async Task<MessageProgressResponseModel> PostProgress(Guid id, [FromBody] MessageProgressType progressType)
+		public async Task<MessageProgressResponseModel> PostProgress(Guid id, PostProgressViewModel model)
 		{
 			
 			// Get the identity user for the current user
@@ -200,14 +274,37 @@ namespace Enivate.ResponseHub.UI.Controllers.Api
 			try
 			{
 
+				// Get the job based on the id
+				JobMessage job = await JobMessageService.GetById(id);
+
+				// Ensure the version matches, otherwise return version mismatch error
+				if (job.Version != model.Version)
+				{
+					return new MessageProgressResponseModel()
+					{
+						Success = false,
+						ErrorMessage = "Someone else has changed this job since you loaded it. Reload the job to view changes."
+					};
+				}
+
+				// Get the current date time
+				DateTime progressDateTime = DateTime.Now;
+
+				// Get the date from the posted string value if it exists
+				if (!String.IsNullOrEmpty(model.ProgressDateTime))
+				{
+					progressDateTime = DateTime.ParseExact(model.ProgressDateTime, "yyyy-MM-dd HH:mm:ss", CultureInfo.CurrentCulture).ToUniversalTime();
+				}
+
 				// Create the progress object and return it
-				MessageProgress progress = await JobMessageService.AddProgress(id, UserId, progressType);
+				MessageProgress progress = await JobMessageService.SaveProgress(id, progressDateTime, UserId, model.ProgressType);
 				return new MessageProgressResponseModel()
 				{
 					Timestamp = progress.Timestamp,
 					UserId = UserId,
 					UserFullName = user.FullName,
-					Success = true
+					Success = true,
+					NewVersion = model.Version + 1
 				};
 
 			} 
@@ -243,6 +340,50 @@ namespace Enivate.ResponseHub.UI.Controllers.Api
 
 		}
 
+		[Route("{id:guid}/progress/delete")]
+		[HttpPost]
+		public async Task<MessageProgressResponseModel> DeleteProgressType(Guid id, PostProgressViewModel model)
+		{
+
+			try
+			{
+
+				// Get the job based on the id
+				JobMessage job = await JobMessageService.GetById(id);
+
+				// Ensure the version matches, otherwise return version mismatch error
+				if (job.Version != model.Version)
+				{
+					return new MessageProgressResponseModel()
+					{
+						Success = false,
+						ErrorMessage = "Someone else has changed this job since you loaded it. Reload the job to view changes."
+					};
+				}
+
+				// Clear the progress type for the job
+				await JobMessageService.RemoveProgress(id, model.ProgressType);
+
+				// return a success value.
+				return new MessageProgressResponseModel()
+				{
+					Success = true,
+					NewVersion = model.Version + 1
+				};
+
+			}
+			catch (Exception ex)
+			{
+				await Log.Error(String.Format("Cannot remove progress from cancelled job.", ex.Message), ex);
+				return new MessageProgressResponseModel()
+				{
+					Success = false,
+					ErrorMessage = "Error removing progress from the job message."
+				};
+			}
+
+		}
+
 		[Route("latest-from-last-id")]
 		[HttpPost]
 		public async Task<IList<JobMessageViewModel>> GetLatestMessagesFromLast(PostGetLatestFromLastModel model)
@@ -261,6 +402,12 @@ namespace Enivate.ResponseHub.UI.Controllers.Api
 				// Create the list of job message view models
 				IList<JobMessageViewModel> latestMessagesModels = new List<JobMessageViewModel>();
 
+				// Get all the sign ins for the messages
+				IList<SignInEntry> allSignIns = await SignInEntryService.GetSignInsForJobMessages(latestMessages.Select(i => i.Id));
+
+				// Get all the users for the job sign ins
+				IList<IdentityUser> allSignInUsers = await UserService.GetUsersByIds(allSignIns.Select(i => i.UserId));
+
 				// Map the job messages to the JobMesageViewModel type
 				if (latestMessages != null && latestMessages.Count > 0)
 				{
@@ -268,18 +415,24 @@ namespace Enivate.ResponseHub.UI.Controllers.Api
 					// Iterate through each message and add to the list
 					foreach(JobMessage message in latestMessages)
 					{
-						// Get the capcode group name from the list of capcodes
+						// Get the capcode unit name from the list of capcodes
 						Capcode messageCapcode = capcodes.FirstOrDefault(i => i.CapcodeAddress == message.Capcode);
-						string capcodeGroupName = messageCapcode?.FormattedName();
+						string capcodeUnitName = messageCapcode?.FormattedName();
 
-						// If there was no group capcode name, just set to unknown
-						if (String.IsNullOrEmpty(capcodeGroupName))
+						// Get the sign ins for the job
+						IList<SignInEntry> messageSignIns = allSignIns.Where(i => i.OperationDetails.JobId == message.Id).ToList();
+
+						// Get the list of users who signed in for the job
+						IList<IdentityUser> signInUsers = allSignInUsers.Where(i => messageSignIns.Select(u => u.UserId).Contains(i.Id)).ToList();
+
+						// If there was no unit capcode name, just set to unknown
+						if (String.IsNullOrEmpty(capcodeUnitName))
 						{
-							capcodeGroupName = "Unknown";
+							capcodeUnitName = "Unknown";
 						}
 
 						// Map to the JobMessageViewModel
-						latestMessagesModels.Add(await BaseJobsMessagesController.MapJobMessageToViewModel(message, capcodeGroupName));
+						latestMessagesModels.Add(await BaseJobsMessagesController.MapJobMessageToViewModel(message, capcodeUnitName, messageSignIns, signInUsers, null));
 					}
 
 				}
@@ -294,6 +447,89 @@ namespace Enivate.ResponseHub.UI.Controllers.Api
 				throw new HttpResponseException(new HttpResponseMessage(HttpStatusCode.InternalServerError));
 			}
 
+		}
+
+		[Route("{id:guid}/distance-from-job/{otherJobNumber}")]
+		[HttpGet]
+		public async Task<GetDistanceFromJobModel> GetDistanceFromOtherJob(Guid id, string otherJobNumber)
+		{
+			// Get the current job
+			JobMessage currentJob = await JobMessageService.GetById(id);
+
+			// If the job is null, or there is no location data, then return error result
+			if (currentJob == null)
+			{
+				return new GetDistanceFromJobModel()
+				{
+					Success = false,
+					Error = "Current job cannot be found."
+				};
+			}
+			else if (currentJob.Location == null || currentJob.Location.Coordinates == null)
+			{
+				return new GetDistanceFromJobModel()
+				{
+					Success = false,
+					Error = "Current job does not contain any location information."
+				};
+			}
+
+			// Get the other job
+			JobMessage otherJob = await JobMessageService.GetByJobNumber(otherJobNumber);
+
+			// If the job is null, or there is no location data, then return error result
+			if (otherJob == null)
+			{
+				return new GetDistanceFromJobModel()
+				{
+					Success = false,
+					Error = "Requested job cannot be found."
+				};
+			}
+			else if (otherJob == null || otherJob.Location == null || otherJob.Location.Coordinates == null)
+			{
+				return new GetDistanceFromJobModel()
+				{
+					Success = false,
+					Error = "Requested job does not contain any location information."
+				};
+			}
+
+			// If they are the same job numbers just return 0 distance
+			if (otherJob.JobNumber.Equals(currentJob.JobNumber, StringComparison.CurrentCultureIgnoreCase))
+			{
+				return new GetDistanceFromJobModel()
+				{
+					Success = true,
+					Distance = 0,
+					ReferencedJobId = otherJob.Id,
+					ReferencedJobNumber = otherJob.JobNumber
+				};
+			}
+
+			// return the list of coordinates from the google geocode result
+			GoogleDirectionsWrapper directionsWrapper = new GoogleDirectionsWrapper(Log);
+			DirectionsInfo directions = await directionsWrapper.GetDirectionsCoordinates(currentJob.Location.Coordinates, otherJob.Location.Coordinates);
+
+			// If there is no directions returned, then the directions couldn't be found
+			if (directions == null)
+			{
+				return new GetDistanceFromJobModel()
+				{
+					Success = false,
+					Error = "Distance information could not be found between the two jobs."
+				};
+			}
+			else
+			{
+				return new GetDistanceFromJobModel()
+				{
+					Success = true,
+					Distance = directions.TotalDistance,
+					ReferencedJobId = otherJob.Id,
+					ReferencedJobNumber = otherJob.JobNumber
+				};
+			}
 		}
 
 	}

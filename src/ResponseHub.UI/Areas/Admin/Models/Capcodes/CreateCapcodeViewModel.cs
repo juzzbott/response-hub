@@ -30,7 +30,7 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Models.Capcodes
 
 		public IList<SelectListItem> AvailableServices { get; set; }
 
-		public bool IsGroupCapcode { get; set; }
+		public bool IsUnitCapcode { get; set; }
 
 		public CreateCapcodeViewModel()
 		{

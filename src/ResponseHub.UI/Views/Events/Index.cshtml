@@ -5,7 +5,7 @@
 
 <h1>@ViewBag.Title</h1>
 
-<p>Events allow groups to manage multiple jobs within a given timeframe. Within an event, you can create sectors and then assign jobs and resources to those sectors. Resources in the field can then view the assigned jobs, and work through the list of jobs.</p>
+<p>Events allow units to manage multiple jobs within a given timeframe. Within an event, you can create sectors and then assign jobs and resources to those sectors. Resources in the field can then view the assigned jobs, and work through the list of jobs.</p>
 
 <a href="/events/create" class="btn btn-primary btn-lg btn-icon"><i class="fa fa-plus"></i>Start new event</a>
 
@@ -15,7 +15,7 @@
 	<thead>
 		<tr>
 			<th>Name</th>
-			<th>Group</th>
+			<th>Unit</th>
 			<th>Started</th>
 			<th>Jobs</th>
 		</tr>
@@ -33,7 +33,7 @@
 			{
 				<tr>
 					<td><a href="/events/@eventObj.Id">@eventObj.Name</a></td>
-					<td><a href="/events/@eventObj.GroupId">@eventObj.GroupName</a></td>
+					<td><a href="/events/@eventObj.UnitId">@eventObj.UnitName</a></td>
 					<td>@eventObj.StartDate.ToString("d MMMM yyyy HH:mm")</td>
 					<td>0</td>
 				</tr>

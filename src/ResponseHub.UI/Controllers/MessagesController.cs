@@ -10,12 +10,14 @@ using Microsoft.Practices.Unity;
 
 using Enivate.ResponseHub.Common;
 using Enivate.ResponseHub.Logging;
-using Enivate.ResponseHub.Model.Groups;
-using Enivate.ResponseHub.Model.Groups.Interface;
+using Enivate.ResponseHub.Model.Units;
+using Enivate.ResponseHub.Model.Units.Interface;
 using Enivate.ResponseHub.Model.Messages;
 using Enivate.ResponseHub.Model.Messages.Interface;
 using Enivate.ResponseHub.UI.Models.Messages;
 using System.Web;
+using Enivate.ResponseHub.Model.Identity;
+using Enivate.ResponseHub.Model.SignIn;
 
 namespace Enivate.ResponseHub.UI.Controllers
 {
@@ -36,10 +38,11 @@ namespace Enivate.ResponseHub.UI.Controllers
 			IList<Capcode> capcodes = await CapcodeService.GetCapcodesForUser(userId);
 
 			// Get the messages for the capcodes
-			IList<JobMessage> messages = await JobMessageService.GetMostRecent(capcodes, MessageType.Message, 50);
+			IList<JobMessage> messages = await JobMessageService.GetMostRecent(capcodes, MessageType.Message, 50, 0);
 
 			// Create the message list view model.
 			JobMessageListViewModel model = await CreateJobMessageListModel(capcodes, messages);
+			model.MessageType = MessageType.Message;
 
 			return View("~/Views/Jobs/Index.cshtml", model);
 		}
@@ -63,8 +66,14 @@ namespace Enivate.ResponseHub.UI.Controllers
 				// Get the capcode for the message
 				Capcode capcode = await CapcodeService.GetByCapcodeAddress(job.Capcode);
 
+				// Get the sign ins for the job
+				IList<SignInEntry> jobSignIns = await SignInEntryService.GetSignInsForJobMessage(job.Id);
+
+				// Get the list of users who signed in for the job
+				IList<IdentityUser> signInUsers = await UserService.GetUsersByIds(jobSignIns.Select(i => i.UserId));
+
 				// Create the model object.
-				JobMessageViewModel model = await MapJobMessageToViewModel(job, capcode.FormattedName());
+				JobMessageViewModel model = await MapJobMessageToViewModel(job, capcode.FormattedName(), jobSignIns, signInUsers, null);
 				
 				// return the job view
 				return View(model);

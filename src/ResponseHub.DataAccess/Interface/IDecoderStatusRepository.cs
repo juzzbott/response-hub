@@ -23,5 +23,7 @@ namespace Enivate.ResponseHub.DataAccess.Interface
 
 		Task ResetDecoderStatus();
 
+		Task<bool> InvalidMessageExists(string invalidMessage);
+
 	}
 }

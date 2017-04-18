@@ -42,12 +42,35 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 		/// <param name="capcodes"></param>
 		/// <param name="count"></param>
 		/// <returns></returns>
-		public async Task<IList<JobMessage>> GetMostRecent(IEnumerable<string> capcodes, MessageType messageTypes, int count)
+		public async Task<IList<JobMessage>> GetMostRecent(IEnumerable<string> capcodes, MessageType messageTypes, int count, int skip)
 		{
+			// return the messages without date filters
+			return await GetMessagesBetweenDates(capcodes, messageTypes, count, skip, null, null);
+		}
 
+		/// <summary>
+		///  Gets the job messages for the list of capcodes specified between the specific dates. Results are limited to count number of items.
+		/// </summary>
+		/// <param name="capcodes"></param>
+		/// <param name="count"></param>
+		/// <returns></returns>
+		public async Task<IList<JobMessage>> GetMessagesBetweenDates(IEnumerable<string> capcodes, MessageType messageTypes, int count, int skip, DateTime? dateFrom, DateTime? dateTo)
+		{
+			
 			// Create the filter and sort
 			FilterDefinitionBuilder<JobMessageDto> builder = Builders<JobMessageDto>.Filter;
 			FilterDefinition<JobMessageDto> filter = builder.In(i => i.Capcode, capcodes);
+
+			// If there is dateFrom and dateTo filters, add them
+			if (dateFrom.HasValue)
+			{
+				filter &= builder.Gte(i => i.Timestamp, dateFrom.Value.ToUniversalTime());
+			}
+			if (dateTo.HasValue)
+			{
+				filter &= builder.Lte(i => i.Timestamp, dateTo.Value.ToUniversalTime());
+			}
+
 
 			// Add the message type to the filter.
 			FilterDefinition<JobMessageDto> priorityFilter = builder.Or();
@@ -71,7 +94,7 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 			SortDefinition<JobMessageDto> sort = Builders<JobMessageDto>.Sort.Descending(i => i.Timestamp);
 
 			// Find the job messages by capcode
-			IList<JobMessageDto> results = await Collection.Find(filter).Sort(sort).Limit(count).ToListAsync();
+			IList<JobMessageDto> results = await Collection.Find(filter).Sort(sort).Limit(count).Skip(skip).ToListAsync();
 
 			// Map the dto objects to model objects and return
 			List<JobMessage> messages = new List<JobMessage>();
@@ -79,7 +102,6 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 
 			// return the messages
 			return messages;
-			
 		}
 
 		/// <summary>
@@ -222,6 +244,20 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 		}
 
 		/// <summary>
+		/// Gets a JobMessage based on the job number.
+		/// </summary>
+		/// <param name="jobNumber">The number of the job message to get.</param>
+		/// <returns>The job message if found, otherwise null.</returns>
+		public async Task<JobMessage> GetByJobNumber(string jobNumber)
+		{
+			// Get the data object from the db
+			JobMessageDto message = await Collection.Find(Builders<JobMessageDto>.Filter.Eq(i => i.JobNumber, jobNumber.ToUpper())).FirstOrDefaultAsync();
+
+			// return the mapped job message
+			return MapDbObjectToModel(message);
+		}
+
+		/// <summary>
 		/// Adds a new note to an existing job message. 
 		/// </summary>
 		/// <param name="jobMessageId">The id of the job message to add the note to.</param>
@@ -289,27 +325,58 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 		/// <param name="jobMessageId">The id of the job message to add the progress to.</param>
 		/// <param name="progress">The progress to add to the job message.</param>
 		/// <returns></returns>
-		public async Task AddProgress(Guid jobMessageId, MessageProgress progress)
+		public async Task SaveProgress(Guid jobMessageId, MessageProgress progress)
 		{
 
-			// If the progress already exists, then throw exception as we can't re-add progress.
+			// If the progress already exists, then update the timestamp of the existing progress update.
 			FilterDefinition<JobMessageDto> countFilter = Builders<JobMessageDto>.Filter.Eq(i => i.Id, jobMessageId) &
 														  Builders<JobMessageDto>.Filter.ElemMatch(i => i.ProgressUpdates, p => p.ProgressType == progress.ProgressType);
 			long count = await Collection.CountAsync(countFilter);
 
+			// Create the filter and update
+			FilterDefinition<JobMessageDto> filter;
+			UpdateDefinition<JobMessageDto> update;
+
 			// If there is already progress update for the type, then throw exception
 			if (count > 0)
 			{
-				throw new ApplicationException(String.Format("The job message already contains a progress update with type '{0}'.", progress.ProgressType.GetEnumDescription()));
+				// Create the filter
+				filter = Builders<JobMessageDto>.Filter.Eq(i => i.Id, jobMessageId) &
+						 Builders<JobMessageDto>.Filter.ElemMatch(i => i.ProgressUpdates, p => p.ProgressType == progress.ProgressType);
+
+				// Create the update
+				update = Builders<JobMessageDto>.Update.Set("ProgressUpdates.$.Timestamp", progress.Timestamp).Set("ProgressUpdates.$.UserId", progress.UserId).Inc(i => i.Version, 1);
+			}
+			else
+			{
+
+				// Create the filter
+				filter = Builders<JobMessageDto>.Filter.Eq(i => i.Id, jobMessageId);
+
+				// Create the update
+				update = Builders<JobMessageDto>.Update.Push(i => i.ProgressUpdates, progress).Inc(i => i.Version, 1);
+
 			}
 
-			// Create the filter
+			// Do the update
+			await Collection.UpdateOneAsync(filter, update);
+		}
+
+		/// <summary>
+		/// Removes the specified progress update type from the job.
+		/// </summary>
+		/// <param name="jobMessageId">The id of the job to remove the progres from.</param>
+		/// <param name="progressType">The progress type to remove.</param>
+		/// <returns></returns>
+		public async Task RemoveProgress(Guid jobMessageId, MessageProgressType progressType)
+		{
+			// If the progress already exists, then throw exception as we can't re-add progress.
 			FilterDefinition<JobMessageDto> filter = Builders<JobMessageDto>.Filter.Eq(i => i.Id, jobMessageId);
 
 			// Create the update
-			UpdateDefinition<JobMessageDto> update = Builders<JobMessageDto>.Update.Push(i => i.ProgressUpdates, progress);
+			UpdateDefinition<JobMessageDto> update = Builders<JobMessageDto>.Update.PullFilter(i => i.ProgressUpdates, x => x.ProgressType == progressType).Inc(i => i.Version, 1);
 
-			// Do the update
+			// perform the update
 			await Collection.UpdateOneAsync(filter, update);
 		}
 
@@ -325,6 +392,23 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 
 			// Create the update
 			UpdateDefinition<JobMessageDto> update = Builders<JobMessageDto>.Update.Push(i => i.AttachmentIds, attachmentId);
+
+			// Do the update
+			await Collection.UpdateOneAsync(filter, update);
+		}
+
+		/// <summary>
+		/// Removes teh attachment from the job message.
+		/// </summary>
+		/// <param name="jobMessageId">The job message id to remove the attachment from.</param>
+		/// <param name="attachmentId">The id of the attachment to remove from the job.</param>
+		/// <returns></returns>
+		public async Task RemoveAttachmentFromJob(Guid jobMessageId, Guid attachmentId)
+		{
+			FilterDefinition<JobMessageDto> filter = Builders<JobMessageDto>.Filter.Eq(i => i.Id, jobMessageId);
+
+			// Create the update
+			UpdateDefinition<JobMessageDto> update = Builders<JobMessageDto>.Update.Pull(i => i.AttachmentIds, attachmentId);
 
 			// Do the update
 			await Collection.UpdateOneAsync(filter, update);
@@ -396,7 +480,7 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 		}
 
 		#endregion
-
+		
 		#region Mappers
 
 		/// <summary>
@@ -423,7 +507,9 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 				Timestamp = dbObject.Timestamp,
 				Notes = dbObject.Notes,
 				ProgressUpdates = dbObject.ProgressUpdates,
-				AttachmentIds = dbObject.AttachmentIds
+				AttachmentIds = dbObject.AttachmentIds,
+				Type = dbObject.Type,
+				Version = dbObject.Version
 				
 			};
 
@@ -461,7 +547,9 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 				Timestamp = modelObject.Timestamp,
 				Notes = modelObject.Notes,
 				ProgressUpdates = modelObject.ProgressUpdates,
-				AttachmentIds = modelObject.AttachmentIds
+				AttachmentIds = modelObject.AttachmentIds,
+				Type = modelObject.Type,
+				Version = modelObject.Version
 			};
 
 			// Map the location property
@@ -489,7 +577,7 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 
 			LocationInfo model = new LocationInfo()
 			{
-				AddressInfo = dbObject.AddressInfo,
+				Address = dbObject.Address,
 				GridSquare = dbObject.GridSqaure,
 				GridReference = dbObject.GridReference,
 				MapPage = dbObject.MapPage,
@@ -521,7 +609,7 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 
 			LocationInfoDto dbObject = new LocationInfoDto()
 			{
-				AddressInfo = modelObject.AddressInfo,
+				Address = modelObject.Address,
 				GridSqaure = modelObject.GridSquare,
 				GridReference = modelObject.GridReference,
 				MapPage = modelObject.MapPage,

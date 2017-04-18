@@ -9,7 +9,7 @@ using System.Web.Mvc;
 using Microsoft.AspNet.Identity;
 
 using Enivate.ResponseHub.Model;
-using Enivate.ResponseHub.Model.Groups;
+using Enivate.ResponseHub.Model.Units;
 using Enivate.ResponseHub.Model.Messages;
 using Enivate.ResponseHub.UI.Models.Search;
 using Enivate.ResponseHub.UI.Models.Messages;

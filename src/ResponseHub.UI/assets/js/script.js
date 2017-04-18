@@ -60,6 +60,30 @@ var responseHub = (function () {
 			$('.tab-collapse').tabCollapse();
 		}
 
+		// Fix date validation bug in jQuery
+		$(document).ready(function () {
+			jQuery.validator.methods.date = function (value, element) {
+
+				// Create the regex and return if the value is valid or not
+				var dateRegex = /^\d{2}\/\d{2}\/\d{4}$/;
+				var validFormat = dateRegex.test(value);
+
+				// If the format is invalid, then return false.
+				if (!validFormat) {
+					return false;
+				}
+
+				// Split the value into days, months, years
+				var dateParts = value.split('/');
+
+				// Create the moment object
+				var dateObj = moment(dateParts[2] + "-" + dateParts[1] + "-" + dateParts[0] + "T00:00:00.000Z");
+
+				// Determine if the date is valid
+				return dateObj.isValid();
+			};
+		});
+
 		$('.toggle-header a').click(function () {
 
 			// Get the toggle id
@@ -94,7 +118,72 @@ var responseHub = (function () {
 			return false;
 
 		});
+		
+		// Bind the time picker
+		$('.timepicker-control').datetimepicker({
+			format: 'HH:mm',
+			allowInputToggle: true,
+			icons: {
+				time: 'fa fa-fw fa-clock-o',
+				date: 'fa fa-fw fa-calendar',
+				up: 'fa fa-fw fa-chevron-up',
+				down: 'fa fa-fw fa-chevron-down',
+				previous: 'fa fa-fw fa-chevron-left',
+				next: 'fa fa-fw fa-chevron-right',
+				today: 'fa fa-fw fa-bullseye',
+				clear: 'fa fa-fw fa-trash-o',
+				close: 'fa fa-fw fa-times'
+			}
+		});
 
+		// Bind the time picker
+		$('.timepicker-seconds-control').datetimepicker({
+			format: 'HH:mm:ss',
+			allowInputToggle: true,
+			icons: {
+				time: 'fa fa-fw fa-clock-o',
+				date: 'fa fa-fw fa-calendar',
+				up: 'fa fa-fw fa-chevron-up',
+				down: 'fa fa-fw fa-chevron-down',
+				previous: 'fa fa-fw fa-chevron-left',
+				next: 'fa fa-fw fa-chevron-right',
+				today: 'fa fa-fw fa-bullseye',
+				clear: 'fa fa-fw fa-trash-o',
+				close: 'fa fa-fw fa-times'
+			}
+		});
+
+		// Add read only to prevent keyboard being shown
+		if (isMobile()) {
+			$('.timepicker input, .timepicker-seconds input, .datepicker-control input').attr('readonly', 'readonly');
+		}
+
+		// Set the graphic radioes and checkboxes
+		setGraphicRadiosCheckboxes();
+
+	}
+
+	// Create the "graphic radio" and "graphic checkbox" functionality
+	function setGraphicRadiosCheckboxes() {
+		
+		$('.graphic-radio label, .graphic-checkbox label').each(function (index, elem) {
+			$(elem).contents().eq(2).wrap('<span/>');
+		});
+
+		$('.graphic-radio label input[type="radio"]').each(function (index, elem) {
+			$(elem).after('<i class="fa fa-circle-o"></i><i class="fa fa-dot-circle-o"></i>');
+		});
+
+		$('.graphic-checkbox label input[type="checkbox"]').each(function (index, elem) {
+			$(elem).after('<i class="fa fa-fw fa-square-o"></i><i class="fa  fa-fw fa-check-square-o"></i>');
+		});
+
+	}
+
+	function overrideValidator() {
+		// By default validator ignores hidden fields.
+		// change the setting here to ignore nothing
+		$.validator.setDefaults({ ignore: null });
 	}
 
 	// Bind the modal
@@ -102,6 +191,9 @@ var responseHub = (function () {
 
 	// Bind the UI
 	bindUI();
+
+	// Override the validator ignore
+	overrideValidator();
 
 	// return the response hub object
 	return {
@@ -117,7 +209,7 @@ responseHub.maps = (function () {
 	/**
 	 * Contains a dictionary of markers
 	 */
-	mapMarkers = [];
+	mapMarkers = {};
 
 
 	/*
@@ -144,6 +236,11 @@ responseHub.maps = (function () {
 	 * Contains the array of icons to display over the map
 	 */
 	leafIcons = [];
+
+	/**
+	 * The fuction to set the map bounds interval to resize the map based on your current location
+	 */
+	mapBoundsInterval = null;
 
 	/**
 	 * Loads the map onto the screen.
@@ -202,21 +299,21 @@ responseHub.maps = (function () {
 	function buildLeafBaseLayers() {
 
 		// Create the default layers
-		streetMapLayer = L.tileLayer('http://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
+		streetMapLayer = L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
 			attribution: 'Imagery from <a href="http://mapbox.com/about/maps/">MapBox</a> &mdash; Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
 			subdomains: 'abcd',
 			id: 'juzzbott.mn25f8nc',
 			accessToken: 'pk.eyJ1IjoianV6emJvdHQiLCJhIjoiMDlmN2JlMzMxMWI2YmNmNGY2NjFkZGFiYTFiZWVmNTQifQ.iKlZsVrsih0VuiUCzLZ1Lg'
 		});
 
-		topoMapLayer = L.tileLayer('http://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
+		topoMapLayer = L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
 			attribution: 'Imagery from <a href="http://mapbox.com/about/maps/">MapBox</a> &mdash; Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
 			subdomains: 'abcd',
 			id: 'juzzbott.mn24imf3',
 			accessToken: 'pk.eyJ1IjoianV6emJvdHQiLCJhIjoiMDlmN2JlMzMxMWI2YmNmNGY2NjFkZGFiYTFiZWVmNTQifQ.iKlZsVrsih0VuiUCzLZ1Lg'
 		});
 
-		aerialMapLayer = L.tileLayer('http://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
+		aerialMapLayer = L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
 			attribution: 'Imagery from <a href="http://mapbox.com/about/maps/">MapBox</a> &mdash; Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
 			subdomains: 'abcd',
 			id: 'juzzbott.mn74md27',
@@ -247,40 +344,130 @@ responseHub.maps = (function () {
 
 	function addMarkerToMap(lat, lng) {
 
-		L.marker([lat, lng]).addTo(map);
+		mapMarkers["job_location"] = L.marker([lat, lng]).addTo(map);
 
 	}
 
-	/*
-	 * Add's a pushpin to the map.
+	/**
+	 * Determines the current location on the map
 	 */
-	//function addMarkerToMap(id, lat, lng, name, description, url, placeType, addPopupWindow) {
-	//
-	//	// Get the marker icon based on the place type name.
-	//	var placeTypeIcon = null;
-	//	if (placeType != null && placeType.IconCssClass != null && placeType.Name.length > 0) {
-	//		for (var i = 0; i < leafIcons.length; i++) {
-	//			if (leafIcons[i].key == placeType.Name.toLowerCase()) {
-	//				placeTypeIcon = leafIcons[i];
-	//				break;
-	//			}
-	//		}
-	//	}
-	//
-	//	// Add the marker to the map.
-	//	var marker = null;
-	//	if (placeTypeIcon !== null) {
-	//		marker = L.marker([lat, lng], { icon: placeTypeIcon }).addTo(map);
-	//		mapMarkers.push(marker);
-	//	}
-	//
-	//	// If we need to add an info window, then do do so on popup for the marker
-	//	if (addPopupWindow && marker != null) {
-	//		var popupContent = createMapPopupContent(name, description, url);
-	//		marker.bindPopup(popupContent);
-	//	}
-	//
-	//}
+	function addCurrentLocationToMap() {
+		
+		// Get the current location
+		if (navigator.geolocation) {
+			navigator.geolocation.watchPosition(
+				function (pos) {
+
+					// If there is 2 map markers in the collection, then the current position alredy exists and we just want to update it.
+					// Otherwise we need to create the new map marker
+					if (mapMarkers["current_location"] != null)
+					{
+						mapMarkers["current_location"].setLatLng(new L.LatLng(pos.coords.latitude, pos.coords.longitude));
+					}
+					else
+					{
+
+						// Second location marker doesn exist, so we need to create it
+
+						var currentLocationMarker = new L.HtmlIcon({
+							html: '<div><i class="fa fa-bullseye fa-2x current-map-location"></i></div>',
+							iconSize: [20, 20], // size of the icon
+							iconAnchor: [-10, -10], // point of the icon which will correspond to marker's location
+						});	
+
+						// Add the marker to the map
+						mapMarkers["current_location"] = L.marker([pos.coords.latitude, pos.coords.longitude], { icon: currentLocationMarker }).addTo(map);
+
+						// Add the route from LHQ to the map
+						addPathFromPoint(pos.coords.latitude, pos.coords.longitude, true, '#00B226')
+
+						// Get the group of markers, destination and current location, and zoom window to fit
+						var group = new L.featureGroup([mapMarkers["job_location"], mapMarkers["current_location"]]);
+						map.fitBounds(group.getBounds().pad(0.1));
+						
+						// Set the interval to resize the window every 30 secs.
+						mapBoundsInterval = setInterval(function () {
+							
+							// Get the group of markers, destination and current location, and zoom window to fit
+							var group = new L.featureGroup([mapMarkers["job_location"], mapMarkers["current_location"]]);
+							map.fitBounds(group.getBounds().pad(0.1));
+
+						}, 30000)
+
+					}
+
+				},
+				function (error) {
+					$('#map-messages').append('<p>' + error.code + ': ' + error.message + '</p>');
+					console.log(error);
+				},
+				{
+					enableHighAccuracy: true,
+					timeout: 15000,
+					maximumAge: 0
+				}
+			);
+		}
+
+	}
+
+	function addLhqMarker(lat, lon)
+	{
+
+		// Create the custom marker
+		var currentLocationMarker = new L.HtmlIcon({
+			html: '<div><i class="fa fa-life-ring fa-2x lhq-map-location"></i></div>',
+			iconSize: [20, 20], // size of the icon
+			iconAnchor: [-10, -10], // point of the icon which will correspond to marker's location
+		});
+
+		// Add the marker to the map
+		mapMarkers["lhq_location"] = L.marker([lat, lon], { icon: currentLocationMarker }).addTo(map);
+
+		// Add the route from LHQ to the map
+		addPathFromPoint(lat, lon, true, '#FF862F');
+
+	}
+
+	function addPathFromPoint(lat, lon, isDistanceFromLhq, pathColour)
+	{
+
+
+		var start_loc = lat + ',' + lon;
+		var end_loc = mapMarkers["job_location"].getLatLng().lat + ',' + mapMarkers["job_location"].getLatLng().lng;
+
+		// Get the directions to the location
+		$.ajax({
+			url: responseHub.apiPrefix + '/google-api/directions?start_loc=' + start_loc + '&end_loc=' + end_loc,
+			dataType: 'json',
+			success: function (data) {
+
+				if (data != null) {
+					var latlngs = [];
+
+					// Loop through the results and create the LatLng objects to add to the poly line
+					for (var i = 0; i < data.Coordinates.length; i++) {
+						latlngs.push(new L.LatLng(data.Coordinates[i].Latitude, data.Coordinates[i].Longitude))
+					}
+
+					if (isDistanceFromLhq == true && $('.lhq-dist-set').length == 0) {
+						$('.dist-from-lhq p').empty();
+						$('.dist-from-lhq p').text((Math.round((data.TotalDistance / 1000) * 10) / 10) + ' km');
+					}
+
+					// Now that we have the lat lngs, add the path to the map
+					L.polyline(latlngs, { color: pathColour, weight: 6, opacity: 0.4, clickable: false }).addTo(map);
+
+					// Get the group of markers, destination and current location, and zoom window to fit
+					if (!responseHub.isMobile()) {
+						var group = new L.featureGroup([mapMarkers["job_location"], mapMarkers["lhq_location"]]);
+						map.fitBounds(group.getBounds().pad(0.1));
+					}
+				}
+
+			}
+		});
+	}
 
 	/**
 	 * Creates the markup for the info window to be displayed.
@@ -367,7 +554,7 @@ responseHub.maps = (function () {
 	function initMap() {
 
 		// Set the default images dir
-		L.Icon.Default.imagePath = '/assets/images/leaflet';
+		L.Icon.Default.imagePath = '/assets/images/leaflet/';
 
 		if (responseHub.isMobile()) {
 			$('#map-canvas').css('height', '450px');
@@ -391,7 +578,9 @@ responseHub.maps = (function () {
 		clearMarkers: clearMarkers,
 		getCurrentLocation: getCurrentLocation,
 		setMapCenter: setMapCenter,
-		mapExists: mapExists
+		mapExists: mapExists,
+		addCurrentLocationToMap: addCurrentLocationToMap,
+		addLhqMarker, addLhqMarker
 	}
 
 })();
@@ -461,7 +650,7 @@ $(document).ready(function () {
 
 });
 
-responseHub.jobLog = (function () {
+responseHub.jobMessages = (function () {
 
 	/**
 	 * Sets the job type of the job from the specifed jobType parameter.
@@ -478,7 +667,7 @@ responseHub.jobLog = (function () {
 		$('#job-title-banner h2').text(jobType + ' job');
 
 		$('#job-details-form').removeClass('hidden');
-		
+
 	}
 
 	/**
@@ -511,22 +700,22 @@ responseHub.jobLog = (function () {
 			dataType: 'json',
 			data: postData,
 			success: function (data) {
-		
+
 				if (data == null) {
 					$(".job-note-messages").append('<div class="alert alert-danger alert-dismissable" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>Sorry, there was an error adding your note. Please try again shortly.</p>');
 					return;
 				}
-		
+
 				var noteDate = moment(data.Date);
 
 				var noteMarkup = buildJobNoteMarkup(data.Id, data.Body, noteDate.format('YYYY-MM-DD HH:mm:ss'), data.IsWordBack, userDisplayName);
-		
+
 				$('#job-notes ul').prepend(noteMarkup);
 				$('#job-notes').removeClass('hidden');
-		
+
 			},
 			error: function (jqXHR, textStatus, errorThrown) {
-				
+
 				// Show the error message
 				$(".job-note-messages").append('<div class="alert alert-danger alert-dismissable" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>Sorry, there was an error adding your note. Please try again shortly.</p>');
 
@@ -567,29 +756,31 @@ responseHub.jobLog = (function () {
 	/**
 	 * Sets the job status when the button is clicked.
 	 */
-	function setJobStatusTime(statusType, sender) {
+	function setJobStatusTime(statusType, progressDateTime, sender) {
 
 		var intStatusType;
 
 		switch (statusType) {
 
-			case "on-route":
+			case "on_route":
 				intStatusType = 1;
 				break;
 
-			case "on-scene":
+			case "on_scene":
 				intStatusType = 2;
 				break;
 
-			case "job-clear":
+			case "job_clear":
 				intStatusType = 3;
 				break;
 
 		}
 
 		// Set the spinner
-		$(sender).find('i').removeClass('fa-check-square-o').addClass('fa-refresh fa-spin');
-		$(sender).attr('disabled', 'disabled');
+		if (sender != null) {
+			$(sender).find('i').removeClass('fa-check-square-o').addClass('fa-refresh fa-spin');
+			$(sender).attr('disabled', 'disabled');
+		}
 
 		var jobId = $('#Id').val();
 
@@ -598,51 +789,74 @@ responseHub.jobLog = (function () {
 			url: responseHub.apiPrefix + '/job-messages/' + jobId + '/progress',
 			type: 'POST',
 			dataType: 'json',
-			data: { '': intStatusType },
+			data: { ProgressType: intStatusType, ProgressDateTime: progressDateTime, Version: parseInt($('#Version').val()) },
 			success: function (data) {
-		
+
 				// If there is a failed result, display that
 				if (data.Success == true) {
-		
+
 					var progressDate = moment(data.Timestamp).local();
-		
+
 					switch (statusType) {
-		
-						case "on-route":
+
+						case "on_route":
 							addProgressMarkup($('.progress-on-route'), "On route", progressDate, data.UserFullName);
 							break;
-		
-						case "on-scene":
+
+						case "on_scene":
 							addProgressMarkup($('.progress-on-scene'), "On scene", progressDate, data.UserFullName);
 							break;
-		
-						case "job-clear":
+
+						case "job_clear":
 							addProgressMarkup($('.progress-job-clear'), "Job clear", progressDate, data.UserFullName);
 							break;
-		
+
 					}
 
-					$(sender).remove();
-		
+					// Update the version
+					$('#Version').val(data.NewVersion);
+
+					if (sender != null) {
+						$(sender).remove();
+					}
+					else {
+						// Sender is null, so sender is actually the edit form, so we want to close the form
+						closeEditProgressForm();
+					}
+
 				} else {
 
 					// Reset the button
-					$(sender).find('i').addClass('fa-check-square-o').removeClass('fa-refresh fa-spin');
-					$(sender).removeAttr('disabled');
+					if (sender != null) {
+						$(sender).find('i').addClass('fa-check-square-o').removeClass('fa-refresh fa-spin');
+						$(sender).removeAttr('disabled');
+					}
+					else 
+					{
+						// Sender is null, so sender is actually the edit form, so we want to close the form
+						closeEditProgressForm();
+					}
 
 					// Clear any existing alerts
 					$(".progess-messages .alert").remove();
-		
+
 					// Display the error message
 					$(".progess-messages").append('<div class="alert alert-warning alert-dismissable" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>' + data.ErrorMessage + '</p>');
-		
+
 				}
-		
+
 			},
 			error: function (jqXHR, textStatus, errorThrown) {
 				// Reset the button
-				$(sender).find('i').addClass('fa-check-square-o').removeClass('fa-refresh fa-spin');
-				$(sender).removeAttr('disabled');
+
+				if (sender != null) {
+					$(sender).find('i').addClass('fa-check-square-o').removeClass('fa-refresh fa-spin');
+					$(sender).removeAttr('disabled');
+				}
+				else {
+					// Sender is null, so sender is actually the edit form, so we want to close the form
+					closeEditProgressForm();
+				}
 
 				// Clear any existing alerts
 				$(".progess-messages .alert").remove();
@@ -659,25 +873,436 @@ responseHub.jobLog = (function () {
 	 */
 	function addProgressMarkup(elem, progressType, date, userFullName) {
 
+		// empty the current markup to prevent duplicate markup entries
+		$(elem).empty();
+
 		$(elem).append("<h4>" + progressType + "</h4>");
 		$(elem).append('<span class="btn-icon"><i class="fa fa-fw fa-clock-o"></i>' + date.format('YYYY-MM-DD HH:mm:ss') + '</span><br />');
 		$(elem).append('<span class="text-muted btn-icon"><i class="fa fa-fw fa-user"></i>' + userFullName + '</span>');
+		$(elem).append('<div><a class="btn btn-link btn-icon action-edit"><i class="fa fa-fw fa-pencil-square-o"></i>Edit</a><a class="btn btn-link btn-icon action-undo"><i class="fa fa-fw fa-undo"></i>Undo</a></div>');
+
+		// Rebind the edit and undo options
+		bindJobProgressEditUndo();
 
 	}
 
+	/**
+	 * Sends the updated progress type to the server.
+	 */
+	function submitEditProgressTime()
+	{
+
+		// Get the specified time
+		var dateVal = $('#EditProgressDate').val() + " " + $('#EditProgressTime').val();
+
+		// Get the progress type
+		var progressType = $('#ProgressType').val();
+
+		// Set the button sending status
+		$('#edit-progress-update button').addClass('disabled');
+		$('#edit-progress-update button').attr('disabled', 'disabled');
+		$('#edit-progress-update button i').removeClass('fa-check').addClass('fa-spinner fa-spin');
+
+
+		// Submit the details of the update
+		setJobStatusTime(progressType, dateVal, null);
+
+
+	}
+
+	function closeEditProgressForm()
+	{
+		$('#edit-progress-update').addClass('hidden');
+		$('#edit-progress-update button').removeClass('disabled');
+		$('#edit-progress-update button').removeAttr('disabled');
+		$('#edit-progress-update button i').removeClass('fa-spinner').removeClass('fa-spin').addClass('fa-check');
+	}
+
+	/**
+	 * Gets the next set of pager messages to display.
+	 */
+	function getNextJobMessages(messageType) {
+
+		// Get the skip count
+		var skipCount = $(".job-list li").length;
+
+		$('#jobs-load-more .loading').removeClass('hidden');
+		$('#jobs-load-more button').addClass('hidden');
+
+		// Create the ajax request
+		$.ajax({
+			url: responseHub.apiPrefix + '/job-messages/?skip=' + skipCount + '&msg_type=' + messageType,
+			dataType: 'json',
+			success: function (data) {
+
+				for (var i = 0; i < data.length; i++) {
+
+					addMessageToList(data[i], true);
+
+				}
+
+				// If there is zero results, hide the show more button
+				if (data.length == 0) {
+					$("#jobs-load-more").remove();
+				} else {
+					$('#jobs-load-more .loading').addClass('hidden');
+					$('#jobs-load-more button').removeClass('hidden');
+				}
+
+			}
+		});
+
+	}
+
+	/**
+	 * Adds the job message to the list of existing job messages.
+	 * @param {any} pagerMessage
+	 * @param {any} append
+	 */
+	function addMessageToList(jobMessage, append) {
+
+		var listItem = $('<li data-message-id="' + jobMessage.Id + '"></li>');
+
+		// Get the job date
+		var jobDate = moment(jobMessage.Timestamp);
+		var localDateString = jobDate.local().format('DD/MM/YYYY HH:mm:ss');
+
+		// Create the header
+		var header = $('<h3></h3>');
+
+		// Set the priority
+		// Add the priority icon
+		switch (jobMessage.Priority) {
+			case 1:
+				header.append('<i class="fa fa-fw fa-exclamation-triangle p-message-emergency"></i>');
+				break;
+
+			case 2:
+				header.append('<i class="fa fa-fw fa-exclamation-circle p-message-non-emergency"></i>');
+				break;
+
+			default:
+				header.append('<i class="fa fa-fw fa-info-circle p-message-admin"></i>');
+				break;
+		}
+
+		// If there is job number, then show it here
+		if (jobMessage.JobNumber != "") {
+			header.append('<a href="/jobs/' + jobMessage.Id + '">' + jobMessage.JobNumber + '</a><span class="text-muted message-date btn-icon">' + localDateString + ' </span>');
+		}
+		else {
+			header.append('<a href="/jobs/' + jobMessage.Id + '">' + localDateString + '</a>');
+		}
+
+		// Add the header
+		listItem.append(header);
+
+		// Add the job meta data
+		var metaContainer = $('<p class="job-message-meta text-muted"></p>');
+		var statusSpan = $('<span class="job-status"></span>');
+
+		// Set the job status
+		if (jobMessage.Cancelled != null)
+		{
+			statusSpan.append('<i class="fa fa-ban"></i>');
+		}
+		else if (jobMessage.JobClear != null)
+		{
+			statusSpan.append('<i class="fa fa-check-circle-o"></i>');
+		}
+		else if (jobMessage.OnScene != null)
+		{
+			statusSpan.append('<i class="fa fa-hourglass-half"></i>');
+		}
+		else if (jobMessage.OnRoute != null)
+		{
+			statusSpan.append('<i class="fa fa-arrow-circle-o-right"></i>');
+		}
+		else
+		{
+			statusSpan.append('<i class="fa fa-asterisk"></i>');
+		}
+
+		// Add the job status span to the metadata container
+		metaContainer.append(statusSpan);
+
+		// Add the unit capcode name
+		metaContainer.append('<span class="capcode-unit-name">' + jobMessage.CapcodeUnitName + '</span>');
+
+		// Append the job message meta
+		listItem.append(metaContainer);
+
+		// Append the pager message content
+		listItem.append($('<p>' + jobMessage.MessageBody + '</p>'));
+
+		// Append the list item to list of jobs
+		if (append) {
+			$(".job-list").append(listItem);
+		} else {
+			$(".job-list").prepend(listItem);
+		}
+
+	}
+
+	/**
+	 * Gets the distance between two jobs, and displays to the user.
+	 */
+	function getDistanceBetweenJobs()
+	{
+
+		// Ensure the form is valid
+		if (!$('#dist-between-jobs form').valid())
+		{
+			return;
+		}
+		
+		// Disable the button to start with
+		$('#dist-between-jobs button').attr('disabled', 'disabled');
+		$('#dist-between-jobs button').addClass('disabled');
+		$('#dist-between-jobs button i').removeClass('fa-search').addClass('fa-spin fa-spinner');
+
+		// Get the current job id and referenced job number
+		var currentJobId = $('#Id').val();
+		var referencedJobNumber = $('#DistanceFromJobNumber').val();
+
+		// Clear any previous results
+		$('#dist-results').empty();
+
+
+		$.ajax({
+			url: responseHub.apiPrefix + '/job-messages/' + currentJobId + '/distance-from-job/' + referencedJobNumber,
+			dataType: 'json',
+			success: function (data) {
+
+				if (data != null)
+				{
+
+					// Is not successull, then display error message
+					if (!data.Success)
+					{
+						$('#dist-results').append('<div class="alert alert-danger alert-dismissible" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>' + data.Error + '</div>');
+					}
+					else
+					{
+						$('#dist-results').append('<h3>Distance results:</h4>');
+						$('#dist-results').append('<p>Distance to job <strong><a href="/jobs/' + data.ReferencedJobId + '">' + data.ReferencedJobNumber + '</a></strong>: ' + (Math.round((data.Distance / 1000) * 10) / 10) + ' km');
+					}
+
+				}
+
+			}, 
+			error: function (jqXHR, textStatus, errorThrown) {
+				$('#dist-results').append('<div class="alert alert-danger alert-dismissible" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>There was an error determining the distance between jobs.</div>');
+			},
+			complete: function () {
+				// Re-enable the button to start with
+				$('#dist-between-jobs button').removeAttr('disabled');
+				$('#dist-between-jobs button').removeClass('disabled');
+				$('#dist-between-jobs button i').removeClass('fa-spin fa-spinner').addClass('fa-search');
+			}
+		});
+
+	}
+
+	/**
+	 * Binds the job progress actions
+	 */
+	function bindJobProgressEditUndo()
+	{
+
+		// Unbind all click events
+		$('.progress-action .action-edit').off('click');
+		$('.progress-action .action-undo').off('click');
+
+		// Set the click event handler for the progress action
+		$('.progress-action .action-edit').click(function () {
+			
+			// From the undo link, get the progress action container
+			var progressAction = $(this).closest('.progress-action');
+
+			// Get the progress type from the data attribute
+			var progressType = progressAction.data('progress-type');
+
+			// Set the progress type hidden value and the h3 title
+			$('#ProgressType').val(progressType);
+
+			headerText = "Update progress";
+			if (progressType == "on_route")
+			{
+				headerText = "Update on route time";
+			}
+			else if (progressType == "on_scene")
+			{
+				headerText = "Update on scene time";
+			}
+			else if (progressType == "job_clear")
+			{
+				headerText = "Update job clear time";
+			}
+
+			// Show the update form.
+			var currentDate = moment().local();
+			$('#EditProgressDate').val(currentDate.format('YYYY-MM-DD'));
+			$('#EditProgressTime').val(currentDate.format('HH:mm:ss'));
+			$('#edit-progress-update h4').text(headerText);
+			$('#edit-progress-update').removeClass('hidden');
+
+			// If we are on mobile, then scroll to the form
+			if (responseHub.isMobile()) {
+				$(window).scrollTop($("#edit-progress-update").offset().top - 50);
+			}
+
+		});
+
+		// Bind the 'undo' event
+		$('.progress-action .action-undo').click(function () {
+
+			var intStatusType;
+			
+			// From the undo link, get the progress action container
+			var progressAction = $(this).closest('.progress-action');
+
+			// Get the progress type from the data attribute
+			var progressType = progressAction.data('progress-type');
+
+			switch (progressType) {
+
+				case "on_route":
+					intStatusType = 1;
+					break;
+
+				case "on_scene":
+					intStatusType = 2;
+					break;
+
+				case "job_clear":
+					intStatusType = 3;
+					break;
+
+			}
+
+			// Get the job id
+			var jobId = $('#Id').val();
+
+			// Get the element from the curret click event
+			var elem = $(this);
+
+			// Disable and set spinner
+			$(elem).attr('disabled', 'disabled');
+			$(elem).addClass('disabled');
+			$(elem).find('i').removeClass('fa-undo').addClass('fa-spinner fa-spin');
+
+			// Close the edit form just in case it's for the same type
+			closeEditProgressForm();
+
+			// Create the ajax request
+			$.ajax({
+				url: responseHub.apiPrefix + '/job-messages/' + jobId + '/progress/delete',
+				type: 'POST',
+				dataType: 'json',
+				data: { ProgressType: intStatusType, Version: parseInt($('#Version').val()) },
+				success: function (data) {
+
+					// If there is a failed result, display that
+					if (data.Success == true) {
+
+						// Remove the progress details
+						progressAction.find('.progress-time').empty();
+
+						// Get the button label
+						var buttonLabel = '';
+						var buttonClass = '';
+						if (progressType == "on_route") {
+							buttonLabel = 'On route';
+							buttonClass = 'btn-on-route';
+						}
+						else if (progressType == "on_scene") {
+							buttonLabel = 'On scene';
+							buttonClass = 'btn-on-scene';
+						}
+						else if (progressType == "job_clear") {
+							buttonLabel = 'Job clear';
+							buttonClass = 'btn-job-clear';
+						}
+
+						// Add the progress button back in
+						progressAction.append('<button class="btn btn-primary btn-icon btn-block btn-lg ' + buttonClass + '"><i class="fa fa-fw fa-check-square-o"></i> ' + buttonLabel + '</button>');
+
+						// Rebind the progress actions
+						bindJobProgressActions();
+
+						// Update the version
+						$('#Version').val(data.NewVersion);
+
+					}
+					else
+					{
+
+						// Reset the button
+						$(elem).removeAttr('disabled');
+						$(elem).removeClass('disabled');
+						$(elem).find('i').removeClass('fa-spinner fa-spin').addClass('fa-undo');
+
+						// Clear any existing alerts
+						$(".progess-messages .alert").remove();
+
+						// Display the error message
+						$(".progess-messages").append('<div class="alert alert-warning alert-dismissable" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>' + data.ErrorMessage + '</p>');
+
+					}
+
+				}, 
+				error: function (jqXHR, textStatus, errorThrown)
+				{
+					// Re-enable spinner
+					$(progressAction).find('.action-undo').removeAttr('disabled');
+					$(progressAction).find('.action-undo').removeClass('disabled');
+					$(progressAction).find('.action-undo i').removeClass('fa-spinner').removeClass('fa-spin').addClass('fa-undo');
+					
+					// Clear any existing alerts
+					$(".progess-messages .alert").remove();
+
+					// Display the error message
+					$(".progess-messages").append('<div class="alert alert-warning alert-dismissable" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>Sorry, there was an error clearing job progress.</p>');
+
+				}
+			});
+
+		});
+
+	}
+
+	/**
+	 * Bind the job progress button events.
+	 */
+	function bindJobProgressActions()
+	{
+
+		$(".btn-on-route").off('click');
+		$(".btn-on-route").click(function () {
+			setJobStatusTime('on_route', "", this);
+		});
+
+		$(".btn-on-scene").off('click');
+		$(".btn-on-scene").click(function () {
+			setJobStatusTime('on_scene', "", this);
+		});
+
+		$(".btn-job-clear").off('click');
+		$(".btn-job-clear").click(function () {
+			setJobStatusTime('job_clear', "", this);
+		});
+
+	}
+
+	/**
+	 * Binds the UI controls
+	 */
 	function bindUI() {
 
-		$(".btn-on-route").click(function () {
-			setJobStatusTime('on-route', this);
-		});
-
-		$(".btn-on-scene").click(function () {
-			setJobStatusTime('on-scene', this);
-		});
-
-		$(".btn-job-clear").click(function () {
-			setJobStatusTime('job-clear', this);
-		});
+		// Bind the progress update actions
+		bindJobProgressActions();
+		bindJobProgressEditUndo();
 
 		$('#btnAddNote').click(function () {
 			addJobNote();
@@ -693,10 +1318,37 @@ responseHub.jobLog = (function () {
 
 		});
 
+		$('#confirm-delete.delete-attachment').on('show.bs.modal', function (e) {
+
+			// Generate the confirm message
+			var message = $(this).find('.modal-body p').text();
+			message = message.replace('#FILE#', $(e.relatedTarget).data('filename'));
+
+			// Set the confirm message
+			$(this).find('.modal-body p').text(message);
+
+		});
+
+		// If we are on the job list page, then load the next jobs
+		if ($('#jobs-list-container').length > 0)
+		{
+			getNextJobMessages('job');
+		}
+		else if ($('#message-list-container').length > 0) {
+			// If we are on the job list page, then load the next jobs
+			getNextJobMessages('message');
+		}
 	}
 
 	// Bind the UI
 	bindUI();
+
+	return {
+		getNextJobMessages: getNextJobMessages,
+		submitEditProgressTime: submitEditProgressTime,
+		closeEditProgressForm: closeEditProgressForm,
+		getDistanceBetweenJobs: getDistanceBetweenJobs
+	};
 
 })();
 
@@ -944,9 +1596,15 @@ responseHub.wallboard = (function () {
 
 		// Set the map reference
 		var mapRef = $(elem).data('map-ref');
+		var address = $(elem).data('address');
 
 		if (mapRef != "") {
-			$('.wallboard-main .map-reference').text(mapRef);
+			if (address != "" && address != "undefined") {
+				$('.wallboard-main .map-reference').text(address);
+				$('.wallboard-main .map-reference').append('<span class="small show">' + mapRef + '</span>');
+			} else {
+				$('.wallboard-main .map-reference').text(mapRef);
+			}
 			$('.wallboard-main .job-location').removeClass('hidden');
 		} else {
 			$('.wallboard-main .job-location').addClass('hidden');
@@ -1004,6 +1662,7 @@ responseHub.wallboard = (function () {
 
 		// Clear the loading notes
 		$("ul.job-notes").empty();
+		$('.no-notes-msg').remove();
 
 		// Hide the loading
 		$(".notes-loading").addClass("hidden");
@@ -1015,7 +1674,7 @@ responseHub.wallboard = (function () {
 				
 				if (data == null || data.length == 0) {
 
-					$("ul.job-notes").append('<li class="no-notes-msg"><p>No notes available.</p></li>');
+					$(".job-notes-container").append('<p class="no-notes-msg">No notes available.</p>');
 
 				} else {
 
@@ -1066,8 +1725,8 @@ responseHub.wallboard = (function () {
 		var messageHeader = $('<div class="row"></div></div>')
 
 		// Build the h2 elements
-		var h2 = $('<div class="col-sm-5"><h2><i id="message-type"></i><span class="job-number"></span></h2></div>');
-		var h2Date = $('<div class="col-sm-7"><p class="text-right job-date"></p><p class="job-status text-right"></p></div>');
+		var h2 = $('<div class="col-sm-5"><h2><i id="message-type"></i><span class="job-number"></span></h2><p class="job-status"></p></div>');
+		var h2Date = $('<div class="col-sm-7"><p class="text-right job-date"></p></div>');
 
 		messageHeader.append(h2);
 		messageHeader.append(h2Date);
@@ -1214,11 +1873,20 @@ responseHub.wallboard = (function () {
 		var localDateString = jobDate.format('DD-MM-YYYY HH:mm:ss');
 
 		var mapReference = "";
+		var address = "";
 		var lat = 0;
 		var lon = 0;
 
 		if (jobMessage.Location != null)
 		{
+
+			// If there is an address, then set that.
+			if (jobMessage.Location.Address != null && jobMessage.Location.Address.FormattedAddress != "" && jobMessage.Location.Address.FormattedAddress != "undefined")
+			{
+				address = jobMessage.Location.Address.FormattedAddress;
+			}
+
+			// Set the map reference
 			mapReference = jobMessage.Location.MapReference;
 
 			if (jobMessage.Location.Coordinates != null)
@@ -1246,11 +1914,8 @@ responseHub.wallboard = (function () {
 
 		// Creat the list item
 		var listItem = $('<li class="' + (selectedJobIndex == index ? "selected" : "") + '" data-message="' + jobMessage.MessageBody + '" data-job-number="' + jobMessage.JobNumber +
-			'" data-date="' + localDateString + '" data-priority="' + jobMessage.Priority + '" data-map-ref="' + mapReference + '" data-lat="' + lat + '" data-lon="' + lon +
+			'" data-date="' + localDateString + '" data-priority="' + jobMessage.Priority + '" data-map-ref="' + mapReference + '" data-address="' + address + '" data-lat="' + lat + '" data-lon="' + lon +
 			'" data-id="' + jobMessage.Id + '" data-progress="' + latestProgress + '" data-has-notes="' + (hasNotes ? 'true' : 'false') + '">');
-
-		// Add the job name and date
-		listItem.append('<div class="message-meta"><h4 class="group-heading">' + jobMessage.CapcodeGroupName + '</h4><p class="text-info message-date">' + localDateString + '</p></div>');
 
 		// Build the h3 tag
 		var h3 = $('<h3></h3>');
@@ -1283,7 +1948,7 @@ responseHub.wallboard = (function () {
 		} else if (jobMessage.OnRoute != null) {
 			h3.append('<span class="job-status on-route"><i class="fa fa-arrow-circle-o-right"></i></span>');
 		} else {
-			h3.append('<span class="job-status"><i class="fa fa-dot-circle-o"></i></span>');
+			h3.append('<span class="job-status"><i class="fa fa-asterisk"></i></span>');
 		}
 
 		// Add the comments indication
@@ -1296,6 +1961,11 @@ responseHub.wallboard = (function () {
 		// Create the message element
 		var messageElem = $('<div class="message"></div>');
 		messageElem.append(h3);
+
+		// Add the job date
+		messageElem.append('<div class="message-meta"><p class="text-info message-date">' + localDateString + '</p></div>');
+
+		// Add the message body
 		messageElem.append('<small class="text-muted">' + jobMessage.MessageBodyTruncated + '</small>');
 		
 		listItem.append(messageElem);
@@ -1338,13 +2008,25 @@ responseHub.wallboard = (function () {
 
 })();
 
-responseHub.groups = (function () {
+responseHub.units = (function () {
 
 	function bindUI() {
 		// Bind the use current location
 		$('#btn-current-location').on('click', function () {
 			responseHub.maps.getCurrentLocation('#Latitude', '#Longitude');
 		});
+
+		$('#confirm-delete.delete-user').on('show.bs.modal', function (e) {
+			
+			// Generate the confirm message
+			var message = $(this).find('.modal-body p').text();
+			message = message.replace('#USER#', $(e.relatedTarget).data('user-name'));
+
+			// Set the confirm message
+			$(this).find('.modal-body p').text(message);
+
+		});
+
 	}
 
 	// Bind the ui
@@ -1489,10 +2171,9 @@ responseHub.capcodes = (function () {
 
 		// Set the autocomplete functionality for capcodes.
 		$("input[data-capcode-autocomplete='true']").typeahead({
-			source: groupCapcodes,
+			source: unitCapcodes,
 			onSelect: function (item) {
 				$("input[data-capcode-autocomplete='true']").val(item.value);
-				console.log();
 			}
 		});
 	}
@@ -1554,7 +2235,7 @@ responseHub.capcodes = (function () {
 responseHub.resources = (function () {
 
 	/** 
-	 * Adds a resource to the system for the specified group. 
+	 * Adds a resource to the system for the specified unit. 
 	 */
 	function addResource() {
 
@@ -1564,7 +2245,7 @@ responseHub.resources = (function () {
 		buttonCtl.find('i').removeClass('fa-plus').addClass('fa-refresh fa-spin');
 		buttonCtl.attr('disabled', 'disabled');
 
-		// Get the group id
+		// Get the unit id
 		var eventId = $("#EventId").val();
 
 		// Create the post data object
@@ -1710,7 +2391,7 @@ responseHub.search = (function () {
 		// Create the message meta
 		var messageMeta = $('<p class="job-message-meta text-muted"></p>');
 		messageMeta.append(getProgessMarkup(result));
-		messageMeta.append($('<span class="capcode-group-name">' + result.CapcodeGroupName + '</span>'));
+		messageMeta.append($('<span class="capcode-unit-name">' + result.CapcodeUnitName + '</span>'));
 		li.append(messageMeta);
 
 		// Add the message text
@@ -1787,7 +2468,7 @@ responseHub.search = (function () {
 		}
 		else
 		{
-			return $('<i class="fa fa-dot-circle-o"></i>');
+			return $('<i class="fa fa-asterisk"></i>');
 		}
 
 	}
@@ -1909,7 +2590,8 @@ responseHub.attachments = (function () {
 
 		// add the link span
 		listItem.append('<span class="btn-icon"><i class="fa fa-fw fa-download"></i><a href="/media/attachment/' + response.id + '">' + file.name + '</a></span>');
-		listItem.append('<span class="attachment-meta"> ' + date + ' <em>(' + file.type + '</em> ' + getFileSizeDisplay(file.size) + ')</span>');
+		listItem.append('<span class="attachment-meta text-muted"> ' + date + ' <em>(' + file.type + '</em> ' + getFileSizeDisplay(file.size) + ')</span>');
+		listItem.append('<span class="pull-right remove-attachment"><a data-href="/jobs/' + response.jobId + '/remove-attachment/' + response.id + '" title="Remove attachment ' + response.filename + '" data-filename="' + response.filename +'" data-toggle="modal" data-target="#confirm-delete"><i class="fa fa-fw fa-times"></i></a></span>');
 
 		$('.attachment-list').prepend(listItem);
 
@@ -1923,10 +2605,10 @@ responseHub.attachments = (function () {
 	{
 
 		// Create the image item
-		var imgDiv = $('<div class="col-sm-4 col-md-3 col-lg-2"><a href="/media/attachment/' + response.id + '" title="' + file.name + '" data-gallery=""><img src="/media/attachment-thumb/' + response.id + '"></a></div>');
+		var imgDiv = $('<div class="image-item"><a href="/media/attachment-resized/' + response.id + '?w=1024&h=768" title="' + file.name + '" data-gallery=""><img src="/media/attachment-resized/' + response.id + '?w=167&h=125"></a></div>');
 
 		// prepend to the links list to be included in the gallery
-		$('#links').prepend(imgDiv);
+		$('#attachment-gallery').prepend(imgDiv);
 
 	}
 
@@ -1966,7 +2648,7 @@ responseHub.attachments = (function () {
 		var attachments = $('<div id="attachment-preload"></div>');
 
 		// Loop through each image attachment
-		$('#links a').each(function () {
+		$('#attachment-gallery a').each(function () {
 
 			// Get the url to the img
 			var imgUrl = $(this).attr('href');
@@ -2066,7 +2748,7 @@ responseHub.wallboard = (function () {
 
 		setTimeout(function () {
 			$('.radar-image.radar-loop').css('display', 'block');
-			$('p.radar-loading').remove();
+			$('.radar-loading').remove();
 		}, 2000);
 
 	}
@@ -2077,6 +2759,348 @@ responseHub.wallboard = (function () {
 	// return object
 	return {
 		showHideWarnings: showHideWarnings
+	}
+
+})();
+
+responseHub.signIn = (function () {
+
+	// Sets the job number and the job id when selected.
+	function setOperationJobNumber(jobNumber, jobId) {
+
+		// Set the jbo number and id in the hidden field
+		$('#OperationDescription').val(jobNumber);
+		$('#OperationJobId').val(jobId);
+	}
+
+	// Shows the elements for operation details
+	function showOperationDetails() {
+		$('#operation-task').removeClass('hidden');
+	}
+
+	// Hides the elements for operation details
+	function hideOperationDetails() {
+		$('#operation-task').addClass('hidden');
+	}
+
+	// Shows the sign out form for the specific sign in entry
+	function showSignOutForm(elem) {
+
+		$(elem).addClass('hidden');
+		$(elem).closest('.sign-out-row').find('form').removeClass('hidden');
+
+	}
+
+	function hideSignOutForm(elem)
+	{
+		$(elem).closest('.sign-out-row').find('form').addClass('hidden');
+		$('.show-sign-out-form').removeClass('hidden');
+	}
+
+	return {
+		setOperationJobNumber: setOperationJobNumber,
+		showOperationDetails: showOperationDetails,
+		hideOperationDetails: hideOperationDetails,
+		showSignOutForm: showSignOutForm,
+		hideSignOutForm: hideSignOutForm
+	}
+
+})();
+
+responseHub.reports = (function () {
+
+
+	function displayTrainingReportGraph() {
+
+		var jsonData = $('#training-overview-chart-data').val().replace(/&quot;/g, '"');
+		var chartData = JSON.parse(jsonData);
+		console.log(jsonData);
+
+		new Chartist.Bar('#training-overview-chart', chartData, {
+			distributeSeries: true,
+			showGridBackground: true,
+			axisY: {
+				onlyInteger: true
+			},
+			axisX: {
+				scaleMinSpace: 5
+			}
+		});
+
+	}
+
+	function bindUI() {
+
+		if ($('#training-report').length > 0) {
+			displayTrainingReportGraph();
+		}
+	}
+
+	bindUI();
+
+})();
+
+responseHub.training = (function () {
+
+	function bindUserSelectList() {
+
+		$('#AvailableMembers').on('change', function () {
+
+			// Find the user
+			var userId = $(this).val();
+
+			// Add the user to the list
+			addUserToList(userId, 'AvailableMembers', 'SelectedMembers', 'training-members-table');
+			
+		});
+
+		$('#AvailableTrainers').on('change', function () {
+
+			// Find the user
+			var userId = $(this).val();
+
+			// Add the user to the list
+			addUserToList(userId, 'AvailableTrainers', 'SelectedTrainers', 'training-trainers-table');
+
+		});
+
+	}
+
+	// Adds the user to the specified list, as either a trainer or a member.
+	function addUserToList(userId, listId, selectedId, tableId) {
+
+
+		user = findUser(userId);
+
+		// If the user id already exists in the selected users element, just return
+		if ($('#' + selectedId).val().indexOf(userId) != -1) {
+			$('#' + listId).selectpicker('val', '');
+			return;
+		}
+
+		// If the first table row in the body is nothing selecting, then remove it
+		if ($('#' + tableId + ' td.none-selected').length > 0) {
+			$('#' + tableId + ' tbody tr').remove();
+		}
+
+		// Build the markup 
+		var row = $('<tr data-user-id="' + user.id + '"></tr>');
+		row.append('<td>' + user.name + '</td>');
+		row.append('<td>' + user.memberNumber + '</td>');
+		row.append('<td><a href="#" onclick="responseHub.training.removeTrainingMember(this); return false;" title="Remove member"><i class="fa fa-fw fa-times"></i></td>');
+		$('#' + tableId + ' tbody').append(row);
+
+		// Add the user id to the selected users
+		$('#' + selectedId).val($('#' + selectedId).val() + user.id + '|');
+
+		// Deselect the previous option
+		$('#' + listId).selectpicker('val', '');
+	}
+
+	// Find the user object in the list of users.
+	function findUser(userId) {
+
+		// Create the user object
+		var user = null;
+
+		// Loop through the users to find the selected one.
+		for (var i = 0; i < users.length; i++) {
+			if (users[i].id == userId) {
+				user = users[i];
+				break;
+			}
+		}
+
+		// return the user object
+		return user;
+	}
+
+	function removeTrainingMember(elem)
+	{
+		// Get the element to remove
+		var link = $(elem);
+
+		// get the hidden id
+		var hiddenId = link.closest('table').data('selected-list');
+		var tableId = link.closest('table').attr('id');
+
+		// Find the user id
+		var userId = link.closest("tr").data('user-id');
+
+		// Remove the user id from the hidden
+		$('#' + hiddenId).val($('#' + hiddenId).val().replace(userId, ""));
+
+		// If there is only | characters, set to empty to re-trip validation
+		if ($('#' + hiddenId).val().match(/^\|*$/))
+		{
+			$('#' + hiddenId).val('');
+		}
+
+		// Remove the row with the user details
+		link.closest("tr").remove();
+
+		// If there are no rows left, add the default message
+		if ($('#' + tableId + ' tbody tr').length == 0) {
+			var memberType = (tableId.indexOf('trainer') != -1 ? "trainers" : "members");
+			$('#' + tableId + ' tbody ').append('<tr><td colspan="3" class="none-selected">No ' + memberType + ' have been added to the this training session yet.</td></tr>');
+		}
+
+	}
+
+	function displayTrainingYearGraph() {
+		var jsonData = $('#training-overview-chart-data').val().replace(/&quot;/g, '"');
+		var chartData = JSON.parse(jsonData);
+		console.log(jsonData);
+
+		new Chartist.Bar('#training-overview-chart', chartData, {
+			distributeSeries: true,
+			showGridBackground: true,
+			axisY: {
+				onlyInteger: true
+			},
+			axisX: {
+				scaleMinSpace: 5
+			}
+		});
+
+	}
+
+	/**
+	 * Sets the training type tag from clicking or tabbing the item in the auto-complete box
+	 */
+	function setTrainingTypeTag(name, id) {
+
+		// Get the current training type ids
+		trainingTypeIds = $('#TrainingTypes').val();
+
+		// First, check to ensure the training type doesn't already exist. If it does, then just exist.
+		if (trainingTypeIds.indexOf(id) >= 0) {
+			// Training type already selected
+			return;
+		}
+
+		// Add the training type tag
+		var trainingTypeTag = $('<span class="label label-primary" data-training-type-id="' + id + '">' + name + '<a><i class="fa fa-times"></i></a></span>');
+		trainingTypeTag.find('a').click(function () {
+
+			// Get the id of the training type
+			var trainingTypeId = $(this).parent().data('training-type-id');
+
+			// Remove the training type tag
+			removeTrainingTypeTag(trainingTypeId);
+
+		});
+
+		// Add the current id to the list of training type ids
+		trainingTypeIds += id + "|";
+
+		// If there is no name for the session, then add it here
+		if ($('#Name').val() == "")
+		{
+			$('#Name').val(name);
+		}
+
+		// Remove the hidden tag from the training type tag list and append the training type tag
+		$('#TrainingTypes').val(trainingTypeIds);
+		$('.training-types-list-tags').removeClass('hidden');
+		$('.training-types-list-tags').append(trainingTypeTag);
+
+	}
+
+	function removeTrainingTypeTag(id) {
+
+		// Get the current training type ids
+		trainingTypeIds = $('#TrainingTypes').val();
+		
+		// Remove the training type id
+		trainingTypeIds = trainingTypeIds.replace(id + "|", "");
+
+		// Update the training type ids
+		$('#TrainingTypes').val(trainingTypeIds);
+
+		// If there is no training types, then clear the name field
+		if (trainingTypeIds == "")
+		{
+			$('#Name').val('');
+		}
+
+		// Remove the tag from the list
+		$('.training-types-list-tags').find("[data-training-type-id='" + id + "']").remove();
+
+		if ($('.training-types-list-tags').children().length == 0) {
+			$('.training-types-list-tags').addClass('hidden');
+		}
+
+	}
+
+	function bindTrainingTypeAutocomplete() {
+
+		// Set the autocomplete functionality for training types.
+		$("input[data-training-type-autocomplete='true']").typeahead({
+			source: trainingTypes,
+			onSelect: function (item) {
+				$("input[data-training-type-autocomplete='true']").val(item.value);
+			}
+		});
+	}
+
+	function bindUI() {
+		
+		if ($('#add-training-session').length > 0) {
+			bindUserSelectList();
+		}
+
+		// If there is a graph to display the training for the year in, then show that graph
+		if ($('#training-overview-chart').length > 0)
+		{
+			displayTrainingYearGraph();
+		}
+
+
+
+		$(document).ready(function () {
+			$('#AvailableTrainingTypes').on('changed.bs.select', function (e) {
+
+				// Get the selected id
+				var selectedId = $('#AvailableTrainingTypes').selectpicker('val');
+
+				// If there is no selected id, just return
+				if (selectedId == "") {
+					return;
+				}
+
+				// Get the option that was selected
+				var selectedOpt = $("#AvailableTrainingTypes option[value='" + selectedId + "']");
+
+				// Add the tag to the list
+				if (selectedOpt.length > 0) {
+					setTrainingTypeTag(selectedOpt.data('name'), selectedId);
+				}
+
+			});
+		});
+
+		// Clicke event for training types rendered on the page
+		$('.training-types-list-tags span a').click(function () {
+
+			// Get the id of the training type
+			var trainingTypeId = $(this).parent().data('training-type-id');
+
+			// Remove the training type tag
+			removeTrainingTypeTag(trainingTypeId);
+
+		});
+
+		if ($("input[data-training-type-autocomplete='true']").length > 0) {
+			bindTrainingTypeAutocomplete();
+		}
+	}
+
+	bindUI();
+
+	return {
+		removeTrainingMember: removeTrainingMember,
+		setTrainingTypeTag: setTrainingTypeTag
 	}
 
 })();

@@ -4,6 +4,7 @@ using Enivate.ResponseHub.Model.Messages;
 using Enivate.ResponseHub.Model.Spatial;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
 
@@ -30,9 +31,9 @@ namespace Enivate.ResponseHub.UI.Models.Messages
 
 		public string Capcode { get; set; }
 
-		public string CapcodeGroupName { get; set; }
+		public string CapcodeUnitName { get; set; }
 
-		public Guid CapcodeGroupId { get; set; }
+		public Guid CapcodeUnitId { get; set; }
 
 		public MessagePriority Priority { get; set; }
 
@@ -52,12 +53,34 @@ namespace Enivate.ResponseHub.UI.Models.Messages
 
 		public IList<Attachment> ImageAttachments { get; set; }
 
+		public IList<JobMessageSignInEntry> SignIns { get; set; }
+
+		[Required(ErrorMessage = "Please ensure you have entered a date.")]
+		public string EditProgressDate { get; set; }
+
+		[Required(ErrorMessage = "Please ensure you have entered a time.")]
+		public string EditProgressTime { get; set; }
+
+		public Coordinates LhqCoordinates { get; set; }
+
+		public double? DistanceFromLhq { get; set; }
+
+		[Required(ErrorMessage = "You must enter a job number to get the distance from.")]
+		public string DistanceFromJobNumber { get; set; }
+
+		public int Version { get; set; }
+
 		public JobMessageViewModel()
 		{
 			Location = new LocationInfo();
 			Notes = new List<JobNoteViewModel>();
 			Attachments = new List<Attachment>();
 			ImageAttachments = new List<Attachment>();
+			SignIns = new List<JobMessageSignInEntry>();
+
+			// Set the default date and time values
+			EditProgressDate = DateTime.Now.ToString("yyyy-MM-dd");
+			EditProgressTime = DateTime.Now.ToString("HH:mm:ss");
 		}
 	}
 }

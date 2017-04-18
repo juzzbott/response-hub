@@ -358,12 +358,25 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 		/// <summary>
 		/// Gets the collection of users based on the user ids.
 		/// </summary>
-		/// <param name="userIds"></param>
-		/// <returns></returns>
-		public async Task<IList<IdentityUser>> GetUsersByIds(IEnumerable<Guid> userIds)
+		/// <param name="userIds">The collection of user ids to get the user objects for.</param>
+		/// <param name="sort">If true, the results will be sorted alphabetically by surname.</param>
+		/// <returns>The list of users found.</returns>
+		public async Task<IList<IdentityUser>> GetUsersByIds(IEnumerable<Guid> userIds, bool sort)
 		{
 			// Find the the list of user dtos based on the collection of User Ids.
-			IList<IdentityUserDto> userDtos = await Collection.Find(Builders<IdentityUserDto>.Filter.In(i => i.Id, userIds)).ToListAsync();
+			IFindFluent<IdentityUserDto, IdentityUserDto> find = Collection.Find(Builders<IdentityUserDto>.Filter.In(i => i.Id, userIds));
+
+			// build the sort definition
+			SortDefinition<IdentityUserDto> sortFilter = Builders<IdentityUserDto>.Sort.Ascending(i => i.Surname);
+
+			// if we need to sort, then add it to the find operation
+			if (sort)
+			{
+				find = find.Sort(sortFilter);
+			}
+
+			// Get the results
+			IList<IdentityUserDto> userDtos = await find.ToListAsync();
 
 			return userDtos.Select(i => MapToModel(i)).ToList();
 		}
@@ -391,7 +404,7 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 		public async Task ActivateAccount(Guid id)
 		{
 			// Update the activation token to null to indicate activated user.
-			await Collection.UpdateOneAsync(Builders<IdentityUserDto>.Filter.Eq(i => i.Id, id), Builders<IdentityUserDto>.Update.Set(i => i.ActivationCode, null));
+			await Collection.UpdateOneAsync(Builders<IdentityUserDto>.Filter.Eq(i => i.Id, id), Builders<IdentityUserDto>.Update.Set(i => i.ActivationCode, null).Set(i => i.Status, UserStatus.Active));
 		}
 
 		/// <summary>
@@ -408,16 +421,16 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 			// Order by first name
 			results.Items = results.Items.OrderBy(i => i.FirstName).ToList();
 
-			// Create the list of groups
+			// Create the list of units
 			List<IdentityUser> mappedUsers = new List<IdentityUser>();
 
-			// For each result, map to a Group model object.
+			// For each result, map to a unit model object.
 			foreach (IdentityUserDto result in results.Items)
 			{
 				mappedUsers.Add(MapToModel(result));
 			}
 
-			// return the mapped groups.
+			// return the mapped units.
 			return mappedUsers;
 		}
 
@@ -480,6 +493,29 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 		}
 
 		/// <summary>
+		/// Updates the first name and surname for the specified account. 
+		/// </summary>
+		/// <param name="userId">The id of the user to update the first name and surname for. </param>
+		/// <param name="firstName">The new first name. </param>
+		/// <param name="surname">The new surname.</param>
+		public async Task UpdateAccountDetails(Guid userId, string firstName, string surname, string emailAddress, UserProfile profile)
+		{
+			// Create the filter
+			FilterDefinition<IdentityUserDto> filter = Builders<IdentityUserDto>.Filter.Eq(i => i.Id, userId);
+
+			// Create the update
+			UpdateDefinition<IdentityUserDto> update = Builders<IdentityUserDto>.Update
+				.Set(i => i.FirstName, firstName)
+				.Set(i => i.Surname, surname)
+				.Set(i => i.UserName, emailAddress)
+				.Set(i => i.EmailAddress, emailAddress)
+				.Set(i => i.Profile, profile);
+			
+			// Update the database
+			await Collection.UpdateOneAsync(filter, update);
+		}
+
+		/// <summary>
 		/// Updates the username and email address properties for the specified user. 
 		/// </summary>
 		/// <param name="userId">The ID of the user to update the email address and username for.</param>
@@ -520,6 +556,24 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 
 		}
 
+		/// <summary>
+		/// Sets the activation code for the specific user.
+		/// </summary>
+		/// <param name="userId">The id of the user to set the activation code for.</param>
+		/// <param name="activationCode">The new activation code</param>
+		/// <returns></returns>
+		public async Task UpdateActivationCode(Guid userId, string activationCode)
+		{
+			// Create the filter to find the user to update
+			FilterDefinition<IdentityUserDto> filter = Builders<IdentityUserDto>.Filter.Eq(i => i.Id, userId);
+
+			// Create the update document
+			UpdateDefinition<IdentityUserDto> update = Builders<IdentityUserDto>.Update.Set(i => i.ActivationCode, activationCode);
+
+			// Perform the update
+			await Collection.UpdateOneAsync(filter, update);
+		}
+		
 		#endregion
 
 		#region Mappers
@@ -548,7 +602,9 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 				PasswordResetToken = dbObject.PasswordResetToken,
 				Surname = dbObject.Surname,
 				UserName = dbObject.UserName,
-				ActivationCode = dbObject.ActivationCode
+				ActivationCode = dbObject.ActivationCode,
+				Profile = dbObject.Profile,
+				Status = dbObject.Status
 			};
 
 			// Map the claims
@@ -584,7 +640,9 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 				PasswordResetToken = modelObj.PasswordResetToken,
 				Surname = modelObj.Surname,
 				UserName = modelObj.UserName,
-				ActivationCode = modelObj.ActivationCode
+				ActivationCode = modelObj.ActivationCode,
+				Profile = modelObj.Profile,
+				Status = modelObj.Status
 			};
 
 			// Map the claims

@@ -1,8 +1,8 @@
 ﻿<p class="explore">System Administration</p>
 
 <ul class="nav nav-sidebar">
-	<li class="@(ViewContext.RouteData.Values["Controller"].ToString() == "Groups" ? "active" : "")">
-		<a href="/admin/groups"><i class="fa fa-fw fa-users"></i>Groups</a>
+	<li class="@(ViewContext.RouteData.Values["Controller"].ToString() == "Units" ? "active" : "")">
+		<a href="/admin/units"><i class="fa fa-fw fa-users"></i>Units</a>
 	</li>
 	<li class="@(ViewContext.RouteData.Values["Controller"].ToString() == "Users" ? "active" : "")">
 		<a href="/admin/users"><i class="fa fa-fw fa-user"></i>Users</a>
@@ -12,6 +12,9 @@
 	</li>
 	<li class="@(ViewContext.RouteData.Values["Controller"].ToString() == "Reports" ? "active" : "")">
 		<a href="/admin/reports"><i class="fa fa-fw fa-bar-chart"></i>Reports</a>
+	</li>
+	<li class="@(ViewContext.RouteData.Values["Controller"].ToString() == "TrainingTypes" ? "active" : "")">
+		<a href="/admin/training-types"><i class="fa fa-fw fa-graduation-cap"></i>Training types</a>
 	</li>
 	<li class="@(ViewContext.RouteData.Values["Controller"].ToString() == "Logs" ? "active" : "")">
 		<a href="/admin/log-viewer"><i class="fa fa-fw fa-file-text-o"></i>Logs</a>

@@ -19,6 +19,10 @@ using Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers;
 using Enivate.ResponseHub.MessageGenerator.Configuration;
 using System.IO;
 using Enivate.ResponseHub.PagerDecoder.ApplicationServices;
+using Enivate.ResponseHub.Model.Messages.Interface;
+using Enivate.ResponseHub.DataAccess.MongoDB;
+using Enivate.ResponseHub.ApplicationServices;
+using Enivate.ResponseHub.Model.Addresses.Interface;
 
 namespace Enivate.ResponseHub.MessageGenerator
 {
@@ -66,6 +70,14 @@ namespace Enivate.ResponseHub.MessageGenerator
 			}
 		}
 
+		protected IAddressService AddressService
+		{
+			get
+			{
+				return ServiceLocator.Get<IAddressService>();
+			}
+		}
+
 
 		public frmMain()
 		{
@@ -79,7 +91,7 @@ namespace Enivate.ResponseHub.MessageGenerator
 			_configuration = JsonConvert.DeserializeObject<GeneratorConfiguration>(File.ReadAllText("config.json"));
 
 			// Instantiate the job message parser
-			_jobMessageParser = new JobMessageParser(MapIndexRepository, Log);
+			_jobMessageParser = new JobMessageParser(AddressService, MapIndexRepository, Log);
 
 			// Generate the html header
 			_htmlDisplayHeader = "<html><head><style type=\"text/css\">body { font-size: 13px; font-family: Arial, sans-serif; } ul.message-list { margin-bottom: 20px; margin-top: 0; padding-left: 0px; } li.emerg { color: #C7201D; } li.non-emerg { color: #C7A216; } p {margin-bottom: 5px; }</style></head><body>";
@@ -101,7 +113,7 @@ namespace Enivate.ResponseHub.MessageGenerator
 
 		}
 
-		private void btnGenerate_Click(object sender, EventArgs e)
+		private async void btnGenerate_Click(object sender, EventArgs e)
 		{
 			
 			if (!_generating)
@@ -127,7 +139,7 @@ namespace Enivate.ResponseHub.MessageGenerator
 
 
 				// Generate the messages
-				GenerateMessages();
+				await GenerateMessages();
 
 				// Start the timer
 				generatorTimer.Enabled = true;
@@ -163,13 +175,13 @@ namespace Enivate.ResponseHub.MessageGenerator
 
 		}
 
-		private void generatorTimer_Tick(object sender, EventArgs e)
+		private async void generatorTimer_Tick(object sender, EventArgs e)
 		{
 			// Generate the messages
-			GenerateMessages();
+			await GenerateMessages();
 		}
 
-		private void GenerateMessages()
+		private async Task GenerateMessages()
 		{
 			
 			// Get the min and max messages
@@ -191,7 +203,7 @@ namespace Enivate.ResponseHub.MessageGenerator
 				PagerMessage pagerMessage = GeneratePagerMessage();
 
 				// Parse it to the Job message
-				JobMessage jobMessage = _jobMessageParser.ParseMessage(pagerMessage);
+				JobMessage jobMessage = await _jobMessageParser.ParseMessage(pagerMessage);
 
 				// Add to the dictionary
 				jobMessages.Add(pagerMessage.ShaHash, jobMessage);
@@ -213,13 +225,17 @@ namespace Enivate.ResponseHub.MessageGenerator
 		{
 			try
 			{
-				// Submit the job messages to the web service
-				JobMessageSubmitter.PostJobMessagesToWebService(jobMessages);
+				ILogger log = new FileLogger();
+				IJobMessageRepository jobMessageRepository = new JobMessageRepository();
+				IJobMessageService jobMessageService = new JobMessageService(jobMessageRepository, log);
+
+				// Submit the job messages to the database
+				jobMessageService.AddMessages(jobMessages.Select(i => i.Value).ToList());
 			}
 			catch (Exception ex)
 			{
 				// Show the messagebox error message
-				MessageBox.Show(ex.Message, "Error submitting job messages.", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				MessageBox.Show(ex.ToString(), "Error submitting job messages", MessageBoxButtons.OK, MessageBoxIcon.Error);
 			}
 		}
 

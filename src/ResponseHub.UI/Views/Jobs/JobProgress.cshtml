@@ -3,11 +3,11 @@
 <h3>Job progress</h3>
 
 <div class="row">
-	<div class="col-lg-8 progess-messages"></div>
+	<div class="col-xs-12 progess-messages"></div>
 </div>
 
 <div class="row">
-	<div class="col-xs-12 col-sm-4 col-md-3 col-lg-3 col-xl-2 progress-action">
+	<div class="col-xs-12 col-sm-4 col-md-3 col-lg-3 col-xl-2 progress-action" data-progress-type="on_route">
 		@if (Model.OnRoute == null && Model.Cancelled == null)
 		{
 			<button class="btn btn-primary btn-icon btn-block btn-lg btn-on-route"><i class="fa fa-fw fa-check-square-o"></i> On route</button>
@@ -18,10 +18,14 @@
 				<h4>On route</h4>
 				<div class="btn-icon"><i class="fa fa-fw fa-clock-o"></i>@Model.OnRoute.Timestamp.ToString("yyyy-MM-dd HH:mm:ss")</div>
 				<div class="text-muted btn-icon"><i class="fa fa-fw fa-user"></i>@Model.OnRoute.UserFullName</div>
+				<div>
+					<button class="btn btn-link btn-icon action-edit"><i class="fa fa-fw fa-pencil-square-o"></i>Edit</button>
+					<button class="btn btn-link btn-icon action-undo"><i class="fa fa-fw fa-undo"></i>Undo</button>
+				</div>
 			}
 		</div>
 	</div>
-	<div class="col-xs-12 col-sm-4 col-md-3 col-md-offset-1 col-lg-3 col-xl-2 progress-action">
+	<div class="col-xs-12 col-sm-4 col-md-3 col-md-offset-1 col-lg-3 col-xl-2 progress-action" data-progress-type="on_scene">
 		@if (Model.OnScene == null && Model.Cancelled == null)
 		{
 			<button class="btn btn-primary btn-icon btn-block btn-lg btn-on-scene"><i class="fa fa-fw fa-check-square-o"></i> On scene</button>
@@ -32,10 +36,14 @@
 				<h4>On scene</h4>
 				<div class="btn-icon"><i class="fa fa-fw fa-clock-o"></i>@Model.OnScene.Timestamp.ToString("yyyy-MM-dd HH:mm:ss")</div>
 				<div class="text-muted btn-icon"><i class="fa fa-fw fa-user"></i>@Model.OnScene.UserFullName</div>
+				<div>
+					<button class="btn btn-link btn-icon action-edit"><i class="fa fa-fw fa-pencil-square-o"></i>Edit</button>
+					<button class="btn btn-link btn-icon action-undo"><i class="fa fa-fw fa-undo"></i>Undo</button>
+				</div>
 			}
 		</div>
 	</div>
-	<div class="col-xs-12 col-sm-4 col-md-3 col-md-offset-1 col-lg-3 col-xl-2 progress-action">
+	<div class="col-xs-12 col-sm-4 col-md-3 col-md-offset-1 col-lg-3 col-xl-2 progress-action" data-progress-type="job_clear">
 		@if (Model.JobClear == null && Model.Cancelled == null)
 		{
 			<button class="btn btn-primary btn-icon btn-block btn-lg btn-job-clear"><i class="fa fa-fw fa-check-square-o"></i> Job clear</button>
@@ -46,38 +54,93 @@
 				<h4>Job clear</h4>
 				<div class="btn-icon"><i class="fa fa-fw fa-clock-o"></i>@Model.JobClear.Timestamp.ToString("yyyy-MM-dd HH:mm:ss")</div>
 				<div class="text-muted btn-icon"><i class="fa fa-fw fa-user"></i>@Model.JobClear.UserFullName</div>
+				<div>
+					<button class="btn btn-link btn-icon action-edit"><i class="fa fa-fw fa-pencil-square-o"></i>Edit</button>
+					<button class="btn btn-link btn-icon action-undo"><i class="fa fa-fw fa-undo"></i>Undo</button>
+				</div>
 			}
 		</div>
 	</div>
 </div>
 
-<div class="row">
+
+<div class="row hidden" id="edit-progress-update">
 	<div class="col-xs-12">
-		@if (Model.Cancelled == null && Model.JobClear == null)
-		{
-			<p class="top-10"><a href="#" class="btn-icon text-danger" data-toggle="modal" data-target="#confirm-cancel-job"><i class="fa fa-fw fa-times"></i>Cancel job</a></p>
-		}
-		else if (Model.Cancelled != null)
-		{
-			<p class="text-danger top-10">Job cancelled on @Model.Cancelled.Timestamp.ToString("dd/MM/yyyy HH:mm:ss") by @Model.Cancelled.UserFullName.</p>
-		}
+
+		<form>
+
+			<h4>Update progress</h4>
+			<hidden id="ProgressType" value="" name="ProgressType" />
+
+			<div class="form-group">
+				<label for="EditProgressDate">Date *</label>
+				<div class="row">
+					<div class="col-sm-8 col-md-6 col-lg-4">
+						<div class="input-group date datepicker-control" data-provide="datepicker" data-date-format="yyyy-mm-dd" data-date-autoclose="true" data-date-show-on-focus="false">
+							@Html.TextBoxFor(model => model.EditProgressDate, new { @class = "form-control" })
+							<div class="input-group-addon">
+								<i class="fa fa-fw fa-calendar"></i>
+							</div>
+						</div>
+						<div class="text-muted"><em>Date format should be yyyy-mm-dd.</em></div>
+					</div>
+				</div>
+				@Html.ValidationMessageFor(model => model.EditProgressDate)
+			</div>
+
+			<div class="form-group">
+				<label for="EditProgressTime">Time *</label>
+				<div class="row">
+					<div class="col-sm-8 col-md-6 col-lg-4">
+						<div class="input-group timepicker-seconds-control">
+							@Html.TextBoxFor(model => model.EditProgressTime, new { @class = "form-control" })
+							<div class="input-group-addon">
+								<i class="fa fa-fw fa-clock-o"></i>
+							</div>
+						</div>
+						<div class="text-muted"><em>Date format should be hh:mm and in 24 hour time.</em></div>
+					</div>
+				</div>
+				@Html.ValidationMessageFor(model => model.EditProgressTime)
+			</div>
+
+			<div class="top-20">
+				<button type="button" class="btn btn-primary btn-icon" onclick="responseHub.jobMessages.submitEditProgressTime(); return false;"><i class="fa fa-check"></i>Update progress</button>
+				<a href="#" class="btn btn-link" onclick="$('#edit-progress-update').addClass('hidden'); return false;">Cancel</a>
+			</div>
+
+		</form>
+
 	</div>
 </div>
 
-<div class="modal fade" id="confirm-cancel-job" tabindex="-1" role="dialog" aria-labelledby="confirm-cancel-label">
-	<div class="modal-dialog">
-		<div class="modal-content">
-			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-				<h4 class="modal-title" id="confirm-cancel-label">Cancel job?</h4>
+		<div class="row">
+			<div class="col-xs-12">
+				@if (Model.Cancelled == null && Model.JobClear == null)
+				{
+					<p class="top-10"><a href="#" class="btn-icon text-danger" data-toggle="modal" data-target="#confirm-cancel-job"><i class="fa fa-fw fa-times"></i>Cancel job</a></p>
+				}
+				else if (Model.Cancelled != null)
+				{
+					<p class="text-danger top-10">Job cancelled on @Model.Cancelled.Timestamp.ToString("dd/MM/yyyy HH:mm:ss") by @Model.Cancelled.UserFullName.</p>
+				}
 			</div>
-			<div class="modal-body">
-				<p>Are you sure you wish to cancel this job? Once a job is cancelled, no further progress updates can be made.</p>
-			</div>
-			<div class="modal-footer">
-				<button type="button" class="btn btn-link" data-dismiss="modal">Close</button>
-				<a href="/jobs/@Model.Id/cancel-job" class="btn btn-danger">Cancel job</a>
-			</div>
-		</div><!-- /.modal-content -->
-	</div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
+		</div>
+
+		<div class="modal fade" id="confirm-cancel-job" tabindex="-1" role="dialog" aria-labelledby="confirm-cancel-label">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+						<h4 class="modal-title" id="confirm-cancel-label">Cancel job?</h4>
+					</div>
+					<div class="modal-body">
+						<p>Are you sure you wish to cancel this job? Once a job is cancelled, no further progress updates can be made.</p>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-link" data-dismiss="modal">Close</button>
+						<a href="/jobs/@Model.Id/cancel-job" class="btn btn-danger">Cancel job</a>
+					</div>
+				</div><!-- /.modal-content -->
+			</div><!-- /.modal-dialog -->
+		</div><!-- /.modal -->

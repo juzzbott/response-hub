@@ -1,7 +1,7 @@
 ﻿responseHub.resources = (function () {
 
 	/** 
-	 * Adds a resource to the system for the specified group. 
+	 * Adds a resource to the system for the specified unit. 
 	 */
 	function addResource() {
 
@@ -11,7 +11,7 @@
 		buttonCtl.find('i').removeClass('fa-plus').addClass('fa-refresh fa-spin');
 		buttonCtl.attr('disabled', 'disabled');
 
-		// Get the group id
+		// Get the unit id
 		var eventId = $("#EventId").val();
 
 		// Create the post data object

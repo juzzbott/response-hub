@@ -8,10 +8,10 @@ using System.Web.Mvc;
 using Microsoft.Practices.Unity;
 
 using Enivate.ResponseHub.Common.Extensions;
-using Enivate.ResponseHub.Model.Groups;
+using Enivate.ResponseHub.Model.Units;
 using Enivate.ResponseHub.Model.Identity;
 using Enivate.ResponseHub.UI.Filters;
-using Enivate.ResponseHub.Model.Groups.Interface;
+using Enivate.ResponseHub.Model.Units.Interface;
 using Enivate.ResponseHub.Common;
 using Enivate.ResponseHub.UI.Areas.Admin.Models.Reports;
 
@@ -26,12 +26,12 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 
 
 
-		private IGroupService _groupService;
-		protected IGroupService GroupService
+		private IUnitService _unitService;
+		protected IUnitService UnitService
 		{
 			get
 			{
-				return _groupService ?? (_groupService = UnityConfiguration.Container.Resolve<IGroupService>());
+				return _unitService ?? (_unitService = UnityConfiguration.Container.Resolve<IUnitService>());
 			}
 		}
 
@@ -51,30 +51,30 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
             return View();
         }
 
-		[Route("groups-capcodes")]
-		public async Task<ActionResult> GroupsCapcodes()
+		[Route("unit-capcodes")]
+		public async Task<ActionResult> UnitsCapcodes()
 		{
 
-			// Get all the groups
-			IList<Group> allGroups = await GroupService.GetAll();
+			// Get all the unit
+			IList<Unit> allUnits = await UnitService.GetAll();
 
 			// Get all the capcodes
 			IList<Capcode> allCapcodes = await CapcodeService.GetAll();
 
 			// Create the report view model
-			IList<GroupsCapcodesReportViewModel> reportItems = new List<GroupsCapcodesReportViewModel>();
+			IList<UnitsCapcodesReportViewModel> reportItems = new List<UnitsCapcodesReportViewModel>();
 
-			// Iterate through all the groups
-			foreach(Group group in allGroups)
+			// Iterate through all the unit
+			foreach(Unit unit in allUnits)
 			{
 				// Create the report item and add to the list
-				GroupsCapcodesReportViewModel reportItem = new GroupsCapcodesReportViewModel()
+				UnitsCapcodesReportViewModel reportItem = new UnitsCapcodesReportViewModel()
 				{
-					Id = group.Id.ToString(),
-					GroupCapcode = group.Capcode,
-					GroupName = group.Name,
-					Service = group.Service.GetEnumDescription(),
-					Capcodes = allCapcodes.Where(i => group.AdditionalCapcodes.Contains(i.Id)).ToList()
+					Id = unit.Id.ToString(),
+					UnitCapcode = unit.Capcode,
+					UnitName = unit.Name,
+					Service = unit.Service.GetEnumDescription(),
+					Capcodes = allCapcodes.Where(i => unit.AdditionalCapcodes.Contains(i.Id)).ToList()
 				};
 				reportItems.Add(reportItem);
 			}

@@ -54,6 +54,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -62,26 +63,32 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Addresses\Mock\MockAddressService.cs" />
     <Compile Include="Agencies\Agency.cs" />
     <Compile Include="Agencies\Interface\IAgencyService.cs" />
     <Compile Include="Crews\Crew.cs" />
     <Compile Include="Attachments\Attachment.cs" />
     <Compile Include="Attachments\Interface\IAttachmentService.cs" />
+    <Compile Include="DataExport\Interface\IDataExportService.cs" />
     <Compile Include="Decoding\DecoderStatus.cs" />
     <Compile Include="Events\Event.cs" />
     <Compile Include="Events\EventResource.cs" />
     <Compile Include="Events\Interface\IEventService.cs" />
     <Compile Include="Events\ResourceType.cs" />
-    <Compile Include="Groups\Capcode.cs" />
-    <Compile Include="Groups\Interface\ICapcodeService.cs" />
-    <Compile Include="Groups\Interface\IGroupService.cs" />
-    <Compile Include="Groups\Group.cs" />
-    <Compile Include="Groups\Region.cs" />
-    <Compile Include="Groups\UserMapping.cs" />
+    <Compile Include="Addresses\Interface\IAddressService.cs" />
+    <Compile Include="Units\Capcode.cs" />
+    <Compile Include="Units\Interface\ICapcodeService.cs" />
+    <Compile Include="Units\Interface\IUnitService.cs" />
+    <Compile Include="Units\Unit.cs" />
+    <Compile Include="Units\Region.cs" />
+    <Compile Include="Units\UserMapping.cs" />
     <Compile Include="IAuthorisationService.cs" />
+    <Compile Include="Identity\ClaimProperties.cs" />
     <Compile Include="Identity\IdentityUser.cs" />
     <Compile Include="Identity\Interface\IUserService.cs" />
     <Compile Include="Identity\PasswordResetToken.cs" />
+    <Compile Include="Identity\UserProfile.cs" />
+    <Compile Include="Identity\UserStatus.cs" />
     <Compile Include="IEntity.cs" />
     <Compile Include="Identity\RoleTypes.cs" />
     <Compile Include="IMailService.cs" />
@@ -92,20 +99,37 @@
     <Compile Include="Messages\MessageProgressType.cs" />
     <Compile Include="Messages\MessageType.cs" />
     <Compile Include="PagedResultSet.cs" />
+    <Compile Include="Parsers\AddressParserData.cs" />
+    <Compile Include="PdfGeneration\Interface\IPdfGenerationService.cs" />
+    <Compile Include="Reports\Interface\IReportService.cs" />
+    <Compile Include="SignIn\Interface\ISignInEntryService.cs" />
+    <Compile Include="SignIn\Activity.cs" />
+    <Compile Include="SignIn\SignInEntry.cs" />
+    <Compile Include="SignIn\OperationActivity.cs" />
+    <Compile Include="SignIn\TrainingActivity.cs" />
+    <Compile Include="SignIn\SignInType.cs" />
+    <Compile Include="Spatial\DirectionsInfo.cs" />
+    <Compile Include="Training\Interface\ITrainingService.cs" />
+    <Compile Include="Training\TrainingSession.cs" />
+    <Compile Include="Training\TrainingSessionType.cs" />
+    <Compile Include="Training\TrainingType.cs" />
+    <Compile Include="Spatial\AddressInfo.cs" />
     <Compile Include="Spatial\LocationInfo.cs" />
     <Compile Include="Messages\JobMessage.cs" />
     <Compile Include="Messages\MessagePriority.cs" />
     <Compile Include="Messages\PagerMessage.cs" />
-    <Compile Include="RadarImages\Interface\IRadarImageService.cs" />
+    <Compile Include="WeatherData\Interface\IWeatherDataService.cs" />
     <Compile Include="ServiceType.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Spatial\MapGridReferenceInfo.cs" />
     <Compile Include="Spatial\MapIndex.cs" />
     <Compile Include="Spatial\Coordinates.cs" />
     <Compile Include="Spatial\MapType.cs" />
+    <Compile Include="Addresses\StructuredAddress.cs" />
     <Compile Include="Warnings\Interface\IWarningService.cs" />
     <Compile Include="Warnings\IWarning.cs" />
     <Compile Include="Warnings\WarningSource.cs" />
+    <Compile Include="WeatherData\ObservationData.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

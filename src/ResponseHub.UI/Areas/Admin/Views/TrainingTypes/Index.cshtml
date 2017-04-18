@@ -1,0 +1,36 @@
+﻿@model List<Enivate.ResponseHub.Model.Training.TrainingType>
+
+@{
+    ViewBag.Title = "Training types";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<h1>@ViewBag.Title</h1>
+
+@Html.SuccessFromQueryString("created", "1", "The new training type has been successfully created.")
+
+@Html.SuccessFromQueryString("saved", "1", "The training type has been successfully updated.")
+
+<a href="/admin/training-types/create" class="btn btn-primary btn-icon btn-lg top-10"><i class="fa fa-plus"></i> Add training type</a>
+
+<table class="table table-responsive table-striped table-hover top-20">
+	<thead>
+		<tr>
+			<th>Name</th>
+			<th>Short name</th>
+			<th>Description</th>
+			<th width="50"></th>
+		</tr>
+	</thead>
+	<tbody>
+		@foreach(var trainingType in Model)
+		{
+			<tr>
+				<td>@trainingType.Name</td>
+				<td>@trainingType.ShortName</td>
+				<td>@trainingType.Description</td>
+				<td><a href="/admin/training-types/@trainingType.Id"><i class="fa fa-fw fa-pencil-square-o"></i></a></td>
+			</tr>
+		}
+	</tbody>
+</table>

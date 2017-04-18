@@ -28,6 +28,12 @@ namespace Enivate.ResponseHub.Common.Extensions
 			// Get the enum field.
 			FieldInfo fi = enumObject.GetType().GetField(enumObject.ToString());
 
+			// If the field is null, just return the value
+			if (fi == null)
+			{
+				return Enum.GetName(enumObject.GetType(), enumObject);
+			}
+
 			// Get the Description attribute
 			IList<DescriptionAttribute> attributes = fi.GetCustomAttributes<DescriptionAttribute>(false).ToList();
 

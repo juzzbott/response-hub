@@ -3,7 +3,7 @@
 	/**
 	 * Contains a dictionary of markers
 	 */
-	mapMarkers = [];
+	mapMarkers = {};
 
 
 	/*
@@ -30,6 +30,11 @@
 	 * Contains the array of icons to display over the map
 	 */
 	leafIcons = [];
+
+	/**
+	 * The fuction to set the map bounds interval to resize the map based on your current location
+	 */
+	mapBoundsInterval = null;
 
 	/**
 	 * Loads the map onto the screen.
@@ -88,21 +93,21 @@
 	function buildLeafBaseLayers() {
 
 		// Create the default layers
-		streetMapLayer = L.tileLayer('http://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
+		streetMapLayer = L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
 			attribution: 'Imagery from <a href="http://mapbox.com/about/maps/">MapBox</a> &mdash; Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
 			subdomains: 'abcd',
 			id: 'juzzbott.mn25f8nc',
 			accessToken: 'pk.eyJ1IjoianV6emJvdHQiLCJhIjoiMDlmN2JlMzMxMWI2YmNmNGY2NjFkZGFiYTFiZWVmNTQifQ.iKlZsVrsih0VuiUCzLZ1Lg'
 		});
 
-		topoMapLayer = L.tileLayer('http://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
+		topoMapLayer = L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
 			attribution: 'Imagery from <a href="http://mapbox.com/about/maps/">MapBox</a> &mdash; Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
 			subdomains: 'abcd',
 			id: 'juzzbott.mn24imf3',
 			accessToken: 'pk.eyJ1IjoianV6emJvdHQiLCJhIjoiMDlmN2JlMzMxMWI2YmNmNGY2NjFkZGFiYTFiZWVmNTQifQ.iKlZsVrsih0VuiUCzLZ1Lg'
 		});
 
-		aerialMapLayer = L.tileLayer('http://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
+		aerialMapLayer = L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
 			attribution: 'Imagery from <a href="http://mapbox.com/about/maps/">MapBox</a> &mdash; Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
 			subdomains: 'abcd',
 			id: 'juzzbott.mn74md27',
@@ -133,40 +138,130 @@
 
 	function addMarkerToMap(lat, lng) {
 
-		L.marker([lat, lng]).addTo(map);
+		mapMarkers["job_location"] = L.marker([lat, lng]).addTo(map);
 
 	}
 
-	/*
-	 * Add's a pushpin to the map.
+	/**
+	 * Determines the current location on the map
 	 */
-	//function addMarkerToMap(id, lat, lng, name, description, url, placeType, addPopupWindow) {
-	//
-	//	// Get the marker icon based on the place type name.
-	//	var placeTypeIcon = null;
-	//	if (placeType != null && placeType.IconCssClass != null && placeType.Name.length > 0) {
-	//		for (var i = 0; i < leafIcons.length; i++) {
-	//			if (leafIcons[i].key == placeType.Name.toLowerCase()) {
-	//				placeTypeIcon = leafIcons[i];
-	//				break;
-	//			}
-	//		}
-	//	}
-	//
-	//	// Add the marker to the map.
-	//	var marker = null;
-	//	if (placeTypeIcon !== null) {
-	//		marker = L.marker([lat, lng], { icon: placeTypeIcon }).addTo(map);
-	//		mapMarkers.push(marker);
-	//	}
-	//
-	//	// If we need to add an info window, then do do so on popup for the marker
-	//	if (addPopupWindow && marker != null) {
-	//		var popupContent = createMapPopupContent(name, description, url);
-	//		marker.bindPopup(popupContent);
-	//	}
-	//
-	//}
+	function addCurrentLocationToMap() {
+		
+		// Get the current location
+		if (navigator.geolocation) {
+			navigator.geolocation.watchPosition(
+				function (pos) {
+
+					// If there is 2 map markers in the collection, then the current position alredy exists and we just want to update it.
+					// Otherwise we need to create the new map marker
+					if (mapMarkers["current_location"] != null)
+					{
+						mapMarkers["current_location"].setLatLng(new L.LatLng(pos.coords.latitude, pos.coords.longitude));
+					}
+					else
+					{
+
+						// Second location marker doesn exist, so we need to create it
+
+						var currentLocationMarker = new L.HtmlIcon({
+							html: '<div><i class="fa fa-bullseye fa-2x current-map-location"></i></div>',
+							iconSize: [20, 20], // size of the icon
+							iconAnchor: [-10, -10], // point of the icon which will correspond to marker's location
+						});	
+
+						// Add the marker to the map
+						mapMarkers["current_location"] = L.marker([pos.coords.latitude, pos.coords.longitude], { icon: currentLocationMarker }).addTo(map);
+
+						// Add the route from LHQ to the map
+						addPathFromPoint(pos.coords.latitude, pos.coords.longitude, true, '#00B226')
+
+						// Get the group of markers, destination and current location, and zoom window to fit
+						var group = new L.featureGroup([mapMarkers["job_location"], mapMarkers["current_location"]]);
+						map.fitBounds(group.getBounds().pad(0.1));
+						
+						// Set the interval to resize the window every 30 secs.
+						mapBoundsInterval = setInterval(function () {
+							
+							// Get the group of markers, destination and current location, and zoom window to fit
+							var group = new L.featureGroup([mapMarkers["job_location"], mapMarkers["current_location"]]);
+							map.fitBounds(group.getBounds().pad(0.1));
+
+						}, 30000)
+
+					}
+
+				},
+				function (error) {
+					$('#map-messages').append('<p>' + error.code + ': ' + error.message + '</p>');
+					console.log(error);
+				},
+				{
+					enableHighAccuracy: true,
+					timeout: 15000,
+					maximumAge: 0
+				}
+			);
+		}
+
+	}
+
+	function addLhqMarker(lat, lon)
+	{
+
+		// Create the custom marker
+		var currentLocationMarker = new L.HtmlIcon({
+			html: '<div><i class="fa fa-life-ring fa-2x lhq-map-location"></i></div>',
+			iconSize: [20, 20], // size of the icon
+			iconAnchor: [-10, -10], // point of the icon which will correspond to marker's location
+		});
+
+		// Add the marker to the map
+		mapMarkers["lhq_location"] = L.marker([lat, lon], { icon: currentLocationMarker }).addTo(map);
+
+		// Add the route from LHQ to the map
+		addPathFromPoint(lat, lon, true, '#FF862F');
+
+	}
+
+	function addPathFromPoint(lat, lon, isDistanceFromLhq, pathColour)
+	{
+
+
+		var start_loc = lat + ',' + lon;
+		var end_loc = mapMarkers["job_location"].getLatLng().lat + ',' + mapMarkers["job_location"].getLatLng().lng;
+
+		// Get the directions to the location
+		$.ajax({
+			url: responseHub.apiPrefix + '/google-api/directions?start_loc=' + start_loc + '&end_loc=' + end_loc,
+			dataType: 'json',
+			success: function (data) {
+
+				if (data != null) {
+					var latlngs = [];
+
+					// Loop through the results and create the LatLng objects to add to the poly line
+					for (var i = 0; i < data.Coordinates.length; i++) {
+						latlngs.push(new L.LatLng(data.Coordinates[i].Latitude, data.Coordinates[i].Longitude))
+					}
+
+					if (isDistanceFromLhq == true && $('.lhq-dist-set').length == 0) {
+						$('.dist-from-lhq p').empty();
+						$('.dist-from-lhq p').text((Math.round((data.TotalDistance / 1000) * 10) / 10) + ' km');
+					}
+
+					// Now that we have the lat lngs, add the path to the map
+					L.polyline(latlngs, { color: pathColour, weight: 6, opacity: 0.4, clickable: false }).addTo(map);
+
+					// Get the group of markers, destination and current location, and zoom window to fit
+					if (!responseHub.isMobile()) {
+						var group = new L.featureGroup([mapMarkers["job_location"], mapMarkers["lhq_location"]]);
+						map.fitBounds(group.getBounds().pad(0.1));
+					}
+				}
+
+			}
+		});
+	}
 
 	/**
 	 * Creates the markup for the info window to be displayed.
@@ -253,7 +348,7 @@
 	function initMap() {
 
 		// Set the default images dir
-		L.Icon.Default.imagePath = '/assets/images/leaflet';
+		L.Icon.Default.imagePath = '/assets/images/leaflet/';
 
 		if (responseHub.isMobile()) {
 			$('#map-canvas').css('height', '450px');
@@ -277,7 +372,9 @@
 		clearMarkers: clearMarkers,
 		getCurrentLocation: getCurrentLocation,
 		setMapCenter: setMapCenter,
-		mapExists: mapExists
+		mapExists: mapExists,
+		addCurrentLocationToMap: addCurrentLocationToMap,
+		addLhqMarker, addLhqMarker
 	}
 
 })();

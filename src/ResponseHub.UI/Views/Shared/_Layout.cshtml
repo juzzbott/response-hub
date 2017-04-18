@@ -2,16 +2,17 @@
 <html>
 <head>
 	<meta charset="utf-8" />
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 	<title>@ViewBag.Title - ResponseHub</title>
 
 	<link rel="stylesheet" href="~/assets/css/framework.css" />
 	<link rel="stylesheet" href="~/assets/css/response-hub.css" />
 
-	<link href='https://fonts.googleapis.com/css?family=Ubuntu:400,300,300italic,700,700italic' rel='stylesheet' type='text/css'>
+	<link href='https://fonts.googleapis.com/css?family=Ubuntu:400,300,300italic,700,700italic' rel='stylesheet' type='text/css' />
+	<link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i" rel="stylesheet">
 
 </head>
-<body>
+<body class="@ViewBag.BodyClass">
 	<div class="navbar navbar-default navbar-fixed-top page-navbar">
 		<div class="container-fluid">
 			<div class="navbar-header">
@@ -41,6 +42,11 @@
 								<li><a href="/my-account">My account<i class="fa fa-fw fa-cog pull-right"></i></a></li>
 								<li><a href="/my-account/change-password">Change password<i class="fa fa-fw fa-lock pull-right"></i></a></li>
 								<li role="separator" class="divider"></li>
+								@if (ViewContext.RouteData.DataTokens["area"] != null && ViewContext.RouteData.DataTokens["area"].ToString().ToLower() == "controlpanel" && Html.IsUnitAdminUserOfMultipleUnits())
+								{
+									<li><a href="/control-panel/unit-selection">Select unit context<i class="fa fa-fw fa-users pull-right"></i></a></li>
+									<li role="separator" class="divider"></li>
+								}
 								<li><a href="/my-account/logout">Logout<i class="fa fa-fw fa-sign-out pull-right"></i></a></li>
 							</ul>
 						</div>

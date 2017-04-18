@@ -35,6 +35,7 @@ namespace Enivate.ResponseHub.ApplicationServices
 		{
 			_repository = repository;
 			_log = log;
+			UserValidator = new UserValidator<IdentityUser, Guid>(this) { AllowOnlyAlphanumericUserNames = false };
 		}
 		
 		#region Password Reset Token
@@ -362,7 +363,7 @@ namespace Enivate.ResponseHub.ApplicationServices
 		/// <param name="surname"></param>
 		/// <param name="roles"></param>
 		/// <returns></returns>
-		public async Task<IdentityUser> CreateAsync(string emailAddress, string firstName, string surname, IList<string> roles)
+		public async Task<IdentityUser> CreateAsync(string emailAddress, string firstName, string surname, IList<string> roles, UserProfile profile, bool activate)
 		{
 
 			// If the roles list is null, instantiate to empty list
@@ -392,7 +393,9 @@ namespace Enivate.ResponseHub.ApplicationServices
 				Surname = surname,
 				UserName = emailAddress,
 				Claims = claims,
-				ActivationCode = HashGenerator.GetSha256HashString(Guid.NewGuid().ToString(), 1)
+				ActivationCode = (activate ? HashGenerator.GetSha256HashString(Guid.NewGuid().ToString(), 1) : null),
+				Profile = profile,
+				Status = UserStatus.New
 			};
 
 			// Add the user
@@ -403,13 +406,31 @@ namespace Enivate.ResponseHub.ApplicationServices
 		}
 
 		/// <summary>
+		/// Sets the activation code for the specific user.
+		/// </summary>
+		/// <param name="userId">The id of the user to set the activation code for.</param>
+		/// <returns></returns>
+		public async Task<string> ResetActivationCode(Guid userId)
+		{
+			// Generate the activation code
+			string activationCode = HashGenerator.GetSha256HashString(Guid.NewGuid().ToString(), 1);
+
+			// Update the activation code
+			await _repository.UpdateActivationCode(userId, activationCode);
+
+			// return the activation code
+			return activationCode;
+
+		}
+
+		/// <summary>
 		/// Gets the collection of users based on the user ids.
 		/// </summary>
 		/// <param name="userIds"></param>
 		/// <returns></returns>
 		public async Task<IList<IdentityUser>> GetUsersByIds(IEnumerable<Guid> userIds)
 		{
-			return await _repository.GetUsersByIds(userIds);
+			return await _repository.GetUsersByIds(userIds, true);
 		}
 
 		/// <summary>
@@ -491,6 +512,20 @@ namespace Enivate.ResponseHub.ApplicationServices
 		public async Task UpdateAccountDetails(Guid userId, string firstName, string surname)
 		{
 			await _repository.UpdateAccountDetails(userId, firstName, surname);
+
+			// Clear the cache object
+			ClearUserFromCache(userId);
+		}
+
+		/// <summary>
+		/// Updates the first name and surname for the specified account. 
+		/// </summary>
+		/// <param name="userId">The id of the user to update the first name and surname for. </param>
+		/// <param name="firstName">The new first name. </param>
+		/// <param name="surname">The new surname.</param>
+		public async Task UpdateAccountDetails(Guid userId, string firstName, string surname, string emailAddress, UserProfile profile)
+		{
+			await _repository.UpdateAccountDetails(userId, firstName, surname, emailAddress, profile);
 
 			// Clear the cache object
 			ClearUserFromCache(userId);

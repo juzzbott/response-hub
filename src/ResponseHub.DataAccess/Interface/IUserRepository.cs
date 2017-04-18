@@ -107,7 +107,7 @@ namespace Enivate.ResponseHub.DataAccess.Interface
 
 		#region Response Hub methods
 
-		Task<IList<IdentityUser>> GetUsersByIds(IEnumerable<Guid> userIds);
+		Task<IList<IdentityUser>> GetUsersByIds(IEnumerable<Guid> userIds, bool sort);
 
 		Task<IdentityUser> GetUserByActivationToken(string activationToken);
 
@@ -121,9 +121,13 @@ namespace Enivate.ResponseHub.DataAccess.Interface
 
 		Task UpdateAccountDetails(Guid userId, string firstName, string surname);
 
+		Task UpdateAccountDetails(Guid userId, string firstName, string surname, string emailAddress, UserProfile profile);
+
 		Task UpdateAccountUsername(Guid userId, string newUsername);
 
 		Task<IdentityUser> GetUserByForgottenPasswordToken(string token);
+
+		Task UpdateActivationCode(Guid userId, string activationCode);
 
 		#endregion
 

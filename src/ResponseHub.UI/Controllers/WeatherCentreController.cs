@@ -6,10 +6,12 @@ using System.Web;
 using System.Web.Mvc;
 
 using Enivate.ResponseHub.Common;
-using Enivate.ResponseHub.Model.RadarImages.Interface;
 using Enivate.ResponseHub.Model.Warnings;
 using Enivate.ResponseHub.Model.Warnings.Interface;
 using Enivate.ResponseHub.UI.Models.WeatherCentre;
+using Enivate.ResponseHub.Model.WeatherData.Interface;
+using Enivate.ResponseHub.Common.Configuration;
+using Enivate.ResponseHub.Model.WeatherData;
 
 namespace Enivate.ResponseHub.UI.Controllers
 {
@@ -18,23 +20,8 @@ namespace Enivate.ResponseHub.UI.Controllers
     public class WeatherCentreController : BaseController
 	{
 
-
-
-		protected IWarningService WarningService
-		{
-			get
-			{
-				return ServiceLocator.Get<IWarningService>();
-			}
-		}
-
-		protected IRadarImageService RadarImageService
-		{
-			get
-			{
-				return ServiceLocator.Get<IRadarImageService>();
-			}
-		}
+		protected IWarningService WarningService = ServiceLocator.Get<IWarningService>();
+		protected IWeatherDataService WeatherDataService = ServiceLocator.Get<IWeatherDataService>();
 
 		[Route]
         // GET: WeatherCentre
@@ -55,24 +42,29 @@ namespace Enivate.ResponseHub.UI.Controllers
 				ViewBag.LoadWarningsError = true;
 			}
 
+			// Get the weather data location
+			WeatherLocationElement location = ResponseHubSettings.WeatherData.Locations[0];
+
 			// Create the rain radar
 			RadarLoopViewModel rainRadar = new RadarLoopViewModel()
 			{
-				RadarBaseCode = "IDR022",
-				RadarCode = "IDR022",
-				RadarImageFiles = RadarImageService.GetRadarImagesForProduct("IDR022")
+				RadarBaseCode = location.BaseRadarProductId,
+				RadarCode = location.RainRadarProductId,
+				RadarImageFiles = WeatherDataService.GetRadarImagesForProduct(location.RainRadarProductId, location.Code)
 			};
 			model.RainRadar = rainRadar;
 
 			// Create the wind radar
 			RadarLoopViewModel windRadar = new RadarLoopViewModel()
 			{
-				RadarBaseCode = "IDR022",
-				RadarCode = "IDR02I",
-				RadarImageFiles = RadarImageService.GetRadarImagesForProduct("IDR02I")
+				RadarBaseCode = location.BaseRadarProductId,
+				RadarCode = location.WindRadarProductId,
+				RadarImageFiles = WeatherDataService.GetRadarImagesForProduct(location.WindRadarProductId, location.Code)
 			};
 			model.WindRadar = windRadar;
 
+			// Get the observation data
+			model.ObservationData = WeatherDataService.GetObservationData(location.ObservationId, location.Code).Take(10).ToList();
 
 			return View(model);
         }

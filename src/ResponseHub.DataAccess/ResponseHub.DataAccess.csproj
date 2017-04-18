@@ -11,6 +11,8 @@
     <AssemblyName>ResponseHub.DataAccess</AssemblyName>
     <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -52,25 +54,24 @@
       <HintPath>..\packages\Microsoft.AspNet.Identity.Core.2.2.1\lib\net45\Microsoft.AspNet.Identity.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="MongoDB.Bson, Version=2.2.4.26, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\MongoDB.Bson.2.2.4\lib\net45\MongoDB.Bson.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="MongoDB.Bson, Version=2.4.3.23, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MongoDB.Bson.2.4.3\lib\net45\MongoDB.Bson.dll</HintPath>
     </Reference>
-    <Reference Include="MongoDB.Driver, Version=2.2.4.26, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\MongoDB.Driver.2.2.4\lib\net45\MongoDB.Driver.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="MongoDB.Driver, Version=2.4.3.23, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MongoDB.Driver.2.4.3\lib\net45\MongoDB.Driver.dll</HintPath>
     </Reference>
-    <Reference Include="MongoDB.Driver.Core, Version=2.2.4.26, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\MongoDB.Driver.Core.2.2.4\lib\net45\MongoDB.Driver.Core.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="MongoDB.Driver.Core, Version=2.4.3.23, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MongoDB.Driver.Core.2.4.3\lib\net45\MongoDB.Driver.Core.dll</HintPath>
     </Reference>
-    <Reference Include="MongoDB.Driver.GridFS, Version=2.2.4.26, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\MongoDB.Driver.GridFS.2.2.4\lib\net45\MongoDB.Driver.GridFS.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="MongoDB.Driver.GridFS, Version=2.4.3.23, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MongoDB.Driver.GridFS.2.4.3\lib\net45\MongoDB.Driver.GridFS.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.InteropServices.RuntimeInformation, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Runtime.InteropServices.RuntimeInformation.4.3.0\lib\net45\System.Runtime.InteropServices.RuntimeInformation.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -79,38 +80,48 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Interface\IAddressRepository.cs" />
     <Compile Include="Interface\IAgencyRepository.cs" />
     <Compile Include="Interface\IAttachmentRepository.cs" />
     <Compile Include="Interface\ICapcodeRepository.cs" />
     <Compile Include="Interface\IDecoderStatusRepository.cs" />
     <Compile Include="Interface\IEventRepository.cs" />
-    <Compile Include="Interface\IGroupRepository.cs" />
+    <Compile Include="Interface\IUnitRepository.cs" />
     <Compile Include="Interface\IJobMessageRepository.cs" />
     <Compile Include="Interface\IMapIndexRepository.cs" />
     <Compile Include="Interface\IPagerMessageRepository.cs" />
     <Compile Include="Interface\IRegionRepository.cs" />
     <Compile Include="Interface\IRepository.cs" />
+    <Compile Include="Interface\ISignInEntryRepository.cs" />
+    <Compile Include="Interface\ITrainingSessionRepository.cs" />
+    <Compile Include="Interface\ITrainingTypeRepository.cs" />
     <Compile Include="Interface\IUserRepository.cs" />
+    <Compile Include="MongoDB\AddressRepository.cs" />
     <Compile Include="MongoDB\AgencyRepository.cs" />
     <Compile Include="MongoDB\AttachmentRepository.cs" />
     <Compile Include="MongoDB\CapcodeRepository.cs" />
     <Compile Include="MongoDB\DataObjects\Attachments\AttachmentDto.cs" />
     <Compile Include="MongoDB\DataObjects\Events\EventDto.cs" />
-    <Compile Include="MongoDB\DataObjects\Groups\GroupDto.cs" />
+    <Compile Include="MongoDB\DataObjects\Units\UnitDto.cs" />
     <Compile Include="MongoDB\DataObjects\Messages\JobMessageDto.cs" />
     <Compile Include="MongoDB\DataObjects\Spatial\MapGridReferenceInfoDto.cs" />
     <Compile Include="MongoDB\DataObjects\Spatial\LocationInfoDto.cs" />
     <Compile Include="MongoDB\DataObjects\Spatial\MapIndexDto.cs" />
+    <Compile Include="MongoDB\DataObjects\Addresses\StructuredAddressDto.cs" />
+    <Compile Include="MongoDB\DataObjects\Training\TrainingSessionDto.cs" />
     <Compile Include="MongoDB\DataObjects\Users\ClaimDto.cs" />
     <Compile Include="MongoDB\DataObjects\Users\IdentityUserDto.cs" />
     <Compile Include="MongoDB\DecoderStatusRepository.cs" />
     <Compile Include="MongoDB\EventRepository.cs" />
-    <Compile Include="MongoDB\GroupRepository.cs" />
+    <Compile Include="MongoDB\UnitRepository.cs" />
     <Compile Include="MongoCollectionNameAttribute.cs" />
     <Compile Include="MongoDB\JobMessageRepository.cs" />
     <Compile Include="MongoDB\MapIndexRepository.cs" />
     <Compile Include="MongoDB\PagerMessageRepository.cs" />
     <Compile Include="MongoDB\RegionRepository.cs" />
+    <Compile Include="MongoDB\SignInEntryRepository.cs" />
+    <Compile Include="MongoDB\TrainingSessionRepository.cs" />
+    <Compile Include="MongoDB\TrainingTypeRepository.cs" />
     <Compile Include="MongoDB\UserRepository.cs" />
     <Compile Include="MongoRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -130,14 +141,24 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="packages.config" />
+    <None Include="ResponseHub.DataAccess.nuspec" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="MongoDB\Scripts\AdminUser.js" />
     <Content Include="MongoDB\Scripts\CreateIndexes.js" />
     <Content Include="MongoDB\Scripts\ReferenceData.js" />
+    <Content Include="MongoDB\Scripts\VersionUpdates.js" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="..\packages\OctoPack.3.5.2\build\OctoPack.targets" Condition="Exists('..\packages\OctoPack.3.5.2\build\OctoPack.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\OctoPack.3.5.2\build\OctoPack.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\OctoPack.3.5.2\build\OctoPack.targets'))" />
+  </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

@@ -14,9 +14,11 @@ namespace Enivate.ResponseHub.DataAccess.Interface
 
 		Task AddMessages(IList<JobMessage> messages);
 
-		Task<IList<JobMessage>> GetMostRecent(IEnumerable<string> capcodes, MessageType messageTypes, int count);
+		Task<IList<JobMessage>> GetMostRecent(IEnumerable<string> capcodes, MessageType messageTypes, int count, int skip);
 
 		Task<IList<JobMessage>> GetMostRecent(int count, int skip);
+
+		Task<IList<JobMessage>> GetMessagesBetweenDates(IEnumerable<string> capcodes, MessageType messageTypes, int count, int skip, DateTime? dateFrom, DateTime? dateTo);
 
 		Task<IList<JobMessage>> GetMostRecent(Guid lastId);
 
@@ -24,15 +26,21 @@ namespace Enivate.ResponseHub.DataAccess.Interface
 
 		Task<JobMessage> GetById(Guid id);
 
+		Task<JobMessage> GetByJobNumber(string jobNumber);
+
 		Task AddNoteToJobMessage(Guid jobMessageId, JobNote note);
 
 		Task<IList<JobNote>> GetNotesForJob(Guid jobMessageId);
 
-		Task AddProgress(Guid jobMessageId, MessageProgress progress);
+		Task SaveProgress(Guid jobMessageId, MessageProgress progress);
+
+		Task RemoveProgress(Guid jobMessageId, MessageProgressType progressType);
 
 		Task<PagedResultSet<JobMessage>> FindByKeyword(string keyword, IEnumerable<string> capcodes, MessageType messageTypes, DateTime dateFrom, DateTime dateTo, int limit, int skip, bool countTotal);
 
 		Task AddAttachmentToJob(Guid jobMessageId, Guid attachmentId);
+
+		Task RemoveAttachmentFromJob(Guid jobMessageId, Guid attachmentId);
 
 	}
 }

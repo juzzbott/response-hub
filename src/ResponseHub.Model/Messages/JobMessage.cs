@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 using Enivate.ResponseHub.Model.Spatial;
+using Enivate.ResponseHub.Model.Attachments;
 
 namespace Enivate.ResponseHub.Model.Messages
 {
@@ -31,17 +32,25 @@ namespace Enivate.ResponseHub.Model.Messages
 
 		public IList<Guid> AttachmentIds { get; set; }
 
+		public MessageType Type { get; set; }
+
+		public int Version { get; set; }
+
 		public JobMessage()
 		{
 
 			// Instantiate the id
 			Id = Guid.NewGuid();
 
+			// Default to version 1
+			Version = 1;
+
 			// Default to administration.
 			Priority = MessagePriority.Administration;
 
 			Notes = new List<JobNote>();
 			ProgressUpdates = new List<MessageProgress>();
+
 			AttachmentIds = new List<Guid>();
 		}
 

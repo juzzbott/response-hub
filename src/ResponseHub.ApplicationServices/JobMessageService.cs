@@ -9,7 +9,7 @@ using Enivate.ResponseHub.Model;
 using Enivate.ResponseHub.Model.Messages;
 using Enivate.ResponseHub.Model.Messages.Interface;
 using Enivate.ResponseHub.DataAccess.Interface;
-using Enivate.ResponseHub.Model.Groups;
+using Enivate.ResponseHub.Model.Units;
 
 namespace Enivate.ResponseHub.ApplicationServices
 {
@@ -76,14 +76,29 @@ namespace Enivate.ResponseHub.ApplicationServices
 		}
 
 		/// <summary>
+		/// ///  Gets the job messages for the list of capcodes specified between the specific dates. Results are limited to count number of items.
+		/// </summary>
+		/// <param name="capcodes"></param>
+		/// <param name="messageTypes"></param>
+		/// <param name="count"></param>
+		/// <param name="skip"></param>
+		/// <param name="dateFrom"></param>
+		/// <param name="dateTo"></param>
+		/// <returns></returns>
+		public async Task<IList<JobMessage>> GetMessagesBetweenDates(IEnumerable<Capcode> capcodes, MessageType messageTypes, int count, int skip, DateTime? dateFrom, DateTime? dateTo)
+		{
+			return await _repository.GetMessagesBetweenDates(capcodes.Select(i => i.CapcodeAddress), messageTypes, count, skip, dateFrom, dateTo);
+		}
+
+		/// <summary>
 		/// Gets the most recent count capcodes. 
 		/// </summary>
 		/// <param name="capcodes"></param>
 		/// <param name="count"></param>
 		/// <returns></returns>
-		public async Task<IList<JobMessage>> GetMostRecent(IEnumerable<Capcode> capcodes, MessageType messageTypes, int count)
+		public async Task<IList<JobMessage>> GetMostRecent(IEnumerable<Capcode> capcodes, MessageType messageTypes, int count, int skip)
 		{
-			return await _repository.GetMostRecent(capcodes.Select(i => i.CapcodeAddress), messageTypes, count);
+			return await _repository.GetMostRecent(capcodes.Select(i => i.CapcodeAddress), messageTypes, count, skip);
 		}
 
 		/// <summary>
@@ -108,7 +123,29 @@ namespace Enivate.ResponseHub.ApplicationServices
 			JobMessage message = await _repository.GetById(id);
 
 			// Ensure the notes always come newest first.
-			message.Notes = message.Notes.OrderByDescending(i => i.Created).ToList();
+			if (message != null)
+			{
+				message.Notes = message.Notes.OrderByDescending(i => i.Created).ToList();
+			}
+
+			// return the message
+			return message;
+		}
+
+		/// <summary>
+		/// Gets the specific job message by the job number.
+		/// </summary>
+		/// <param name="id">The number of the job to return.</param>
+		/// <returns>The job message if found, otherwise null.</returns>
+		public async Task<JobMessage> GetByJobNumber(string jobNumber)
+		{
+			JobMessage message = await _repository.GetByJobNumber(jobNumber);
+
+			// Ensure the notes always come newest first.
+			if (message != null)
+			{
+				message.Notes = message.Notes.OrderByDescending(i => i.Created).ToList();
+			}
 
 			// return the message
 			return message;
@@ -153,7 +190,7 @@ namespace Enivate.ResponseHub.ApplicationServices
 		/// <param name="userId">The id of the user who created the progress update.</param>
 		/// <param name="progressType">The type of job progress to add,</param>
 		/// <returns></returns>
-		public async Task<MessageProgress> AddProgress(Guid jobMessageId, Guid userId, MessageProgressType progressType)
+		public async Task<MessageProgress> SaveProgress(Guid jobMessageId, DateTime progressDateTime, Guid userId, MessageProgressType progressType)
 		{
 
 			// Get the job
@@ -169,16 +206,26 @@ namespace Enivate.ResponseHub.ApplicationServices
 			MessageProgress progress = new MessageProgress()
 			{
 				ProgressType = progressType,
-				Timestamp = DateTime.UtcNow,
+				Timestamp = progressDateTime.ToUniversalTime(),
 				UserId = userId
 			};
 
 			// Update the progress in the repository
-			await _repository.AddProgress(jobMessageId, progress);
+			await _repository.SaveProgress(jobMessageId, progress);
 
 			// return the progress.
 			return progress;
 
+		}
+
+		/// <summary>
+		/// Removes the specified progress update type from the job.
+		/// </summary>
+		/// <param name="jobMessageId">The id of the job to remove the progres from.</param>
+		/// <param name="progressType">The progress type to remove.</param>
+		public async Task RemoveProgress(Guid jobMessageId, MessageProgressType progressType)
+		{
+			await _repository.RemoveProgress(jobMessageId, progressType);
 		}
 
 		public async Task<PagedResultSet<JobMessage>> FindByKeyword(string keyword, IEnumerable<string> capcodes, MessageType messageTypes, DateTime dateFrom, DateTime dateTo, int limit, int skip, bool countTotal)
@@ -186,10 +233,21 @@ namespace Enivate.ResponseHub.ApplicationServices
 			return await _repository.FindByKeyword(keyword, capcodes, messageTypes, dateFrom, dateTo, limit, skip, countTotal);
 		}
 
+		/// <summary>
+		/// Adds the specified attachment id to the job attachment list.
+		/// </summary>
+		/// <param name="jobMessageId">The ID of the job to store the attachment against.</param>
+		/// <param name="attachmentId">The ID of the attachment to store.</param>
+		/// <returns></returns>
 		public async Task AddAttachmentToJob(Guid jobMessageId, Guid attachmentId)
 		{
 			await _repository.AddAttachmentToJob(jobMessageId, attachmentId);
 		}
 
+		public async Task RemoveAttachmentFromJob(Guid jobMessageId, Guid attachmentId)
+		{
+			await _repository.RemoveAttachmentFromJob(jobMessageId, attachmentId);
+		}
+		
 	}
 }

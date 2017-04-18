@@ -5,8 +5,8 @@ using System.Web;
 
 using Enivate.ResponseHub.Common;
 using Enivate.ResponseHub.Model.Attachments.Interface;
-using Enivate.ResponseHub.Model.Groups.Interface;
-using Enivate.ResponseHub.Model.Groups;
+using Enivate.ResponseHub.Model.Units.Interface;
+using Enivate.ResponseHub.Model.Units;
 using Enivate.ResponseHub.Model.Messages.Interface;
 using Enivate.ResponseHub.Model.Messages;
 using Enivate.ResponseHub.UI.Models.Messages;
@@ -17,6 +17,8 @@ using Enivate.ResponseHub.Model.Attachments;
 using System.IO;
 using Enivate.ResponseHub.Common.Constants;
 using Enivate.ResponseHub.UI.Helpers;
+using Enivate.ResponseHub.Model.SignIn.Interface;
+using Enivate.ResponseHub.Model.SignIn;
 
 namespace Enivate.ResponseHub.UI.Controllers
 {
@@ -25,7 +27,10 @@ namespace Enivate.ResponseHub.UI.Controllers
 
 		protected readonly ICapcodeService CapcodeService = ServiceLocator.Get<ICapcodeService>();
 		protected readonly IJobMessageService JobMessageService = ServiceLocator.Get<IJobMessageService>();
-		
+		protected readonly IUnitService UnitService = ServiceLocator.Get<IUnitService>();
+		protected readonly ISignInEntryService SignInEntryService = ServiceLocator.Get<ISignInEntryService>();
+		protected readonly IAttachmentService AttachmentService = ServiceLocator.Get<IAttachmentService>();
+
 		#region Helpers
 
 		/// <summary>
@@ -34,18 +39,31 @@ namespace Enivate.ResponseHub.UI.Controllers
 		/// <param name="capcodes"></param>
 		/// <param name="jobMessages"></param>
 		/// <returns></returns>
-		public static async Task<JobMessageListViewModel> CreateJobMessageListModel(IList<Capcode> capcodes, IList<JobMessage> jobMessages)
+		public async Task<JobMessageListViewModel> CreateJobMessageListModel(IList<Capcode> capcodes, IList<JobMessage> jobMessages)
 		{
+
+			// Get all the sign ins for the messages
+			IList<SignInEntry> allSignIns = await SignInEntryService.GetSignInsForJobMessages(jobMessages.Select(i => i.Id));
+
+			// Get all the users for the job sign ins
+			IList<IdentityUser> allSignInUsers = await UserService.GetUsersByIds(allSignIns.Select(i => i.UserId));
+
 			// Create the list of job message view models
 			IList<JobMessageViewModel> jobMessageViewModels = new List<JobMessageViewModel>();
 			foreach (JobMessage jobMessage in jobMessages)
 			{
 
+				// Get the sign ins for the job
+				IList<SignInEntry> jobSignIns = allSignIns.Where(i => i.OperationDetails.JobId == jobMessage.Id).ToList();
+
+				// Get the list of users who signed in for the job
+				IList<IdentityUser> signInUsers = allSignInUsers.Where(i => jobSignIns.Select(u => u.UserId).Contains(i.Id)).ToList();
+
 				// Get the capcode for the job message
 				Capcode capcode = capcodes.FirstOrDefault(i => i.CapcodeAddress == jobMessage.Capcode);
 
 				// Map the view model and add to the list
-				jobMessageViewModels.Add(await MapJobMessageToViewModel(jobMessage, capcode.FormattedName()));
+				jobMessageViewModels.Add(await MapJobMessageToViewModel(jobMessage, capcode.FormattedName(), jobSignIns, signInUsers, null));
 
 			}
 
@@ -58,7 +76,7 @@ namespace Enivate.ResponseHub.UI.Controllers
 			return model;
 		}
 
-		public static async Task<JobMessageViewModel> MapJobMessageToViewModel(JobMessage job, string capcodeGroupName)
+		public static async Task<JobMessageViewModel> MapJobMessageToViewModel(JobMessage job, string capcodeUnitName, IList<SignInEntry> jobSignIns, IList<IdentityUser> signInUsers, Unit unit)
 		{
 
 			IUserService userService = ServiceLocator.Get<IUserService>();
@@ -69,14 +87,15 @@ namespace Enivate.ResponseHub.UI.Controllers
 			JobMessageViewModel model = new JobMessageViewModel()
 			{
 				Capcode = job.Capcode,
-				CapcodeGroupName = capcodeGroupName,
+				CapcodeUnitName = capcodeUnitName,
 				Id = job.Id,
 				JobNumber = job.JobNumber,
 				Location = job.Location,
 				MessageBody = job.MessageContent,
 				Notes = jobNotesModels,
 				Priority = job.Priority,
-				Timestamp = job.Timestamp.ToLocalTime()
+				Timestamp = job.Timestamp.ToLocalTime(),
+				Version = job.Version
 			};
 
 			// Set the on route, on scene, job clear values
@@ -108,6 +127,36 @@ namespace Enivate.ResponseHub.UI.Controllers
 			// Add all the attachments
 			model.Attachments = attachments;
 			model.ImageAttachments = imageAttachments;
+
+			// If there are sign ins and users, then map them to the view models
+			if (jobSignIns != null && jobSignIns.Count > 0 && signInUsers != null && signInUsers.Count > 0)
+			{
+				// Loop through the sign ins
+				foreach(SignInEntry signIn in jobSignIns)
+				{
+
+					// Get the user
+					IdentityUser signInUser = signInUsers.FirstOrDefault(i => i.Id == signIn.UserId);
+
+					// Ensure the user is not null, then map to the model
+					if (signInUser != null)
+					{
+						model.SignIns.Add(new JobMessageSignInEntry()
+						{
+							FullName = signInUser.FullName,
+							MemberNumber = signInUser.Profile.MemberNumber,
+							SignInTime = signIn.SignInTime
+						});
+					}
+
+				}
+			}
+
+			// If the unit is not null, set the lhq coordinates
+			if (unit != null)
+			{
+				model.LhqCoordinates = unit.HeadquartersCoordinates;
+			}
 
 			// return the mapped job view model
 			return model;

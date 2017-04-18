@@ -10,6 +10,7 @@ using Microsoft.Practices.Unity;
 using Microsoft.Practices.Unity.Configuration;
 
 using Enivate.ResponseHub.Common;
+using Enivate.ResponseHub.DataAccess.MongoDB;
 
 namespace Enivate.ResponseHub.UI
 {

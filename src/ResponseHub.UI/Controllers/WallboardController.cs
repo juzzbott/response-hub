@@ -6,8 +6,8 @@ using System.Web;
 using System.Web.Mvc;
 
 using Enivate.ResponseHub.Common;
-using Enivate.ResponseHub.Model.Groups;
-using Enivate.ResponseHub.Model.Groups.Interface;
+using Enivate.ResponseHub.Model.Units;
+using Enivate.ResponseHub.Model.Units.Interface;
 using Enivate.ResponseHub.Model.Messages;
 using Enivate.ResponseHub.UI.Models.Messages;
 using Enivate.ResponseHub.UI.Models.Wallboard;
@@ -45,10 +45,11 @@ namespace Enivate.ResponseHub.UI.Controllers
 			IList<Capcode> capcodes = await CapcodeService.GetCapcodesForUser(UserId);
 
 			// Get the messages for the capcodes
-			IList<JobMessage> jobMessages = await JobMessageService.GetMostRecent(capcodes, MessageType.Job, 30);
+			IList<JobMessage> jobMessages = await JobMessageService.GetMostRecent(capcodes, MessageType.Job, 30, 0);
 
 			// Create the jobs list view model.
-			JobMessageListViewModel jobListModel = await BaseJobsMessagesController.CreateJobMessageListModel(capcodes, jobMessages);
+			JobsController jobsController = new JobsController();
+			JobMessageListViewModel jobListModel = await jobsController.CreateJobMessageListModel(capcodes, jobMessages);
 			model.Messages = jobListModel.Messages;
 			
 			return View(model);

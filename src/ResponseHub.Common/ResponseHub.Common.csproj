@@ -76,13 +76,17 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Configuration\WarningElementCollection.cs" />
-    <Compile Include="Configuration\ConfigurationSettings.cs" />
+    <Compile Include="Configuration\ResponseHubSettings.cs" />
     <Compile Include="Configuration\WarningsConfigurationSection.cs" />
     <Compile Include="Configuration\WarningSourceElement.cs" />
+    <Compile Include="Configuration\WeatherDataConfigurationSection.cs" />
+    <Compile Include="Configuration\WeatherLocationElement.cs" />
+    <Compile Include="Configuration\WeatherLocationElementCollection.cs" />
     <Compile Include="Constants\ConfigurationKeys.cs" />
     <Compile Include="Constants\CustomClaimTypes.cs" />
     <Compile Include="Constants\GeneralConstants.cs" />
     <Compile Include="Constants\MailTemplates.cs" />
+    <Compile Include="Constants\SessionConstants.cs" />
     <Compile Include="Constants\Common.cs" />
     <Compile Include="Extensions\EnumExtensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />

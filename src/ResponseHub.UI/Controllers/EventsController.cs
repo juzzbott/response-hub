@@ -8,8 +8,8 @@ using System.Web.Mvc;
 using Enivate.ResponseHub.Common;
 using Enivate.ResponseHub.Logging;
 using Enivate.ResponseHub.Model.Events.Interface;
-using Enivate.ResponseHub.Model.Groups.Interface;
-using Enivate.ResponseHub.Model.Groups;
+using Enivate.ResponseHub.Model.Units.Interface;
+using Enivate.ResponseHub.Model.Units;
 using Enivate.ResponseHub.UI.Models.Events;
 using Enivate.ResponseHub.Model.Events;
 using System.Globalization;
@@ -25,11 +25,11 @@ namespace Enivate.ResponseHub.UI.Controllers
 	public class EventsController : BaseController
     {
 		
-		IGroupService GroupService
+		IUnitService UnitService
 		{
 			get
 			{
-				return ServiceLocator.Get<IGroupService>();
+				return ServiceLocator.Get<IUnitService>();
 			}
 		}
 
@@ -54,35 +54,35 @@ namespace Enivate.ResponseHub.UI.Controllers
         public async Task<ActionResult> Index()
         {
 
-			// Get the groups for the user
-			IList<Group> usersGroups = await GroupService.GetGroupsForUser(UserId);
+			// Get the units for the user
+			IList<Unit> usersUnits = await UnitService.GetUnitsForUser(UserId);
 
 			List<Event> events = new List<Event>();
 
 			// If there is no search term, return all results, otherwise return only those that match the search results.
 			if (String.IsNullOrEmpty(Request.QueryString["q"]))
 			{
-				// Get the most recent groups
-				events.AddRange(await EventService.GetEventsByGroup(usersGroups.Select(i => i.Id)));
+				// Get the most recent units
+				events.AddRange(await EventService.GetEventsByUnit(usersUnits.Select(i => i.Id)));
 			}
 			else
 			{
-				events.AddRange(await EventService.FindByKeywords(Request.QueryString["q"], usersGroups.Select(i => i.Id)));
+				events.AddRange(await EventService.FindByKeywords(Request.QueryString["q"], usersUnits.Select(i => i.Id)));
 			}
 
 			// Create the list of view model items
 			IList<EventListItemViewModel> model = new List<EventListItemViewModel>();
 			foreach(Event eventObj in events)
 			{
-				// Get the group
-				Group eventGroup = usersGroups.First(i => i.Id == eventObj.GroupId);
+				// Get the unit
+				Unit eventUnit = usersUnits.First(i => i.Id == eventObj.UnitId);
 
 				// Add the list item to the model list
 				model.Add(new EventListItemViewModel() {
 					Id = eventObj.Id,
 					Name = eventObj.Name,
-					GroupId = eventGroup.Id,
-					GroupName = eventGroup.Name,
+					UnitId = eventUnit.Id,
+					UnitName = eventUnit.Name,
 					StartDate = eventObj.EventStarted.ToLocalTime(),
 					FinishDate = eventObj.EventFinished.ToLocalTime()
 				});
@@ -100,8 +100,8 @@ namespace Enivate.ResponseHub.UI.Controllers
 			// Create the model
 			CreateEventViewModel model = new CreateEventViewModel();
 
-			// Set the available groups
-			model.AvailableGroups = await GetAvailableGroups(UserId);
+			// Set the available units
+			model.AvailableUnits = await GetAvailableUnits(UserId);
 			model.Name = DateTime.Now.ToString("d MMMM yyyy");
 			model.StartDate = DateTime.Now.ToString("yyyy-MM-dd");
 			model.StartTime = DateTime.Now.AddMinutes(-90).ToString("HH:mm");
@@ -113,8 +113,8 @@ namespace Enivate.ResponseHub.UI.Controllers
 		[HttpPost]
 		public async Task<ActionResult> Create(CreateEventViewModel model)
 		{
-			// Set the available groups
-			model.AvailableGroups = await GetAvailableGroups(UserId);
+			// Set the available units
+			model.AvailableUnits = await GetAvailableUnits(UserId);
 
 			// If the model state is invalid, return the view with the model
 			if (!ModelState.IsValid)
@@ -129,7 +129,7 @@ namespace Enivate.ResponseHub.UI.Controllers
 				DateTime startDate = DateTime.ParseExact(startDateComplete, "yyyy-MM-dd HH:mm:ss", CultureInfo.CurrentCulture);
 
 				// Create the new event
-				Event newEvent = await EventService.CreateEvent(model.Name, model.GroupId, UserId, startDate);
+				Event newEvent = await EventService.CreateEvent(model.Name, model.UnitId, UserId, startDate);
 
 				// Redirect to the event
 				return new RedirectResult(String.Format("/events/{0}", newEvent.Id));
@@ -159,11 +159,11 @@ namespace Enivate.ResponseHub.UI.Controllers
 				throw new HttpException((int)HttpStatusCode.NotFound, "The requested page cannot be found.");
 			}
 
-			// Get the group If it's null, throw system error
-			Group group = await GroupService.GetById(eventObj.GroupId);
-			if (group == null)
+			// Get the unit If it's null, throw system error
+			Unit unit = await UnitService.GetById(eventObj.UnitId);
+			if (unit == null)
 			{
-				throw new HttpException((int)HttpStatusCode.InternalServerError, "The group details count not be found.");
+				throw new HttpException((int)HttpStatusCode.InternalServerError, "The unit details count not be found.");
 			}
 
 			// Create the model
@@ -172,13 +172,13 @@ namespace Enivate.ResponseHub.UI.Controllers
 				Id = id,
 				EventFinished = eventObj.EventFinished,
 				EventStarted = eventObj.EventStarted,
-				GroupId = eventObj.GroupId,
-				GroupName = group.Name,
+				UnitId = eventObj.UnitId,
+				UnitName = unit.Name,
 				Name = eventObj.Name
 			};
 
-			// Set the group resources
-			model.GroupResources = await GetGroupResources(group.Id, eventObj);
+			// Set the unit resources
+			model.UnitResources = await GetUnitResources(unit.Id, eventObj);
 
 			// Set the available resources
 			model.AdditionalResourceModel.AvailableAgencies = await GetAvailableAgencies();
@@ -192,67 +192,64 @@ namespace Enivate.ResponseHub.UI.Controllers
 		#region Helper methods
 
 		/// <summary>
-		/// Gets a list of select list items that represents the current users available groups.
+		/// Gets a list of select list items that represents the current users available units.
 		/// </summary>
 		/// <param name="userId"></param>
 		/// <returns></returns>
-		private async Task<IList<SelectListItem>> GetAvailableGroups(Guid userId)
+		private async Task<IList<SelectListItem>> GetAvailableUnits(Guid userId)
 		{
-			// Get the list of groups for the user
-			IList<Group> userGroups = await GroupService.GetGroupsForUser(userId);
+			// Get the list of units for the user
+			IList<Unit> userUnits = await UnitService.GetUnitsForUser(userId);
 
 			// Create the list of select list items
-			IList<SelectListItem> availableGroups = new List<SelectListItem>();
-
-			// Create the list of select list items
-			if (userGroups == null || userGroups.Count > 1)
+			IList<SelectListItem> availableUnits = new List<SelectListItem>()
 			{
-				availableGroups.Add(new SelectListItem() { Text = "Please select...", Value = "" });
-			}
+				new SelectListItem() { Text = "Please select...", Value = "" }
+			};
 
-			// Loop through the groups and add to the list of available groups
-			foreach (Group group in userGroups)
+			// Loop through the units and add to the list of available units
+			foreach (Unit unit in userUnits)
 			{
-				availableGroups.Add(new SelectListItem()
+				availableUnits.Add(new SelectListItem()
 				{
-					Text = group.Name,
-					Value = group.Id.ToString()
+					Text = unit.Name,
+					Value = unit.Id.ToString()
 				});
 			}
 
-			// return the available groups
-			return availableGroups;
+			// return the available units
+			return availableUnits;
 		}
 
 		/// <summary>
-		/// Gets the group resources for the event. 
+		/// Gets the unit resources for the event. 
 		/// </summary>
-		/// <param name="groupId"></param>
+		/// <param name="unitId"></param>
 		/// <returns></returns>
-		private async Task<IList<EventResource>> GetGroupResources(Guid groupId, Event eventObj)
+		private async Task<IList<EventResource>> GetUnitResources(Guid unitId, Event eventObj)
 		{
 			// Create the list of event resources
 			IList<EventResource> resources = new List<EventResource>();
 
-			// Get the group
-			Group group = await GroupService.GetById(groupId);
+			// Get the unit
+			Unit unit = await UnitService.GetById(unitId);
 
-			// If the group is null, return empty list
-			if (group == null)
+			// If the unit is null, return empty list
+			if (unit == null)
 			{
 				return resources;
 			}
 
-			// Get the users for the specified group
-			IList<IdentityUser> users = await GroupService.GetUsersForGroup(groupId);
+			// Get the users for the specified unit
+			IList<IdentityUser> users = await UnitService.GetUsersForUnit(unitId);
 
-			// For each user in the group, add the event resource
+			// For each user in the unit, add the event resource
 			foreach(IdentityUser user in users)
 			{
 				resources.Add(new EventResource() {
 					Active = eventObj.Resources.Any(i => i.UserId.HasValue && i.UserId == user.Id),
 					Name = user.FullName,
-					Type = ResourceType.GroupMember,
+					Type = ResourceType.UnitMember,
 					UserId = user.Id
 				});
 			}

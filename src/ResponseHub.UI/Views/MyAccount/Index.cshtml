@@ -18,50 +18,63 @@
 			<dd>@Model.FirstName @Model.Surname</dd>
 			<dt>Email address:</dt>
 			<dd>@Model.EmailAddress</dd>
+			<dt>Member number:</dt>
+			<dd>@Model.Profile.MemberNumber</dd>
 		</dl>
 		<hr />
 	</div>
 </div>
 
 <div class="row">
-	<div class="col-sm-4 col-xl-3 col-xl-offset-0">
-		<p class="text-center"><i class="fa fa-fw fa-pencil-square-o fa-3x text-primary"></i></p>
-		<h3 class="text-center">Update your account</h3>
-		<p class="text-center">
+	<div class="col-xs-12">
+		<h3><i class="fa fa-fw fa-pencil-square-o text-primary"></i>Update your account</h3>
+		<p>
 			Update the details of your account such as your name, profile settings, etc.
 		</p>
-		<p class="text-center">
+		<p>
 			<a href="/my-account/update-account" class="btn btn-primary">Update account</a>
 		</p>
+		<hr />
 	</div>
+</div>
 
-	<hr class="visible-xs-block" />
+<div class="row">
+	<div class="col-xs-12">
+		<h3><i class="fa fa-fw fa-address-book-o text-primary"></i>View sign ins</h3>
+		<p>
+			View your sign in history
+		</p>
+		<p>
+			<a href="/my-account/sign-in-history" class="btn btn-primary">View sign in history</a>
+		</p>
+		<hr />
+	</div>
+</div>
 
-	<div class="col-sm-4 col-xl-3 col-xl-offset-1">
-		<p class="text-center"><i class="fa fa-fw fa-envelope-o fa-3x text-primary""></i></p>
-		<h3 class="text-center">Change your email address</h3>
-		<p class="text-center">
+<div class="row">
+	<div class="col-xs-12">
+		<h3><i class="fa fa-fw fa-envelope-o text-primary"></i>Change your email address</h3>
+		<p>
 			Change you primary contact email address and ResponseHub username.
 		</p>
-		<p class="text-center">
+		<p>
 			<a href="/my-account/update-email" class="btn btn-primary">Update email address</a>
 		</p>
+		<hr />
 	</div>
+</div>
 
 @if (Model.CanChangePassword)
 {
-	
-	<hr class="visible-xs-block" />
-
-	<div class="col-sm-4 col-xl-3 col-xl-offset-1">
-		<p class="text-center"><i class="fa fa-fw fa-key fa-3x text-primary"></i></p>
-		<h3 class="text-center">Change your account password</h3>
-		<p class="text-center">
-			Keep your account secure by regularly changing your password.
-		</p>
-		<p class="text-center">
-			<a href="/my-account/change-password" class="btn btn-primary">Change account password</a>
-		</p>
+	<div class="row">
+		<div class="col-xs-12">
+			<h3><i class="fa fa-fw fa-key text-primary"></i>Change your account password</h3>
+			<p>
+				Keep your account secure by regularly changing your password.
+			</p>
+			<p>
+				<a href="/my-account/change-password" class="btn btn-primary">Change account password</a>
+			</p>
+		</div>
 	</div>
 }
-</div>

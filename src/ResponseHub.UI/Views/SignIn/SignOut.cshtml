@@ -1,0 +1,65 @@
+﻿@model Enivate.ResponseHub.UI.Models.SignIn.SignOutViewModel
+@{
+	ViewBag.Title = "Sign out";
+	ViewBag.BodyClass = "sign-in";
+}
+
+<h1>@ViewBag.Title</h1>
+
+@Html.SuccessFromQueryString("signed_out", "1", "You have signed out for the specified sign in session.")
+
+@if (Model.SignIns == null || Model.SignIns.Count == 0)
+{
+	<p class="lead">You don't have any times you need to sign out for.</p>
+}
+else
+{
+	
+	<p>Sign out of previous sign ins below:</p>
+
+	foreach (var item in Model.SignIns)
+	{
+		<div class="sign-out-row">
+			<p class="lead">@item.SignInTime.ToLocalTime().ToString("yyyy-MM-dd HH:mm") - @item.SignInType</p>
+			<p><strong>Description: </strong>@item.Description</p>
+			<button class="btn btn-primary btn-icon show-sign-out-form" onclick="responseHub.signIn.showSignOutForm(this);"><i class="fa fa-fw fa-chevron-down"></i>Sign out</button>
+			<form action="/sign-in/sign-out/@item.Id" method="post" class="hidden">
+
+				<div class="form-group">
+					<label for="StartDate">Start date *</label>
+					<div class="row">
+						<div class="col-sm-6 col-md-4 col-lg-3">
+							<div class="input-group date datepicker-control" data-provide="datepicker" data-date-format="yyyy-mm-dd" data-date-autoclose="true" data-date-show-on-focus="false">
+								@Html.TextBoxFor(model => model.SignOutDate, new { @class = "form-control" })
+								<div class="input-group-addon">
+									<i class="fa fa-fw fa-calendar"></i>
+								</div>
+							</div>
+							<div class="text-muted"><em>Date format should be yyyy-mm-dd.</em></div>
+						</div>
+					</div>
+					@Html.ValidationMessageFor(model => model.SignOutDate)
+				</div>
+
+				<div class="form-group">
+					<label for="StartTime">Start time *</label>
+					<div class="row">
+						<div class="col-sm-6 col-md-4 col-lg-3">
+							<div class="input-group timepicker-control">
+								@Html.TextBoxFor(model => model.SignOutTime, new { @class = "form-control" })
+								<div class="input-group-addon">
+									<i class="fa fa-fw fa-clock-o"></i>
+								</div>
+							</div>
+							<div class="text-muted"><em>Date format should be hh:mm and in 24 hour time.</em></div>
+						</div>
+					</div>
+					@Html.ValidationMessageFor(model => model.SignOutTime)
+				</div>
+
+				<button type="submit" class="btn btn-primary btn-icon"><i class="fa fa-sign-out"></i>Sign out</button>
+				<a href="#" onclick="responseHub.signIn.hideSignOutForm(this); return false;" class="btn btn-link">Cancel</a>
+			</form>
+		</div>
+	}
+}

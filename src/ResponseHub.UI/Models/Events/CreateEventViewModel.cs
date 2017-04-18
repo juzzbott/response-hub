@@ -13,8 +13,8 @@ namespace Enivate.ResponseHub.UI.Models.Events
 		[Required(ErrorMessage = "Please enter a name for the event.")]
 		public string Name { get; set; }
 
-		[Required(ErrorMessage = "Please select the group managing the event.")]
-		public Guid GroupId { get; set; }
+		[Required(ErrorMessage = "Please select the unit managing the event.")]
+		public Guid UnitId { get; set; }
 
 		[Required(ErrorMessage = "Please ensure a start date has been specified.")]
 		public string StartDate { get; set; }
@@ -22,11 +22,11 @@ namespace Enivate.ResponseHub.UI.Models.Events
 		[Required(ErrorMessage = "Please ensure a start time has been specified.")]
 		public string StartTime { get; set; }
 
-		public IList<SelectListItem> AvailableGroups { get; set; }
+		public IList<SelectListItem> AvailableUnits { get; set; }
 
 		public CreateEventViewModel()
 		{
-			AvailableGroups = new List<SelectListItem>();
+			AvailableUnits = new List<SelectListItem>();
 		} 
 
 	}

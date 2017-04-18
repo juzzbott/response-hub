@@ -1,0 +1,76 @@
+﻿@model Enivate.ResponseHub.UI.Areas.Admin.Models.Users.EditUserViewModel
+
+@{
+    ViewBag.Title = "Edit user";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<h1>@ViewBag.Title</h1>
+
+<p>Edit the users details below:</p>
+
+<form action="@Request.Url.LocalPath" method="post">
+
+	@Html.AntiForgeryToken()
+
+	@Html.ValidationSummary(true)
+
+	<h3>User account details</h3>
+
+	<div class="form-group">
+		<label for="EmailAddress">Email address *</label>
+		<div class="row">
+			<div class="col-sm-8 col-md-6 col-lg-4">
+				@Html.TextBoxFor(model => model.EmailAddress, new { @class = "form-control", placeholder = "user@domain.com" })
+			</div>
+		</div>
+		@Html.ValidationMessageFor(model => model.EmailAddress)
+		<div class="row">
+			<div class="col-lg-10 col-xl-6">
+				<p class="section-help"><strong>Note: </strong>Changing a users' email address will also change their username to access ResponseHub.</p>
+			</div>
+		</div>
+	</div>
+
+	<div class="form-group">
+		<label for="FirstName">First name *</label>
+		<div class="row">
+			<div class="col-sm-8 col-md-6 col-lg-4">
+				@Html.TextBoxFor(model => model.FirstName, new { @class = "form-control", placeholder = "John" })
+			</div>
+		</div>
+		@Html.ValidationMessageFor(model => model.FirstName)
+	</div>
+
+	<div class="form-group">
+		<label for="Surname">Surname *</label>
+		<div class="row">
+			<div class="col-sm-8 col-md-6 col-lg-4">
+				@Html.TextBoxFor(model => model.Surname, new { @class = "form-control", placeholder = "Smith" })
+			</div>
+		</div>
+		@Html.ValidationMessageFor(model => model.Surname)
+	</div>
+
+	@if (Model.UserHasProfile)
+	{
+
+		<h3>Profile information</h3>
+
+		<div class="form-group">
+			<label for="MemberNumber">Member number</label>
+			<div class="row">
+				<div class="col-sm-8 col-md-6 col-lg-4">
+					@Html.TextBoxFor(model => model.MemberNumber, new { @class = "form-control", placeholder = "6xxxx" })
+				</div>
+			</div>
+		</div>
+
+	}
+
+	<button type="submit" class="btn btn-primary">Save user</button>
+	<a href="/admin/users" class="btn btn-link">Cancel</a>
+
+</form>
+
+

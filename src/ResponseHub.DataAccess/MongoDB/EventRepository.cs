@@ -49,15 +49,15 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 		}
 
 		/// <summary>
-		/// Gets the collection of events based on the group id.
+		/// Gets the collection of events based on the unit id.
 		/// </summary>
-		/// <param name="groupId">The id of the group to get the events for.</param>
-		/// <returns>The colection of events for the group.</returns>
-		public async Task<IList<Event>> GetEventsByGroup(IEnumerable<Guid> groupIds)
+		/// <param name="unitId">The id of the unit to get the events for.</param>
+		/// <returns>The colection of events for the unit.</returns>
+		public async Task<IList<Event>> GetEventsByUnit(IEnumerable<Guid> unitIds)
 		{
 
 			// Define the 'in' filter
-			FilterDefinition<Event> filter = Builders<Event>.Filter.In(i => i.GroupId, groupIds);
+			FilterDefinition<Event> filter = Builders<Event>.Filter.In(i => i.UnitId, unitIds);
 
 			// Find the event data objects
 			IList<Event> events = await Collection.Find(filter).ToListAsync();
@@ -69,20 +69,29 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 		/// <summary>
 		/// Finds the events that match the keywords entered.
 		/// </summary>
-		/// <param name="name">The name to find the group by.</param>
-		/// <returns>The list of groups matching the result.</returns>
-		public async Task<IList<Event>> FindByKeywords(string keywords, IEnumerable<Guid> groupIds)
+		/// <param name="name">The name to find the unit by.</param>
+		/// <returns>The list of units matching the result.</returns>
+		public async Task<IList<Event>> FindByKeywords(string keywords, IEnumerable<Guid> unitIds)
 		{
 
 			// Build the query
 			FilterDefinition<Event> filter = Builders<Event>.Filter.Text(keywords) &
-												Builders<Event>.Filter.In(i => i.GroupId, groupIds);
+												Builders<Event>.Filter.In(i => i.UnitId, unitIds);
 
 			// Get the results of the text search.
-			IList<Event> events = await Collection.Find(filter).ToListAsync();
-		
-			// return the mapped groups.
-			return events;
+			IList<Event> results = await Collection.Find(filter).ToListAsync();
+
+			// Create the list of events
+			List<Event> mappedEvents = new List<Event>();
+
+			// For each result, map to a Event model object.
+			//foreach (EventDto result in results)
+			//{
+			//	mappedEvents.Add(MapDbObjectToModel(result));
+			//}
+
+			// return the mapped units.
+			return results;
 		}
 
 		/// <summary>
@@ -163,7 +172,7 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 				Created = dbObject.Created,
 				EventFinished = dbObject.EventFinished,
 				EventStarted = dbObject.EventStarted,
-				GroupId = dbObject.GroupId,
+				UnitId = dbObject.UnitId,
 				Id = dbObject.Id,
 				Name = dbObject.Name,
 				Resources = dbObject.Resources,
@@ -193,7 +202,7 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 				Created = modelObject.Created,
 				EventFinished = modelObject.EventFinished,
 				EventStarted = modelObject.EventStarted,
-				GroupId = modelObject.GroupId,
+				UnitId = modelObject.UnitId,
 				Id = modelObject.Id,
 				Name = modelObject.Name,
 				Resources = modelObject.Resources,

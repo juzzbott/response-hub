@@ -123,13 +123,23 @@ namespace Enivate.ResponseHub.DataAccess
 		}
 
 		/// <summary>
-		/// Removes the specified user from the collection.
+		/// Removes the specified entity from the collection.
 		/// </summary>
-		/// <param name="user">The user object to remove from the collection.</param>
+		/// <param name="entity">The object to remove from the collection.</param>
 		public virtual async Task Remove(T entity)
 		{
 			// Remove the object from the collection based on the user id.
 			await Collection.DeleteOneAsync<T>(i => i.Id == entity.Id);
+		}
+
+		/// <summary>
+		/// Removes the specified entity from the collection.
+		/// </summary>
+		/// <param name="id">The id of the object to remove from the collection.</param>
+		public virtual async Task Remove(Guid id)
+		{
+			// Remove the object from the collection based on the user id.
+			await Collection.DeleteOneAsync<T>(i => i.Id == id);
 		}
 
 		/// <summary>

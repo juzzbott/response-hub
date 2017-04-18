@@ -4,7 +4,7 @@ using System.Linq;
 using System.Web;
 
 using Enivate.ResponseHub.Model.Messages;
-using Enivate.ResponseHub.Model.Groups;
+using Enivate.ResponseHub.Model.Units;
 
 namespace Enivate.ResponseHub.UI.Models.Messages
 {
@@ -15,10 +15,15 @@ namespace Enivate.ResponseHub.UI.Models.Messages
 
 		public IList<Capcode> UserCapcodes { get; set; }
 
+		public JobMessageFilter Filter { get; set; }
+
+		public MessageType MessageType { get; set; }
+
 		public JobMessageListViewModel()
 		{
 			Messages = new List<JobMessageViewModel>();
 			UserCapcodes = new List<Capcode>();
+			Filter = new JobMessageFilter();
 		}
 
 	}

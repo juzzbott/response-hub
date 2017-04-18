@@ -16,6 +16,8 @@ namespace Enivate.ResponseHub.DataAccess.Interface
 
 		Task Remove(T entity);
 
+		Task Remove(Guid id);
+
 		Task<T> Save(T entity);
 
 		Task<IList<T>> GetAll();

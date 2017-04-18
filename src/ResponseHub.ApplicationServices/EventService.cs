@@ -29,18 +29,18 @@ namespace Enivate.ResponseHub.ApplicationServices
 		/// Creates a new event.
 		/// </summary>
 		/// <param name="name"></param>
-		/// <param name="groupId"></param>
+		/// <param name="unitId"></param>
 		/// <param name="userId"></param>
 		/// <param name="startDate"></param>
 		/// <returns></returns>
-		public async Task<Event> CreateEvent(string name, Guid groupId, Guid userId, DateTime startDate)
+		public async Task<Event> CreateEvent(string name, Guid unitId, Guid userId, DateTime startDate)
 		{
 			// Create the new event
 			Event newEvent = new Event()
 			{
 				Created = DateTime.UtcNow,
 				EventStarted = startDate.ToUniversalTime(),
-				GroupId = groupId,
+				UnitId = unitId,
 				Name = name
 			};
 
@@ -62,24 +62,24 @@ namespace Enivate.ResponseHub.ApplicationServices
 		}
 
 		/// <summary>
-		/// Gets the collection of events based on the group id.
+		/// Gets the collection of events based on the unit id.
 		/// </summary>
-		/// <param name="groupId">The id of the group to get the events for.</param>
-		/// <returns>The colection of events for the group.</returns>
-		public async Task<IList<Event>> GetEventsByGroup(IEnumerable<Guid> groupIds)
+		/// <param name="unitId">The id of the unit to get the events for.</param>
+		/// <returns>The colection of events for the unit.</returns>
+		public async Task<IList<Event>> GetEventsByUnit(IEnumerable<Guid> unitIds)
 		{
-			return await _repository.GetEventsByGroup(groupIds);
+			return await _repository.GetEventsByUnit(unitIds);
 		}
 
 		/// <summary>
 		/// Find the event by the keywords. 
 		/// </summary>
 		/// <param name="keywords">Keywords to find the event for.</param>
-		/// <param name="groupIds">The collection of group ids to limit the results to.</param>
-		/// <returns>The list of events that match the search terms and group ids.</returns>
-		public async Task<IList<Event>> FindByKeywords(string keywords, IEnumerable<Guid> groupIds)
+		/// <param name="unitIds">The collection of unit ids to limit the results to.</param>
+		/// <returns>The list of events that match the search terms and unit ids.</returns>
+		public async Task<IList<Event>> FindByKeywords(string keywords, IEnumerable<Guid> unitIds)
 		{
-			return await _repository.FindByKeywords(keywords, groupIds);
+			return await _repository.FindByKeywords(keywords, unitIds);
 		}
 
 		/// <summary>

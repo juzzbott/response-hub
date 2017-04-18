@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.26403.3
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ResponseHub.UI", "ResponseHub.UI\ResponseHub.UI.csproj", "{AE4E432F-C3FA-49DC-A0C3-CCC564F1E3A8}"
 EndProject
@@ -38,6 +38,12 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ResponseHub.PagerDecoder.ConsoleRunner", "PagerDecoding\ResponseHub.PagerDecoder.ConsoleRunner\ResponseHub.PagerDecoder.ConsoleRunner.csproj", "{87774AFF-1B83-4666-B0A2-BD0F91C2C397}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ResponseHub.MessageGenerator", "Tests\ResponseHub.MessageGenerator\ResponseHub.MessageGenerator.csproj", "{9F19A222-E532-43AD-98BC-C003735C1EE0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ResponseHub.Tests.Integration", "Tests\ResponseHub.Tests.Integration\ResponseHub.Tests.Integration.csproj", "{DA937F16-FC89-4F71-AFDD-7AA40945D19F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tasks", "Tasks", "{3CFE5B51-3147-418B-B60F-63F6907F7759}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ResponseHub.WebTasks", "Tasks\ResponseHub.WebTasks\ResponseHub.WebTasks.csproj", "{B08039DC-7FA4-4946-BCA1-5AEE11DEBB7B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -167,6 +173,22 @@ Global
 		{9F19A222-E532-43AD-98BC-C003735C1EE0}.Staging|Any CPU.Build.0 = Release|Any CPU
 		{9F19A222-E532-43AD-98BC-C003735C1EE0}.Test|Any CPU.ActiveCfg = Release|Any CPU
 		{9F19A222-E532-43AD-98BC-C003735C1EE0}.Test|Any CPU.Build.0 = Release|Any CPU
+		{DA937F16-FC89-4F71-AFDD-7AA40945D19F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DA937F16-FC89-4F71-AFDD-7AA40945D19F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DA937F16-FC89-4F71-AFDD-7AA40945D19F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DA937F16-FC89-4F71-AFDD-7AA40945D19F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DA937F16-FC89-4F71-AFDD-7AA40945D19F}.Staging|Any CPU.ActiveCfg = Release|Any CPU
+		{DA937F16-FC89-4F71-AFDD-7AA40945D19F}.Staging|Any CPU.Build.0 = Release|Any CPU
+		{DA937F16-FC89-4F71-AFDD-7AA40945D19F}.Test|Any CPU.ActiveCfg = Release|Any CPU
+		{DA937F16-FC89-4F71-AFDD-7AA40945D19F}.Test|Any CPU.Build.0 = Release|Any CPU
+		{B08039DC-7FA4-4946-BCA1-5AEE11DEBB7B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B08039DC-7FA4-4946-BCA1-5AEE11DEBB7B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B08039DC-7FA4-4946-BCA1-5AEE11DEBB7B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B08039DC-7FA4-4946-BCA1-5AEE11DEBB7B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B08039DC-7FA4-4946-BCA1-5AEE11DEBB7B}.Staging|Any CPU.ActiveCfg = Release|Any CPU
+		{B08039DC-7FA4-4946-BCA1-5AEE11DEBB7B}.Staging|Any CPU.Build.0 = Release|Any CPU
+		{B08039DC-7FA4-4946-BCA1-5AEE11DEBB7B}.Test|Any CPU.ActiveCfg = Release|Any CPU
+		{B08039DC-7FA4-4946-BCA1-5AEE11DEBB7B}.Test|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -179,5 +201,7 @@ Global
 		{677C45D9-103D-473F-99E3-4C6403DE5D78} = {A9CE0402-08E1-467F-835D-8C26A81534E7}
 		{87774AFF-1B83-4666-B0A2-BD0F91C2C397} = {A9CE0402-08E1-467F-835D-8C26A81534E7}
 		{9F19A222-E532-43AD-98BC-C003735C1EE0} = {F118DA4A-AF5A-4C8A-9651-AF604DB40467}
+		{DA937F16-FC89-4F71-AFDD-7AA40945D19F} = {F118DA4A-AF5A-4C8A-9651-AF604DB40467}
+		{B08039DC-7FA4-4946-BCA1-5AEE11DEBB7B} = {3CFE5B51-3147-418B-B60F-63F6907F7759}
 	EndGlobalSection
 EndGlobal

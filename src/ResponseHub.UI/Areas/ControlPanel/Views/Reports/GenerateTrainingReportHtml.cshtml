@@ -1,0 +1,101 @@
+﻿@model Enivate.ResponseHub.UI.Areas.ControlPanel.Models.Reports.Training.TrainingReportViewModel
+@{
+	ViewBag.Title = "Training report";
+	if (Model.UseStandardLayout)
+	{
+		Layout = "~/Areas/ControlPanel/Views/Shared/_Layout.cshtml";
+	}
+	else
+	{
+		Layout = "~/Areas/ControlPanel/Views/Shared/HtmlExportLayout.cshtml";
+	}
+}
+
+<div class="generated-report">
+
+	<h1 id="training-report">@ViewBag.Title</h1>
+
+	<h2>Training overview</h2>
+
+	<div id="training-overview-chart" class="ct-chart ct-perfect-fourth" style="width: 900px; height: 400px;"></div>
+	<input type="hidden" id="training-overview-chart-data" value="@Model.ChartDataJs" />
+
+	<h2 style="page-break-before: always">Member training sessions</h2>
+
+	<table class="table table-striped results-overview table-small">
+		<thead>
+			<tr>
+				<th>&nbsp;</th>
+				@foreach (var trainingType in Model.TrainingTypes)
+				{
+					<th>@trainingType.Value</th>
+				}
+				<th>Attendance</th>
+			</tr>
+		</thead>
+		<tbody>
+			@foreach (var memberReport in Model.MemberReports)
+			{
+				<tr>
+					<td>@memberReport.Name</td>
+					@foreach (var trainingSession in memberReport.TrainingSessions)
+					{
+						<td>
+							@if (trainingSession.Value != 0)
+							{
+								<span class="text-success"><strong>@trainingSession.Value</strong></span>
+							}
+							else
+							{
+								<span class="text-muted">@trainingSession.Value</span>
+							}
+						</td>
+					}
+					<td>
+						<strong>
+							@if (memberReport.AttendancePercent < 40)
+							{
+								<span class="text-danger">@String.Format("{0}%", memberReport.AttendancePercent)</span>
+							}
+							else if (memberReport.AttendancePercent < 60)
+							{
+								<span class="text-warning">@String.Format("{0}%", memberReport.AttendancePercent)</span>
+							}
+							else
+							{
+								<span class="text-success">@String.Format("{0}%", memberReport.AttendancePercent)</span>
+							}
+						</strong>
+					</td>
+				</tr>
+			}
+		</tbody>
+	</table>
+
+	<h2 style="page-break-before: always">Member training dates</h2>
+
+	<table class="table table-striped results-overview table-small">
+		<thead>
+			<tr>
+				<th>&nbsp;</th>
+				@foreach (var trainingType in Model.TrainingTypes)
+			{
+					<th>@trainingType.Value</th>
+			}
+			</tr>
+		</thead>
+		<tbody>
+			@foreach (var memberReport in Model.MemberReports)
+			{
+				<tr>
+					<td>@memberReport.Name</td>
+					@foreach (var trainingSession in memberReport.TrainingDates)
+				{
+						<td>@Html.Raw(String.Join("<br />", trainingSession.Value.Select(i => i.ToString("yyyy-MM-dd")).ToList()))</td>
+				}
+				</tr>
+			}
+		</tbody>
+	</table>
+
+</div>

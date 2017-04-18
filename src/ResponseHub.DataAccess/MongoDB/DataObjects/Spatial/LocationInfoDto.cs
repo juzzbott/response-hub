@@ -22,9 +22,14 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB.DataObjects.Spatial
 
 		public string GridReference { get; set; }
 
-		public string AddressInfo { get; set; }
+		public AddressInfo Address { get; set; }
 
 		public GeoJson2DGeographicCoordinates Coordinates { get; set; }
+
+		public LocationInfoDto()
+		{
+			Address = new AddressInfo();
+		}
 
 
 	}

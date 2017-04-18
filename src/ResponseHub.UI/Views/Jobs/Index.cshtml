@@ -9,23 +9,28 @@
 
 
 <div class="row">
-	<div class="col-sm-12 job-list">
+	<div id="@(Model.MessageType == Enivate.ResponseHub.Model.Messages.MessageType.Job ? "jobs-list-container" : "message-list-container")" class="col-sm-12">
 
-		<ul class="job-list list-unstyled">
 
 			@if (Model.Messages == null || Model.Messages.Count == 0)
 			{
-				<li class="no-jobs-msg">
-					<p class="lead">There are no @ViewBag.JobsOrMessages to display.</p>
-				</li>
+				<p class="lead">There are no @ViewBag.JobsOrMessages to display.</p>
 			}
-
-			@foreach (var message in Model.Messages)
+			else
 			{
-				@Html.Partial("~/Views/Jobs/JobListItem.cshtml", message);
+				
+				@Html.Partial("~/Views/Shared/JobMessageFilter.cshtml", Model.Filter);
+
+				<ul class="job-list list-unstyled">		
+				</ul>
 			}
 
-		</ul>
+	</div>
+</div>
 
+<div class="row bottom-20 top-20" id="jobs-load-more">
+	<div class="col-sm-12 text-center">
+		<p class="text-primary btn-icon loading hidden lead"><i class="fa fa-spinner fa-spin"></i>Loading job details...</p>
+		<button class="btn btn-primary hidden" onclick="responseHub.jobMessages.getNextJobMessages('@(Model.MessageType == Enivate.ResponseHub.Model.Messages.MessageType.Job ? "job" : "message")');">Load more</button>
 	</div>
 </div>

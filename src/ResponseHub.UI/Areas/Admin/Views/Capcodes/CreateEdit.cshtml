@@ -8,7 +8,7 @@
 
 @if (Model.Id == Guid.Empty)
 {
-	<p>Create a new capcode that can be selected by groups so that members can also recieve messages from the capcode.</p>
+	<p>Create a new capcode that can be selected by units so that members can also recieve messages from the capcode.</p>
 }
 else
 {
@@ -32,7 +32,7 @@ else
 	</div>
 
 	<div class="form-group">
-		<label for="Name">Short name *</label>
+		<label for="ShortName">Short name *</label>
 		<div class="row">
 			<div class="col-sm-8 col-md-6 col-lg-4">
 				@Html.TextBoxFor(model => model.ShortName, new { @class = "form-control", placeholder = "e.g. STATE_INFO" })
@@ -42,7 +42,7 @@ else
 	</div>
 
 	<div class="form-group">
-		<label for="Name">Capcode *</label>
+		<label for="CapcodeAddress">Capcode *</label>
 		<div class="row">
 			<div class="col-sm-8 col-md-6 col-lg-4">
 				@Html.TextBoxFor(model => model.CapcodeAddress, new { @class = "form-control", placeholder = "00000xxx", maxlength = "9" })
@@ -62,22 +62,31 @@ else
 	</div>
 
 	<div class="form-group">
-		<label for="Service">Group use only *</label>
+		<label>Unit use only *</label>
 		<div class="row">
-			<div class="col-sm-8 col-md-6 col-lg-4">
+			<div class="col-sm-8 col-md-6 col-lg-4 graphic-checkbox">
 				<div class="checkbox">
 					<label>
-						@Html.CheckBoxFor(i => i.IsGroupCapcode) Is group capcode
+						@Html.CheckBoxFor(i => i.IsUnitCapcode) Is unit capcode
 					</label>
 				</div>
 			</div>
 		</div>
 		<div class="row">
 			<div class="col-lg-10 col-xl-6">
-				<p class="section-help">Capcodes that are specified as "group use only" can only be selected for a group as the primary capcode. They are not available for use in the additional capcodes field.</p>
+				<p class="section-help">Capcodes that are specified as "unit use only" can only be selected for a unit as the primary capcode. They are not available for use in the additional capcodes field.</p>
 			</div>
 		</div>
 	</div>
+
+	@if (Model.Id != Guid.Empty)
+	{
+		<div class="row">
+			<div class="col-xs-12">
+				<a data-href="/admin/capcodes/delete/@Model.Id" class="btn btn-link btn-link-delete cursor-pointer btn-icon btn-action-icon" data-toggle="modal" data-target="#confirm-delete"><i class="fa fa-fw fa-times"></i>Delete capcode</a>
+			</div>
+		</div>
+	}
 
 	<div class="top-20">
 		@if (Model.Id == Guid.Empty)
@@ -92,3 +101,21 @@ else
 	</div>
 
 </form>
+
+<div class="modal fade delete-capcode" tabindex="-1" role="dialog" id="confirm-delete">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h4 class="modal-title">Are you sure?</h4>
+			</div>
+			<div class="modal-body">
+				<p>Are you sure you want to remove the capcode?</p>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-link" data-dismiss="modal">Cancel</button>
+				<a class="btn btn-primary btn-ok">Remove capcode</a>
+			</div>
+		</div><!-- /.modal-content -->
+	</div><!-- /.modal-dialog -->
+</div><!-- /.modal -->

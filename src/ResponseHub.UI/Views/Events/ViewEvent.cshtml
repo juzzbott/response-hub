@@ -23,7 +23,7 @@
 		<li role="presentation" class="active"><a href="#overview" aria-controls="overview" role="tab" data-toggle="tab" class="btn-icon"><i class="fa fa-fw fa-bar-chart"></i>Overview</a></li>
 		<li role="presentation"><a href="#crews" aria-controls="crews" role="tab" data-toggle="tab" class="btn-icon"><i class="fa fa-fw fa-users"></i>Crews</a></li>
 		<li role="presentation"><a href="#resources" aria-controls="resources" role="tab" data-toggle="tab" class="btn-icon"><i class="fa fa-fw fa-cubes"></i>Resources</a></li>
-		<!-- <li role="presentation"><a href="#sectors" aria-controls="sectors" role="tab" data-toggle="tab" class="btn-icon"><i class="fa fa-fw fa-object-group"></i>Sectors</a></li> -->
+		<!-- <li role="presentation"><a href="#sectors" aria-controls="sectors" role="tab" data-toggle="tab" class="btn-icon"><i class="fa fa-fw fa-object-unit"></i>Sectors</a></li> -->
 	</ul>
 
 	<!-- Tab panes -->
@@ -36,10 +36,10 @@
 		</div>
 		<div role="tabpanel" class="tab-pane" id="resources">
 
-			<h3>Group members</h3>
+			<h3>Unit members</h3>
 
 			<div class="row">
-				@foreach (var resource in Model.GroupResources)
+				@foreach (var resource in Model.UnitResources)
 				{
 					<div class="col-sm-6 col-md-4 col-lg-3 col-xl-2"><div class="checkbox"><label><input type="checkbox" value="@resource.UserId.Value" data-name="@resource.Name" /> @resource.Name</label></div></div>
 				}

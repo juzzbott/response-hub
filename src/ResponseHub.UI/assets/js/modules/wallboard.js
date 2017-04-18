@@ -105,9 +105,15 @@
 
 		// Set the map reference
 		var mapRef = $(elem).data('map-ref');
+		var address = $(elem).data('address');
 
 		if (mapRef != "") {
-			$('.wallboard-main .map-reference').text(mapRef);
+			if (address != "" && address != "undefined") {
+				$('.wallboard-main .map-reference').text(address);
+				$('.wallboard-main .map-reference').append('<span class="small show">' + mapRef + '</span>');
+			} else {
+				$('.wallboard-main .map-reference').text(mapRef);
+			}
 			$('.wallboard-main .job-location').removeClass('hidden');
 		} else {
 			$('.wallboard-main .job-location').addClass('hidden');
@@ -165,6 +171,7 @@
 
 		// Clear the loading notes
 		$("ul.job-notes").empty();
+		$('.no-notes-msg').remove();
 
 		// Hide the loading
 		$(".notes-loading").addClass("hidden");
@@ -176,7 +183,7 @@
 				
 				if (data == null || data.length == 0) {
 
-					$("ul.job-notes").append('<li class="no-notes-msg"><p>No notes available.</p></li>');
+					$(".job-notes-container").append('<p class="no-notes-msg">No notes available.</p>');
 
 				} else {
 
@@ -227,8 +234,8 @@
 		var messageHeader = $('<div class="row"></div></div>')
 
 		// Build the h2 elements
-		var h2 = $('<div class="col-sm-5"><h2><i id="message-type"></i><span class="job-number"></span></h2></div>');
-		var h2Date = $('<div class="col-sm-7"><p class="text-right job-date"></p><p class="job-status text-right"></p></div>');
+		var h2 = $('<div class="col-sm-5"><h2><i id="message-type"></i><span class="job-number"></span></h2><p class="job-status"></p></div>');
+		var h2Date = $('<div class="col-sm-7"><p class="text-right job-date"></p></div>');
 
 		messageHeader.append(h2);
 		messageHeader.append(h2Date);
@@ -375,11 +382,20 @@
 		var localDateString = jobDate.format('DD-MM-YYYY HH:mm:ss');
 
 		var mapReference = "";
+		var address = "";
 		var lat = 0;
 		var lon = 0;
 
 		if (jobMessage.Location != null)
 		{
+
+			// If there is an address, then set that.
+			if (jobMessage.Location.Address != null && jobMessage.Location.Address.FormattedAddress != "" && jobMessage.Location.Address.FormattedAddress != "undefined")
+			{
+				address = jobMessage.Location.Address.FormattedAddress;
+			}
+
+			// Set the map reference
 			mapReference = jobMessage.Location.MapReference;
 
 			if (jobMessage.Location.Coordinates != null)
@@ -407,11 +423,8 @@
 
 		// Creat the list item
 		var listItem = $('<li class="' + (selectedJobIndex == index ? "selected" : "") + '" data-message="' + jobMessage.MessageBody + '" data-job-number="' + jobMessage.JobNumber +
-			'" data-date="' + localDateString + '" data-priority="' + jobMessage.Priority + '" data-map-ref="' + mapReference + '" data-lat="' + lat + '" data-lon="' + lon +
+			'" data-date="' + localDateString + '" data-priority="' + jobMessage.Priority + '" data-map-ref="' + mapReference + '" data-address="' + address + '" data-lat="' + lat + '" data-lon="' + lon +
 			'" data-id="' + jobMessage.Id + '" data-progress="' + latestProgress + '" data-has-notes="' + (hasNotes ? 'true' : 'false') + '">');
-
-		// Add the job name and date
-		listItem.append('<div class="message-meta"><h4 class="group-heading">' + jobMessage.CapcodeGroupName + '</h4><p class="text-info message-date">' + localDateString + '</p></div>');
 
 		// Build the h3 tag
 		var h3 = $('<h3></h3>');
@@ -444,7 +457,7 @@
 		} else if (jobMessage.OnRoute != null) {
 			h3.append('<span class="job-status on-route"><i class="fa fa-arrow-circle-o-right"></i></span>');
 		} else {
-			h3.append('<span class="job-status"><i class="fa fa-dot-circle-o"></i></span>');
+			h3.append('<span class="job-status"><i class="fa fa-asterisk"></i></span>');
 		}
 
 		// Add the comments indication
@@ -457,6 +470,11 @@
 		// Create the message element
 		var messageElem = $('<div class="message"></div>');
 		messageElem.append(h3);
+
+		// Add the job date
+		messageElem.append('<div class="message-meta"><p class="text-info message-date">' + localDateString + '</p></div>');
+
+		// Add the message body
 		messageElem.append('<small class="text-muted">' + jobMessage.MessageBodyTruncated + '</small>');
 		
 		listItem.append(messageElem);

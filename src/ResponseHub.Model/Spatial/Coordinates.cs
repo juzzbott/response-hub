@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace Enivate.ResponseHub.Model.Spatial
 {
+
 	public class Coordinates
 	{
 
@@ -76,6 +77,11 @@ namespace Enivate.ResponseHub.Model.Spatial
 		{
 			const double radToDegFactor = 180 / Math.PI;
 			return radians * radToDegFactor;
+		}
+
+		public bool IsEmpty()
+		{
+			return (Latitude == 0 && Longitude == 0);
 		}
 
 	}

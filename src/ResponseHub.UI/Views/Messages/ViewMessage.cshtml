@@ -5,6 +5,7 @@
 }
 
 @Html.HiddenFor(i => i.Id)
+@Html.HiddenFor(i => i.Version)
 
 <div class="row">
 	<div class="col-sm-7">
@@ -33,10 +34,59 @@
 
 <div class="row">
 	<div class="col-xs-12">
-		<p class="lead text-muted"><em>@Model.CapcodeGroupName</em></p>
+		<p class="lead text-muted"><em>@Model.CapcodeUnitName</em></p>
 	</div>
 </div>
 
 <p class="lead">@Model.MessageBody</p>
 
-@Html.Partial("~/Views/Jobs/JobNotes.cshtml", Model.Notes)
+<!-- Nav tabs -->
+<ul class="nav nav-tabs" role="tablist">
+	<li role="presentation" class="active"><a href="#tab-notes" aria-controls="tab-notes" role="tab" data-toggle="tab" class="btn-icon"><i class="fa fa-fw fa-sticky-note-o"></i>Notes</a></li>
+	<li role="presentation"><a href="#tab-members" aria-controls="tab-members" role="tab" data-toggle="tab" class="btn-icon" id="tab-header-members"><i class="fa fa-fw fa-address-book-o"></i>Members (<span>@Model.SignIns.Count</span>)</a></li>
+</ul>
+
+<!-- Tab panes -->
+<div class="tab-content">
+	<div role="tabpanel" class="tab-pane active" id="tab-notes">
+
+		@Html.Partial("~/Views/Jobs/JobNotes.cshtml", Model.Notes)
+
+	</div>
+
+	<div role="tabpanel" class="tab-pane" id="tab-members">
+
+		<h2>Members</h2>
+
+		<table class="table table-striped table-hover">
+			<thead>
+				<tr>
+					<th>Name</th>
+					<th>Member number</th>
+					<th>Sign in time</th>
+				</tr>
+			</thead>
+			<tbody>
+				@if (Model.SignIns == null || Model.SignIns.Count == 0)
+				{
+					<tr>
+						<td colspan="3">No members have signed in for this job yet.</td>
+					</tr>
+				}
+				else
+				{
+					foreach (var signIn in Model.SignIns)
+					{
+						<tr>
+							<td>@signIn.FullName</td>
+							<td>@signIn.MemberNumber</td>
+							<td>@signIn.SignInTime.ToLocalTime().ToString("yyyy-MM-dd HH:mm")</td>
+						</tr>
+					}
+				}
+			</tbody>
+		</table>
+
+	</div>
+
+</div>

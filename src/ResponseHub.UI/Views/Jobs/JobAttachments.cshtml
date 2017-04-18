@@ -2,14 +2,14 @@
 
 <h3>Image gallery</h3>
 
-<div id="links" class="row">
+<div id="attachment-gallery" class="clearfix">
 	@if (Model.ImageAttachments != null && Model.ImageAttachments.Count > 0)
 	{
 		foreach (var attachment in Model.ImageAttachments)
 		{
-			<div class="col-sm-4 col-md-3 col-lg-2">
-				<a href="/media/attachment/@attachment.Id" title="@attachment.Filename" data-gallery>
-					<img src="/media/attachment-thumb-crop/@attachment.Id">
+			<div class="image-item">
+				<a href="/media/attachment-resized/@attachment.Id?w=1024&h=768" title="@attachment.Filename" data-gallery>
+					<img src="/media/attachment-resized/@attachment.Id?w=167&h=125">
 				</a>
 			</div>
 		}
@@ -60,22 +60,44 @@
 <h3>Attachments</h3>
 
 @if (Model.Attachments != null && Model.Attachments.Count > 0)
-			{
+{
 	<ul class="list-unstyled attachment-list">
 		@foreach (var attachment in Model.Attachments)
 		{
 			<li>
 				<span class="btn-icon"><i class="fa fa-fw fa-download"></i><a href="/media/attachment/@attachment.Id">@attachment.Filename</a></span>
-				<span class="attachment-meta"> @attachment.Created.ToLocalTime().ToString("dd/MM/yyyy HH:mm") <em>(@attachment.MimeType</em> @Html.GetFileSizeDisplayForBytes(attachment.FileLength))</span>
+				<span class="attachment-meta text-muted">@attachment.Created.ToLocalTime().ToString("dd/MM/yyyy HH:mm") <em>(@attachment.MimeType</em> @Html.GetFileSizeDisplayForBytes(attachment.FileLength))</span>
+				@if (Html.IsUnitAdminUser())
+				{
+				<span class="pull-right remove-attachment"><a data-href="/jobs/@Model.Id/remove-attachment/@attachment.Id" title="Remove attachment '@attachment.Filename'" data-filename="@attachment.Filename" data-toggle="modal" data-target="#confirm-delete"><i class="fa fa-fw fa-times"></i></a></span>
+				}	
 			</li>
 		}
 
 	</ul>
 				<p class="bottom-20"><a href="/media/download-job-attachments/@Model.Id" class="btn btn-primary btn-icon"><i class="fa fa-fw fa-file-archive-o"></i>Download all attachments</a></p>
-			}
-			else
-			{
+}
+else
+{
 	<ul class="list-unstyled attachment-list">
 		<li class="no-attachments-msg"><span class="text-center">No attachments have been uploaded for this job.</span></li>
 	</ul>
-			}
+}
+
+<div class="modal fade delete-attachment" tabindex="-1" role="dialog" id="confirm-delete">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h4 class="modal-title">Are you sure?</h4>
+			</div>
+			<div class="modal-body">
+				<p>Are you sure you want to remove the attachment '#FILE#'?</p>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-link" data-dismiss="modal">Cancel</button>
+				<a class="btn btn-primary btn-ok">Remove attachment</a>
+			</div>
+		</div><!-- /.modal-content -->
+	</div><!-- /.modal-dialog -->
+</div><!-- /.modal -->

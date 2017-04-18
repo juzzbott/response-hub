@@ -33,7 +33,7 @@ namespace Enivate.ResponseHub.ApplicationServices
 		{
 
 			// Get the configuration
-			WarningSourceElement elem = ConfigurationSettings.Warnings.WarningSources[BureauOfMeteorologySourceKey];
+			WarningSourceElement elem = ResponseHubSettings.Warnings.WarningSources[BureauOfMeteorologySourceKey];
 
 			// if the warning source doesn't exist, just return empty list
 			if (elem == null)
@@ -50,7 +50,7 @@ namespace Enivate.ResponseHub.ApplicationServices
 		public IList<IWarning> GetStateEmergencyServiceWarnings()
 		{
 			// Get the configuration
-			WarningSourceElement elem = ConfigurationSettings.Warnings.WarningSources[StateEmergencyServiceSourceKey];
+			WarningSourceElement elem = ResponseHubSettings.Warnings.WarningSources[StateEmergencyServiceSourceKey];
 
 			// if the warning source doesn't exist, just return empty list
 			if (elem == null)
@@ -67,7 +67,7 @@ namespace Enivate.ResponseHub.ApplicationServices
 		public IList<IWarning> GetCountryFireAuthorityWarnings()
 		{
 			// Get the configuration
-			WarningSourceElement elem = ConfigurationSettings.Warnings.WarningSources[CountryFireAuthoritySourceKey];
+			WarningSourceElement elem = ResponseHubSettings.Warnings.WarningSources[CountryFireAuthoritySourceKey];
 
 			// if the warning source doesn't exist, just return empty list
 			if (elem == null)
@@ -186,7 +186,7 @@ namespace Enivate.ResponseHub.ApplicationServices
 		private static bool IsCacheFileValid(string cacheFileName)
 		{
 			// Get the cache duration
-			TimeSpan cacheDuration = ConfigurationSettings.Warnings.CacheDuration;
+			TimeSpan cacheDuration = ResponseHubSettings.Warnings.CacheDuration;
 
 			// If the file exists, and it was created within the cachefile timeout period, then the feedSource should be the file instead
 			if (File.Exists(cacheFileName))
@@ -225,7 +225,7 @@ namespace Enivate.ResponseHub.ApplicationServices
 			string cacheFile = String.Format("{0}_cache.xml", Enum.GetName(sourceType.GetType(), sourceType));
 
 			// Get the cache directory
-			string cacheDirectory = ConfigurationSettings.Warnings.CacheDirectory;
+			string cacheDirectory = ResponseHubSettings.Warnings.CacheDirectory;
 
 			// If the http context exists, use the map path, otherwise use the standard file path mapping
 			if (HttpContext.Current != null)
