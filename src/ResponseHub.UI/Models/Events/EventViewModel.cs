@@ -1,6 +1,8 @@
 ﻿using Enivate.ResponseHub.Model.Events;
+using Enivate.ResponseHub.UI.Models.Messages;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
 
@@ -21,17 +23,17 @@ namespace Enivate.ResponseHub.UI.Models.Events
 
 		public string UnitName { get; set; }
 
-		public IList<EventResource> UnitResources { get; set; }
-		
-		public IList<EventResource> AdditionalResources { get; set; }
+		public IList<Tuple<Guid, string, string>> AvailableMembers { get; set; }
 
-		public AdditionalResourceViewModel AdditionalResourceModel { get; set; }
+		public EventCrewsViewModel EventCrewsModel { get; set; }
+
+		public IList<JobMessageViewModel> Jobs { get; set; }
 
 		public EventViewModel()
 		{
-			UnitResources = new List<EventResource>();
-			AdditionalResources = new List<EventResource>();
-			AdditionalResourceModel = new AdditionalResourceViewModel();
+			AvailableMembers = new List<Tuple<Guid, string, string>>();
+			EventCrewsModel = new EventCrewsViewModel();
+			Jobs = new List<JobMessageViewModel>();
 		}
 
 	}

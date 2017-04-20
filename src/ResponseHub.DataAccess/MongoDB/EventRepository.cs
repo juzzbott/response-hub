@@ -53,11 +53,11 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 		/// </summary>
 		/// <param name="unitId">The id of the unit to get the events for.</param>
 		/// <returns>The colection of events for the unit.</returns>
-		public async Task<IList<Event>> GetEventsByUnit(IEnumerable<Guid> unitIds)
+		public async Task<IList<Event>> GetEventsByUnit(Guid unitId)
 		{
 
 			// Define the 'in' filter
-			FilterDefinition<Event> filter = Builders<Event>.Filter.In(i => i.UnitId, unitIds);
+			FilterDefinition<Event> filter = Builders<Event>.Filter.Eq(i => i.UnitId, unitId);
 
 			// Find the event data objects
 			IList<Event> events = await Collection.Find(filter).ToListAsync();
@@ -69,14 +69,14 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 		/// <summary>
 		/// Finds the events that match the keywords entered.
 		/// </summary>
-		/// <param name="name">The name to find the unit by.</param>
+		/// <param name="keywords">The keywords to find the event by.</param>
+		/// <param name="unitId">The unit id to limit the results by.</param>
 		/// <returns>The list of units matching the result.</returns>
-		public async Task<IList<Event>> FindByKeywords(string keywords, IEnumerable<Guid> unitIds)
+		public async Task<IList<Event>> FindByKeywords(string keywords, Guid unitId)
 		{
 
 			// Build the query
-			FilterDefinition<Event> filter = Builders<Event>.Filter.Text(keywords) &
-												Builders<Event>.Filter.In(i => i.UnitId, unitIds);
+			FilterDefinition<Event> filter = Builders<Event>.Filter.Text(keywords) & Builders<Event>.Filter.Eq(i => i.UnitId, unitId);
 
 			// Get the results of the text search.
 			IList<Event> results = await Collection.Find(filter).ToListAsync();
@@ -93,49 +93,15 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 			// return the mapped units.
 			return results;
 		}
-
-		/// <summary>
-		/// Adds the resource to the event.
-		/// </summary>
-		/// <param name="eventId"></param>
-		/// <param name="resource"></param>
-		/// <returns></returns>
-		public async Task<bool> AddResourceToEvent(Guid eventId, EventResource resource)
-		{
-
-			// Create the filter 
-			FilterDefinition<Event> filter = Builders<Event>.Filter.Eq(i => i.Id, eventId);
-
-			// Create the push
-			UpdateDefinition<Event> update = Builders<Event>.Update.Push(i => i.Resources, resource);
-
-			// Do the update
-			UpdateResult result = await Collection.UpdateOneAsync(filter, update);
-
-			return result.ModifiedCount > 0;
-
-		}
-
+		
 		/// <summary>
 		/// Creates a new crew for the event.
 		/// </summary>
 		/// <param name="eventId">The id of the event to create the crew for.</param>
 		/// <param name="name">The name of the crew.</param>
 		/// <returns></returns>
-		public async Task<Crew> CreateCrew(Guid eventId, string name)
+		public async Task<Crew> CreateCrew(Guid eventId, Crew crew)
 		{
-
-			// Ensure there is a crew name
-			if (String.IsNullOrEmpty(name))
-			{
-				throw new ArgumentException("The crew must have a name.");
-			}
-
-			// Create the new crew object
-			Crew crew = new Crew()
-			{
-				Name = name
-			};
 
 			// Create the filter
 			FilterDefinition<Event> filter = Builders<Event>.Filter.Eq(i => i.Id, eventId);
@@ -149,6 +115,45 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 			// return the crew
 			return crew;
 
+		}
+
+		/// <summary>
+		/// Gets the crew from the event.
+		/// </summary>
+		/// <param name="eventId">The Id of the event to get the crew from.</param>
+		/// <param name="crewId">The Id of the crew to return</param>
+		/// <returns>The crew if found, otherwise null</returns>
+		public async Task<Crew> GetCrewFromEvent(Guid eventId, Guid crewId)
+		{
+
+			// Create the filter
+			FilterDefinition<Event> filter = Builders<Event>.Filter.Eq(i => i.Id, eventId);
+
+			// Get the event
+			Event eventObj = await Collection.Find(filter).FirstOrDefaultAsync();
+
+			// return the crew with matching id
+			return eventObj.Crews.FirstOrDefault(i => i.Id == crewId);
+
+		}
+
+		/// <summary>
+		/// Updates the crew within the event for the specified assigned job ids.
+		/// </summary>
+		/// <param name="eventId">The id of the event that contains the crew.</param>
+		/// <param name="crewId">The id of the crew to update.</param>
+		/// <param name="assignedJobIds">The list of job ids to set as the assigned jobs for the crew</param>
+		/// <returns></returns>
+		public async Task AssignJobsToCrew(Guid eventId, Guid crewId, IList<Guid> assignedJobIds)
+		{
+			// Create the filter
+			FilterDefinition<Event> filter = Builders<Event>.Filter.Eq(i => i.Id, eventId) & Builders<Event>.Filter.ElemMatch(i => i.Crews, f => f.Id == crewId);
+
+			// Create the update
+			UpdateDefinition<Event> update = Builders<Event>.Update.Set("Crews.$.JobMessageIds", assignedJobIds);
+
+			// Perform the update
+			await Collection.UpdateOneAsync(filter, update);
 		}
 
 		#region Mappers
@@ -175,7 +180,6 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 				UnitId = dbObject.UnitId,
 				Id = dbObject.Id,
 				Name = dbObject.Name,
-				Resources = dbObject.Resources,
 				Crews = dbObject.Crews
 			};
 
@@ -205,7 +209,6 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 				UnitId = modelObject.UnitId,
 				Id = modelObject.Id,
 				Name = modelObject.Name,
-				Resources = modelObject.Resources,
 				Crews = modelObject.Crews
 			};
 

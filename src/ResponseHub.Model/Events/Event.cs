@@ -22,15 +22,15 @@ namespace Enivate.ResponseHub.Model.Events
 
 		public DateTime EventFinished { get; set; }
 
-		public IList<EventResource> Resources { get; set; }
-
 		public IList<Crew> Crews { get; set; }
+
+		public IList<Guid> JobMessageIds { get; set; }
 
 		public Event()
 		{
 			Id = Guid.NewGuid();
-			Resources = new List<EventResource>();
 			Crews = new List<Crew>();
+			JobMessageIds = new List<Guid>();
 		}
 
 	}

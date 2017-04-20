@@ -115,6 +115,11 @@ table {
 .btn-link-delete:hover {
   color: #a94442;
 }
+.btn-left-align {
+  padding-left: 0;
+  margin-left: 0;
+  border-left-width: 0;
+}
 .cursor-pointer {
   cursor: pointer;
 }
@@ -1574,6 +1579,80 @@ div.generated-report .notes li .wordback-icon {
   margin-top: -10px;
   margin-left: -10px;
   display: block;
+}
+/**
+ * Event styles
+ */
+.event-job-allocation .jobs-list ul {
+  border-top: 1px solid #ddd;
+}
+.event-job-allocation .jobs-list li {
+  padding: 10px 20px 10px 10px;
+  border-bottom: 1px solid #ddd;
+}
+.event-job-allocation .jobs-list li:hover {
+  background-color: #fafafa;
+}
+.event-job-allocation .jobs-list li.allocated,
+.event-job-allocation .jobs-list li.allocated:hover {
+  background-color: #fcf6f2;
+}
+.event-job-allocation .jobs-list li h4 {
+  margin-top: 0;
+}
+.event-job-allocation .jobs-list li h4 span {
+  color: #31708f;
+}
+.event-job-allocation .jobs-list li .message-body {
+  max-height: 35px;
+  overflow-y: hidden;
+}
+.event-job-allocation .crew-allocation .assigned-jobs li {
+  border: 2px dashed #ddd;
+  margin: 10px 0;
+  padding: 10px;
+  background-color: #fafafa;
+  position: relative;
+}
+.event-job-allocation .crew-allocation .assigned-jobs li .drag-handle {
+  position: absolute;
+  top: 10px;
+  left: 0;
+  cursor: move;
+  color: #7b74a8;
+}
+.event-job-allocation .crew-allocation .assigned-jobs li .assigned-content {
+  margin-left: 30px;
+}
+.event-job-allocation .crew-allocation .assigned-jobs li .assigned-content h4 {
+  margin-top: 0;
+}
+.event-job-allocation .crew-allocation .assigned-jobs li .assigned-content h4 span {
+  padding-left: 15px;
+  color: #31708f;
+}
+.event-job-allocation .crew-allocation .assigned-jobs li .assigned-content p {
+  margin-bottom: 0;
+}
+.event-job-allocation .crew-allocation .assigned-jobs .assigned-jobs-highlight {
+  height: 70px;
+  border: 2px dashed #d0e5ef;
+  background-color: #f6fafc;
+}
+.crew-list .panel {
+  margin-bottom: 20px;
+  border-radius: 2px;
+}
+.crew-list .panel-heading a {
+  display: block;
+}
+.crew-list .panel-heading {
+  border-top-left-radius: 2px;
+  border-top-right-radius: 2px;
+}
+.crew-list .panel-body.crew-details {
+  padding-top: 0;
+  padding-bottom: 0;
 }
 /**
  * Mixins

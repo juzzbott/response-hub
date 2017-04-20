@@ -72,9 +72,7 @@
     <Compile Include="DataExport\Interface\IDataExportService.cs" />
     <Compile Include="Decoding\DecoderStatus.cs" />
     <Compile Include="Events\Event.cs" />
-    <Compile Include="Events\EventResource.cs" />
     <Compile Include="Events\Interface\IEventService.cs" />
-    <Compile Include="Events\ResourceType.cs" />
     <Compile Include="Addresses\Interface\IAddressService.cs" />
     <Compile Include="Units\Capcode.cs" />
     <Compile Include="Units\Interface\ICapcodeService.cs" />

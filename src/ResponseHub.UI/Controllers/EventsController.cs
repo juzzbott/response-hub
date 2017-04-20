@@ -17,6 +17,11 @@ using System.Net;
 using Enivate.ResponseHub.Model.Identity;
 using Enivate.ResponseHub.Model.Agencies.Interface;
 using Enivate.ResponseHub.Model.Agencies;
+using Enivate.ResponseHub.Model.Crews;
+using Enivate.ResponseHub.UI.Models.Messages;
+using Enivate.ResponseHub.Model.Messages;
+using Enivate.ResponseHub.Model.Messages.Interface;
+using Enivate.ResponseHub.UI.Models.Users;
 
 namespace Enivate.ResponseHub.UI.Controllers
 {
@@ -24,30 +29,12 @@ namespace Enivate.ResponseHub.UI.Controllers
 	[RoutePrefix("events")]
 	public class EventsController : BaseController
     {
-		
-		IUnitService UnitService
-		{
-			get
-			{
-				return ServiceLocator.Get<IUnitService>();
-			}
-		}
 
-		IEventService EventService
-		{
-			get
-			{
-				return ServiceLocator.Get<IEventService>();
-			}
-		}
-
-		IAgencyService AgencyService
-		{
-			get
-			{
-				return ServiceLocator.Get<IAgencyService>();
-			}
-		}
+		IUnitService UnitService = ServiceLocator.Get<IUnitService>();
+		IEventService EventService = ServiceLocator.Get<IEventService>();
+		IAgencyService AgencyService = ServiceLocator.Get<IAgencyService>();
+		ICapcodeService CapcodeService = ServiceLocator.Get<ICapcodeService>();
+		IJobMessageService JobMessageService = ServiceLocator.Get<IJobMessageService>();
 
 		// GET: Events
 		[Route]
@@ -63,11 +50,11 @@ namespace Enivate.ResponseHub.UI.Controllers
 			if (String.IsNullOrEmpty(Request.QueryString["q"]))
 			{
 				// Get the most recent units
-				events.AddRange(await EventService.GetEventsByUnit(usersUnits.Select(i => i.Id)));
+				events.AddRange(await EventService.GetEventsByUnit(usersUnits.Select(i => i.Id).FirstOrDefault()));
 			}
 			else
 			{
-				events.AddRange(await EventService.FindByKeywords(Request.QueryString["q"], usersUnits.Select(i => i.Id)));
+				events.AddRange(await EventService.FindByKeywords(Request.QueryString["q"], usersUnits.Select(i => i.Id).FirstOrDefault()));
 			}
 
 			// Create the list of view model items
@@ -176,13 +163,20 @@ namespace Enivate.ResponseHub.UI.Controllers
 				UnitName = unit.Name,
 				Name = eventObj.Name
 			};
+			
+			// Load the users for the model
+			IList<IdentityUser> users = await UnitService.GetUsersForUnit(eventObj.UnitId);
+			foreach (IdentityUser user in users)
+			{
+				model.AvailableMembers.Add(new Tuple<Guid, string, string>(user.Id, user.FullName, user.Profile.MemberNumber));
+			}
+			
+			// Get the current crews
+			model.EventCrewsModel = await GetCrewsModelForEvent(eventObj, model.AvailableMembers);
 
-			// Set the unit resources
-			model.UnitResources = await GetUnitResources(unit.Id, eventObj);
-
-			// Set the available resources
-			model.AdditionalResourceModel.AvailableAgencies = await GetAvailableAgencies();
-
+			// Get the jobs for the event
+			model.Jobs = await GetJobsForEvent(eventObj.JobMessageIds);
+			
 			// return the view
 			return View(model);
 		}
@@ -190,6 +184,82 @@ namespace Enivate.ResponseHub.UI.Controllers
 		#endregion
 
 		#region Helper methods
+
+		/// <summary>
+		/// Gets the jobs for the specific list of job message ids.
+		/// </summary>
+		/// <param name="jobMessageIds"></param>
+		/// <returns></returns>
+		private async Task<IList<JobMessageViewModel>> GetJobsForEvent(IList<Guid> jobMessageIds)
+		{
+
+			// Get the capcodes for the current user
+			IList<Capcode> capcodes = await CapcodeService.GetCapcodesForUser(UserId);
+
+			// Get the messages for the capcodes
+			IList<JobMessage> jobMessages = await JobMessageService.GetByIds(jobMessageIds);
+
+			JobsController jobsController = new JobsController();
+			JobMessageListViewModel jobListModel = await jobsController.CreateJobMessageListModel(capcodes, jobMessages);
+
+			return jobListModel.Messages;
+		}
+
+		/// <summary>
+		/// Gets the crews model to add to the event view model.
+		/// </summary>
+		/// <param name="eventObj"></param>
+		/// <returns></returns>
+		private async Task<EventCrewsViewModel> GetCrewsModelForEvent(Event eventObj, IList<Tuple<Guid, string, string>> availableMembers)
+		{
+
+			// Create the crews view model
+			EventCrewsViewModel crewsModel = new EventCrewsViewModel()
+			{
+				AvailableMembers = availableMembers
+			};
+
+			if (eventObj.Crews == null || eventObj.Crews.Count == 0)
+			{
+				return crewsModel;
+			}
+
+			List<Guid> memberIds = new List<Guid>();
+			// Add the crew leaders
+			memberIds.AddRange(eventObj.Crews.Select(i => i.CrewLeaderId));
+
+			// Add the crew members, excluding the crew leader user.
+			memberIds.AddRange(eventObj.Crews.SelectMany(i => i.CrewMembers));
+
+			// Remove any duplicates
+			memberIds = memberIds.Distinct().ToList();
+
+			// Get the users with the specific ids
+			IList<IdentityUser> members = await UserService.GetUsersByIds(memberIds);
+
+			// Loop through the crews in the 
+			foreach (Crew crew in eventObj.Crews)
+			{
+
+				// Create the model
+				CrewViewModel crewModel = new CrewViewModel()
+				{
+					Id = crew.Id,
+					Created = crew.Created,
+					Name = crew.Name,
+					Updated = crew.Updated,
+					CrewLeader = UnitMemberViewModel.FromIdentityUserWithoutRole(members.FirstOrDefault(i => i.Id == crew.CrewLeaderId)),
+					CrewMembers = members.Where(i => crew.CrewMembers.Where(x => x != crew.CrewLeaderId).Contains(i.Id)).Select(i => UnitMemberViewModel.FromIdentityUserWithoutRole(i)).ToList()
+				};
+
+				// Add the model to the list of crew models
+				crewsModel.Crews.Add(crewModel);
+
+			}
+
+			// return the crews model
+			return crewsModel;
+		}
 
 		/// <summary>
 		/// Gets a list of select list items that represents the current users available units.
@@ -219,44 +289,6 @@ namespace Enivate.ResponseHub.UI.Controllers
 
 			// return the available units
 			return availableUnits;
-		}
-
-		/// <summary>
-		/// Gets the unit resources for the event. 
-		/// </summary>
-		/// <param name="unitId"></param>
-		/// <returns></returns>
-		private async Task<IList<EventResource>> GetUnitResources(Guid unitId, Event eventObj)
-		{
-			// Create the list of event resources
-			IList<EventResource> resources = new List<EventResource>();
-
-			// Get the unit
-			Unit unit = await UnitService.GetById(unitId);
-
-			// If the unit is null, return empty list
-			if (unit == null)
-			{
-				return resources;
-			}
-
-			// Get the users for the specified unit
-			IList<IdentityUser> users = await UnitService.GetUsersForUnit(unitId);
-
-			// For each user in the unit, add the event resource
-			foreach(IdentityUser user in users)
-			{
-				resources.Add(new EventResource() {
-					Active = eventObj.Resources.Any(i => i.UserId.HasValue && i.UserId == user.Id),
-					Name = user.FullName,
-					Type = ResourceType.UnitMember,
-					UserId = user.Id
-				});
-			}
-
-			// return the list of resources 
-			return resources;
-			
 		}
 
 		private async Task<IList<SelectListItem>> GetAvailableAgencies()

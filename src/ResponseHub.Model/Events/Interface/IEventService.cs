@@ -14,15 +14,17 @@ namespace Enivate.ResponseHub.Model.Events.Interface
 
 		Task<Event> GetById(Guid id);
 
-		Task<IList<Event>> GetEventsByUnit(IEnumerable<Guid> unitIds);
+		Task<IList<Event>> GetEventsByUnit(Guid unitId);
 
-		Task<IList<Event>> FindByKeywords(string keywords, IEnumerable<Guid> unitIds);
+		Task<IList<Event>> FindByKeywords(string keywords, Guid unitId);
 
-		Task<EventResource> AddResourceToEvent(Guid eventId, string name, Guid agency, Guid? userId, ResourceType resourceType);
-
-		Task<Crew> CreateCrew(Guid eventId, string name);
+		Task<Crew> CreateCrew(Guid eventId, string name, IList<Guid> crewMembers, Guid crewLeaderId);
 
 		Task<IList<Crew>> GetCrewsForEvent(Guid eventId);
+
+		Task<Crew> GetCrewFromEvent(Guid eventId, Guid crewId);
+
+		Task AssignJobsToCrew(Guid eventId, Guid crewId, IList<Guid> assignedJobIds);
 
 	}
 }

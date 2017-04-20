@@ -167,14 +167,24 @@
 	function setGraphicRadiosCheckboxes() {
 		
 		$('.graphic-radio label, .graphic-checkbox label').each(function (index, elem) {
+			if ($(elem).find('i').length > 0)
+			{
+				return;
+			}
 			$(elem).contents().eq(2).wrap('<span/>');
 		});
 
 		$('.graphic-radio label input[type="radio"]').each(function (index, elem) {
+			if ($(elem).parent().find('i').length > 0) {
+				return;
+			}
 			$(elem).after('<i class="fa fa-circle-o"></i><i class="fa fa-dot-circle-o"></i>');
 		});
 
 		$('.graphic-checkbox label input[type="checkbox"]').each(function (index, elem) {
+			if ($(elem).parent().find('i').length > 0) {
+				return;
+			}
 			$(elem).after('<i class="fa fa-fw fa-square-o"></i><i class="fa  fa-fw fa-check-square-o"></i>');
 		});
 
@@ -199,7 +209,8 @@
 	return {
 		apiPrefix: apiPrefix,
 		isMobile: isMobile,
-		executeFunctionByName: executeFunctionByName
+		executeFunctionByName: executeFunctionByName,
+		setGraphicRadiosCheckboxes: setGraphicRadiosCheckboxes
 	}
 
 })();

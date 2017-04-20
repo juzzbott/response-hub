@@ -244,6 +244,20 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 		}
 
 		/// <summary>
+		/// Gets a JobMessages based on the ids supplied.
+		/// </summary>
+		/// <param name="id">The collection of Ids to return job messages for.</param>
+		/// <returns>The job messages list..</returns>
+		public async Task<IList<JobMessage>> GetByIds(IEnumerable<Guid> ids)
+		{
+			// Get the data object from the db
+			IList<JobMessageDto> messages = await Collection.Find(Builders<JobMessageDto>.Filter.In(i => i.Id, ids)).ToListAsync();
+
+			// return the mapped job message
+			return messages.Select(i => MapDbObjectToModel(i)).ToList();
+		}
+
+		/// <summary>
 		/// Gets a JobMessage based on the job number.
 		/// </summary>
 		/// <param name="jobNumber">The number of the job message to get.</param>

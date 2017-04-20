@@ -105,11 +105,11 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 				unitUsers.AddRange(searchResults.Where(i => unit.Users.Select(u => u.UserId).Contains(i.Id)));
 			}
 
-			// Create the list of UnitUserViewModels for the users in the unit
-			IList<UnitUserViewModel> unitUserModels = new List<UnitUserViewModel>();
+			// Create the list of unit member view models for the users in the unit
+			IList<UnitMemberViewModel> unitUserModels = new List<UnitMemberViewModel>();
 			foreach (IdentityUser unitUser in unitUsers)
 			{
-				unitUserModels.Add(new UnitUserViewModel()
+				unitUserModels.Add(new UnitMemberViewModel()
 				{
 					EmailAddress = unitUser.EmailAddress,
 					FirstName = unitUser.FirstName,

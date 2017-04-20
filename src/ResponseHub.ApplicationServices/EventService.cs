@@ -66,65 +66,79 @@ namespace Enivate.ResponseHub.ApplicationServices
 		/// </summary>
 		/// <param name="unitId">The id of the unit to get the events for.</param>
 		/// <returns>The colection of events for the unit.</returns>
-		public async Task<IList<Event>> GetEventsByUnit(IEnumerable<Guid> unitIds)
+		public async Task<IList<Event>> GetEventsByUnit(Guid unitId)
 		{
-			return await _repository.GetEventsByUnit(unitIds);
+			return await _repository.GetEventsByUnit(unitId);
 		}
 
 		/// <summary>
 		/// Find the event by the keywords. 
 		/// </summary>
 		/// <param name="keywords">Keywords to find the event for.</param>
-		/// <param name="unitIds">The collection of unit ids to limit the results to.</param>
+		/// <param name="unitId">The id of the unit to limit the results to.</param>
 		/// <returns>The list of events that match the search terms and unit ids.</returns>
-		public async Task<IList<Event>> FindByKeywords(string keywords, IEnumerable<Guid> unitIds)
+		public async Task<IList<Event>> FindByKeywords(string keywords, Guid unitId)
 		{
-			return await _repository.FindByKeywords(keywords, unitIds);
+			return await _repository.FindByKeywords(keywords, unitId);
 		}
-
+		
 		/// <summary>
-		/// Adds the specified resource to the event. 
+		/// Creates a new Crew to be assigned to an event.
 		/// </summary>
-		/// <param name="eventId"></param>
-		/// <param name="name"></param>
-		/// <param name="agency"></param>
-		/// <param name="userId"></param>
-		/// <param name="resourceType"></param>
-		/// <returns></returns>
-		public async Task<EventResource> AddResourceToEvent(Guid eventId, string name, Guid agency, Guid? userId, ResourceType resourceType)
+		/// <param name="eventId">The ID of the event to create the crew for.</param>
+		/// <param name="name">The name of the crew</param>
+		/// <param name="crewMembers">The members for the crew</param>
+		/// <returns>The newly created crew object</returns>
+		public async Task<Crew> CreateCrew(Guid eventId, string name, IList<Guid> crewMembers, Guid crewLeaderId)
 		{
 
-			// Create the event resource
-			EventResource resource = new EventResource()
+			// Ensure there is a crew name
+			if (String.IsNullOrEmpty(name))
 			{
-				Active = true,
-				AgencyId = agency,
-				Name = name,
-				Type = resourceType,
-				UserId = userId,
-				Created = DateTime.UtcNow
-			};
-
-			// Add the resource to the event
-			bool result = await _repository.AddResourceToEvent(eventId, resource);
-
-			// If the result is null, throw exception
-			if (!result)
-			{
-				throw new ApplicationException("Count not add resource to event.");
+				throw new ArgumentException("The crew must have a name.");
 			}
 
-			return resource;
-		}
+			// Create the new crew object
+			Crew crew = new Crew()
+			{
+				Name = name,
+				CrewMembers = crewMembers,
+				CrewLeaderId = crewLeaderId,
+				Created = DateTime.UtcNow,
+				Updated = DateTime.UtcNow,
+			};
 
-		public async Task<Crew> CreateCrew(Guid eventId, string name)
-		{
-			return await _repository.CreateCrew(eventId, name);
+			return await _repository.CreateCrew(eventId, crew);
 		}
 
 		public Task<IList<Crew>> GetCrewsForEvent(Guid eventId)
 		{
 			throw new NotImplementedException();
+		}
+		
+		/// <summary>
+		/// Gets the crew from the event.
+		/// </summary>
+		/// <param name="eventId">The Id of the event to get the crew from.</param>
+		/// <param name="crewId">The Id of the crew to return</param>
+		/// <returns>The crew if found, otherwise null</returns>
+		public async Task<Crew> GetCrewFromEvent(Guid eventId, Guid crewId)
+		{
+			// return the crew
+			return await _repository.GetCrewFromEvent(eventId, crewId);
+
+		}
+
+		/// <summary>
+		/// Updates the crew within the event for the specified assigned job ids.
+		/// </summary>
+		/// <param name="eventId">The id of the event that contains the crew.</param>
+		/// <param name="crewId">The id of the crew to update.</param>
+		/// <param name="assignedJobIds">The list of job ids to set as the assigned jobs for the crew</param>
+		/// <returns></returns>
+		public async Task AssignJobsToCrew(Guid eventId, Guid crewId, IList<Guid> assignedJobIds)
+		{
+			await _repository.AssignJobsToCrew(eventId, crewId, assignedJobIds);
 		}
 	}
 }

@@ -244,12 +244,15 @@
     <Compile Include="Filters\ExceptionLogFilter.cs" />
     <Compile Include="Filters\SystemAdminUserRedirectAttribute.cs" />
     <Compile Include="Helpers\JobMessageModelHelper.cs" />
-    <Compile Include="Models\Api\Events\AddResourcePostModel.cs" />
-    <Compile Include="Models\Api\Events\AddResourceResponseModel.cs" />
+    <Compile Include="Models\Api\Events\AddCrewPostModel.cs" />
+    <Compile Include="Models\Api\Events\AddCrewResponseModel.cs" />
+    <Compile Include="Models\Api\Events\AssignJobsToCrewPostModel.cs" />
     <Compile Include="Models\Api\Messages\GetDistanceFromJobModel.cs" />
     <Compile Include="Models\Api\Messages\PostGetLatestFromLastModel.cs" />
     <Compile Include="Models\Api\Search\SearchPostModel.cs" />
-    <Compile Include="Models\Events\AdditionalResourceViewModel.cs" />
+    <Compile Include="Models\Events\AssignedJobViewModel.cs" />
+    <Compile Include="Models\Events\CrewViewModel.cs" />
+    <Compile Include="Models\Events\EventCrewsViewModel.cs" />
     <Compile Include="Models\Events\EventListItemViewModel.cs" />
     <Compile Include="Models\Events\EventViewModel.cs" />
     <Compile Include="Areas\Admin\Models\Units\ChangeUserRoleViewModel.cs" />
@@ -300,7 +303,7 @@
     <Compile Include="Models\SignIn\SignInOperationItem.cs" />
     <Compile Include="Models\SignIn\SignInViewModel.cs" />
     <Compile Include="Models\SignIn\SignOutViewModel.cs" />
-    <Compile Include="Models\Users\UnitUserViewModel.cs" />
+    <Compile Include="Models\Users\UnitMemberViewModel.cs" />
     <Compile Include="Models\Wallboard\WallboardViewModel.cs" />
     <Compile Include="Models\WeatherCentre\RadarLoopViewModel.cs" />
     <Compile Include="Models\WeatherCentre\WeatherCentreViewModel.cs" />
@@ -319,6 +322,7 @@
     <Content Include="assets\css\lib\bootstrap-datepicker3.min.css" />
     <Content Include="assets\css\lib\bootstrap-grid-xl.css" />
     <Content Include="assets\css\lib\fm.scrollator.jquery.css" />
+    <Content Include="assets\css\lib\jquery-ui.min.css" />
     <Content Include="assets\css\lib\leaflet.css" />
     <Content Include="assets\css\response-hub.css" />
     <Content Include="assets\fonts\fontawesome-webfont.svg" />
@@ -334,6 +338,7 @@
     <Content Include="assets\js\lib\bootstrap-tabcollapse.js" />
     <Content Include="assets\js\lib\bootstrap-typeahead.min.js" />
     <Content Include="assets\js\lib\fm.scrollator.jquery.js" />
+    <Content Include="assets\js\lib\jquery-ui.min.js" />
     <Content Include="assets\js\lib\leaflet-html-icons.js" />
     <Content Include="assets\js\lib\leaflet.js" />
     <Content Include="assets\js\lib\palette.js" />
@@ -352,6 +357,7 @@
     <Content Include="assets\js\modules\search.js" />
     <Content Include="assets\js\modules\sign-on.js" />
     <Content Include="assets\js\modules\training.js" />
+    <Content Include="assets\js\modules\user-list.js" />
     <Content Include="assets\js\modules\wallboard.js" />
     <Content Include="assets\js\modules\weather-centre.js" />
     <Content Include="assets\js\modules\_core.js" />
@@ -543,7 +549,6 @@
     <Content Include="Views\Events\Index.cshtml" />
     <Content Include="Views\Events\Create.cshtml" />
     <Content Include="Views\Events\ViewEvent.cshtml" />
-    <Content Include="Views\Events\AddResourceForm.cshtml" />
     <Content Include="Views\MyAccount\Index.cshtml" />
     <Content Include="Views\MyAccount\UpdateAccountDetails.cshtml" />
     <Content Include="Views\MyAccount\UpdateEmailAddress.cshtml" />

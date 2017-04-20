@@ -24,13 +24,10 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB.DataObjects.Events
 
 		public DateTime EventFinished { get; set; }
 
-		public IList<EventResource> Resources { get; set; }
-
 		public IList<Crew> Crews { get; set; }
 		
 		public EventDto()
 		{
-			Resources = new List<EventResource>();
 			Crews = new List<Crew>();
 		}
 

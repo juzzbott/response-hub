@@ -5,16 +5,14 @@ using System.Web;
 
 namespace Enivate.ResponseHub.UI.Models.Api.Events
 {
-	public class AddResourceResponseModel
+	public class AddCrewPostModel
 	{
-
-		public Guid Id { get; set; }
 
 		public string Name { get; set; }
 
-		public Guid AgencyId { get; set; }
+		public string SelectedMembers { get; set; }
 
-		public string AgencyName { get; set; }
+		public Guid CrewLeaderId { get; set; }
 
 	}
 }

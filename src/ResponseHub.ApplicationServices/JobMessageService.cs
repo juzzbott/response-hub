@@ -133,6 +133,21 @@ namespace Enivate.ResponseHub.ApplicationServices
 		}
 
 		/// <summary>
+		/// Gets the job messages by the Ids specified.
+		/// </summary>
+		/// <param name="ids">The Ids of the jobs to return.</param>
+		/// <returns>The job messages found.</returns>
+		public async Task<IList<JobMessage>> GetByIds(IEnumerable<Guid> ids)
+		{
+			// Return the list of job messages from the database.
+			IList<JobMessage> messages = await _repository.GetByIds(ids);
+			
+			// return the message
+			return messages;
+		}
+
+
+		/// <summary>
 		/// Gets the specific job message by the job number.
 		/// </summary>
 		/// <param name="id">The number of the job to return.</param>

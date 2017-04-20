@@ -17,6 +17,12 @@ namespace Enivate.ResponseHub.Model.Crews
 
 		public IList<Guid> CrewMembers { get; set; }
 
+		public DateTime Created { get; set; }
+
+		public DateTime Updated { get; set; }
+
+		public Guid CrewLeaderId { get; set; }
+
 		public Crew()
 		{
 			Id = Guid.NewGuid();

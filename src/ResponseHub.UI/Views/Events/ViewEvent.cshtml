@@ -22,7 +22,6 @@
 	<ul class="nav nav-tabs tab-collapse" role="tablist">
 		<li role="presentation" class="active"><a href="#overview" aria-controls="overview" role="tab" data-toggle="tab" class="btn-icon"><i class="fa fa-fw fa-bar-chart"></i>Overview</a></li>
 		<li role="presentation"><a href="#crews" aria-controls="crews" role="tab" data-toggle="tab" class="btn-icon"><i class="fa fa-fw fa-users"></i>Crews</a></li>
-		<li role="presentation"><a href="#resources" aria-controls="resources" role="tab" data-toggle="tab" class="btn-icon"><i class="fa fa-fw fa-cubes"></i>Resources</a></li>
 		<!-- <li role="presentation"><a href="#sectors" aria-controls="sectors" role="tab" data-toggle="tab" class="btn-icon"><i class="fa fa-fw fa-object-unit"></i>Sectors</a></li> -->
 	</ul>
 
@@ -30,33 +29,71 @@
 	<div class="tab-content">
 		<div role="tabpanel" class="tab-pane active" id="overview">
 
+			<div class="row event-job-allocation">
+				<div class="col-sm-4 jobs">
+					<h3>Jobs</h3>
+					<div class="jobs-list">
+						<ul class="list-unstyled">
+							@foreach(var job in Model.Jobs)
+							{
+								<li data-job-number="@job.JobNumber" data-job-id="@job.Id" data-job-message="@job.MessageBody" data-job-timestamp="@job.Timestamp.ToLocalTime().ToString("dd-MM-yyyy HH:mm:ss")">
+									<h4>@job.JobNumber<span class="text-info pull-right small">@job.Timestamp.ToLocalTime().ToString("dd-MM-yyyy HH:mm:ss")</span></h4>
+									<div class="message-body"><small class="text-muted">@job.MessageBody</small></div>
+									<div class="job-allocation-actions clearfix">
+										<button class="btn btn-link btn-icon pull-left btn-left-align btn-assign-job disabled" disabled="disabled" title="Allocate to crew"><i class="fa fa-fw fa-share"></i> Assign to crew</button>
+									</div>
+								</li>
+							}
+						</ul>
+					</div>
+				</div>
+				<div class="col-sm-8 crew-allocation">
+					<h3>Crew allocation</h3>
+
+					<div class="form-group">
+						<label for="AvailableMembers">Crew</label>
+						<div class="row">
+							<div class="col-sm-8 col-md-8 col-lg-6">
+								<select class="form-control selectpicker" data-live-search="true" id="CrewSelect" title="Select crew...">
+									@foreach (var crew in Model.EventCrewsModel.Crews)
+									{
+										<option data-tokens="@crew.Name @crew.CrewLeader.FullName" value="@crew.Id">@crew.Name  - Crew Leader: @crew.CrewLeader.FullName</option>
+									}
+								</select>
+							</div>
+						</div>
+					</div>
+
+					<div class="row">
+						<div class=" col-sm-12 loading-crew-details text-center text-primary hidden">
+							<i class="fa fa-fw fa-spin fa-spinner"></i> Loading crew...
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="col-sm-12 crew-job-list">
+							<p class="lead no-jobs hidden">No jobs have been assigned to this crew yet.</p>
+
+							<ul class="assigned-jobs list-unstyled">
+
+							</ul>
+
+							<div class="allocate-jobs hidden">
+								<button class="btn btn-primary btn-icon"><i class="fa fa-fw fa-indent"></i>Assign jobs</button>
+							</div>
+
+						</div>
+					</div>
+
+				</div>
+
+			</div>
+
 		</div>
 		<div role="tabpanel" class="tab-pane" id="crews">
-			@Html.Partial("Crews")
+			@Html.Partial("Crews", Model.EventCrewsModel)
 		</div>
-		<div role="tabpanel" class="tab-pane" id="resources">
-
-			<h3>Unit members</h3>
-
-			<div class="row">
-				@foreach (var resource in Model.UnitResources)
-				{
-					<div class="col-sm-6 col-md-4 col-lg-3 col-xl-2"><div class="checkbox"><label><input type="checkbox" value="@resource.UserId.Value" data-name="@resource.Name" /> @resource.Name</label></div></div>
-				}
-			</div>
-
-			<h3>Additional resources</h3>
-
-			<div class="row">
-				@if (Model.AdditionalResources == null || Model.AdditionalResources.Count == 0)
-				{
-					<div class="col-xs-12 no-additional-resources"><p>No additional resources have been allocated to this event yet.</p></div>
-				}
-			</div>
-
-			@Html.Partial("AddResourceForm", Model.AdditionalResourceModel)
-
-		</div>
+		
 	</div>
 
 </div>
