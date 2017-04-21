@@ -137,20 +137,22 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config">
+    <None Include="ResponseHub.PagerDecoder.exe.config">
       <SubType>Designer</SubType>
     </None>
-    <Content Include="App.Debug.config">
-      <DependentUpon>App.config</DependentUpon>
+    <Content Include="ResponseHub.PagerDecoder.exe.Debug.config">
+      <DependentUpon>ResponseHub.PagerDecoder.exe.config</DependentUpon>
     </Content>
-    <Content Include="App.Test.config">
-      <DependentUpon>App.config</DependentUpon>
+    <Content Include="ResponseHub.PagerDecoder.exe.Test.config">
+      <DependentUpon>ResponseHub.PagerDecoder.exe.config</DependentUpon>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="App.Staging.config">
-      <DependentUpon>App.config</DependentUpon>
+    <Content Include="ResponseHub.PagerDecoder.exe.Staging.config">
+      <DependentUpon>ResponseHub.PagerDecoder.exe.config</DependentUpon>
     </Content>
-    <Content Include="App.Release.config">
-      <DependentUpon>App.config</DependentUpon>
+    <Content Include="ResponseHub.PagerDecoder.exe.Release.config">
+      <DependentUpon>ResponseHub.PagerDecoder.exe.config</DependentUpon>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <None Include="packages.config" />
     <None Include="Unity.config">
