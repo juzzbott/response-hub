@@ -111,9 +111,24 @@ namespace Enivate.ResponseHub.ApplicationServices
 			return await _repository.CreateCrew(eventId, crew);
 		}
 
+		/// <summary>
+		/// Gets the crews for the event.
+		/// </summary>
+		/// <param name="eventId">The Id of the event to get the crews for.</param>
+		/// <returns></returns>
 		public Task<IList<Crew>> GetCrewsForEvent(Guid eventId)
 		{
 			throw new NotImplementedException();
+		}
+
+		/// <summary>
+		/// Finishes the event by setting the finish date. 
+		/// </summary>
+		/// <param name="eventId">The id of the event to set the finish date for.</param>
+		/// <returns></returns>
+		public async Task FinishEvent(Guid eventId)
+		{
+			await _repository.FinishEvent(eventId, DateTime.UtcNow);
 		}
 		
 		/// <summary>

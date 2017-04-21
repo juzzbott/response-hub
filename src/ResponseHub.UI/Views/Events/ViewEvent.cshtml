@@ -6,89 +6,36 @@
 
 <input type="hidden" id="EventId" value="@Model.Id" />
 
-<div class="val-edit">
-	<h1 class="val">@ViewBag.Title</h1>
-	<div class="val-edit-input hidden">
-		<input type="text" class="form-control input-lg" name="Name" value="@ViewBag.Title" /> 
-		<div class="val-edit-controls">
-			<button class="btn btn-lg btn-default"><i class="fa fa-fw fa-check"></i></button>
-			<button class="btn btn-lg btn-default"><i class="fa fa-fw fa-times"></i></button>
-		</div>
+<div class="row title-row">
+	<div class="col-sm-9">
+		<h1>@ViewBag.Title</h1>
+	</div>
+	<div class="col-sm-3">
+		<a href="@Request.Url.LocalPath/edit" class="btn btn-link btn-icon btn-lg pull-right"><i class="fa fa-pencil-square-o"></i>Edit event</a>
 	</div>
 </div>
 
-<div class="tab-container">
+@Html.SuccessFromQueryString("updated", "1", "The event has been successfully updated.")
+
+<div class="tab-container top-10">
 	<!-- Nav tabs -->
 	<ul class="nav nav-tabs tab-collapse" role="tablist">
-		<li role="presentation" class="active"><a href="#overview" aria-controls="overview" role="tab" data-toggle="tab" class="btn-icon"><i class="fa fa-fw fa-bar-chart"></i>Overview</a></li>
+		<li role="presentation" class="active"><a href="#overview" aria-controls="overview" role="tab" data-toggle="tab" class="btn-icon"><i class="fa fa-fw fa-list"></i>Overview</a></li>
+		<li role="presentation"><a href="#map-view" aria-controls="map-view" id="map-view-tab" role="tab" data-toggle="tab" class="btn-icon"><i class="fa fa-fw fa-map-o"></i>Map view</a></li>
+		<li role="presentation"><a href="#crew-job-allocation" aria-controls="crew-job-allocation" id="crew-job-allocation-tab" role="tab" data-toggle="tab" class="btn-icon"><i class="fa fa-fw fa-object-group"></i>Crew/Job allocation</a></li>
 		<li role="presentation"><a href="#crews" aria-controls="crews" role="tab" data-toggle="tab" class="btn-icon"><i class="fa fa-fw fa-users"></i>Crews</a></li>
-		<!-- <li role="presentation"><a href="#sectors" aria-controls="sectors" role="tab" data-toggle="tab" class="btn-icon"><i class="fa fa-fw fa-object-unit"></i>Sectors</a></li> -->
 	</ul>
 
 	<!-- Tab panes -->
 	<div class="tab-content">
 		<div role="tabpanel" class="tab-pane active" id="overview">
-
-			<div class="row event-job-allocation">
-				<div class="col-sm-4 jobs">
-					<h3>Jobs</h3>
-					<div class="jobs-list">
-						<ul class="list-unstyled">
-							@foreach(var job in Model.Jobs)
-							{
-								<li data-job-number="@job.JobNumber" data-job-id="@job.Id" data-job-message="@job.MessageBody" data-job-timestamp="@job.Timestamp.ToLocalTime().ToString("dd-MM-yyyy HH:mm:ss")">
-									<h4>@job.JobNumber<span class="text-info pull-right small">@job.Timestamp.ToLocalTime().ToString("dd-MM-yyyy HH:mm:ss")</span></h4>
-									<div class="message-body"><small class="text-muted">@job.MessageBody</small></div>
-									<div class="job-allocation-actions clearfix">
-										<button class="btn btn-link btn-icon pull-left btn-left-align btn-assign-job disabled" disabled="disabled" title="Allocate to crew"><i class="fa fa-fw fa-share"></i> Assign to crew</button>
-									</div>
-								</li>
-							}
-						</ul>
-					</div>
-				</div>
-				<div class="col-sm-8 crew-allocation">
-					<h3>Crew allocation</h3>
-
-					<div class="form-group">
-						<label for="AvailableMembers">Crew</label>
-						<div class="row">
-							<div class="col-sm-8 col-md-8 col-lg-6">
-								<select class="form-control selectpicker" data-live-search="true" id="CrewSelect" title="Select crew...">
-									@foreach (var crew in Model.EventCrewsModel.Crews)
-									{
-										<option data-tokens="@crew.Name @crew.CrewLeader.FullName" value="@crew.Id">@crew.Name  - Crew Leader: @crew.CrewLeader.FullName</option>
-									}
-								</select>
-							</div>
-						</div>
-					</div>
-
-					<div class="row">
-						<div class=" col-sm-12 loading-crew-details text-center text-primary hidden">
-							<i class="fa fa-fw fa-spin fa-spinner"></i> Loading crew...
-						</div>
-					</div>
-
-					<div class="row">
-						<div class="col-sm-12 crew-job-list">
-							<p class="lead no-jobs hidden">No jobs have been assigned to this crew yet.</p>
-
-							<ul class="assigned-jobs list-unstyled">
-
-							</ul>
-
-							<div class="allocate-jobs hidden">
-								<button class="btn btn-primary btn-icon"><i class="fa fa-fw fa-indent"></i>Assign jobs</button>
-							</div>
-
-						</div>
-					</div>
-
-				</div>
-
-			</div>
-
+			@Html.Partial("Overview", Model)
+		</div>
+		<div role="tabpanel" class="tab-pane event-map-view" id="map-view">
+			@Html.Partial("MapDisplay", Model)
+		</div>
+		<div role="tabpanel" class="tab-pane" id="crew-job-allocation">
+			@Html.Partial("CrewJobAllocation", Model)
 		</div>
 		<div role="tabpanel" class="tab-pane" id="crews">
 			@Html.Partial("Crews", Model.EventCrewsModel)

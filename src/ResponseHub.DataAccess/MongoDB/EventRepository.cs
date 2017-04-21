@@ -156,6 +156,25 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 			await Collection.UpdateOneAsync(filter, update);
 		}
 
+		/// <summary>
+		/// Finishes the event by setting the finish date. 
+		/// </summary>
+		/// <param name="eventId">The id of the event to set the finish date for.</param>
+		/// <param name="finishDateTime">The date and time the event finished.</param>
+		/// <returns></returns>
+		public async Task FinishEvent(Guid eventId, DateTime finishDateTime)
+		{
+			// Create the filter
+			FilterDefinition<Event> filter = Builders<Event>.Filter.Eq(i => i.Id, eventId);
+
+			// Create the update
+			UpdateDefinition<Event> update = Builders<Event>.Update.Set(i => i.EventFinished, finishDateTime);
+
+			// Perform the update
+			await Collection.UpdateOneAsync(filter, update);
+
+		}
+
 		#region Mappers
 
 		/// <summary>

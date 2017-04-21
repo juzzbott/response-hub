@@ -174,7 +174,7 @@
 
 		// Set the heights of the main containers
 		var headerHeight = $('.page-navbar').height();
-		var containerHeight = ($(window).height() - headerHeight - 275);
+		var containerHeight = ($(window).height() - headerHeight - 260);
 
 		// return the height
 		return containerHeight;
@@ -246,8 +246,16 @@
 
 	}
 
+	/**
+	 * Submits the job allocations for the crew to the server.
+	 */
 	function submitJobAllocationToCrew()
 	{
+
+		// Disable button while posting
+		$('.allocate-jobs button').attr('disabled', 'disabled');
+		$('.allocate-jobs button').addClass('disabled');
+		$('.allocate-jobs button i').removeClass('fa-indent').addClass('fa-spin fa-spinner');
 
 		var eventId = $('#EventId').val();
 		var crewId = $('#CrewSelect').val();
@@ -277,9 +285,148 @@
 			},
 			error: function (jqXHR, textStatus, errorThrown) {
 
+			}, 
+			complete: function () {
+				$('.allocate-jobs button').removeAttr('disabled');
+				$('.allocate-jobs button').removeClass('disabled');
+				$('.allocate-jobs button i').addClass('fa-indent').removeClass('fa-spin fa-spinner');
 			}
 		});
 
+	}
+
+	/**
+	 * Adds the jobs in the list to the map.
+	 */
+	function addJobsToMap()
+	{
+
+		var markers = []
+
+		// Loop through the locations
+		for (var i = 0; i < jobLocations.length; i++)
+		{
+			markers.push(responseHub.maps.addCustomLocationMarkerToMap(jobLocations[i].lat, jobLocations[i].lon, 'fa-map-marker', 'event-marker ' + jobLocations[i].cssClass));
+		}
+
+		// Resize the map to match the markers
+		responseHub.maps.zoomToMarkerGroup(markers);
+	}
+
+	/**
+	 * Adds the assigned job markup to the sortable list.
+	 * @param {any} jobId
+	 * @param {any} jobNumber
+	 * @param {any} jobMessage
+	 * @param {any} jobTimestamp
+	 */
+	function addAssignedListItemMarkup(jobId, jobNumber, jobMessage, jobTimestamp)
+	{
+		// Add to the assigned crew list
+		var assignedListItem = $('<li data-job-id="' + jobId + '" data-job-number="' + jobNumber + '" data-job-message="' + jobMessage + '" data-job-timestamp="' + jobTimestamp + '">');
+
+		// Add the drag handle
+		$(assignedListItem).append('<div class="drag-handle"><i class="fa fa-fw fa-2x fa-sort"></i></div>');
+		$(assignedListItem).append('<div class="unassign"><button onclick="responseHub.events.unassignJobFromCrew(this);" title="Unassign job from crew"><i class="fa fa-fw fa-times text-danger"></i></div>');
+
+		// Add the job number, message and date
+		var assignedItemContent = $('<div class="assigned-content"></div>');
+		$(assignedItemContent).append('<h4>' + jobNumber + '<span class="small text-info">' + jobTimestamp + '</span></h4>');
+		$(assignedItemContent).append('<p>' + jobMessage + '</p>');
+		$(assignedListItem).append(assignedItemContent);
+
+		// Add the list item to the assigned jobs
+		$('ul.assigned-jobs').append(assignedListItem);
+	}
+
+	/**
+	 * Unassigns the job from the crew
+	 * @param {any} elem
+	 */
+	function unassignJobFromCrew(elem)
+	{
+
+		// Get the li element
+		var assignedListItem = $(elem).closest('li');
+
+		// Get the job id, number, message and date
+		var jobId = $(assignedListItem).data('job-id');
+		var jobNumber = $(assignedListItem).data('job-number');
+		var jobMessage = $(assignedListItem).data('job-message');
+		var jobTimestamp = $(assignedListItem).data('job-timestamp');
+
+		// Create the new list item
+		var jobListItem = $('<li data-job-number="' + jobNumber + '" data-job-id="' + jobId + '" data-job-message="' + jobMessage + '" data-job-timestamp="' + jobTimestamp + '">');
+		jobListItem.append('<h4>' + jobNumber + '<span class="text-info pull-right small">' + jobTimestamp + '</span></h4>');
+		jobListItem.append('<div class="message-body"><small class="text-muted">' + jobMessage + '</small></div>');
+		jobListItem.append('<div class="job-allocation-actions clearfix"><button class="btn btn-link btn-icon pull-left btn-left-align btn-assign-job" title="Allocate to crew"><i class="fa fa-fw fa-share"></i> Assign to crew</button></div>');
+
+		// Get the index to insert it at
+		var insertIndex = -1
+		var sortJobNumber = jobNumber.substring(1);
+		var maxIndex = ($('.jobs-list ul li').length - 1)
+		$('.jobs-list ul li').each(function (index, elem) {
+			
+			// Get the job number in the list item
+			var checkJobNumber = $(elem).data('job-number').substring(1);
+
+			// If it's the first element, and we are already greater than that, then just set the insert index as 0'
+			if (index == 0) {
+				if (sortJobNumber > checkJobNumber)
+				{
+					insertIndex = 0;
+					return false;
+				}
+			}
+			else 
+			{
+				// If the current index is the max index, we've got nothing else to check, so just remain as -1 as this will just append to the list
+				if (index == maxIndex)
+				{
+					return false;
+				}
+				else
+				{
+					// Get the prev index element
+					var prevCheckJobNumber = $(elem).prev().data('job-number').substring(1);
+
+					// If the sort number is > check number but < prev check number, then we want to insert at the current index
+					if (sortJobNumber > checkJobNumber && sortJobNumber < prevCheckJobNumber)
+					{
+						insertIndex = index;
+						return false;
+					}
+
+				}
+			}
+
+		});
+
+		// Add the list item at the specific index
+		if (insertIndex != -1) {
+			$('.jobs-list ul').insertAt(insertIndex, jobListItem);
+		} else {
+			$('.jobs-list ul').append(jobListItem);
+		}
+
+		// remove the assigned list item
+		$(assignedListItem).remove();
+
+		// rebind the assign controls
+		bindAssignJobToCrew();
+
+	}
+
+	function bindSortable() {
+		$(".assigned-jobs").sortable({
+			placeholder: "assigned-jobs-highlight",
+			handle: '.drag-handle',
+			axis: 'y',
+			forceHelperSize: true,
+			forcePlaceholderSize: true,
+			helper: 'clone',
+			opacity: 0.85
+		});
 	}
 
 	/**
@@ -287,6 +434,10 @@
 	 */
 	function bindAssignJobToCrew() {
 
+		// unbind all click events
+		$('.btn-assign-job').off('click');
+
+		// Bind the click event
 		$('.btn-assign-job').click(function () {
 
 			// Get the li element
@@ -310,43 +461,6 @@
 
 		});
 
-	}
-
-	/**
-	 * Adds the assigned job markup to the sortable list.
-	 * @param {any} jobId
-	 * @param {any} jobNumber
-	 * @param {any} jobMessage
-	 * @param {any} jobTimestamp
-	 */
-	function addAssignedListItemMarkup(jobId, jobNumber, jobMessage, jobTimestamp)
-	{
-		// Add to the assigned crew list
-		var assignedListItem = $('<li data-job-id="' + jobId + '">');
-
-		// Add the drag handle
-		$(assignedListItem).append('<div class="drag-handle"><i class="fa fa-fw fa-2x fa-sort"></i></div>')
-
-		// Add the job number, message and date
-		var assignedItemContent = $('<div class="assigned-content"></div>');
-		$(assignedItemContent).append('<h4>' + jobNumber + '<span class="small text-info">' + jobTimestamp + '</span></h4>');
-		$(assignedItemContent).append('<p>' + jobMessage + '</p>');
-		$(assignedListItem).append(assignedItemContent);
-
-		// Add the list item to the assigned jobs
-		$('ul.assigned-jobs').append(assignedListItem);
-	}
-
-	function bindSortable() {
-		$(".assigned-jobs").sortable({
-			placeholder: "assigned-jobs-highlight",
-			handle: '.drag-handle',
-			axis: 'y',
-			forceHelperSize: true,
-			forcePlaceholderSize: true,
-			helper: 'clone',
-			opacity: 0.85
-		});
 	}
 
 	/**
@@ -396,6 +510,36 @@
 
 		// Bind the assign job to crew method
 		bindAssignJobToCrew();
+
+		$('.nav-tabs #crew-job-allocation-tab').on('hide.bs.tab', function (e) {
+			$('.scrollator_lane_holder').css('opacity', '0');
+		});
+
+
+
+		// Ensure the map is displayed correctly within the tab.
+		$(".nav-tabs #map-view-tab").on("shown.bs.tab", function () {
+			console.log('loading map');
+
+			// Define the map config
+			var mapConfig = {
+				lat: -37.020100,
+				lon: 144.964600,
+				zoom: 8,
+				minZoom: 4,
+				scrollWheel: false,
+				mapContainer: 'map-canvas',
+				loadCallback: function () {
+
+					responseHub.events.addJobsToMap();
+
+				}
+			};
+
+			// Display the map
+			responseHub.maps.displayMap(mapConfig);
+
+		});
 	}
 
 	function loadUI() {
@@ -411,7 +555,9 @@
 	bindUI();
 
 	return {
-		createCrew: createCrew
+		createCrew: createCrew,
+		addJobsToMap: addJobsToMap,
+		unassignJobFromCrew: unassignJobFromCrew
 	}
 
 })();

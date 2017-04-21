@@ -164,7 +164,7 @@
 						// Second location marker doesn exist, so we need to create it
 
 						var currentLocationMarker = new L.HtmlIcon({
-							html: '<div><i class="fa fa-bullseye fa-2x current-map-location"></i></div>',
+							html: '<div><i class="fa fa-bullseye fa-2x current-map-location custom-icon-marker"></i></div>',
 							iconSize: [20, 20], // size of the icon
 							iconAnchor: [-10, -10], // point of the icon which will correspond to marker's location
 						});	
@@ -176,15 +176,13 @@
 						addPathFromPoint(pos.coords.latitude, pos.coords.longitude, true, '#00B226')
 
 						// Get the group of markers, destination and current location, and zoom window to fit
-						var group = new L.featureGroup([mapMarkers["job_location"], mapMarkers["current_location"]]);
-						map.fitBounds(group.getBounds().pad(0.1));
+						zoomToMarkerGroup([mapMarkers["job_location"], mapMarkers["current_location"]]);
 						
 						// Set the interval to resize the window every 30 secs.
 						mapBoundsInterval = setInterval(function () {
 							
 							// Get the group of markers, destination and current location, and zoom window to fit
-							var group = new L.featureGroup([mapMarkers["job_location"], mapMarkers["current_location"]]);
-							map.fitBounds(group.getBounds().pad(0.1));
+							zoomToMarkerGroup([mapMarkers["job_location"], mapMarkers["current_location"]]);
 
 						}, 30000)
 
@@ -205,12 +203,31 @@
 
 	}
 
+	function addCustomLocationMarkerToMap(lat, lon, fontAwesomeIcon, customCssClass)
+	{
+		var customMarker = new L.HtmlIcon({
+			html: '<div><i class="fa fa-2x ' + fontAwesomeIcon + ' custom-icon-marker ' + customCssClass + '"></i></div>',
+			iconSize: [20, 20], // size of the icon
+			iconAnchor: [-10, -10], // point of the icon which will correspond to marker's location
+		});
+		
+		// Add the marker to the map
+		return L.marker([lat, lon], { icon: customMarker }).addTo(map);
+	}
+
+	function zoomToMarkerGroup(markers)
+	{
+		// Get the group of markers, destination and current location, and zoom window to fit
+		var group = new L.featureGroup(markers);
+		map.fitBounds(group.getBounds().pad(0.1));
+	}
+
 	function addLhqMarker(lat, lon)
 	{
 
 		// Create the custom marker
 		var currentLocationMarker = new L.HtmlIcon({
-			html: '<div><i class="fa fa-life-ring fa-2x lhq-map-location"></i></div>',
+			html: '<div><i class="fa fa-life-ring fa-2x lhq-map-location custom-icon-marker"></i></div>',
 			iconSize: [20, 20], // size of the icon
 			iconAnchor: [-10, -10], // point of the icon which will correspond to marker's location
 		});
@@ -254,8 +271,7 @@
 
 					// Get the group of markers, destination and current location, and zoom window to fit
 					if (!responseHub.isMobile()) {
-						var group = new L.featureGroup([mapMarkers["job_location"], mapMarkers["lhq_location"]]);
-						map.fitBounds(group.getBounds().pad(0.1));
+						zoomToMarkerGroup([mapMarkers["job_location"], mapMarkers["lhq_location"]]);
 					}
 				}
 
@@ -355,7 +371,7 @@
 		}
 
 		if (typeof mapConfig != "undefined") {
-			displayMap(mapConfig);
+			map = displayMap(mapConfig);
 		}
 
 	}
@@ -374,7 +390,9 @@
 		setMapCenter: setMapCenter,
 		mapExists: mapExists,
 		addCurrentLocationToMap: addCurrentLocationToMap,
-		addLhqMarker, addLhqMarker
+		addLhqMarker: addLhqMarker,
+		addCustomLocationMarkerToMap: addCustomLocationMarkerToMap,
+		zoomToMarkerGroup: zoomToMarkerGroup
 	}
 
 })();

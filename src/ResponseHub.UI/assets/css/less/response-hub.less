@@ -648,7 +648,7 @@ footer {
 }
 
 .main-content {
-	padding-bottom: 50px;
+	padding-bottom: 20px;
 }
 
 .content-container {
@@ -1939,23 +1939,80 @@ div.generated-report {
  * Map styles
  */
 
-.current-map-location {
-	color: @brand-primary;
+.custom-icon-marker {
 	margin-top: -10px;
 	margin-left: -10px;
 	display: block;
 }
 
-.lhq-map-location {
+.current-map-location {
+	color: @brand-primary;
+}
+
+.lhq-map-location,
+.event-marker {
 	color: @ses-orange;
-	margin-top: -10px;
-	margin-left: -10px;
-	display: block;
+}
+
+.marker-unassigned {
+	color: @ses-orange;
+}
+
+.marker-assigned {
+	color: @brand-primary;
+}
+
+.marker-completed {
+	color: @job-clear-color;
+}
+
+.marker-in-progress {
+	color: @on-scene-color;
+}
+
+.marker-cancelled {
+	color: @cancelled-color;
+}
+
+.marker-requires-info {
+	color: @text-info;
 }
 
 /**
  * Event styles
  */
+
+#event-map-legend li {
+	margin-right: 20px;
+
+	i {
+		font-size: 18px;
+		margin-right: 10px;
+	}
+}
+
+.event-map-view {
+	padding-bottom: 20px;
+}
+
+.event-overview-item {
+	text-align: center;
+	font-size: 16px;
+	margin-top: 20px;
+	margin-bottom: 15px;
+	padding-top: 0;
+	padding-bottom: 20px;
+	border-right: 3px solid @border-color;
+
+	&.no-border {
+		border-right: none;
+	}
+
+	span {
+		display: block;
+		font-size: 34px;
+	}
+}
 
 .event-job-allocation {
 	.jobs-list {
@@ -2007,6 +2064,19 @@ div.generated-report {
 					left: 0;
 					cursor: move;
 					color: @brand-primary;
+				}
+
+				.unassign {
+					position: absolute;
+					right: 10px;
+					top: 10px;
+					cursor: pointer;
+
+					button {
+						border: none;
+						padding: 0;
+						background: none;
+					}
 				}
 
 				.assigned-content {

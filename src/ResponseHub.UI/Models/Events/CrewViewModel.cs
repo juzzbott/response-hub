@@ -23,12 +23,12 @@ namespace Enivate.ResponseHub.UI.Models.Events
 
 		public IList<UnitMemberViewModel> CrewMembers { get; set; }
 
-		public IList<AssignedJobViewModel> AssignedJobs { get; set; }
+		public IList<EventJobViewModel> AssignedJobs { get; set; }
 
 		public CrewViewModel()
 		{
 			CrewMembers = new List<UnitMemberViewModel>();
-			AssignedJobs = new List<AssignedJobViewModel>();
+			AssignedJobs = new List<EventJobViewModel>();
 		}
 
 	}

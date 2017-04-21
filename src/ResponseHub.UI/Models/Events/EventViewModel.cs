@@ -17,7 +17,7 @@ namespace Enivate.ResponseHub.UI.Models.Events
 
 		public DateTime  EventStarted { get; set; }
 
-		public DateTime EventFinished { get; set; }
+		public DateTime? EventFinished { get; set; }
 
 		public Guid UnitId { get; set; }
 
@@ -27,13 +27,25 @@ namespace Enivate.ResponseHub.UI.Models.Events
 
 		public EventCrewsViewModel EventCrewsModel { get; set; }
 
-		public IList<JobMessageViewModel> Jobs { get; set; }
+		public IList<EventJobViewModel> Jobs { get; set; }
+
+		public IList<EventJobViewModel> UnassignedJobs { get; set; }
+
+		public int UnassignedJobsCount { get; set; }
+
+		public int InProgressJobsCount { get; set; }
+
+		public int CompletedJobsCount { get; set; }
+
+		public bool Finished { get; set; }
+
+		public string DurationString { get; set; }
 
 		public EventViewModel()
 		{
 			AvailableMembers = new List<Tuple<Guid, string, string>>();
 			EventCrewsModel = new EventCrewsViewModel();
-			Jobs = new List<JobMessageViewModel>();
+			Jobs = new List<EventJobViewModel>();
 		}
 
 	}

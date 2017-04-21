@@ -127,7 +127,7 @@ namespace Enivate.ResponseHub.UI.Controllers.Api
 			IList<JobMessage> jobMessages = await JobMessageService.GetByIds(crew.JobMessageIds);
 
 			// Map the jobs to the assigned job view model
-			crewModel.AssignedJobs = jobMessages.Select(i => AssignedJobViewModel.FromJobMessage(i)).ToList();
+			crewModel.AssignedJobs = jobMessages.Select(i => EventJobViewModel.FromJobMessage(i)).ToList();
 
 			// return the crewModel
 			return crewModel;

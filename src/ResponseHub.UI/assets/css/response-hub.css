@@ -492,7 +492,7 @@ footer p {
   font-size: 16px;
 }
 .main-content {
-  padding-bottom: 50px;
+  padding-bottom: 20px;
 }
 .content-container {
   padding: 0 20px;
@@ -1568,21 +1568,65 @@ div.generated-report .notes li .wordback-icon {
 /**
  * Map styles
  */
-.current-map-location {
-  color: #7b74a8;
+.custom-icon-marker {
   margin-top: -10px;
   margin-left: -10px;
   display: block;
 }
-.lhq-map-location {
+.current-map-location {
+  color: #7b74a8;
+}
+.lhq-map-location,
+.event-marker {
   color: #FF862F;
-  margin-top: -10px;
-  margin-left: -10px;
-  display: block;
+}
+.marker-unassigned {
+  color: #FF862F;
+}
+.marker-assigned {
+  color: #7b74a8;
+}
+.marker-completed {
+  color: #64B752;
+}
+.marker-in-progress {
+  color: #476890;
+}
+.marker-cancelled {
+  color: #AA3939;
+}
+.marker-requires-info {
+  color: #31708f;
 }
 /**
  * Event styles
  */
+#event-map-legend li {
+  margin-right: 20px;
+}
+#event-map-legend li i {
+  font-size: 18px;
+  margin-right: 10px;
+}
+.event-map-view {
+  padding-bottom: 20px;
+}
+.event-overview-item {
+  text-align: center;
+  font-size: 16px;
+  margin-top: 20px;
+  margin-bottom: 15px;
+  padding-top: 0;
+  padding-bottom: 20px;
+  border-right: 3px solid #ddd;
+}
+.event-overview-item.no-border {
+  border-right: none;
+}
+.event-overview-item span {
+  display: block;
+  font-size: 34px;
+}
 .event-job-allocation .jobs-list ul {
   border-top: 1px solid #ddd;
 }
@@ -1620,6 +1664,17 @@ div.generated-report .notes li .wordback-icon {
   left: 0;
   cursor: move;
   color: #7b74a8;
+}
+.event-job-allocation .crew-allocation .assigned-jobs li .unassign {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  cursor: pointer;
+}
+.event-job-allocation .crew-allocation .assigned-jobs li .unassign button {
+  border: none;
+  padding: 0;
+  background: none;
 }
 .event-job-allocation .crew-allocation .assigned-jobs li .assigned-content {
   margin-left: 30px;

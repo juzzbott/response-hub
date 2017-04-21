@@ -20,7 +20,7 @@ namespace Enivate.ResponseHub.Model.Events
 
 		public DateTime EventStarted { get; set; }
 
-		public DateTime EventFinished { get; set; }
+		public DateTime? EventFinished { get; set; }
 
 		public IList<Crew> Crews { get; set; }
 

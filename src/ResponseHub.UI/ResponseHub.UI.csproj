@@ -250,7 +250,8 @@
     <Compile Include="Models\Api\Messages\GetDistanceFromJobModel.cs" />
     <Compile Include="Models\Api\Messages\PostGetLatestFromLastModel.cs" />
     <Compile Include="Models\Api\Search\SearchPostModel.cs" />
-    <Compile Include="Models\Events\AssignedJobViewModel.cs" />
+    <Compile Include="Models\Events\EditEventViewModel.cs" />
+    <Compile Include="Models\Events\EventJobViewModel.cs" />
     <Compile Include="Models\Events\CrewViewModel.cs" />
     <Compile Include="Models\Events\EventCrewsViewModel.cs" />
     <Compile Include="Models\Events\EventListItemViewModel.cs" />
@@ -605,6 +606,21 @@
     <Content Include="Web.Test.config">
       <DependentUpon>Web.config</DependentUpon>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Events\CrewJobAllocation.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Events\MapDisplay.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Events\Overview.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Events\_EventJobStats.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Events\Edit.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

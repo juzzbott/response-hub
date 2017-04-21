@@ -26,5 +26,7 @@ namespace Enivate.ResponseHub.DataAccess.Interface
 
 		Task AssignJobsToCrew(Guid eventId, Guid crewId, IList<Guid> assignedJobIds);
 
+		Task FinishEvent(Guid eventId, DateTime finishDateTime);
+
 	}
 }

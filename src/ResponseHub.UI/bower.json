@@ -22,6 +22,7 @@
 		"blueimp-bootstrap-image-gallery": "~3.4.2",
 		"eonasdan-bootstrap-datetimepicker": "~4.17.47",
 		"Chart.js": "~2.5.0",
-		"chartist": "~0.10.1"
+		"chartist": "~0.10.1",
+		"bootstrap-table": "1.11.1"
 	}
 }

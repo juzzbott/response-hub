@@ -22,7 +22,7 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB.DataObjects.Events
 
 		public DateTime EventStarted { get; set; }
 
-		public DateTime EventFinished { get; set; }
+		public DateTime? EventFinished { get; set; }
 
 		public IList<Crew> Crews { get; set; }
 		

@@ -72,8 +72,10 @@
     <Compile Include="DataExport\Interface\IDataExportService.cs" />
     <Compile Include="Decoding\DecoderStatus.cs" />
     <Compile Include="Events\Event.cs" />
+    <Compile Include="Events\EventJobStatus.cs" />
     <Compile Include="Events\Interface\IEventService.cs" />
     <Compile Include="Addresses\Interface\IAddressService.cs" />
+    <Compile Include="Messages\JobNumberComparer.cs" />
     <Compile Include="Units\Capcode.cs" />
     <Compile Include="Units\Interface\ICapcodeService.cs" />
     <Compile Include="Units\Interface\IUnitService.cs" />

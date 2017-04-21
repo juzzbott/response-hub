@@ -71,7 +71,8 @@ namespace Enivate.ResponseHub.UI.Controllers
 					UnitId = eventUnit.Id,
 					UnitName = eventUnit.Name,
 					StartDate = eventObj.EventStarted.ToLocalTime(),
-					FinishDate = eventObj.EventFinished.ToLocalTime()
+					FinishDate = eventObj.EventFinished,
+					JobsCount = eventObj.JobMessageIds.Count
 				});
 			}
 
@@ -132,6 +133,58 @@ namespace Enivate.ResponseHub.UI.Controllers
 
 		#endregion
 
+		#region Create Event
+
+		[Route("{id:guid}/edit")]
+		public async Task<ActionResult> Edit(Guid id)
+		{
+
+			// Get the event based on the id
+			Event eventObj = await EventService.GetById(id);
+
+			// If the job is null, return 404
+			if (eventObj == null)
+			{
+				throw new HttpException((int)HttpStatusCode.NotFound, "The requested page cannot be found.");
+			}
+
+			// Create the model
+			EditEventViewModel model = new EditEventViewModel();
+
+			// Set the available units
+			model.Name = eventObj.Name;
+			model.StartDate = eventObj.EventStarted.ToString("yyyy-MM-dd");
+			model.StartTime = eventObj.EventStarted.ToString("HH:mm");
+
+			return View(model);
+		}
+
+		[Route("{id:guid}/edit")]
+		[HttpPost]
+		public async Task<ActionResult> Edit(Guid id, CreateEventViewModel model)
+		{
+			// If the model state is invalid, return the view with the model
+			if (!ModelState.IsValid)
+			{
+				return View(model);
+			}
+
+			try
+			{
+				// Redirect to the event
+				return new RedirectResult(String.Format("/events/{0}?updated=1", id));
+
+			}
+			catch (Exception ex)
+			{
+				await ServiceLocator.Get<ILogger>().Error(String.Format("Unable to save event. Message: {0}", ex.Message), ex);
+				ModelState.AddModelError("", "Sorry, there was a system error saving the event.");
+				return View(model);
+			}
+		}
+
+		#endregion
+
 		#region View event
 
 		[Route("{id:guid}")]
@@ -161,8 +214,16 @@ namespace Enivate.ResponseHub.UI.Controllers
 				EventStarted = eventObj.EventStarted,
 				UnitId = eventObj.UnitId,
 				UnitName = unit.Name,
-				Name = eventObj.Name
+				Name = eventObj.Name,
+				Finished = eventObj.EventFinished.HasValue
 			};
+
+			// If finsihed, set the duration string
+			if (model.Finished)
+			{
+				TimeSpan duration = model.EventFinished.Value - model.EventStarted;
+				model.DurationString = String.Format("{0} days {1} hours", duration.ToString("%d"), duration.ToString("%h"));
+			}
 			
 			// Load the users for the model
 			IList<IdentityUser> users = await UnitService.GetUsersForUnit(eventObj.UnitId);
@@ -175,10 +236,39 @@ namespace Enivate.ResponseHub.UI.Controllers
 			model.EventCrewsModel = await GetCrewsModelForEvent(eventObj, model.AvailableMembers);
 
 			// Get the jobs for the event
-			model.Jobs = await GetJobsForEvent(eventObj.JobMessageIds);
-			
+			model.Jobs = await GetJobsForEvent(eventObj.JobMessageIds, eventObj);
+			model.UnassignedJobs = model.Jobs.Where(i => !i.Assigned).OrderByDescending(i => i.JobNumber, new JobNumberComparer()).ToList();
+			model.UnassignedJobsCount = model.Jobs.Count(i => !i.Assigned);
+			model.InProgressJobsCount = model.Jobs.Count(i => i.Status == EventJobStatus.InProgress);
+			model.CompletedJobsCount = model.Jobs.Count(i => i.Status == EventJobStatus.Completed);
+
 			// return the view
 			return View(model);
+		}
+
+		#endregion
+
+		#region Finish Event
+
+		[Route("{id:guid}/finish-event")]
+		public async Task<ActionResult> FinishEvent(Guid id)
+		{
+			try
+			{
+
+				// Finish the event
+				await EventService.FinishEvent(id);
+
+				// Redirect to the event
+				return new RedirectResult(String.Format("/events/{0}?finished=1", id));
+
+			}
+			catch (Exception ex)
+			{
+				await ServiceLocator.Get<ILogger>().Error(String.Format("Unable to finish event. Message: {0}", ex.Message), ex);
+				return new RedirectResult(String.Format("/events/{0}?error_finishing=1", id));
+			}
+
 		}
 
 		#endregion
@@ -190,19 +280,30 @@ namespace Enivate.ResponseHub.UI.Controllers
 		/// </summary>
 		/// <param name="jobMessageIds"></param>
 		/// <returns></returns>
-		private async Task<IList<JobMessageViewModel>> GetJobsForEvent(IList<Guid> jobMessageIds)
+		private async Task<IList<EventJobViewModel>> GetJobsForEvent(IList<Guid> jobMessageIds, Event eventObj)
 		{
-
-			// Get the capcodes for the current user
-			IList<Capcode> capcodes = await CapcodeService.GetCapcodesForUser(UserId);
 
 			// Get the messages for the capcodes
 			IList<JobMessage> jobMessages = await JobMessageService.GetByIds(jobMessageIds);
 
-			JobsController jobsController = new JobsController();
-			JobMessageListViewModel jobListModel = await jobsController.CreateJobMessageListModel(capcodes, jobMessages);
+			// Get the list of event jobs
+			IList<EventJobViewModel> eventJobs = jobMessages.Select(i => EventJobViewModel.FromJobMessage(i)).ToList();
 
-			return jobListModel.Messages;
+			// Get all jobs ids currently assigned to crews
+			IList<Guid> assignedJobIds = eventObj.Crews.SelectMany(i => i.JobMessageIds).ToList();
+
+			// Determine jobs that have been assigned
+			for (int i = 0; i < eventJobs.Count; i++)
+			{
+				// If the id is contained within the assigned jobs, then mark it as assigned
+				if (assignedJobIds.Contains(eventJobs[i].Id))
+				{
+					eventJobs[i].Assigned = true;
+				}
+			}
+
+			// return the event jobs
+			return eventJobs;
 		}
 
 		/// <summary>

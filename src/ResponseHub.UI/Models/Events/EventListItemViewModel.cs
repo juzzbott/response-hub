@@ -18,7 +18,9 @@ namespace Enivate.ResponseHub.UI.Models.Events
 
 		public DateTime StartDate { get; set; }
 
-		public DateTime FinishDate { get; set; }
+		public DateTime? FinishDate { get; set; }
+
+		public int JobsCount { get; set; }
 
 	}
 }

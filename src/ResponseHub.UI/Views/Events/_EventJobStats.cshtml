@@ -1,0 +1,24 @@
+﻿@model Enivate.ResponseHub.UI.Models.Events.EventViewModel
+
+<div class="row">
+	<div class="col-sm-3">
+		<div class="event-overview-item">
+			<span>@Model.Jobs.Count</span>Total jobs
+		</div>
+	</div>
+	<div class="col-sm-3">
+		<div class="event-overview-item">
+			<span>@Model.UnassignedJobsCount</span>Unassigned jobs
+		</div>
+	</div>
+	<div class="col-sm-3">
+		<div class="event-overview-item">
+			<span>@Model.InProgressJobsCount</span>In progress jobs
+		</div>
+	</div>
+	<div class="col-sm-3">
+		<div class="event-overview-item no-border">
+			<span>@Model.CompletedJobsCount</span>Completed jobs
+		</div>
+	</div>
+</div>
