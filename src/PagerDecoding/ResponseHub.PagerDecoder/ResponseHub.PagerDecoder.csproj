@@ -139,9 +139,11 @@
   <ItemGroup>
     <None Include="ResponseHub.PagerDecoder.exe.config">
       <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <Content Include="ResponseHub.PagerDecoder.exe.Debug.config">
       <DependentUpon>ResponseHub.PagerDecoder.exe.config</DependentUpon>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="ResponseHub.PagerDecoder.exe.Test.config">
       <DependentUpon>ResponseHub.PagerDecoder.exe.config</DependentUpon>
@@ -149,6 +151,7 @@
     </Content>
     <Content Include="ResponseHub.PagerDecoder.exe.Staging.config">
       <DependentUpon>ResponseHub.PagerDecoder.exe.config</DependentUpon>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="ResponseHub.PagerDecoder.exe.Release.config">
       <DependentUpon>ResponseHub.PagerDecoder.exe.config</DependentUpon>
