@@ -10,7 +10,7 @@ namespace Enivate.ResponseHub.Model.Events.Interface
 	public interface IEventService
 	{
 
-		Task<Event> CreateEvent(string name, Guid unitId, Guid userId, DateTime startDate);
+		Task<Event> CreateEvent(string name, string description, Guid unitId, Guid userId, DateTime startDate);
 
 		Task<Event> GetById(Guid id);
 

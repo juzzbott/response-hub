@@ -1,27 +1,27 @@
-﻿@model Enivate.ResponseHub.UI.Models.Events.EventCrewsViewModel
+﻿@model Enivate.ResponseHub.UI.Models.Events.EventViewModel
 
 <h3>Current crews</h3>
 
-@if (Model.Crews == null || Model.Crews.Count == 0)
+@if (Model.EventCrewsModel.Crews == null || Model.EventCrewsModel.Crews.Count == 0)
 {
 	<p class="no-crews">There is currently no crews defined.</p>
 }
 
 <div class="panel-group crew-list">
 
-	@for (int i = 0; i < Model.Crews.Count; i++)
+	@for (int i = 0; i < Model.EventCrewsModel.Crews.Count; i++)
 	{
 		<div class="panel panel-default">
 			<div class="panel-heading" role="tab" id="crew-accordion-heading-@i">
-				<h4 class="panel-title"><a class="accordion-toggle collapsed" data-toggle="collapse" href="#crew-accordion-@i">@Model.Crews[i].Name - Crew leader: @Model.Crews[i].CrewLeader.FullName</a></h4>
+				<h4 class="panel-title"><a class="accordion-toggle collapsed" data-toggle="collapse" href="#crew-accordion-@i">@Model.EventCrewsModel.Crews[i].Name - Crew leader: @Model.EventCrewsModel.Crews[i].CrewLeader.FullName</a></h4>
 			</div>
 			<div id="crew-accordion-@i" class="panel-collapse collapse">
 				<div class="panel-body crew-details">
 					<h4>Crew leader:</h4>
-					<p>@Model.Crews[i].CrewLeader.FullName</p>
+					<p>@Model.EventCrewsModel.Crews[i].CrewLeader.FullName</p>
 					<h4>Crew members:</h4>
 					<p>
-						@foreach (var crewMember in Model.Crews[i].CrewMembers)
+						@foreach (var crewMember in Model.EventCrewsModel.Crews[i].CrewMembers)
 						{
 							@crewMember.FullName <br />
 						}
@@ -34,6 +34,9 @@
 
 </div>
 
+@if (!Model.Finished)
+{
+
 <h3>Create new crew</h3>
 
 <form id="create-crew">
@@ -44,19 +47,19 @@
 				<label for="Service">Name *</label>
 				<div class="row">
 					<div class="col-sm-8 col-md-6 col-lg-4">
-						@Html.TextBoxFor(model => model.CrewName, new { @class = "form-control", placeholder = "e.g. Alpha" })
+						@Html.TextBoxFor(model => model.EventCrewsModel.CrewName, new { @class = "form-control", placeholder = "e.g. Alpha" })
 					</div>
 				</div>
-				@Html.ValidationMessageFor(model => model.CrewName)
+				@Html.ValidationMessageFor(model => model.EventCrewsModel.CrewName)
 			</div>
 		</div>
 	</div>
 
 	<script language="javascript">
 	var users = [
-		@for (int i = 0; i < Model.AvailableMembers.Count; i++)
+		@for (int i = 0; i < Model.EventCrewsModel.AvailableMembers.Count; i++)
 		{
-			@Html.Raw(String.Format("{0}{{id: \"{1}\", name: \"{2}\", memberNumber: \"{3}\"}}", (i > 0 ? "," : ""), Model.AvailableMembers[i].Item1, Model.AvailableMembers[i].Item2, Model.AvailableMembers[i].Item3));
+			@Html.Raw(String.Format("{0}{{id: \"{1}\", name: \"{2}\", memberNumber: \"{3}\"}}", (i > 0 ? "," : ""), Model.EventCrewsModel.AvailableMembers[i].Item1, Model.EventCrewsModel.AvailableMembers[i].Item2, Model.EventCrewsModel.AvailableMembers[i].Item3));
 			@Html.Raw("\r\n");
 		}
 	];
@@ -68,16 +71,16 @@
 		<div class="row">
 			<div class="col-sm-8 col-md-6 col-lg-4">
 				<select class="form-control selectpicker" data-live-search="true" id="AvailableMembers" title="Select member...">
-					@foreach (var user in Model.AvailableMembers)
+					@foreach (var user in Model.EventCrewsModel.AvailableMembers)
 					{
 						<option data-tokens="@user.Item2" value="@user.Item1">@user.Item2</option>
 					}
 				</select>
 			</div>
 		</div>
-		@Html.ValidationMessageFor(model => model.SelectedMembers)
+		@Html.ValidationMessageFor(model => model.EventCrewsModel.SelectedMembers)
 	</div>
-	@Html.HiddenFor(model => model.SelectedMembers)
+	@Html.HiddenFor(model => model.EventCrewsModel.SelectedMembers)
 
 	<table class="table table-responsive table-striped table-hover" id="crew-members-table" data-selected-list="SelectedMembers" data-select-box="AvailableMembers">
 		<thead>
@@ -102,3 +105,8 @@
 	</div>
 
 </form>
+}
+else
+{
+	<p class="text-info"><strong>No new crews can be added as the event has finished.</strong></p>
+}

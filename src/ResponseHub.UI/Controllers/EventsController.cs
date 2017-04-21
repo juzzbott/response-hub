@@ -90,6 +90,12 @@ namespace Enivate.ResponseHub.UI.Controllers
 
 			// Set the available units
 			model.AvailableUnits = await GetAvailableUnits(UserId);
+
+			if (model.AvailableUnits.Count == 2) // First is please select
+			{
+				model.UnitId = new Guid(model.AvailableUnits[1].Value);
+			}
+
 			model.Name = DateTime.Now.ToString("d MMMM yyyy");
 			model.StartDate = DateTime.Now.ToString("yyyy-MM-dd");
 			model.StartTime = DateTime.Now.AddMinutes(-90).ToString("HH:mm");
@@ -117,7 +123,7 @@ namespace Enivate.ResponseHub.UI.Controllers
 				DateTime startDate = DateTime.ParseExact(startDateComplete, "yyyy-MM-dd HH:mm:ss", CultureInfo.CurrentCulture);
 
 				// Create the new event
-				Event newEvent = await EventService.CreateEvent(model.Name, model.UnitId, UserId, startDate);
+				Event newEvent = await EventService.CreateEvent(model.Name, model.Description, model.UnitId, UserId, startDate);
 
 				// Redirect to the event
 				return new RedirectResult(String.Format("/events/{0}", newEvent.Id));
@@ -153,6 +159,7 @@ namespace Enivate.ResponseHub.UI.Controllers
 
 			// Set the available units
 			model.Name = eventObj.Name;
+			model.Description = eventObj.Description;
 			model.StartDate = eventObj.EventStarted.ToString("yyyy-MM-dd");
 			model.StartTime = eventObj.EventStarted.ToString("HH:mm");
 

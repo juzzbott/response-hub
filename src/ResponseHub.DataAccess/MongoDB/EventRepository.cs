@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using MongoDB.Driver;
 
 using Enivate.ResponseHub.DataAccess.Interface;
-using Enivate.ResponseHub.DataAccess.MongoDB.DataObjects.Events;
 using Enivate.ResponseHub.Model.Events;
 using Enivate.ResponseHub.Model.Crews;
 
@@ -174,68 +173,6 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 			await Collection.UpdateOneAsync(filter, update);
 
 		}
-
-		#region Mappers
-
-		/// <summary>
-		/// Maps the event dto object to a model object.
-		/// </summary>
-		/// <param name="dbObject">The dto object to map to the model object</param>
-		/// <returns>The mapped model object</returns>
-		public Event MapDbObjectToModel(EventDto dbObject)
-		{
-			// If the db object is null, retun null
-			if (dbObject == null)
-			{
-				return null;
-			}
-
-			// Map the model object
-			Event modelObject = new Event()
-			{
-				Created = dbObject.Created,
-				EventFinished = dbObject.EventFinished,
-				EventStarted = dbObject.EventStarted,
-				UnitId = dbObject.UnitId,
-				Id = dbObject.Id,
-				Name = dbObject.Name,
-				Crews = dbObject.Crews
-			};
-
-			// return the model event
-			return modelObject;
-		}
-
-		/// <summary>
-		/// Maps the event model object to the event dto object.
-		/// </summary>
-		/// <param name="modelObject">The model object to map to the dto object.</param>
-		/// <returns>The mapped dto object.</returns>
-		public EventDto MapModelObjectToDb(Event modelObject)
-		{
-			// If the model object is null, retun null
-			if (modelObject == null)
-			{
-				return null;
-			}
-
-			// Map the db object
-			EventDto dbObject = new EventDto()
-			{
-				Created = modelObject.Created,
-				EventFinished = modelObject.EventFinished,
-				EventStarted = modelObject.EventStarted,
-				UnitId = modelObject.UnitId,
-				Id = modelObject.Id,
-				Name = modelObject.Name,
-				Crews = modelObject.Crews
-			};
-
-			// return the model event
-			return dbObject;
-		}
-
-		#endregion
 
 	}
 }

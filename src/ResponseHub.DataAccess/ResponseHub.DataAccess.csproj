@@ -101,7 +101,6 @@
     <Compile Include="MongoDB\AttachmentRepository.cs" />
     <Compile Include="MongoDB\CapcodeRepository.cs" />
     <Compile Include="MongoDB\DataObjects\Attachments\AttachmentDto.cs" />
-    <Compile Include="MongoDB\DataObjects\Events\EventDto.cs" />
     <Compile Include="MongoDB\DataObjects\Units\UnitDto.cs" />
     <Compile Include="MongoDB\DataObjects\Messages\JobMessageDto.cs" />
     <Compile Include="MongoDB\DataObjects\Spatial\MapGridReferenceInfoDto.cs" />

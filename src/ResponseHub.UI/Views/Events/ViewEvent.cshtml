@@ -35,10 +35,17 @@
 			@Html.Partial("MapDisplay", Model)
 		</div>
 		<div role="tabpanel" class="tab-pane" id="crew-job-allocation">
-			@Html.Partial("CrewJobAllocation", Model)
+			@if (Model.Finished)
+			{
+				<p class="text-info top-20"><strong>Job allocation is disabled as the event has finished.</strong></p>
+			}
+			else
+			{
+				@Html.Partial("CrewJobAllocation", Model)
+			}
 		</div>
 		<div role="tabpanel" class="tab-pane" id="crews">
-			@Html.Partial("Crews", Model.EventCrewsModel)
+			@Html.Partial("Crews", Model)
 		</div>
 		
 	</div>

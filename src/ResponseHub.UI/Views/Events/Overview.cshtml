@@ -38,6 +38,12 @@ else
 		</tr>
 	</thead>
 	<tbody>
+		@if (Model.Jobs.Count == 0)
+		{
+			<tr>
+				<td colspan="4">No jobs have been added to the event yet.</td>
+			</tr>
+		}
 		@foreach(var job in Model.Jobs)
 		{
 			<tr>

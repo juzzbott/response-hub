@@ -33,7 +33,7 @@ namespace Enivate.ResponseHub.ApplicationServices
 		/// <param name="userId"></param>
 		/// <param name="startDate"></param>
 		/// <returns></returns>
-		public async Task<Event> CreateEvent(string name, Guid unitId, Guid userId, DateTime startDate)
+		public async Task<Event> CreateEvent(string name, string description, Guid unitId, Guid userId, DateTime startDate)
 		{
 			// Create the new event
 			Event newEvent = new Event()
@@ -41,7 +41,8 @@ namespace Enivate.ResponseHub.ApplicationServices
 				Created = DateTime.UtcNow,
 				EventStarted = startDate.ToUniversalTime(),
 				UnitId = unitId,
-				Name = name
+				Name = name,
+				Description = description
 			};
 
 			// Create the event

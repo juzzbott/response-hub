@@ -13,6 +13,8 @@ namespace Enivate.ResponseHub.UI.Models.Events
 		[Required(ErrorMessage = "Please enter a name for the event.")]
 		public string Name { get; set; }
 
+		public string Description { get; set; }
+
 		[Required(ErrorMessage = "Please ensure a start date has been specified.")]
 		public string StartDate { get; set; }
 

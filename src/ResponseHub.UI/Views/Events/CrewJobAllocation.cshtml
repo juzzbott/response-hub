@@ -16,6 +16,10 @@
 					</li>
 				}
 			</ul>
+			@if (Model.UnassignedJobs.Count == 0)
+			{
+				<p class="text-info no-unassigned-jobs"><strong>There are currently no unassigned jobs.</strong></p>
+			}
 		</div>
 	</div>
 	<div class="col-sm-8 crew-allocation">

@@ -14,6 +14,8 @@ namespace Enivate.ResponseHub.Model.Events
 
 		public string Name { get; set; }
 
+		public string Description { get; set; }
+
 		public Guid UnitId { get; set; }
 
 		public DateTime Created { get; set; }

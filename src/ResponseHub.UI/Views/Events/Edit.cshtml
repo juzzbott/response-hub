@@ -1,7 +1,7 @@
 ﻿@model Enivate.ResponseHub.UI.Models.Events.EditEventViewModel
 
 @{
-    ViewBag.Title = "Create event";
+    ViewBag.Title = "Edit event";
 }
 
 <h1>@ViewBag.Title</h1>
@@ -18,6 +18,15 @@
 			</div>
 		</div>
 		@Html.ValidationMessageFor(model => model.Name)
+	</div>
+
+	<div class="form-group">
+		<label for="Description">Description</label>
+		<div class="row">
+			<div class="col-sm-8 col-md-6">
+				@Html.TextAreaFor(model => model.Description, new { @class = "form-control", rows = "5" })
+			</div>
+		</div>
 	</div>
 
 	<div class="form-group">
