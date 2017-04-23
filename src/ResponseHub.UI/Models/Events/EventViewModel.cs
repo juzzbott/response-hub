@@ -25,7 +25,7 @@ namespace Enivate.ResponseHub.UI.Models.Events
 
 		public IList<Tuple<Guid, string, string>> AvailableMembers { get; set; }
 
-		public EventCrewsViewModel EventCrewsModel { get; set; }
+		public IList<CrewViewModel> Crews { get; set; }
 
 		public IList<EventJobViewModel> Jobs { get; set; }
 
@@ -41,10 +41,14 @@ namespace Enivate.ResponseHub.UI.Models.Events
 
 		public string DurationString { get; set; }
 
+		public bool AllMembersAllocated { get; set; }
+
+		public string Description { get; set; }
+
 		public EventViewModel()
 		{
 			AvailableMembers = new List<Tuple<Guid, string, string>>();
-			EventCrewsModel = new EventCrewsViewModel();
+			Crews = new List<CrewViewModel>();
 			Jobs = new List<EventJobViewModel>();
 		}
 

@@ -40,53 +40,6 @@ namespace Enivate.ResponseHub.UI.Controllers.Api
 			throw new NotImplementedException();
 		}
 
-		[Route("{eventId:guid}/add-crew")]
-		public async Task<AddCrewResponseModel> AddCrew(Guid eventId, AddCrewPostModel model)
-		{
-
-			// If the crew leader id is empty guid, or there is no crew members, it's an invalid model response
-			if (String.IsNullOrEmpty(model.SelectedMembers))
-			{
-				return new AddCrewResponseModel() { Success = false, ErrorMessage = "You need to select members to add to a crew." };
-			}
-			if (model.CrewLeaderId == Guid.Empty)
-			{
-				return new AddCrewResponseModel() { Success = false, ErrorMessage = "You need to specify a crew leader for a crew." };
-			}
-
-			try
-			{
-
-				// Create the list of crew members
-				IList<Guid> crewMembers = new List<Guid>();
-
-				// Get the list of crew members from the selected crew members
-				crewMembers = model.SelectedMembers.Split(new char[] { '|' }, StringSplitOptions.RemoveEmptyEntries).Select(i => new Guid(i)).ToList();
-
-				// Create the crew
-				Crew newCrew = await EventService.CreateCrew(eventId, model.Name, crewMembers, model.CrewLeaderId);
-
-				// return the success result
-				return new AddCrewResponseModel()
-				{
-					Success = true,
-					Crew = newCrew
-				};
-
-			}
-			catch (Exception ex)
-			{
-				// Log the exception and return failed result
-				await Log.Error(String.Format("Error creating crew for event. Message: {0}", ex.Message), ex);
-				return new AddCrewResponseModel()
-				{
-					Success = false,
-					ErrorMessage = "There was an error creating the crew for the event."
-				};
-			}
-
-		}
-
 		[Route("{eventId:guid}/crew/{crewId:guid}")]
 		public async Task<CrewViewModel> GetCrew(Guid eventId, Guid crewId)
 		{

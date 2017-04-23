@@ -1,113 +1,5 @@
 ﻿responseHub.events = (function () {
-
-	function createCrew() {
-
-		// Ensure the form is valid
-		if (!$('#create-crew').valid()) {
-			return;
-		}
-
-		var eventId = $('#EventId').val();
-
-		var postData = {
-			Name: $('#CrewName').val(),
-			SelectedMembers: $('#SelectedMembers').val(),
-			CrewLeaderId: $('input[name="CrewLeaderId"]:checked').val()
-		};
-
-		$.ajax({
-			url: responseHub.apiPrefix + '/events/' + eventId + '/add-crew',
-			type: 'post',
-			dataType: 'json',
-			data: postData,
-			success: function (data) {
-
-				if (data.Success) {
-
-
-					// Build the new accordion markuo
-					buildNewCrewAccordionMarkup(data.Crew);
-
-					// Hide the no crews message
-					if (!$('.no-crews').hasClass("hidden")) {
-						$('.no-crews').addClass("hidden");
-					}
-
-					// Clear the textbox
-					$('#CrewName').val('');
-					$('#SelectedMembers').val('');
-
-					// Clear the crew members
-					$('#crew-members-table tbody').empty();
-					$('#crew-members-table tbody').append('<tr><td colspan="4">No members have been added to the this crew yet.</td></tr>');
-
-				} else {
-					$('#create-crew').prepend('<div class="alert alert-danger alert-dismissible" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>' + data.ErrorMessage + '</div>');
-				}
-
-
-			},
-			error: function () {
-				$('#create-crew').prepend('<div class="alert alert-danger alert-dismissible" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>There was an error creating the crew.</div>');
-			},
-			complete: function () {
-
-			}
-		});
-
-	}
-
-	function buildNewCrewAccordionMarkup(crew) {
-
-		// Get the count of current accordions and define the accordion name based on the count
-		var currentAccordionCount = $('.crew-list .panel').length;
-		var accordionId = 'crew-accordion-' + (currentAccordionCount + 1);
-		var accordionHeadingId = 'crew-accordion-heading-' + (currentAccordionCount + 1);
-
-		// Get the crew leader details
-		var crewLeader = findUser(crew.CrewLeaderId);
-
-		// Create the accordion
-		var accordion = $('<div class="panel panel-default"></div>');
-
-		// Create the accordion header
-		var accordionHeader = $('<div class="panel-heading" role="tab" id="' + accordionHeadingId + '"><h4 class="panel-title"><a class="accordion-toggle" data-toggle="collapse" href="#' + accordionId + '">' + crew.Name + (crewLeader != null ? ' - Crew leader: ' + crewLeader.name : '') +'</a></h4></div>');
-
-		// Create the accordion body
-		var accordionContent = $('<div class="panel-body crew-details"></div>');
-
-		// Add the crew leader
-		accordionContent.append("<h4>Crew leader:</h4>");
-		if (crewLeader != null)
-		{
-			accordionContent.append("<p>" + crewLeader.name + "</p>");
-		}
-
-		// Add the crew members
-		accordionContent.append("<h4>Crew members:</h4>");
-		var crewMembersMarkup = $('<p></p>');
-		for (var i = 0; i < crew.CrewMembers.length; i++)
-		{
-			var crewMember = findUser(crew.CrewMembers[i]);
-			if (crewMember != null && crewMember.id.toLowerCase() != crew.CrewLeaderId.toLowerCase()) {
-				crewMembersMarkup.append(crewMember.name + "<br />");
-			}
-		}
-		// Add the crew members to the list
-		accordionContent.append(crewMembersMarkup);
-
-		// Create the accordion content container markup
-		var accordionBody = $('<div id="' + accordionId + '" class="panel-collapse collapse in"></div>');
-		accordionBody.append(accordionContent);
-
-		// Build the accordion and add to the crew list
-		accordion.append(accordionHeader);
-		accordion.append(accordionBody);
-
-		$('.crew-list').append(accordion);
-
-	}
-
+	
 	// Adds the user to the specified list, as either a trainer or a member.
 	function addUserToList(userId, listId, selectedId, tableId, removeCallbackMethodName) {
 
@@ -130,7 +22,7 @@
 		row.append('<td>' + user.name + '</td>');
 		row.append('<td>' + user.memberNumber + '</td>');
 		row.append('<td><div class="radio graphic-radio"><label><input type="radio" name="CrewLeaderId" id="CrewLeaderId_' + user.id + '" value="' + user.id + '" ' + ($('#' + tableId + ' tbody tr').length == 0 ? 'checked="checked"' : '') + ' /></label></div>');
-		row.append('<td><a href="#" onclick="' + removeCallbackMethodName + '(this); return false;" title="Remove member"><i class="fa fa-fw fa-times"></i></td>');
+		row.append('<td><a href="#" onclick="responseHub.events.removeCrewMember(this); return false;" title="Remove member" class="text-danger"><i class="fa fa-fw fa-times"></i></td>');
 		$('#' + tableId + ' tbody').append(row);
 
 		// Add the user id to the selected users
@@ -141,6 +33,43 @@
 
 		// reset the graphical checkboxes
 		responseHub.setGraphicRadiosCheckboxes();
+	}
+
+	function removeCrewMember(elem) {
+		// Get the element to remove
+		var link = $(elem);
+
+		// get the hidden id
+		var hiddenId = link.closest('table').data('selected-list');
+		var tableId = link.closest('table').attr('id');
+
+		// Find the user id
+		var userId = link.closest("tr").data('user-id');
+
+		// Remove the user id from the hidden
+		$('#' + hiddenId).val($('#' + hiddenId).val().replace(userId, ""));
+
+		// If there is only | characters, set to empty to re-trip validation
+		if ($('#' + hiddenId).val().match(/^\|*$/)) {
+			$('#' + hiddenId).val('');
+		}
+
+		// Remove the row with the user details
+		link.closest("tr").remove();
+
+		// If there is no checked crewleader option, check the first in the list
+		if ($('#' + tableId + ' tbody input[type="radio"]:checked').length == 0)
+		{
+			// Set the first row input as checked
+			$('#' + tableId + ' tbody tr:first input').attr('checked', 'checked');
+		}
+
+		// If there are no rows left, add the default message
+		if ($('#' + tableId + ' tbody tr').length == 0) {
+			var memberType = (tableId.indexOf('trainer') != -1 ? "trainers" : "members");
+			$('#' + tableId + ' tbody ').append('<tr><td colspan="4" class="none-selected">No members have been added to the this crew yet.</td></tr>');
+		}
+
 	}
 
 	// Find the user object in the list of users.
@@ -302,6 +231,11 @@
 	{
 
 		var markers = []
+		
+		// Ensure there are job locations before adding the markers to the map
+		if (jobLocations == null || jobLocations.length == 0) {
+			return;
+		}
 
 		// Loop through the locations
 		for (var i = 0; i < jobLocations.length; i++)
@@ -487,7 +421,7 @@
 			var userId = $(this).val();
 
 			// Add the user to the list
-			addUserToList(userId, 'AvailableMembers', 'SelectedMembers', 'crew-members-table', 'responseHub.events.removeCrewMember');
+			addUserToList(userId, 'AvailableMembers', 'SelectedMembers', 'crew-members-table');
 
 		});
 
@@ -514,12 +448,9 @@
 		$('.nav-tabs #crew-job-allocation-tab').on('hide.bs.tab', function (e) {
 			$('.scrollator_lane_holder').css('opacity', '0');
 		});
-
-
-
+		
 		// Ensure the map is displayed correctly within the tab.
 		$(".nav-tabs #map-view-tab").on("shown.bs.tab", function () {
-			console.log('loading map');
 
 			// Define the map config
 			var mapConfig = {
@@ -555,9 +486,9 @@
 	bindUI();
 
 	return {
-		createCrew: createCrew,
 		addJobsToMap: addJobsToMap,
-		unassignJobFromCrew: unassignJobFromCrew
+		unassignJobFromCrew: unassignJobFromCrew,
+		removeCrewMember: removeCrewMember
 	}
 
 })();

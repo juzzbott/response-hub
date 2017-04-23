@@ -30,7 +30,7 @@
 			<div class="row">
 				<div class="col-sm-8 col-md-8 col-lg-6">
 					<select class="form-control selectpicker" data-live-search="true" id="CrewSelect" title="Select crew...">
-						@foreach (var crew in Model.EventCrewsModel.Crews)
+						@foreach (var crew in Model.Crews)
 						{
 							<option data-tokens="@crew.Name @crew.CrewLeader.FullName" value="@crew.Id">@crew.Name  - Crew Leader: @crew.CrewLeader.FullName</option>
 						}

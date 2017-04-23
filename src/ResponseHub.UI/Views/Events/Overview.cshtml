@@ -26,6 +26,12 @@ else
 	</div>
 }
 
+@if (!String.IsNullOrEmpty(Model.Description))
+{
+	<h4>Description</h4>
+	<p>@Model.Description</p>
+}
+
 <h3>Jobs</h3>
 
 <table class="table table-striped table-hovered">

@@ -161,6 +161,15 @@
 		// Set the graphic radioes and checkboxes
 		setGraphicRadiosCheckboxes();
 
+		// Activate selected tab from bootstrap
+		var hash = window.location.hash;
+		if (hash) {
+			var selectedTab = $('.nav li a[href="' + hash + '"]');
+			if (selectedTab.length > 0) {
+				selectedTab.trigger('click', true);
+			}
+		}
+
 	}
 
 	// Create the "graphic radio" and "graphic checkbox" functionality

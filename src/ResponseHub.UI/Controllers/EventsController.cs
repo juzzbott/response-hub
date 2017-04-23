@@ -139,7 +139,7 @@ namespace Enivate.ResponseHub.UI.Controllers
 
 		#endregion
 
-		#region Create Event
+		#region Edit Event
 
 		[Route("{id:guid}/edit")]
 		public async Task<ActionResult> Edit(Guid id)
@@ -222,7 +222,8 @@ namespace Enivate.ResponseHub.UI.Controllers
 				UnitId = eventObj.UnitId,
 				UnitName = unit.Name,
 				Name = eventObj.Name,
-				Finished = eventObj.EventFinished.HasValue
+				Finished = eventObj.EventFinished.HasValue,
+				Description = eventObj.Description
 			};
 
 			// If finsihed, set the duration string
@@ -240,7 +241,7 @@ namespace Enivate.ResponseHub.UI.Controllers
 			}
 			
 			// Get the current crews
-			model.EventCrewsModel = await GetCrewsModelForEvent(eventObj, model.AvailableMembers);
+			model.Crews = await GetCrewsModelForEvent(eventObj, model.AvailableMembers);
 
 			// Get the jobs for the event
 			model.Jobs = await GetJobsForEvent(eventObj.JobMessageIds, eventObj);
@@ -248,6 +249,12 @@ namespace Enivate.ResponseHub.UI.Controllers
 			model.UnassignedJobsCount = model.Jobs.Count(i => !i.Assigned);
 			model.InProgressJobsCount = model.Jobs.Count(i => i.Status == EventJobStatus.InProgress);
 			model.CompletedJobsCount = model.Jobs.Count(i => i.Status == EventJobStatus.Completed);
+
+			// Determine if all the available members have been assigned to crews
+			if (model.AvailableMembers.Count == model.Crews.Sum(i => i.CrewMemberCount))
+			{
+				model.AllMembersAllocated = true;
+			}
 
 			// return the view
 			return View(model);
@@ -274,6 +281,123 @@ namespace Enivate.ResponseHub.UI.Controllers
 			{
 				await ServiceLocator.Get<ILogger>().Error(String.Format("Unable to finish event. Message: {0}", ex.Message), ex);
 				return new RedirectResult(String.Format("/events/{0}?error_finishing=1", id));
+			}
+
+		}
+
+		#endregion
+
+		#region Crews
+
+		[Route("{id:guid}/create-crew")]
+		public async Task<ActionResult> CreateCrew(Guid id)
+		{
+			// Get the event based on the id
+			Event eventObj = await EventService.GetById(id);
+
+			// If the job is null, return 404
+			if (eventObj == null)
+			{
+				throw new HttpException((int)HttpStatusCode.NotFound, "The requested page cannot be found.");
+			}
+
+			// Create the model
+			CreateEditCrewViewModel model = new CreateEditCrewViewModel();
+
+			// Get the list of currently assigned users
+			IList<Guid> assignedUserIds = eventObj.Crews.SelectMany(i => i.CrewMembers).ToList();
+
+			// Load the users for the model
+			IList<IdentityUser> users = await UnitService.GetUsersForUnit(eventObj.UnitId);
+			foreach (IdentityUser user in users)
+			{
+
+				// If the user id is contained within the already assigned user ids, then skip to the next one
+				if (assignedUserIds.Contains(user.Id))
+				{
+					continue;
+				}
+
+				model.AvailableMembers.Add(new Tuple<Guid, string, string>(user.Id, user.FullName, user.Profile.MemberNumber));
+			}
+
+			// return the view
+			return View("CreateEditCrew", model);
+
+		}
+
+		[Route("{id:guid}/create-crew")]
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public async Task<ActionResult> CreateCrew(Guid id, CreateEditCrewViewModel model)
+		{
+			// Get the event based on the id
+			Event eventObj = await EventService.GetById(id);
+
+			// If the job is null, return 404
+			if (eventObj == null)
+			{
+				throw new HttpException((int)HttpStatusCode.NotFound, "The requested page cannot be found.");
+			}
+
+			// Get the list of currently assigned users
+			IList<Guid> assignedUserIds = eventObj.Crews.SelectMany(i => i.CrewMembers).ToList();
+
+			// Load the users for the model
+			IList<IdentityUser> users = await UnitService.GetUsersForUnit(eventObj.UnitId);
+			foreach (IdentityUser user in users)
+			{
+
+				// If the user id is contained within the already assigned user ids, then skip to the next one
+				if (assignedUserIds.Contains(user.Id))
+				{
+					continue;
+				}
+
+				model.AvailableMembers.Add(new Tuple<Guid, string, string>(user.Id, user.FullName, user.Profile.MemberNumber));
+			}
+
+			// If the crew leader id is empty guid, or there is no crew members, it's an invalid model response
+			if (String.IsNullOrEmpty(model.SelectedMembers))
+			{
+				ModelState.AddModelError("", "You need to select members to add to a crew.");
+				return View("CreateEditCrew", model);
+			}
+			if (model.CrewLeaderId == Guid.Empty)
+			{
+				ModelState.AddModelError("", "You need to specify a crew leader for a crew.");
+				return View("CreateEditCrew", model);
+			}
+
+			// If there is a crew with that name already, then return error
+			if (eventObj.Crews.Any(i => i.Name.Equals(model.Name, StringComparison.CurrentCultureIgnoreCase)))
+			{
+				ModelState.AddModelError("", String.Format("There is already a crew named '{0}'. Crew names must be unique within an event.", model.Name));
+				return View("CreateEditCrew", model);
+			}
+
+			try
+			{
+
+				// Create the list of crew members
+				IList<Guid> crewMembers = new List<Guid>();
+
+				// Get the list of crew members from the selected crew members
+				crewMembers = model.SelectedMembers.Split(new char[] { '|' }, StringSplitOptions.RemoveEmptyEntries).Select(i => new Guid(i)).ToList();
+
+				// Create the crew
+				Crew newCrew = await EventService.CreateCrew(id, model.Name, crewMembers, model.CrewLeaderId);
+
+				// return the success result
+				return new RedirectResult(String.Format("/events/{0}#crews", id));
+
+			}
+			catch (Exception ex)
+			{
+				// Log the exception and return failed result
+				await Log.Error(String.Format("Error creating crew for event. Message: {0}", ex.Message), ex);
+				ModelState.AddModelError("", "There was an error creating the crew for the event.");
+				return View("CreateEditCrew", model);
 			}
 
 		}
@@ -318,18 +442,14 @@ namespace Enivate.ResponseHub.UI.Controllers
 		/// </summary>
 		/// <param name="eventObj"></param>
 		/// <returns></returns>
-		private async Task<EventCrewsViewModel> GetCrewsModelForEvent(Event eventObj, IList<Tuple<Guid, string, string>> availableMembers)
+		private async Task<IList<CrewViewModel>> GetCrewsModelForEvent(Event eventObj, IList<Tuple<Guid, string, string>> availableMembers)
 		{
 
-			// Create the crews view model
-			EventCrewsViewModel crewsModel = new EventCrewsViewModel()
-			{
-				AvailableMembers = availableMembers
-			};
+			IList<CrewViewModel> crews = new List<CrewViewModel>();
 
 			if (eventObj.Crews == null || eventObj.Crews.Count == 0)
 			{
-				return crewsModel;
+				return crews;
 			}
 
 			List<Guid> memberIds = new List<Guid>();
@@ -361,12 +481,12 @@ namespace Enivate.ResponseHub.UI.Controllers
 				};
 
 				// Add the model to the list of crew models
-				crewsModel.Crews.Add(crewModel);
+				crews.Add(crewModel);
 
 			}
 
-			// return the crews model
-			return crewsModel;
+			// return the crews list
+			return crews;
 		}
 
 		/// <summary>

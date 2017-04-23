@@ -244,12 +244,11 @@
     <Compile Include="Filters\ExceptionLogFilter.cs" />
     <Compile Include="Filters\SystemAdminUserRedirectAttribute.cs" />
     <Compile Include="Helpers\JobMessageModelHelper.cs" />
-    <Compile Include="Models\Api\Events\AddCrewPostModel.cs" />
-    <Compile Include="Models\Api\Events\AddCrewResponseModel.cs" />
     <Compile Include="Models\Api\Events\AssignJobsToCrewPostModel.cs" />
     <Compile Include="Models\Api\Messages\GetDistanceFromJobModel.cs" />
     <Compile Include="Models\Api\Messages\PostGetLatestFromLastModel.cs" />
     <Compile Include="Models\Api\Search\SearchPostModel.cs" />
+    <Compile Include="Models\Events\CreateEditCrewViewModel.cs" />
     <Compile Include="Models\Events\EditEventViewModel.cs" />
     <Compile Include="Models\Events\EventJobViewModel.cs" />
     <Compile Include="Models\Events\CrewViewModel.cs" />
@@ -621,6 +620,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Events\Edit.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Events\CreateEditCrew.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

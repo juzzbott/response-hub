@@ -25,6 +25,14 @@ namespace Enivate.ResponseHub.UI.Models.Events
 
 		public IList<EventJobViewModel> AssignedJobs { get; set; }
 
+		public int CrewMemberCount
+		{
+			get
+			{
+				return CrewMembers.Count + (CrewLeader != null ? 1 : 0);
+			}
+		}
+
 		public CrewViewModel()
 		{
 			CrewMembers = new List<UnitMemberViewModel>();
