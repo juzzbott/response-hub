@@ -180,5 +180,26 @@ namespace Enivate.ResponseHub.ApplicationServices
 		{
 			await _repository.SaveEvent(eventId, name, description, eventStarted);
 		}
+
+		/// <summary>
+		/// Returns a list of the currently actived events.
+		/// </summary>
+		/// <returns>The list of currently active events (where there is no finish date specified).</returns>
+		public async Task<IList<Event>> GetActiveEvents()
+		{
+			return await _repository.GetActiveEvents();
+		}
+
+		/// <summary>
+		/// Sets the specified list of job ids to the event. 
+		/// </summary>
+		/// <param name="eventId">The Id of the event to set the job ids for.</param>
+		/// <param name="jobMessageIds">The list of job message ids to set to the event.</param>
+		/// <returns></returns>
+		public async Task SetJobsToEvent(Guid eventId, IList<Guid> jobMessageIds)
+		{
+			await _repository.SetJobsToEvent(eventId, jobMessageIds);
+		}
+
 	}
 }

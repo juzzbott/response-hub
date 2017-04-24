@@ -24,7 +24,9 @@ namespace Enivate.ResponseHub.Model.Units.Interface
 		Task<IList<Capcode>> FindByName(string name);
 
 		Task<IList<Capcode>> GetCapcodesForUser(Guid userId);
-		
+
+		Task<IList<Capcode>> GetCapcodesForUnit(Guid unitId);
+
 		Task<IList<Capcode>> GetSharedCapcodes();
 		
 		Task<IList<Capcode>> GetAllByUnitOnly(bool unitOnly);

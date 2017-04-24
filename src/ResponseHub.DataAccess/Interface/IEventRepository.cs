@@ -32,5 +32,9 @@ namespace Enivate.ResponseHub.DataAccess.Interface
 
 		Task SaveEvent(Guid eventId, string name, string description, DateTime eventStarted);
 
+		Task<IList<Event>> GetActiveEvents();
+
+		Task SetJobsToEvent(Guid eventId, IList<Guid> jobMessageIds);
+
 	}
 }

@@ -19,6 +19,8 @@ namespace Enivate.ResponseHub.Model.Messages.Interface
 
 		Task<IList<JobMessage>> GetMessagesBetweenDates(IEnumerable<Capcode> capcodes, MessageType messageTypes, int count, int skip, DateTime? dateFrom, DateTime? dateTo);
 
+		Task<IList<Guid>> GetMessageIdsBetweenDates(IEnumerable<Capcode> capcodes, MessageType messageTypes, DateTime? dateFrom, DateTime? dateTo);
+
 		Task<IList<JobMessage>> GetMostRecent(Guid lastId);
 
 		Task<IList<JobMessage>> GetLatestFromLastMessage(Guid lastId, IEnumerable<string> capcodes, MessageType messageTypes);

@@ -1,26 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Configuration;
-using System.Diagnostics;
 using System.Linq;
 using System.ServiceProcess;
 using System.Text;
 using System.Threading.Tasks;
 
+using Enivate.ResponseHub.Common;
 using Microsoft.Practices.Unity;
+
 using Microsoft.Practices.Unity.Configuration;
 
-using Enivate.ResponseHub.Common;
-
-namespace Enivate.ResponseHub.PagerDecoder
+namespace Enivate.ResponseHub.WebTasks
 {
 	static class Program
 	{
-		
 		/// <summary>
 		/// The main entry point for the application.
 		/// </summary>
-		static void Main(string[] args)
+		static void Main()
 		{
 
 			try
@@ -30,7 +27,6 @@ namespace Enivate.ResponseHub.PagerDecoder
 			}
 			catch (Exception ex)
 			{
-				// Write the exception
 				UnityConfiguration.LogUnityException(ex);
 				return;
 			}
@@ -39,12 +35,11 @@ namespace Enivate.ResponseHub.PagerDecoder
 			ServiceBase[] ServicesToRun;
 			ServicesToRun = new ServiceBase[]
 			{
-				new MessageService()
+				new WebTasksService()
 			};
-			
+
 			// Run windows service in normal service mode
 			ServiceBase.Run(ServicesToRun);
-						
 		}
 	}
 }

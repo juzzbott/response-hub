@@ -127,6 +127,15 @@ namespace Enivate.ResponseHub.UI.Controllers
 				// Create the new event
 				Event newEvent = await EventService.CreateEvent(model.Name, model.Description, model.UnitId, UserId, startDate);
 
+				// Get the capcodes for the specified unit
+				IList<Capcode> unitCapcodes = await CapcodeService.GetCapcodesForUnit(model.UnitId);
+
+				// Get the job message ids within the start date and an hour in the future
+				IList<Guid> jobMessageIds = await JobMessageService.GetMessageIdsBetweenDates(unitCapcodes, MessageType.Job, startDate, DateTime.UtcNow.AddHours(1));
+
+				// Now that we have the job message ids, we need to set them to the event
+				await EventService.SetJobsToEvent(newEvent.Id, jobMessageIds);
+
 				// Redirect to the event
 				return new RedirectResult(String.Format("/events/{0}", newEvent.Id));
 

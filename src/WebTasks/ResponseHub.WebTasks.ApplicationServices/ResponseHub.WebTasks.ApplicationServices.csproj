@@ -1,0 +1,78 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{8393C805-EEBD-4C2C-A49E-396AF158A4B4}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Enivate.ResponseHub.WebTasks.ApplicationServices</RootNamespace>
+    <AssemblyName>ResponseHub.WebTasks.ApplicationServices</AssemblyName>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Newtonsoft.Json.10.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="BomCacheManager.cs" />
+    <Compile Include="EventJobMessageLoader.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\ResponseHub.ApplicationServices\ResponseHub.ApplicationServices.csproj">
+      <Project>{a77ef1a1-1492-41ac-b62e-d14f9c01014f}</Project>
+      <Name>ResponseHub.ApplicationServices</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ResponseHub.Common\ResponseHub.Common.csproj">
+      <Project>{64b4f6f9-8e0e-4475-8895-d7d4b0c1da4b}</Project>
+      <Name>ResponseHub.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ResponseHub.DataAccess\ResponseHub.DataAccess.csproj">
+      <Project>{cf5c523b-660b-4538-9a64-928e7601804e}</Project>
+      <Name>ResponseHub.DataAccess</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ResponseHub.Logging\ResponseHub.Logging.csproj">
+      <Project>{38015057-6ff4-4ee7-b101-550a99578671}</Project>
+      <Name>ResponseHub.Logging</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ResponseHub.Model\ResponseHub.Model.csproj">
+      <Project>{63ebc394-caed-4b0b-974c-ba56f619f853}</Project>
+      <Name>ResponseHub.Model</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

@@ -221,5 +221,37 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 
 		}
 
+		/// <summary>
+		/// Returns a list of the currently actived events.
+		/// </summary>
+		/// <returns>The list of currently active events (where there is no finish date specified).</returns>
+		public async Task<IList<Event>> GetActiveEvents()
+		{
+			// Create the filter
+			FilterDefinition<Event> filter = Builders<Event>.Filter.Eq(i => i.EventFinished, null);
+
+			// return the results for active events.
+			IList<Event> activeEvents = await Collection.Find(filter).ToListAsync();
+
+			// return the active events
+			return activeEvents;
+		}
+
+		/// <summary>
+		/// Sets the specified list of job ids to the event. 
+		/// </summary>
+		/// <param name="eventId">The Id of the event to set the job ids for.</param>
+		/// <param name="jobMessageIds">The list of job message ids to set to the event.</param>
+		public async Task SetJobsToEvent(Guid eventId, IList<Guid> jobMessageIds)
+		{
+			// Create the filter
+			FilterDefinition<Event> filter = Builders<Event>.Filter.Eq(i => i.Id, eventId);
+
+			// Create the update
+			UpdateDefinition<Event> update = Builders<Event>.Update.Set(i => i.JobMessageIds, jobMessageIds);
+
+			await Collection.UpdateOneAsync(filter, update);
+		}
+
 	}
 }
