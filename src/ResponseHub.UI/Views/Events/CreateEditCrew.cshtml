@@ -1,6 +1,6 @@
 ﻿@model Enivate.ResponseHub.UI.Models.Events.CreateEditCrewViewModel
 @{
-    ViewBag.Title = "Create new crew";
+    ViewBag.Title = !Model.CrewId.HasValue ? "Create new crew" : "Edit crew";
     Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
 }
 
@@ -63,16 +63,42 @@
 			</tr>
 		</thead>
 		<tbody>
-			<tr>
-				<td colspan="4" class="none-selected">No members have been added to the this crew yet.</td>
-			</tr>
+			@if (String.IsNullOrEmpty(Model.SelectedMembers))
+			{
+				<tr>
+					<td colspan="4" class="none-selected">No members have been added to the this crew yet.</td>
+				</tr>
+			}
+			else
+			{
+				foreach (var member in Model.AvailableMembers)
+				{
+					if (Model.SelectedMembers.Contains(member.Item1.ToString()))
+					{
+						<tr data-user-id="@member.Item1">
+							<td>@member.Item2</td>
+							<td>@member.Item3</td>
+							<td><div class="radio graphic-radio"><label><input type="radio" name="CrewLeaderId" id="CrewLeaderId_@member.Item1" value="@member.Item1" @(member.Item1 == Model.CrewLeaderId ? "checked=\"checked\"" : "")/></label></div>
+							<td><a href="#" onclick="responseHub.events.removeCrewMember(this); return false;" title="Remove member" class="text-danger"><i class="fa fa-fw fa-times"></i></a></td>
+						</tr>
+					}
+				}
+			}
 		</tbody>
 	</table>
 
 	<div class="row bottom-20">
 		<div class="col-xs-12">
-			<button class="btn btn-primary btn-icon" id="create-crew" type="submit"><i class="fa fa-fw fa-plus"></i>Create crew</button>
-			<a href="@Request.Url.LocalPath.Replace("/create-crew", "")" class="btn btn-link">Cencel</a>
+			@if (!Model.CrewId.HasValue)
+			{
+				<button class="btn btn-primary btn-icon" id="create-crew" type="submit"><i class="fa fa-fw fa-plus"></i>Create crew</button>
+				<a href="@Request.Url.LocalPath.Replace("/create-crew", "")" class="btn btn-link">Cancel</a>
+			}
+			else
+			{
+				<button class="btn btn-primary btn-icon" id="create-crew" type="submit"><i class="fa fa-fw fa-check"></i>Save crew</button>
+				<a href="/events/@Model.EventId#crews" class="btn btn-link">Cancel</a>
+			}
 		</div>
 	</div>
 

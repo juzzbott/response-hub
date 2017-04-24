@@ -22,11 +22,15 @@ namespace Enivate.ResponseHub.DataAccess.Interface
 		
 		Task<Crew> CreateCrew(Guid eventId, Crew crew);
 
+		Task SaveCrew(Guid eventId, Crew crew);
+
 		Task<Crew> GetCrewFromEvent(Guid eventId, Guid crewId);
 
 		Task AssignJobsToCrew(Guid eventId, Guid crewId, IList<Guid> assignedJobIds);
 
 		Task FinishEvent(Guid eventId, DateTime finishDateTime);
+
+		Task SaveEvent(Guid eventId, string name, string description, DateTime eventStarted);
 
 	}
 }

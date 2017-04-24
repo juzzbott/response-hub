@@ -9,6 +9,10 @@ namespace Enivate.ResponseHub.UI.Models.Events
 	public class CreateEditCrewViewModel
 	{
 
+		public Guid EventId { get; set; }
+
+		public Guid? CrewId { get; set; }
+
 		[Required(ErrorMessage = "You must enter a name for the crew")]
 		public string Name { get; set; }
 

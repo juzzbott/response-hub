@@ -2,26 +2,17 @@
 
 @Html.Partial("_EventJobStats", Model)
 
+<div class="row">
+	<div class="col-sm-12">
+		<p class="lead">Event duration @Model.DurationString</p>
+	</div>
+</div>
+
 @if (!Model.Finished)
 {
 	<div class="row">
 		<div class="col-sm-12">
-			<p class="lead">Event running for 3 hours</p>
-		</div>
-	</div>
-	<div class="row">
-		<div class="col-sm-12">
 			<p><button class="btn btn-danger btn-icon" data-toggle="modal" data-target="#confirm-finish-event"><i class="fa fa-fw fa-stop-circle-o"></i>Finish event</button></p>
-		</div>
-	</div>
-}
-else
-{
-	<div class="row">
-		<div class="col-sm-12">
-			<p class="lead">
-				Event duration @Model.DurationString
-			</p>
 		</div>
 	</div>
 }

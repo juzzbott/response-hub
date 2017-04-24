@@ -72,7 +72,8 @@ namespace Enivate.ResponseHub.UI.Controllers
 					UnitName = eventUnit.Name,
 					StartDate = eventObj.EventStarted.ToLocalTime(),
 					FinishDate = eventObj.EventFinished,
-					JobsCount = eventObj.JobMessageIds.Count
+					JobsCount = eventObj.JobMessageIds.Count,
+					Description = eventObj.Description
 				});
 			}
 
@@ -105,6 +106,7 @@ namespace Enivate.ResponseHub.UI.Controllers
 
 		[Route("create")]
 		[HttpPost]
+		[ValidateAntiForgeryToken]
 		public async Task<ActionResult> Create(CreateEventViewModel model)
 		{
 			// Set the available units
@@ -120,7 +122,7 @@ namespace Enivate.ResponseHub.UI.Controllers
 
 				// Parse the start date
 				string startDateComplete = String.Format("{0} {1}:00", model.StartDate, model.StartTime);
-				DateTime startDate = DateTime.ParseExact(startDateComplete, "yyyy-MM-dd HH:mm:ss", CultureInfo.CurrentCulture);
+				DateTime startDate = DateTime.ParseExact(startDateComplete, "yyyy-MM-dd HH:mm:ss", CultureInfo.CurrentCulture).ToUniversalTime();
 
 				// Create the new event
 				Event newEvent = await EventService.CreateEvent(model.Name, model.Description, model.UnitId, UserId, startDate);
@@ -160,16 +162,27 @@ namespace Enivate.ResponseHub.UI.Controllers
 			// Set the available units
 			model.Name = eventObj.Name;
 			model.Description = eventObj.Description;
-			model.StartDate = eventObj.EventStarted.ToString("yyyy-MM-dd");
-			model.StartTime = eventObj.EventStarted.ToString("HH:mm");
+			model.StartDate = eventObj.EventStarted.ToLocalTime().ToString("yyyy-MM-dd");
+			model.StartTime = eventObj.EventStarted.ToLocalTime().ToString("HH:mm");
 
 			return View(model);
 		}
 
 		[Route("{id:guid}/edit")]
 		[HttpPost]
+		[ValidateAntiForgeryToken]
 		public async Task<ActionResult> Edit(Guid id, CreateEventViewModel model)
 		{
+
+			// Get the event based on the id
+			Event eventObj = await EventService.GetById(id);
+
+			// If the job is null, return 404
+			if (eventObj == null)
+			{
+				throw new HttpException((int)HttpStatusCode.NotFound, "The requested page cannot be found.");
+			}
+
 			// If the model state is invalid, return the view with the model
 			if (!ModelState.IsValid)
 			{
@@ -178,6 +191,14 @@ namespace Enivate.ResponseHub.UI.Controllers
 
 			try
 			{
+
+				// Parse the start date
+				string startDateComplete = String.Format("{0} {1}:00", model.StartDate, model.StartTime);
+				DateTime startDate = DateTime.ParseExact(startDateComplete, "yyyy-MM-dd HH:mm:ss", CultureInfo.CurrentCulture).ToUniversalTime();
+
+				// Try to save the event
+				await EventService.SaveEvent(id, model.Name, model.Description, startDate);
+
 				// Redirect to the event
 				return new RedirectResult(String.Format("/events/{0}?updated=1", id));
 
@@ -226,12 +247,21 @@ namespace Enivate.ResponseHub.UI.Controllers
 				Description = eventObj.Description
 			};
 
+			TimeSpan duration;
+
 			// If finsihed, set the duration string
 			if (model.Finished)
 			{
-				TimeSpan duration = model.EventFinished.Value - model.EventStarted;
-				model.DurationString = String.Format("{0} days {1} hours", duration.ToString("%d"), duration.ToString("%h"));
+				duration = model.EventFinished.Value - model.EventStarted;
 			}
+			else
+			{
+				// Use UtcNow as EventStarted is stored in UTC time.
+				duration = DateTime.UtcNow - model.EventStarted;
+			}
+
+			// Set the duration
+			model.DurationString = String.Format("{0} days {1} hours", duration.ToString("%d"), duration.ToString("%h"));
 			
 			// Load the users for the model
 			IList<IdentityUser> users = await UnitService.GetUsersForUnit(eventObj.UnitId);
@@ -289,11 +319,11 @@ namespace Enivate.ResponseHub.UI.Controllers
 
 		#region Crews
 
-		[Route("{id:guid}/create-crew")]
-		public async Task<ActionResult> CreateCrew(Guid id)
+		[Route("{eventId:guid}/create-crew")]
+		public async Task<ActionResult> CreateCrew(Guid eventId)
 		{
 			// Get the event based on the id
-			Event eventObj = await EventService.GetById(id);
+			Event eventObj = await EventService.GetById(eventId);
 
 			// If the job is null, return 404
 			if (eventObj == null)
@@ -302,7 +332,10 @@ namespace Enivate.ResponseHub.UI.Controllers
 			}
 
 			// Create the model
-			CreateEditCrewViewModel model = new CreateEditCrewViewModel();
+			CreateEditCrewViewModel model = new CreateEditCrewViewModel()
+			{
+				EventId = eventId
+			};
 
 			// Get the list of currently assigned users
 			IList<Guid> assignedUserIds = eventObj.Crews.SelectMany(i => i.CrewMembers).ToList();
@@ -326,19 +359,22 @@ namespace Enivate.ResponseHub.UI.Controllers
 
 		}
 
-		[Route("{id:guid}/create-crew")]
+		[Route("{eventId:guid}/create-crew")]
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		public async Task<ActionResult> CreateCrew(Guid id, CreateEditCrewViewModel model)
+		public async Task<ActionResult> CreateCrew(Guid eventId, CreateEditCrewViewModel model)
 		{
 			// Get the event based on the id
-			Event eventObj = await EventService.GetById(id);
+			Event eventObj = await EventService.GetById(eventId);
 
 			// If the job is null, return 404
 			if (eventObj == null)
 			{
 				throw new HttpException((int)HttpStatusCode.NotFound, "The requested page cannot be found.");
 			}
+
+			// Set the model event id
+			model.EventId = eventId;
 
 			// Get the list of currently assigned users
 			IList<Guid> assignedUserIds = eventObj.Crews.SelectMany(i => i.CrewMembers).ToList();
@@ -386,10 +422,163 @@ namespace Enivate.ResponseHub.UI.Controllers
 				crewMembers = model.SelectedMembers.Split(new char[] { '|' }, StringSplitOptions.RemoveEmptyEntries).Select(i => new Guid(i)).ToList();
 
 				// Create the crew
-				Crew newCrew = await EventService.CreateCrew(id, model.Name, crewMembers, model.CrewLeaderId);
+				Crew newCrew = await EventService.CreateCrew(eventId, model.Name, crewMembers, model.CrewLeaderId);
 
 				// return the success result
-				return new RedirectResult(String.Format("/events/{0}#crews", id));
+				return new RedirectResult(String.Format("/events/{0}#crews", eventId));
+
+			}
+			catch (Exception ex)
+			{
+				// Log the exception and return failed result
+				await Log.Error(String.Format("Error creating crew for event. Message: {0}", ex.Message), ex);
+				ModelState.AddModelError("", "There was an error creating the crew for the event.");
+				return View("CreateEditCrew", model);
+			}
+
+		}
+
+		[Route("{eventId:guid}/crews/{crewId:guid}")]
+		public async Task<ActionResult> EditCrew(Guid eventId, Guid crewId)
+		{
+			// Get the event based on the id
+			Event eventObj = await EventService.GetById(eventId);
+
+			// If the job is null, return 404
+			if (eventObj == null)
+			{
+				throw new HttpException((int)HttpStatusCode.NotFound, "The requested page cannot be found.");
+			}
+
+			// Get the crew based on the id
+			Crew crew = eventObj.Crews.FirstOrDefault(i => i.Id == crewId);
+
+			// If the crew is null, return 404
+			if (crew == null)
+			{
+				throw new HttpException((int)HttpStatusCode.NotFound, "The requested page cannot be found.");
+			}
+
+			// Create the model
+			CreateEditCrewViewModel model = new CreateEditCrewViewModel()
+			{
+				EventId = eventId,
+				CrewId = crewId,
+				CrewLeaderId = crew.CrewLeaderId,
+				SelectedMembers = String.Join("|", crew.CrewMembers),
+				Name = crew.Name
+			};
+
+			// If there is a value in the selected members, we need to append a trailing |
+			if (!String.IsNullOrEmpty(model.SelectedMembers))
+			{
+				model.SelectedMembers = String.Format("{0}|", model.SelectedMembers);
+			}
+
+			// Get the list of currently assigned users, except for the members of the current crew
+			IList<Guid> assignedUserIds = eventObj.Crews.SelectMany(i => i.CrewMembers).Except(crew.CrewMembers).ToList();
+
+			// Load the users for the model
+			IList<IdentityUser> users = await UnitService.GetUsersForUnit(eventObj.UnitId);
+			foreach (IdentityUser user in users)
+			{
+
+				// If the user id is contained within the already assigned user ids, then skip to the next one
+				if (assignedUserIds.Contains(user.Id))
+				{
+					continue;
+				}
+
+				model.AvailableMembers.Add(new Tuple<Guid, string, string>(user.Id, user.FullName, user.Profile.MemberNumber));
+			}
+
+			// return the view
+			return View("CreateEditCrew", model);
+
+		}
+
+		[Route("{eventId:guid}/crews/{crewId:guid}")]
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public async Task<ActionResult> EditCrew(Guid eventId, Guid crewId, CreateEditCrewViewModel model)
+		{
+			// Get the event based on the id
+			Event eventObj = await EventService.GetById(eventId);
+
+			// If the job is null, return 404
+			if (eventObj == null)
+			{
+				throw new HttpException((int)HttpStatusCode.NotFound, "The requested page cannot be found.");
+			}
+
+			// Get the crew based on the id
+			Crew crew = eventObj.Crews.FirstOrDefault(i => i.Id == crewId);
+
+			// If the crew is null, return 404
+			if (crew == null)
+			{
+				throw new HttpException((int)HttpStatusCode.NotFound, "The requested page cannot be found.");
+			}
+
+			// Set the model properties
+			model.EventId = eventId;
+			model.CrewId = crewId;
+
+			// Get the list of currently assigned users, except for the members of the current crew
+			IList<Guid> assignedUserIds = eventObj.Crews.SelectMany(i => i.CrewMembers).Except(crew.CrewMembers).ToList();
+
+			// Load the users for the model
+			IList<IdentityUser> users = await UnitService.GetUsersForUnit(eventObj.UnitId);
+			foreach (IdentityUser user in users)
+			{
+
+				// If the user id is contained within the already assigned user ids, then skip to the next one
+				if (assignedUserIds.Contains(user.Id))
+				{
+					continue;
+				}
+
+				model.AvailableMembers.Add(new Tuple<Guid, string, string>(user.Id, user.FullName, user.Profile.MemberNumber));
+			}
+
+			// If the crew leader id is empty guid, or there is no crew members, it's an invalid model response
+			if (String.IsNullOrEmpty(model.SelectedMembers))
+			{
+				ModelState.AddModelError("", "You need to select members to add to a crew.");
+				return View("CreateEditCrew", model);
+			}
+			if (model.CrewLeaderId == Guid.Empty)
+			{
+				ModelState.AddModelError("", "You need to specify a crew leader for a crew.");
+				return View("CreateEditCrew", model);
+			}
+
+			// If there is a crew with that name already, then return error
+			if (eventObj.Crews.Where(i => i.Id != crewId).Any(i => i.Name.Equals(model.Name, StringComparison.CurrentCultureIgnoreCase)))
+			{
+				ModelState.AddModelError("", String.Format("There is already a crew named '{0}'. Crew names must be unique within an event.", model.Name));
+				return View("CreateEditCrew", model);
+			}
+
+			try
+			{
+
+				// Create the list of crew members
+				IList<Guid> crewMembers = new List<Guid>();
+
+				// Get the list of crew members from the selected crew members
+				crewMembers = model.SelectedMembers.Split(new char[] { '|' }, StringSplitOptions.RemoveEmptyEntries).Select(i => new Guid(i)).ToList();
+
+				// Create the crew
+				crew.Name = model.Name;
+				crew.CrewLeaderId = model.CrewLeaderId;
+				crew.CrewMembers = crewMembers;
+
+				// Save the crew
+				await EventService.SaveCrew(eventId, crew);
+
+				// return the success result
+				return new RedirectResult(String.Format("/events/{0}#crews", eventId));
 
 			}
 			catch (Exception ex)

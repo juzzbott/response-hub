@@ -22,7 +22,7 @@
 		row.append('<td>' + user.name + '</td>');
 		row.append('<td>' + user.memberNumber + '</td>');
 		row.append('<td><div class="radio graphic-radio"><label><input type="radio" name="CrewLeaderId" id="CrewLeaderId_' + user.id + '" value="' + user.id + '" ' + ($('#' + tableId + ' tbody tr').length == 0 ? 'checked="checked"' : '') + ' /></label></div>');
-		row.append('<td><a href="#" onclick="responseHub.events.removeCrewMember(this); return false;" title="Remove member" class="text-danger"><i class="fa fa-fw fa-times"></i></td>');
+		row.append('<td><a href="#" onclick="responseHub.events.removeCrewMember(this); return false;" title="Remove member" class="text-danger"><i class="fa fa-fw fa-times"></i></a></td>');
 		$('#' + tableId + ' tbody').append(row);
 
 		// Add the user id to the selected users

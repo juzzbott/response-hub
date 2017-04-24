@@ -20,6 +20,8 @@ namespace Enivate.ResponseHub.Model.Events.Interface
 
 		Task<Crew> CreateCrew(Guid eventId, string name, IList<Guid> crewMembers, Guid crewLeaderId);
 
+		Task SaveCrew(Guid eventId, Crew crew);
+
 		Task<IList<Crew>> GetCrewsForEvent(Guid eventId);
 
 		Task<Crew> GetCrewFromEvent(Guid eventId, Guid crewId);
@@ -27,6 +29,8 @@ namespace Enivate.ResponseHub.Model.Events.Interface
 		Task AssignJobsToCrew(Guid eventId, Guid crewId, IList<Guid> assignedJobIds);
 
 		Task FinishEvent(Guid eventId);
+		
+		Task SaveEvent(Guid eventId, string name, string description, DateTime eventStarted);
 
 	}
 }

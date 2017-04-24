@@ -117,6 +117,28 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 		}
 
 		/// <summary>
+		/// Saves the crew in the event.
+		/// </summary>
+		/// <param name="eventId">The id of the event to save the crew for.</param>
+		/// <param name="crew">The crew to save.</param>
+		public async Task SaveCrew(Guid eventId, Crew crew)
+		{
+
+			// Set the updated date
+			crew.Updated = DateTime.UtcNow;
+
+			// Create the filter
+			FilterDefinition<Event> filter = Builders<Event>.Filter.Eq(i => i.Id, eventId) & Builders<Event>.Filter.ElemMatch(i => i.Crews, c => c.Id == crew.Id);
+
+			// Create the update
+			UpdateDefinition<Event> update = Builders<Event>.Update.Set(i => i.Crews[-1], crew);
+
+			// Perform the update
+			await Collection.UpdateOneAsync(filter, update);
+			
+		}
+
+		/// <summary>
 		/// Gets the crew from the event.
 		/// </summary>
 		/// <param name="eventId">The Id of the event to get the crew from.</param>
@@ -170,6 +192,31 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 			UpdateDefinition<Event> update = Builders<Event>.Update.Set(i => i.EventFinished, finishDateTime);
 
 			// Perform the update
+			await Collection.UpdateOneAsync(filter, update);
+
+		}
+
+		/// <summary>
+		/// Saves the name, description and datetime the event started to the specified event.
+		/// </summary>
+		/// <param name="eventId">The id of the event to update.</param>
+		/// <param name="name">The name of the event</param>
+		/// <param name="description">The description for the event.</param>
+		/// <param name="eventStarted">The date and time the event was started.</param>
+		/// <returns></returns>
+		public async Task SaveEvent(Guid eventId, string name, string description, DateTime eventStarted)
+		{
+
+			// Create the filter
+			FilterDefinition<Event> filter = Builders<Event>.Filter.Eq(i => i.Id, eventId);
+
+			// Create the update
+			UpdateDefinition<Event> update = Builders<Event>.Update
+				.Set(i => i.Description, description)
+				.Set(i => i.EventStarted, eventStarted)
+				.Set(i => i.Name, name);
+
+			// Do the update
 			await Collection.UpdateOneAsync(filter, update);
 
 		}

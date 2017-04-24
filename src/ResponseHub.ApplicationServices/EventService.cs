@@ -113,6 +113,17 @@ namespace Enivate.ResponseHub.ApplicationServices
 		}
 
 		/// <summary>
+		/// Saves the crew in the event.
+		/// </summary>
+		/// <param name="eventId">The id of the event to save the crew for.</param>
+		/// <param name="crew">The crew to save.</param>
+		public async Task SaveCrew(Guid eventId, Crew crew)
+		{
+			// Save the crew
+			await _repository.SaveCrew(eventId, crew);
+		}
+
+		/// <summary>
 		/// Gets the crews for the event.
 		/// </summary>
 		/// <param name="eventId">The Id of the event to get the crews for.</param>
@@ -155,6 +166,19 @@ namespace Enivate.ResponseHub.ApplicationServices
 		public async Task AssignJobsToCrew(Guid eventId, Guid crewId, IList<Guid> assignedJobIds)
 		{
 			await _repository.AssignJobsToCrew(eventId, crewId, assignedJobIds);
+		}
+
+		/// <summary>
+		/// Saves the name, description and datetime the event started to the specified event.
+		/// </summary>
+		/// <param name="eventId">The id of the event to update.</param>
+		/// <param name="name">The name of the event</param>
+		/// <param name="description">The description for the event.</param>
+		/// <param name="eventStarted">The date and time the event was started.</param>
+		/// <returns></returns>
+		public async Task SaveEvent(Guid eventId, string name, string description, DateTime eventStarted)
+		{
+			await _repository.SaveEvent(eventId, name, description, eventStarted);
 		}
 	}
 }

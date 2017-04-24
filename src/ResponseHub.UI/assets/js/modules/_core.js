@@ -167,9 +167,30 @@
 			var selectedTab = $('.nav li a[href="' + hash + '"]');
 			if (selectedTab.length > 0) {
 				selectedTab.trigger('click', true);
+				removeHash();
 			}
 		}
 
+	}
+
+	/**
+	 * Removes the hash from the url
+	 */
+	function removeHash() {
+		var scrollV, scrollH, loc = window.location;
+		if ("pushState" in history)
+			history.pushState("", document.title, loc.pathname + loc.search);
+		else {
+			// Prevent scrolling by storing the page's current scroll offset
+			scrollV = document.body.scrollTop;
+			scrollH = document.body.scrollLeft;
+
+			loc.hash = "";
+
+			// Restore the scroll offset, should be flicker free
+			document.body.scrollTop = scrollV;
+			document.body.scrollLeft = scrollH;
+		}
 	}
 
 	// Create the "graphic radio" and "graphic checkbox" functionality
