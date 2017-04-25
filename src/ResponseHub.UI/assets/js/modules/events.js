@@ -248,7 +248,7 @@
 		// Loop through the locations
 		for (var i = 0; i < jobLocations.length; i++)
 		{
-			var marker = responseHub.maps.addCustomLocationMarkerToMap(jobLocations[i].lat, jobLocations[i].lon, 'fa-map-marker', 'event-marker ' + jobLocations[i].cssClass);
+			var marker = responseHub.maps.addCustomLocationMarkerToMap(jobLocations[i].lat, jobLocations[i].lon, jobLocations[i].markerIcon, [15, 23], [7, 23], [1, -27]);
 			marker.bindPopup('<strong><a href="/jobs/' + jobLocations[i].id + '" target="_blank">' + jobLocations[i].jobNumber + '</strong></a><br /><small>' + jobLocations[i].messageBody + '</small>');
 			jobMapMarkers.push(marker);
 		}
@@ -498,23 +498,23 @@
 							continue;
 						}
 
-						var cssClass = "marker-unassigned";
+						var markerIcon = "event-unassigned";
 						if (data.Jobs[i].Assigned) {
-							cssClass = "marker-assigned";
+							markerIcon = "event-assigned";
 						}
 
 						switch (data.Jobs[i].Status) {
 							case 2:
-								cssClass = "marker-in-progress";
+								markerIcon = "event-in-progress";
 								break;
 							case 3:
-								cssClass = "marker-completed";
+								markerIcon = "event-completed";
 								break;
 							case 4:
-								cssClass = "marker-cancelled";
+								markerIcon = "event-cancelled";
 								break;
 							case 5:
-								cssClass = "marker-requires-info";
+								markerIcon = "event-requires-info";
 								break;
 						}
 
@@ -524,7 +524,7 @@
 							messageBody: data.Jobs[i].MessageBody,
 							lat: data.Jobs[i].Coordinates.Latitude,
 							lon: data.Jobs[i].Coordinates.Longitude,
-							cssClass: cssClass
+							markerIcon: markerIcon
 						};
 
 						jobLocations.push(jobLocation);
@@ -631,7 +631,7 @@
 		});
 
 		// If we are viewing the job, set the interval to reload event data every 60 seconds
-		if ($('body.view-event-details').length > 0)
+		if ($('body.view-event-details').length > 0 && $('#EventFinished').val() == "0")
 		{
 			viewEventReloadInterval = setInterval(reloadEventData, 60000);
 		}

@@ -162,11 +162,10 @@
 					{
 
 						// Second location marker doesn exist, so we need to create it
-
-						var currentLocationMarker = new L.HtmlIcon({
-							html: '<div><i class="fa fa-bullseye fa-2x current-map-location custom-icon-marker"></i></div>',
-							iconSize: [20, 20], // size of the icon
-							iconAnchor: [-10, -10], // point of the icon which will correspond to marker's location
+						var currentLocationMarker = new L.Icon({
+							iconUrl: '/assets/images/map-icons/current-location.png',
+							iconSize: [21, 21], // size of the icon
+							iconAnchor: [10, 10], // point of the icon which will correspond to marker's location
 						});	
 
 						// Add the marker to the map
@@ -192,7 +191,7 @@
 				function (error) {
 					$('#map-messages').append('<p>' + error.code + ': ' + error.message + '</p>');
 					console.log(error);
-				},
+				},	
 				{
 					enableHighAccuracy: true,
 					timeout: 15000,
@@ -203,13 +202,15 @@
 
 	}
 
-	function addCustomLocationMarkerToMap(lat, lon, fontAwesomeIcon, customCssClass)
+	function addCustomLocationMarkerToMap(lat, lon, icon, iconSize, iconAnchor, popupAnchor)
 	{
-		var customMarker = new L.HtmlIcon({
-			html: '<div><i class="fa fa-2x ' + fontAwesomeIcon + ' custom-icon-marker ' + customCssClass + '"></i></div>',
-			iconSize: [20, 20], // size of the icon
-			iconAnchor: [-10, -10], // point of the icon which will correspond to marker's location
-		});
+
+		var customMarker = new L.Icon({
+			iconUrl: '/assets/images/map-icons/' + icon + '.png',
+			iconSize: iconSize, // size of the icon
+			iconAnchor: iconAnchor, // point of the icon which will correspond to marker's location
+			popupAnchor: popupAnchor
+		});	
 		
 		// Add the marker to the map
 		return L.marker([lat, lon], { icon: customMarker }).addTo(map);
@@ -226,14 +227,14 @@
 	{
 
 		// Create the custom marker
-		var currentLocationMarker = new L.HtmlIcon({
-			html: '<div><i class="fa fa-life-ring fa-2x lhq-map-location custom-icon-marker"></i></div>',
-			iconSize: [20, 20], // size of the icon
-			iconAnchor: [-10, -10], // point of the icon which will correspond to marker's location
-		});
+		var lhqMarker = new L.Icon({
+			iconUrl: '/assets/images/map-icons/lhq-marker.png',
+			iconSize: [24, 25], // size of the icon
+			iconAnchor: [12, 12], // point of the icon which will correspond to marker's location
+		});	
 
 		// Add the marker to the map
-		mapMarkers["lhq_location"] = L.marker([lat, lon], { icon: currentLocationMarker }).addTo(map);
+		mapMarkers["lhq_location"] = L.marker([lat, lon], { icon: lhqMarker }).addTo(map);
 
 		// Add the route from LHQ to the map
 		addPathFromPoint(lat, lon, true, '#FF862F');

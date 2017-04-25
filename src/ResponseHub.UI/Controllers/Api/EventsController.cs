@@ -47,10 +47,10 @@ namespace Enivate.ResponseHub.UI.Controllers.Api
 			GetEventViewModel model = new GetEventViewModel()
 			{
 				Id = eventObj.Id,
-				EventFinished = eventObj.EventFinished,
-				EventStarted = eventObj.EventStarted,
+				FinishedDate = eventObj.FinishedDate,
+				StartDate = eventObj.StartDate,
 				Name = eventObj.Name,
-				Finished = eventObj.EventFinished.HasValue,
+				Finished = eventObj.FinishedDate.HasValue,
 				Description = eventObj.Description
 			};
 
@@ -59,12 +59,12 @@ namespace Enivate.ResponseHub.UI.Controllers.Api
 			// If finsihed, set the duration string
 			if (model.Finished)
 			{
-				duration = model.EventFinished.Value - model.EventStarted;
+				duration = model.FinishedDate.Value - model.StartDate;
 			}
 			else
 			{
-				// Use UtcNow as EventStarted is stored in UTC time.
-				duration = DateTime.UtcNow - model.EventStarted;
+				// Use UtcNow as StartDate is stored in UTC time.
+				duration = DateTime.UtcNow - model.StartDate;
 			}
 
 			// Set the duration

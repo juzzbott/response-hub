@@ -30,7 +30,7 @@ namespace Enivate.ResponseHub.DataAccess.Interface
 
 		Task FinishEvent(Guid eventId, DateTime finishDateTime);
 
-		Task SaveEvent(Guid eventId, string name, string description, DateTime eventStarted);
+		Task SaveEvent(Guid eventId, string name, string description, DateTime startDate);
 
 		Task<IList<Event>> GetActiveEvents();
 

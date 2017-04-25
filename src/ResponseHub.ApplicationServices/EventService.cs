@@ -39,7 +39,7 @@ namespace Enivate.ResponseHub.ApplicationServices
 			Event newEvent = new Event()
 			{
 				Created = DateTime.UtcNow,
-				EventStarted = startDate.ToUniversalTime(),
+				StartDate = startDate.ToUniversalTime(),
 				UnitId = unitId,
 				Name = name,
 				Description = description
@@ -174,11 +174,11 @@ namespace Enivate.ResponseHub.ApplicationServices
 		/// <param name="eventId">The id of the event to update.</param>
 		/// <param name="name">The name of the event</param>
 		/// <param name="description">The description for the event.</param>
-		/// <param name="eventStarted">The date and time the event was started.</param>
+		/// <param name="startDate">The date and time the event was started.</param>
 		/// <returns></returns>
-		public async Task SaveEvent(Guid eventId, string name, string description, DateTime eventStarted)
+		public async Task SaveEvent(Guid eventId, string name, string description, DateTime startDate)
 		{
-			await _repository.SaveEvent(eventId, name, description, eventStarted);
+			await _repository.SaveEvent(eventId, name, description, startDate);
 		}
 
 		/// <summary>

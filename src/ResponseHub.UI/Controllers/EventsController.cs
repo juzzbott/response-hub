@@ -70,8 +70,8 @@ namespace Enivate.ResponseHub.UI.Controllers
 					Name = eventObj.Name,
 					UnitId = eventUnit.Id,
 					UnitName = eventUnit.Name,
-					StartDate = eventObj.EventStarted.ToLocalTime(),
-					FinishDate = eventObj.EventFinished,
+					StartDate = eventObj.StartDate.ToLocalTime(),
+					FinishDate = eventObj.FinishedDate,
 					JobsCount = eventObj.JobMessageIds.Count,
 					Description = eventObj.Description
 				});
@@ -171,8 +171,8 @@ namespace Enivate.ResponseHub.UI.Controllers
 			// Set the available units
 			model.Name = eventObj.Name;
 			model.Description = eventObj.Description;
-			model.StartDate = eventObj.EventStarted.ToLocalTime().ToString("yyyy-MM-dd");
-			model.StartTime = eventObj.EventStarted.ToLocalTime().ToString("HH:mm");
+			model.StartDate = eventObj.StartDate.ToLocalTime().ToString("yyyy-MM-dd");
+			model.StartTime = eventObj.StartDate.ToLocalTime().ToString("HH:mm");
 
 			return View(model);
 		}
@@ -247,12 +247,12 @@ namespace Enivate.ResponseHub.UI.Controllers
 			EventViewModel model = new EventViewModel()
 			{
 				Id = id,
-				EventFinished = eventObj.EventFinished,
-				EventStarted = eventObj.EventStarted,
+				FinishedDate = eventObj.FinishedDate,
+				StartDate = eventObj.StartDate,
 				UnitId = eventObj.UnitId,
 				UnitName = unit.Name,
 				Name = eventObj.Name,
-				Finished = eventObj.EventFinished.HasValue,
+				Finished = eventObj.FinishedDate.HasValue,
 				Description = eventObj.Description
 			};
 
@@ -261,12 +261,12 @@ namespace Enivate.ResponseHub.UI.Controllers
 			// If finsihed, set the duration string
 			if (model.Finished)
 			{
-				duration = model.EventFinished.Value - model.EventStarted;
+				duration = model.FinishedDate.Value - model.StartDate;
 			}
 			else
 			{
-				// Use UtcNow as EventStarted is stored in UTC time.
-				duration = DateTime.UtcNow - model.EventStarted;
+				// Use UtcNow as StartDate is stored in UTC time.
+				duration = DateTime.UtcNow - model.StartDate;
 			}
 
 			// Set the duration

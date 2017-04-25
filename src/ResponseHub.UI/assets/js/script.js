@@ -480,11 +480,10 @@ responseHub.maps = (function () {
 					{
 
 						// Second location marker doesn exist, so we need to create it
-
-						var currentLocationMarker = new L.HtmlIcon({
-							html: '<div><i class="fa fa-bullseye fa-2x current-map-location custom-icon-marker"></i></div>',
-							iconSize: [20, 20], // size of the icon
-							iconAnchor: [-10, -10], // point of the icon which will correspond to marker's location
+						var currentLocationMarker = new L.Icon({
+							iconUrl: '/assets/images/map-icons/current-location.png',
+							iconSize: [21, 21], // size of the icon
+							iconAnchor: [10, 10], // point of the icon which will correspond to marker's location
 						});	
 
 						// Add the marker to the map
@@ -510,7 +509,7 @@ responseHub.maps = (function () {
 				function (error) {
 					$('#map-messages').append('<p>' + error.code + ': ' + error.message + '</p>');
 					console.log(error);
-				},
+				},	
 				{
 					enableHighAccuracy: true,
 					timeout: 15000,
@@ -521,13 +520,15 @@ responseHub.maps = (function () {
 
 	}
 
-	function addCustomLocationMarkerToMap(lat, lon, fontAwesomeIcon, customCssClass)
+	function addCustomLocationMarkerToMap(lat, lon, icon, iconSize, iconAnchor, popupAnchor)
 	{
-		var customMarker = new L.HtmlIcon({
-			html: '<div><i class="fa fa-2x ' + fontAwesomeIcon + ' custom-icon-marker ' + customCssClass + '"></i></div>',
-			iconSize: [20, 20], // size of the icon
-			iconAnchor: [-10, -10], // point of the icon which will correspond to marker's location
-		});
+
+		var customMarker = new L.Icon({
+			iconUrl: '/assets/images/map-icons/' + icon + '.png',
+			iconSize: iconSize, // size of the icon
+			iconAnchor: iconAnchor, // point of the icon which will correspond to marker's location
+			popupAnchor: popupAnchor
+		});	
 		
 		// Add the marker to the map
 		return L.marker([lat, lon], { icon: customMarker }).addTo(map);
@@ -544,14 +545,14 @@ responseHub.maps = (function () {
 	{
 
 		// Create the custom marker
-		var currentLocationMarker = new L.HtmlIcon({
-			html: '<div><i class="fa fa-life-ring fa-2x lhq-map-location custom-icon-marker"></i></div>',
-			iconSize: [20, 20], // size of the icon
-			iconAnchor: [-10, -10], // point of the icon which will correspond to marker's location
-		});
+		var lhqMarker = new L.Icon({
+			iconUrl: '/assets/images/map-icons/lhq-marker.png',
+			iconSize: [24, 25], // size of the icon
+			iconAnchor: [12, 12], // point of the icon which will correspond to marker's location
+		});	
 
 		// Add the marker to the map
-		mapMarkers["lhq_location"] = L.marker([lat, lon], { icon: currentLocationMarker }).addTo(map);
+		mapMarkers["lhq_location"] = L.marker([lat, lon], { icon: lhqMarker }).addTo(map);
 
 		// Add the route from LHQ to the map
 		addPathFromPoint(lat, lon, true, '#FF862F');
@@ -3436,7 +3437,7 @@ responseHub.events = (function () {
 		// Loop through the locations
 		for (var i = 0; i < jobLocations.length; i++)
 		{
-			var marker = responseHub.maps.addCustomLocationMarkerToMap(jobLocations[i].lat, jobLocations[i].lon, 'fa-map-marker', 'event-marker ' + jobLocations[i].cssClass);
+			var marker = responseHub.maps.addCustomLocationMarkerToMap(jobLocations[i].lat, jobLocations[i].lon, jobLocations[i].markerIcon, [15, 23], [7, 23], [1, -27]);
 			marker.bindPopup('<strong><a href="/jobs/' + jobLocations[i].id + '" target="_blank">' + jobLocations[i].jobNumber + '</strong></a><br /><small>' + jobLocations[i].messageBody + '</small>');
 			jobMapMarkers.push(marker);
 		}
@@ -3686,23 +3687,23 @@ responseHub.events = (function () {
 							continue;
 						}
 
-						var cssClass = "marker-unassigned";
+						var markerIcon = "event-unassigned";
 						if (data.Jobs[i].Assigned) {
-							cssClass = "marker-assigned";
+							markerIcon = "event-assigned";
 						}
 
 						switch (data.Jobs[i].Status) {
 							case 2:
-								cssClass = "marker-in-progress";
+								markerIcon = "event-in-progress";
 								break;
 							case 3:
-								cssClass = "marker-completed";
+								markerIcon = "event-completed";
 								break;
 							case 4:
-								cssClass = "marker-cancelled";
+								markerIcon = "event-cancelled";
 								break;
 							case 5:
-								cssClass = "marker-requires-info";
+								markerIcon = "event-requires-info";
 								break;
 						}
 
@@ -3712,7 +3713,7 @@ responseHub.events = (function () {
 							messageBody: data.Jobs[i].MessageBody,
 							lat: data.Jobs[i].Coordinates.Latitude,
 							lon: data.Jobs[i].Coordinates.Longitude,
-							cssClass: cssClass
+							markerIcon: markerIcon
 						};
 
 						jobLocations.push(jobLocation);
@@ -3819,7 +3820,7 @@ responseHub.events = (function () {
 		});
 
 		// If we are viewing the job, set the interval to reload event data every 60 seconds
-		if ($('body.view-event-details').length > 0)
+		if ($('body.view-event-details').length > 0 && $('#EventFinished').val() == "0")
 		{
 			viewEventReloadInterval = setInterval(reloadEventData, 60000);
 		}

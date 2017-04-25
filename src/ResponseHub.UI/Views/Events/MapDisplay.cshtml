@@ -5,9 +5,9 @@
 <div>
 	<ul id="event-map-legend" class="list-unstyled clearfix">
 		<li class="pull-right"><i class="fa fa-map-marker marker-cancelled"></i>Cancelled</li>
-		<li class="pull-right"><i class="fa fa-map-marker marker-completed"></i>Completed</li>
 		<li class="pull-right"><i class="fa fa-map-marker marker-requires-info"></i>Requires more info</li>
 		<li class="pull-right"><i class="fa fa-map-marker marker-in-progress"></i>In progress</li>
+		<li class="pull-right"><i class="fa fa-map-marker marker-completed"></i>Completed</li>
 		<li class="pull-right"><i class="fa fa-map-marker marker-assigned"></i>Assigned</li>
 		<li class="pull-right"><i class="fa fa-map-marker marker-unassigned"></i>Unassigned</li>
 	</ul>
@@ -26,29 +26,29 @@
 			continue;
 		}
 
-		var cssClass = "marker-unassigned";
+		var markerIcon = "event-unassigned";
 		if (job.Assigned)
 		{
-			cssClass = "marker-assigned";
+			markerIcon = "event-assigned";
 		}
 
 		switch (job.Status)
 		{
 			case Enivate.ResponseHub.Model.Events.EventJobStatus.Cancelled:
-				cssClass = "marker-cancelled";
+				markerIcon = "event-cancelled";
 				break;
 			case Enivate.ResponseHub.Model.Events.EventJobStatus.Completed:
-				cssClass = "marker-completed";
+				markerIcon = "event-completed";
 				break;
 			case Enivate.ResponseHub.Model.Events.EventJobStatus.FurtherInformationRequired:
-				cssClass = "marker-requires-info";
+				markerIcon = "event-requires-info";
 				break;
 			case Enivate.ResponseHub.Model.Events.EventJobStatus.InProgress:
-				cssClass = "marker-in-progress";
+				markerIcon = "event-in-progress";
 				break;
 		}
 
-		@:{ id: '@job.Id', jobNumber: '@job.JobNumber', messageBody: '@job.MessageBody', lat: @(job.Coordinates.Latitude), lon: @(job.Coordinates.Longitude), cssClass: '@(cssClass)'},
+		@:{ id: '@job.Id', jobNumber: '@job.JobNumber', messageBody: '@job.MessageBody', lat: @(job.Coordinates.Latitude), lon: @(job.Coordinates.Longitude), markerIcon: '@(markerIcon)'},
 	}
 	];
 

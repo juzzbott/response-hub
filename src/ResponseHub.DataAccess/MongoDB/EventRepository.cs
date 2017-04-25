@@ -189,7 +189,7 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 			FilterDefinition<Event> filter = Builders<Event>.Filter.Eq(i => i.Id, eventId);
 
 			// Create the update
-			UpdateDefinition<Event> update = Builders<Event>.Update.Set(i => i.EventFinished, finishDateTime);
+			UpdateDefinition<Event> update = Builders<Event>.Update.Set(i => i.FinishedDate, finishDateTime);
 
 			// Perform the update
 			await Collection.UpdateOneAsync(filter, update);
@@ -202,9 +202,9 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 		/// <param name="eventId">The id of the event to update.</param>
 		/// <param name="name">The name of the event</param>
 		/// <param name="description">The description for the event.</param>
-		/// <param name="eventStarted">The date and time the event was started.</param>
+		/// <param name="startDate">The date and time the event was started.</param>
 		/// <returns></returns>
-		public async Task SaveEvent(Guid eventId, string name, string description, DateTime eventStarted)
+		public async Task SaveEvent(Guid eventId, string name, string description, DateTime startDate)
 		{
 
 			// Create the filter
@@ -213,7 +213,7 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 			// Create the update
 			UpdateDefinition<Event> update = Builders<Event>.Update
 				.Set(i => i.Description, description)
-				.Set(i => i.EventStarted, eventStarted)
+				.Set(i => i.StartDate, startDate)
 				.Set(i => i.Name, name);
 
 			// Do the update
@@ -228,7 +228,7 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 		public async Task<IList<Event>> GetActiveEvents()
 		{
 			// Create the filter
-			FilterDefinition<Event> filter = Builders<Event>.Filter.Eq(i => i.EventFinished, null);
+			FilterDefinition<Event> filter = Builders<Event>.Filter.Eq(i => i.FinishedDate, null);
 
 			// return the results for active events.
 			IList<Event> activeEvents = await Collection.Find(filter).ToListAsync();

@@ -15,9 +15,9 @@ namespace Enivate.ResponseHub.UI.Models.Events
 
 		public string Name { get; set; }
 
-		public DateTime  EventStarted { get; set; }
+		public DateTime  StartDate { get; set; }
 
-		public DateTime? EventFinished { get; set; }
+		public DateTime? FinishedDate { get; set; }
 
 		public Guid UnitId { get; set; }
 
