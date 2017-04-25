@@ -1,4 +1,5 @@
-﻿using Enivate.ResponseHub.Model.Events;
+﻿using Enivate.ResponseHub.Common.Extensions;
+using Enivate.ResponseHub.Model.Events;
 using Enivate.ResponseHub.Model.Messages;
 using Enivate.ResponseHub.Model.Spatial;
 using System;
@@ -22,6 +23,14 @@ namespace Enivate.ResponseHub.UI.Models.Events
 		public bool Assigned { get; set; }
 
 		public EventJobStatus Status { get; set; }
+
+		public string StatusString
+		{
+			get
+			{
+				return Status.GetEnumDescription();
+			}
+		}
 
 		public Coordinates Coordinates { get; set; }
 

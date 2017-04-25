@@ -48,8 +48,8 @@
 				break;
 		}
 
-		@:{ lat: @(job.Coordinates.Latitude), lon: @(job.Coordinates.Longitude), cssClass: '@(cssClass)'},
+		@:{ id: '@job.Id', jobNumber: '@job.JobNumber', messageBody: '@job.MessageBody', lat: @(job.Coordinates.Latitude), lon: @(job.Coordinates.Longitude), cssClass: '@(cssClass)'},
 	}
 	];
-	
+
 </script>

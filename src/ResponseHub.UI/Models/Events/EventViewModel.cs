@@ -50,6 +50,7 @@ namespace Enivate.ResponseHub.UI.Models.Events
 			AvailableMembers = new List<Tuple<Guid, string, string>>();
 			Crews = new List<CrewViewModel>();
 			Jobs = new List<EventJobViewModel>();
+			UnassignedJobs = new List<EventJobViewModel>();
 		}
 
 	}

@@ -301,10 +301,12 @@
 	/**
 	 * Clears all the markers from the map.
 	 */
-	function clearMarkers() {
+	function clearMarkers(markers) {
 
-		for (var i = 0; i < mapMarkers.length; i++) {
-			map.removeLayer(mapMarkers[i]);
+		var markersToRemove = (markers != null ? markers : mapMarkers);
+
+		for (var i = 0; i < markersToRemove.length; i++) {
+			map.removeLayer(markersToRemove[i]);
 		}
 
 		// Clear the markers

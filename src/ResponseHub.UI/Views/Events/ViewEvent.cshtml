@@ -2,13 +2,14 @@
 
 @{
     ViewBag.Title = Model.Name;
+	ViewBag.BodyClass = "view-event-details";
 }
 
 <input type="hidden" id="EventId" value="@Model.Id" />
 
 <div class="row title-row">
 	<div class="col-sm-9">
-		<h1>@ViewBag.Title</h1>
+		<h1><span>@ViewBag.Title</span> <small class="text-primary hidden event-detail-refresh-loading"><i class="fa fa-fw fa-spin fa-spinner text-primary"></i></small></h1>
 	</div>
 	<div class="col-sm-3">
 		<a href="@Request.Url.LocalPath/edit" class="btn btn-link btn-icon btn-lg pull-right"><i class="fa fa-pencil-square-o"></i>Edit event</a>

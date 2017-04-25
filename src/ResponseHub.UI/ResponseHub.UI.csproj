@@ -239,6 +239,7 @@
     <Compile Include="Filters\SystemAdminUserRedirectAttribute.cs" />
     <Compile Include="Helpers\JobMessageModelHelper.cs" />
     <Compile Include="Models\Api\Events\AssignJobsToCrewPostModel.cs" />
+    <Compile Include="Models\Api\Events\GetEventViewModel.cs" />
     <Compile Include="Models\Api\Messages\GetDistanceFromJobModel.cs" />
     <Compile Include="Models\Api\Messages\PostGetLatestFromLastModel.cs" />
     <Compile Include="Models\Api\Search\SearchPostModel.cs" />

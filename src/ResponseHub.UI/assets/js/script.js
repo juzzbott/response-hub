@@ -619,10 +619,12 @@ responseHub.maps = (function () {
 	/**
 	 * Clears all the markers from the map.
 	 */
-	function clearMarkers() {
+	function clearMarkers(markers) {
 
-		for (var i = 0; i < mapMarkers.length; i++) {
-			map.removeLayer(mapMarkers[i]);
+		var markersToRemove = (markers != null ? markers : mapMarkers);
+
+		for (var i = 0; i < markersToRemove.length; i++) {
+			map.removeLayer(markersToRemove[i]);
 		}
 
 		// Clear the markers
@@ -3185,6 +3187,16 @@ responseHub.training = (function () {
 })();
 
 responseHub.events = (function () {
+
+	/*
+	 * The object to store the interval handler for reloading event data when viewing an event.
+	 */
+	viewEventReloadInterval = null;
+
+	/*
+	 * The array containing the job markers on the map
+	 */
+	jobMapMarkers = [];
 	
 	// Adds the user to the specified list, as either a trainer or a member.
 	function addUserToList(userId, listId, selectedId, tableId, removeCallbackMethodName) {
@@ -3415,8 +3427,6 @@ responseHub.events = (function () {
 	 */
 	function addJobsToMap()
 	{
-
-		var markers = []
 		
 		// Ensure there are job locations before adding the markers to the map
 		if (jobLocations == null || jobLocations.length == 0) {
@@ -3426,11 +3436,13 @@ responseHub.events = (function () {
 		// Loop through the locations
 		for (var i = 0; i < jobLocations.length; i++)
 		{
-			markers.push(responseHub.maps.addCustomLocationMarkerToMap(jobLocations[i].lat, jobLocations[i].lon, 'fa-map-marker', 'event-marker ' + jobLocations[i].cssClass));
+			var marker = responseHub.maps.addCustomLocationMarkerToMap(jobLocations[i].lat, jobLocations[i].lon, 'fa-map-marker', 'event-marker ' + jobLocations[i].cssClass);
+			marker.bindPopup('<strong><a href="/jobs/' + jobLocations[i].id + '" target="_blank">' + jobLocations[i].jobNumber + '</strong></a><br /><small>' + jobLocations[i].messageBody + '</small>');
+			jobMapMarkers.push(marker);
 		}
 
 		// Resize the map to match the markers
-		responseHub.maps.zoomToMarkerGroup(markers);
+		responseHub.maps.zoomToMarkerGroup(jobMapMarkers);
 	}
 
 	/**
@@ -3584,6 +3596,154 @@ responseHub.events = (function () {
 	}
 
 	/**
+	 * Reloads the event data and refreshed the information displayed on screen with the updated data
+	 */
+	function reloadEventData()
+	{
+
+		// Display the loading animation
+		$('.event-detail-refresh-loading').removeClass('hidden');
+
+		// Get the event id
+		var eventId = $('#EventId').val();
+
+		$.ajax({
+			url: responseHub.apiPrefix + '/events/' + eventId,
+			dataType: 'json',
+			success: function (data) {
+
+				if (data != null) {
+
+					// Set the name, description and totals
+					$('.title-row h1 span').text(data.Name);
+					$('p.event-desc').text(data.Description);
+					$('.event-total-jobs-count span').text(data.Jobs.length);
+					$('.event-unassigned-jobs-count span').text(data.UnassignedJobsCount);
+					$('.event-in-progress-jobs-count span').text(data.InProgressJobsCount);
+					$('.event-completed-jobs-count span').text(data.CompletedJobsCount);
+
+					// reload all the jobs
+					$('#event-jobs-list tbody').empty();
+
+					// Loop through all the jobs. If there are no jobs, just add a message
+					if (data.Jobs == null || data.Jobs.length == 0)
+					{
+						$('#event-jobs-list tbody').append('<tr><td colspan="4">No jobs have been added to the event yet.</td></tr>');
+					}
+					else
+					{
+						for (var i = 0; i < data.Jobs.length; i++)
+						{
+							var row = $('<tr></tr>');
+
+							// Set the assigned checkbox
+							row.append('<td>' + (data.Jobs[i].Assigned ? '<center><i class="fa fa-fw fa-check text-primary"></i></center>' : '') + '</td>');
+
+							// Set the job number/link and description
+							row.append('<td><a href="/jobs/' + data.Jobs[i].Id + '" target="_blank">' + data.Jobs[i].JobNumber + '</a></td>');
+							row.append('<td><small class="text-muted">' + data.Jobs[i].MessageBody + '</small></td>');
+
+							// Get the value of the status based on the value
+							var statusContent = '';
+							switch (data.Jobs[i].Status)
+							{
+								case 1:
+									statusContent = '<span>' + data.Jobs[i].StatusString + '</span>';
+									break;
+
+								case 2:
+									statusContent = '<span class="marker-in-progress">' + data.Jobs[i].StatusString + '</span>';
+									break;
+
+								case 3:
+									statusContent = '<span class="marker-completed">' + data.Jobs[i].StatusString + '</span>';
+									break;
+
+								case 4:
+									statusContent = '<span class="marker-cancelled">' + data.Jobs[i].StatusString + '</span>';
+									break;
+
+								case 5:
+									statusContent = '<span class="marker-requires-info">' + data.Jobs[i].StatusString + '</span>';
+									break;
+							}
+
+							// Append the status column
+							row.append('<td>' + statusContent + '</td>');
+
+							// Append the row to the table
+							$('#event-jobs-list tbody').append(row);
+
+						}
+					}
+
+					// Clear the jobLocations array
+					jobLocations = [];
+
+					// Reset the job map makrers from the data in the web service
+					for (var i = 0; i < data.Jobs.length; i++) {
+						if (data.Jobs[i].Coordinates == null || (data.Jobs[i].Coordinates.Latitude == 0 && data.Jobs[i].Coordinates.Longitude == 0)) {
+							continue;
+						}
+
+						var cssClass = "marker-unassigned";
+						if (data.Jobs[i].Assigned) {
+							cssClass = "marker-assigned";
+						}
+
+						switch (data.Jobs[i].Status) {
+							case 2:
+								cssClass = "marker-in-progress";
+								break;
+							case 3:
+								cssClass = "marker-completed";
+								break;
+							case 4:
+								cssClass = "marker-cancelled";
+								break;
+							case 5:
+								cssClass = "marker-requires-info";
+								break;
+						}
+
+						var jobLocation = {
+							id: data.Jobs[i].Id,
+							jobNumber: data.Jobs[i].JobNumber,
+							messageBody: data.Jobs[i].MessageBody,
+							lat: data.Jobs[i].Coordinates.Latitude,
+							lon: data.Jobs[i].Coordinates.Longitude,
+							cssClass: cssClass
+						};
+
+						jobLocations.push(jobLocation);
+
+					}
+
+					// If the map is loaded, then reset the markers
+					if (responseHub.maps.mapExists()) {
+
+						// Clear the existing map markers
+						responseHub.maps.clearMarkers(jobMapMarkers);
+
+						// Add the markers to the map
+						addJobsToMap();
+					}
+
+					// hide the loading animation
+					$('.event-detail-refresh-loading').addClass('hidden');
+
+				}
+
+			},
+			complete: function () {
+				// hide the loading animation
+				$('.event-detail-refresh-loading').addClass('hidden');
+			}
+		});
+
+	}
+
+	/**
 	 * Bind the UI controls.
 	 */
 	function bindUI()
@@ -3657,6 +3817,12 @@ responseHub.events = (function () {
 			responseHub.maps.displayMap(mapConfig);
 
 		});
+
+		// If we are viewing the job, set the interval to reload event data every 60 seconds
+		if ($('body.view-event-details').length > 0)
+		{
+			viewEventReloadInterval = setInterval(reloadEventData, 60000);
+		}
 	}
 
 	function loadUI() {
