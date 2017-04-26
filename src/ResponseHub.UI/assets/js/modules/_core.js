@@ -226,6 +226,27 @@
 		$.validator.setDefaults({ ignore: null });
 	}
 
+	/**
+	 * Gets a query string value based on the parameter.
+	 * @param {any} name
+	 * @param {any} url
+	 */
+	function getQueryString(name, url) {
+
+		// Default the url to the current location
+		if (!url) {
+			url = window.location.href;
+		}
+
+		// Get the name of the query string
+		name = name.replace(/[\[\]]/g, "\\$&");
+		var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+			results = regex.exec(url);
+		if (!results) return null;
+		if (!results[2]) return '';
+		return decodeURIComponent(results[2].replace(/\+/g, " "));
+	}
+
 	// Bind the modal
 	bindModals();
 
@@ -240,7 +261,8 @@
 		apiPrefix: apiPrefix,
 		isMobile: isMobile,
 		executeFunctionByName: executeFunctionByName,
-		setGraphicRadiosCheckboxes: setGraphicRadiosCheckboxes
+		setGraphicRadiosCheckboxes: setGraphicRadiosCheckboxes,
+		getQueryString: getQueryString
 	}
 
 })();

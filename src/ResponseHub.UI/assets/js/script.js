@@ -226,6 +226,27 @@ var responseHub = (function () {
 		$.validator.setDefaults({ ignore: null });
 	}
 
+	/**
+	 * Gets a query string value based on the parameter.
+	 * @param {any} name
+	 * @param {any} url
+	 */
+	function getQueryString(name, url) {
+
+		// Default the url to the current location
+		if (!url) {
+			url = window.location.href;
+		}
+
+		// Get the name of the query string
+		name = name.replace(/[\[\]]/g, "\\$&");
+		var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+			results = regex.exec(url);
+		if (!results) return null;
+		if (!results[2]) return '';
+		return decodeURIComponent(results[2].replace(/\+/g, " "));
+	}
+
 	// Bind the modal
 	bindModals();
 
@@ -240,7 +261,8 @@ var responseHub = (function () {
 		apiPrefix: apiPrefix,
 		isMobile: isMobile,
 		executeFunctionByName: executeFunctionByName,
-		setGraphicRadiosCheckboxes: setGraphicRadiosCheckboxes
+		setGraphicRadiosCheckboxes: setGraphicRadiosCheckboxes,
+		getQueryString: getQueryString
 	}
 
 })();
@@ -1062,9 +1084,20 @@ responseHub.jobMessages = (function () {
 		$('#jobs-load-more .loading').removeClass('hidden');
 		$('#jobs-load-more button').addClass('hidden');
 
+		// Get the date_from and date_to
+		var dateTo = responseHub.getQueryString('date_to');
+		var dateFrom = responseHub.getQueryString('date_from');
+
+		// Build the filter query
+		var filterQuery = '';
+		if (dateTo != null || dateFrom != null)
+		{
+			filterQuery = 'date_from=' + dateFrom + '&date_to=' + dateTo;
+		}
+
 		// Create the ajax request
 		$.ajax({
-			url: responseHub.apiPrefix + '/job-messages/?skip=' + skipCount + '&msg_type=' + messageType,
+			url: responseHub.apiPrefix + '/job-messages/?skip=' + skipCount + '&msg_type=' + messageType + filterQuery,
 			dataType: 'json',
 			success: function (data) {
 
@@ -1461,16 +1494,7 @@ responseHub.jobMessages = (function () {
 			$(this).find('.modal-body p').text(message);
 
 		});
-
-		// If we are on the job list page, then load the next jobs
-		if ($('#jobs-list-container').length > 0)
-		{
-			getNextJobMessages('job');
-		}
-		else if ($('#message-list-container').length > 0) {
-			// If we are on the job list page, then load the next jobs
-			getNextJobMessages('message');
-		}
+		
 	}
 
 	// Bind the UI

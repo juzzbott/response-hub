@@ -19,6 +19,7 @@ using Enivate.ResponseHub.Common.Constants;
 using Enivate.ResponseHub.UI.Helpers;
 using Enivate.ResponseHub.Model.SignIn.Interface;
 using Enivate.ResponseHub.Model.SignIn;
+using System.Globalization;
 
 namespace Enivate.ResponseHub.UI.Controllers
 {
@@ -32,6 +33,61 @@ namespace Enivate.ResponseHub.UI.Controllers
 		protected readonly IAttachmentService AttachmentService = ServiceLocator.Get<IAttachmentService>();
 
 		#region Helpers
+
+		protected async Task<JobMessageListViewModel> GetAllJobsMessagesViewModel(Guid userId, MessageType messageType)
+		{
+
+
+			// Get the capcodes for the current user
+			IList<Capcode> capcodes = await CapcodeService.GetCapcodesForUser(userId);
+
+			// create the job messages list
+			IList<JobMessage> jobMessages;
+
+			int count = 5;
+			int skip = 0;
+
+			// Determine if filter is applied
+			bool filterApplied = false;
+
+			// If there are no job messages between dates, then just return the most recent
+			if (String.IsNullOrEmpty(Request.QueryString["date_from"]) && String.IsNullOrEmpty(Request.QueryString["date_to"]))
+			{
+				// Get the messages for the capcodes
+				jobMessages = await JobMessageService.GetMostRecent(capcodes, messageType, count, skip);
+			}
+			else
+			{
+
+				// Get the date from an date to values
+				DateTime? dateFrom = null;
+				DateTime? dateTo = null;
+
+				// If there is a date from, set it
+				if (!String.IsNullOrEmpty(Request.QueryString["date_from"]))
+				{
+					dateFrom = DateTime.ParseExact(Request.QueryString["date_from"], "dd/MM/yyyy", CultureInfo.CurrentCulture, DateTimeStyles.AssumeLocal);
+					filterApplied = true;
+				}
+
+				// If there is a date from, set it
+				if (!String.IsNullOrEmpty(Request.QueryString["date_to"]))
+				{
+					dateTo = DateTime.ParseExact(Request.QueryString["date_to"], "dd/MM/yyyy", CultureInfo.CurrentCulture, DateTimeStyles.AssumeLocal);
+					filterApplied = true;
+				}
+
+				// Get the messages for the capcodes
+				jobMessages = await JobMessageService.GetMessagesBetweenDates(capcodes, messageType, count, skip, dateFrom, dateTo);
+			}
+
+			// Create the jobs list view model.
+			JobMessageListViewModel model = await CreateJobMessageListModel(capcodes, jobMessages);
+			model.MessageType = messageType;
+			model.Filter.FilterApplied = filterApplied;
+
+			return model;
+		}
 
 		/// <summary>
 		/// Creates the JobMessageListViewModel object from the list of messages and capcodes.

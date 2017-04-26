@@ -32,21 +32,8 @@ namespace Enivate.ResponseHub.UI.Controllers.Api
 	[RoutePrefix("api/job-messages")]
     public class JobMessageController : BaseApiController
     {
-		protected IJobMessageService JobMessageService
-		{
-			get
-			{
-				return ServiceLocator.Get<IJobMessageService>();
-			}
-		}
-
-		protected ICapcodeService CapcodeService
-		{
-			get
-			{
-				return ServiceLocator.Get<ICapcodeService>();
-			}
-		}
+		protected readonly IJobMessageService JobMessageService = ServiceLocator.Get<IJobMessageService>();
+		protected readonly ICapcodeService CapcodeService = ServiceLocator.Get<ICapcodeService>();
 		protected readonly ISignInEntryService SignInEntryService = ServiceLocator.Get<ISignInEntryService>();
 
 		[Route]
@@ -106,7 +93,7 @@ namespace Enivate.ResponseHub.UI.Controllers.Api
 					dateFrom = DateTime.ParseExact(qs.FirstOrDefault(x => x.Key == "date_from").Value, "dd/MM/yyyy", CultureInfo.CurrentCulture, DateTimeStyles.AssumeLocal);
 				}
 
-				if (qs.Count(i => i.Key.ToLower() == "date_to") > 0 && !String.IsNullOrEmpty(qs.FirstOrDefault(i => i.Key.ToLower() == "date_from").Value))
+				if (qs.Count(i => i.Key.ToLower() == "date_to") > 0 && !String.IsNullOrEmpty(qs.FirstOrDefault(i => i.Key.ToLower() == "date_to").Value))
 				{
 					dateTo = DateTime.ParseExact(qs.FirstOrDefault(x => x.Key == "date_to").Value, "dd/MM/yyyy", CultureInfo.CurrentCulture, DateTimeStyles.AssumeLocal);
 				}

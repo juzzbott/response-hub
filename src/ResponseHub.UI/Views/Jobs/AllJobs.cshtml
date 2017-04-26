@@ -21,7 +21,11 @@
 				
 				@Html.Partial("~/Views/Shared/JobMessageFilter.cshtml", Model.Filter);
 
-				<ul class="job-list list-unstyled">		
+				<ul class="job-list list-unstyled">	
+					@foreach (var message in Model.Messages)
+					{
+						@Html.Partial("~/Views/Jobs/JobListItem.cshtml", message);
+					}
 				</ul>
 			}
 
@@ -30,7 +34,7 @@
 
 <div class="row bottom-20 top-20" id="jobs-load-more">
 	<div class="col-sm-12 text-center">
-		<p class="text-primary btn-icon loading hidden lead"><i class="fa fa-spinner fa-spin"></i>Loading job details...</p>
-		<button class="btn btn-primary hidden" onclick="responseHub.jobMessages.getNextJobMessages('@(Model.MessageType == Enivate.ResponseHub.Model.Messages.MessageType.Job ? "job" : "message")');">Load more</button>
+		<p class="text-primary btn-icon loading hidden lead"><i class="fa fa-spinner fa-spin"></i>Loading more @(Model.MessageType == Enivate.ResponseHub.Model.Messages.MessageType.Job ? "jobs" : "messages") ...</p>
+		<button class="btn btn-primary" onclick="responseHub.jobMessages.getNextJobMessages('@(Model.MessageType == Enivate.ResponseHub.Model.Messages.MessageType.Job ? "job" : "message")');">Load more</button>
 	</div>
 </div>
