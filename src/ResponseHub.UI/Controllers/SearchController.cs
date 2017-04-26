@@ -82,13 +82,13 @@ namespace Enivate.ResponseHub.UI.Controllers
 				PagedResultSet<JobMessage> results = await JobMessageService.FindByKeyword(keywords, capcodes.Select(i => i.CapcodeAddress), messageTypes, dateFrom, dateTo, 50, 0, true);
 
 				// Create the job message list view model
-				JobMessageListViewModel resultsModel = await CreateJobMessageListModel(capcodes, results.Items);
+				JobMessageListViewModel resultsModel = CreateJobMessageListModel(capcodes, results.Items);
 
 				// Create the model
 				SearchViewModel model = new SearchViewModel
 				{
 					SearchKeywords = keywords,
-					Results = resultsModel.Messages,
+					Results = resultsModel.JobMessages,
 					TotalResults = results.TotalResults,
 					DateFrom = (dateFromSet ? dateFrom : (DateTime?)null),
 					DateTo = (dateToSet ? dateTo : (DateTime?)null),

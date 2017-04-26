@@ -255,7 +255,9 @@
     <Compile Include="Areas\Admin\Models\Reports\UnitsCapcodesReportViewModel.cs" />
     <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Models\Events\CreateEventViewModel.cs" />
+    <Compile Include="Models\Messages\EventJobListViewModel.cs" />
     <Compile Include="Models\Messages\JobMessageFilter.cs" />
+    <Compile Include="Models\Messages\JobMessageListItemViewModel.cs" />
     <Compile Include="Models\Messages\JobMessageListViewModel.cs" />
     <Compile Include="Models\Messages\JobMessageSignInEntry.cs" />
     <Compile Include="Models\Messages\JobNoteViewModel.cs" />
@@ -618,6 +620,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Events\CreateEditCrew.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Jobs\EventJobs.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

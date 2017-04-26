@@ -82,7 +82,7 @@ namespace Enivate.ResponseHub.UI.Controllers
 			}
 
 			// Create the jobs list view model.
-			JobMessageListViewModel model = await CreateJobMessageListModel(capcodes, jobMessages);
+			JobMessageListViewModel model = CreateJobMessageListModel(capcodes, jobMessages);
 			model.MessageType = messageType;
 			model.Filter.FilterApplied = filterApplied;
 
@@ -95,39 +95,25 @@ namespace Enivate.ResponseHub.UI.Controllers
 		/// <param name="capcodes"></param>
 		/// <param name="jobMessages"></param>
 		/// <returns></returns>
-		public async Task<JobMessageListViewModel> CreateJobMessageListModel(IList<Capcode> capcodes, IList<JobMessage> jobMessages)
+		public JobMessageListViewModel CreateJobMessageListModel(IList<Capcode> capcodes, IList<JobMessage> jobMessages)
 		{
-
-			// Get all the sign ins for the messages
-			IList<SignInEntry> allSignIns = await SignInEntryService.GetSignInsForJobMessages(jobMessages.Select(i => i.Id));
-
-			// Get all the users for the job sign ins
-			IList<IdentityUser> allSignInUsers = await UserService.GetUsersByIds(allSignIns.Select(i => i.UserId));
-
 			// Create the list of job message view models
-			IList<JobMessageViewModel> jobMessageViewModels = new List<JobMessageViewModel>();
+			IList<JobMessageListItemViewModel> jobMessageViewModels = new List<JobMessageListItemViewModel>();
 			foreach (JobMessage jobMessage in jobMessages)
 			{
-
-				// Get the sign ins for the job
-				IList<SignInEntry> jobSignIns = allSignIns.Where(i => i.OperationDetails.JobId == jobMessage.Id).ToList();
-
-				// Get the list of users who signed in for the job
-				IList<IdentityUser> signInUsers = allSignInUsers.Where(i => jobSignIns.Select(u => u.UserId).Contains(i.Id)).ToList();
 
 				// Get the capcode for the job message
 				Capcode capcode = capcodes.FirstOrDefault(i => i.CapcodeAddress == jobMessage.Capcode);
 
 				// Map the view model and add to the list
-				jobMessageViewModels.Add(await MapJobMessageToViewModel(jobMessage, capcode.FormattedName(), jobSignIns, signInUsers, null));
+				jobMessageViewModels.Add(JobMessageListItemViewModel.FromJobMessage(jobMessage, capcode, null));
 
 			}
 
 			// Create the model object
 			JobMessageListViewModel model = new JobMessageListViewModel()
 			{
-				Messages = jobMessageViewModels,
-				UserCapcodes = capcodes
+				JobMessages = jobMessageViewModels
 			};
 			return model;
 		}

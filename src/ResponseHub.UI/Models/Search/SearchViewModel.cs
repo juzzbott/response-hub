@@ -15,7 +15,7 @@ namespace Enivate.ResponseHub.UI.Models.Search
 
 		public int TotalResults { get; set; }
 
-		public IList<JobMessageViewModel> Results { get; set; }
+		public IList<JobMessageListItemViewModel> Results { get; set; }
 
 		public DateTime? DateFrom { get; set; }
 

@@ -36,5 +36,9 @@ namespace Enivate.ResponseHub.Model.Events.Interface
 
 		Task SetJobsToEvent(Guid eventId, IList<Guid> jobMessageIds);
 
+		Task<int> CountActiveEventsForUser(Guid userId);
+
+		Task<IList<Event>> GetActiveEventsForUser(Guid userId);
+
 	}
 }

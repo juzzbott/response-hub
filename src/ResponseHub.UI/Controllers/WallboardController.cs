@@ -49,8 +49,8 @@ namespace Enivate.ResponseHub.UI.Controllers
 
 			// Create the jobs list view model.
 			JobsController jobsController = new JobsController();
-			JobMessageListViewModel jobListModel = await jobsController.CreateJobMessageListModel(capcodes, jobMessages);
-			model.Messages = jobListModel.Messages;
+			JobMessageListViewModel jobListModel = jobsController.CreateJobMessageListModel(capcodes, jobMessages);
+			model.JobMessages = jobListModel.JobMessages;
 			
 			return View(model);
         }

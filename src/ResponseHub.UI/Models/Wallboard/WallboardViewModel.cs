@@ -10,11 +10,11 @@ namespace Enivate.ResponseHub.UI.Models.Wallboard
 	public class WallboardViewModel
 	{
 
-		public IList<JobMessageViewModel> Messages { get; set; }
+		public IList<JobMessageListItemViewModel> JobMessages { get; set; }
 
 		public WallboardViewModel()
 		{
-			Messages = new List<JobMessageViewModel>();
+			JobMessages = new List<JobMessageListItemViewModel>();
 		}
 
 	}

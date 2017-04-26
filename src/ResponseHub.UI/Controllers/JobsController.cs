@@ -6,38 +6,68 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 
-using Microsoft.AspNet.Identity;
-using Microsoft.Practices.Unity;
-
 using Enivate.ResponseHub.Common;
-using Enivate.ResponseHub.Model.Units.Interface;
 using Enivate.ResponseHub.Model.Units;
-using Enivate.ResponseHub.Model.Messages.Interface;
 using Enivate.ResponseHub.Model.Messages;
-using Enivate.ResponseHub.Logging;
 using Enivate.ResponseHub.UI.Models.Messages;
 using Enivate.ResponseHub.Model.Identity;
-using Enivate.ResponseHub.Model.Identity.Interface;
 using Enivate.ResponseHub.Model.SignIn;
-using System.Globalization;
+using Enivate.ResponseHub.Model.Events.Interface;
+using Enivate.ResponseHub.Model.Events;
 
 namespace Enivate.ResponseHub.UI.Controllers
 {
 
 	[RoutePrefix("jobs")]
     public class JobsController : BaseJobsMessagesController
-	{	
+	{
+
+		protected readonly IEventService EventService = ServiceLocator.Get<IEventService>();
+
+		[Route]
+		public async Task<ActionResult> Index()
+		{
+			// Determine if the user has any active events, if there is, redirect to active event jobs, otherwise redirect to all events
+			int activeEvents = await EventService.CountActiveEventsForUser(UserId);
+
+			// If there are active events, redirect to job messages for the event, otherwise redirect to all messages
+			if (activeEvents > 0)
+			{
+				// Build the event job list
+				IList<EventJobListViewModel> model = await GetEventJobsListModel(UserId);
+
+				// return the view
+				return View("EventJobs", model);
+			}
+			else
+			{
+
+				// Get the initial jobs list
+				JobMessageListViewModel model = await GetAllJobsMessagesViewModel(UserId, MessageType.Job);
+
+				return View("AllJobs", model);
+			}
+		}
+
+		[Route("event-jobs")]
+		public async Task<ActionResult> EventJobs()
+		{
+
+			// Build the event job list
+			IList<EventJobListViewModel> model = await GetEventJobsListModel(UserId);
+
+			// return the view
+			return View(model);
+
+		}
 
 		// GET: Jobs
 		[Route("all-jobs")]
         public async Task<ActionResult> AllJobs()
 		{
 
-			// Get the current user id
-			Guid userId = new Guid(User.Identity.GetUserId());
-
 			// Get the initial jobs list
-			JobMessageListViewModel model = await GetAllJobsMessagesViewModel(userId, MessageType.Job);
+			JobMessageListViewModel model = await GetAllJobsMessagesViewModel(UserId, MessageType.Job);
 
 			return View(model);
 		}
@@ -72,7 +102,7 @@ namespace Enivate.ResponseHub.UI.Controllers
 				IList<IdentityUser> signInUsers = await UserService.GetUsersByIds(jobSignIns.Select(i => i.UserId));
 
 				// Create the model object.
-				JobMessageViewModel model = await MapJobMessageToViewModel(job, capcode.FormattedName(), jobSignIns, signInUsers, unit);
+				JobMessageViewModel model = await MapJobMessageToViewModel(job, capcode.ToString(), jobSignIns, signInUsers, unit);
 
 				// return the job view
 				return View(model);
@@ -146,5 +176,71 @@ namespace Enivate.ResponseHub.UI.Controllers
 			return new RedirectResult(String.Format("/jobs/{0}?attachment_removed=1", jobId));
 
 		}
+
+		#region Helpers
+
+		/// <summary>
+		/// Loads the active events model list for the user.
+		/// </summary>
+		/// <param name="userId">The user id of the current user to get the events and jobs for.</param>
+		/// <returns></returns>
+		private async Task<IList<EventJobListViewModel>> GetEventJobsListModel(Guid userId)
+		{
+			// Get the list of active events for the user
+			IList<Event> events = await EventService.GetActiveEventsForUser(userId);
+
+			// Get the capcodes for the current user
+			IList<Capcode> capcodes = await CapcodeService.GetCapcodesForUser(userId);
+
+			// Get the distinct job ids from the list of events
+			IList<Guid> jobMessageIds = events.SelectMany(i => i.JobMessageIds).Distinct().ToList();
+
+			// Gets all the job messages for the specified ids
+			IList<JobMessage> allJobs = await JobMessageService.GetByIds(jobMessageIds);
+
+			// Create the list event job list view models
+			IList<EventJobListViewModel> eventJobs = new List<EventJobListViewModel>();
+
+			// Loop through the events
+			foreach(Event eventObj in events)
+			{
+
+				// Create the event job list view model
+				EventJobListViewModel model = new EventJobListViewModel()
+				{
+					EventId = eventObj.Id,
+					EventName = eventObj.Name,
+					EventDescription = eventObj.Description
+				};
+
+				// Loop through the job messages for the event
+				foreach(JobMessage jobMessage in allJobs.Where(i => jobMessageIds.Contains(i.Id)))
+				{
+
+					// Get the capcode for the job
+					Capcode capcode = capcodes.FirstOrDefault(i => i.CapcodeAddress == jobMessage.Capcode);
+
+					// Add the JobMessageListItemViewModel model to the list
+					JobMessageListItemViewModel listItemModel = JobMessageListItemViewModel.FromJobMessage(jobMessage, capcode, null);
+
+					// If the model was created, add to the list.
+					if (listItemModel != null)
+					{
+						model.Jobs.Add(listItemModel);
+					}
+
+				}
+
+				// Add the event jobs model to the list
+				eventJobs.Add(model);
+
+			}
+
+			// return the events
+			return eventJobs;
+
+		}
+
+		#endregion
 	}
 }

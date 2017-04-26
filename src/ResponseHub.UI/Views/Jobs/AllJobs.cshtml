@@ -12,7 +12,7 @@
 	<div id="@(Model.MessageType == Enivate.ResponseHub.Model.Messages.MessageType.Job ? "jobs-list-container" : "message-list-container")" class="col-sm-12">
 
 
-			@if (Model.Messages == null || Model.Messages.Count == 0)
+			@if (Model.JobMessages == null || Model.JobMessages.Count == 0)
 			{
 				<p class="lead">There are no @ViewBag.JobsOrMessages to display.</p>
 			}
@@ -22,7 +22,7 @@
 				@Html.Partial("~/Views/Shared/JobMessageFilter.cshtml", Model.Filter);
 
 				<ul class="job-list list-unstyled">	
-					@foreach (var message in Model.Messages)
+					@foreach (var message in Model.JobMessages)
 					{
 						@Html.Partial("~/Views/Jobs/JobListItem.cshtml", message);
 					}
