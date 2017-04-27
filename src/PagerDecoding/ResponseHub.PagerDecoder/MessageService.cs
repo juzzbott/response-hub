@@ -63,45 +63,11 @@ namespace Enivate.ResponseHub.PagerDecoder
 		/// </summary>
 		private string _lastMessageFileKey = "LastMessageFile";
 
-		protected ILogger Log
-		{
-			get
-			{
-				return ServiceLocator.Get<ILogger>();
-			}
-		}
-
-		protected IMapIndexRepository MapIndexRepository
-		{
-			get
-			{
-				return ServiceLocator.Get<IMapIndexRepository>();
-			}
-		}
-
-		protected IJobMessageService JobMessageService
-		{
-			get
-			{
-				return ServiceLocator.Get<IJobMessageService>();
-			}
-		}
-
-		protected IDecoderStatusRepository DecoderStatusRepository
-		{
-			get
-			{
-				return ServiceLocator.Get<IDecoderStatusRepository>();
-			}
-		}
-
-		protected IAddressService AddressService
-		{
-			get
-			{
-				return ServiceLocator.Get<IAddressService>();
-			}
-		}
+		protected ILogger Log = ServiceLocator.Get<ILogger>();
+		protected IMapIndexRepository MapIndexRepository = ServiceLocator.Get<IMapIndexRepository>();
+		protected IJobMessageService JobMessageService = ServiceLocator.Get<IJobMessageService>();
+		protected IDecoderStatusRepository DecoderStatusRepository = ServiceLocator.Get<IDecoderStatusRepository>();
+		protected IAddressService AddressService = ServiceLocator.Get<IAddressService>();
 
 		public MessageService()
 		{
@@ -196,7 +162,7 @@ namespace Enivate.ResponseHub.PagerDecoder
 			_msgServiceTimer.Stop();
             _cleanupTimer.Stop();
 			_invalidMessageTimer.Stop();
-			Log.Info("ResponseHub service stopped.\r\n\r\n");
+			Log.Info("ResponseHub pager decoder service stopped.\r\n\r\n");
 		}
 
 		/// <summary>
@@ -209,7 +175,7 @@ namespace Enivate.ResponseHub.PagerDecoder
 			StringBuilder sbStartLog = new StringBuilder();
 			sbStartLog.AppendLine();
 			sbStartLog.AppendLine("==================================================");
-			sbStartLog.AppendLine("  ResponseHub service started.");
+			sbStartLog.AppendLine("  ResponseHub pager decoder service started.");
 			sbStartLog.AppendLine("==================================================");
 			sbStartLog.AppendLine(String.Format("  Message Timer Interval: {0}", ConfigurationManager.AppSettings[_serviceIntervalKey]));
             sbStartLog.AppendLine(String.Format("  Cleanup Timer Interval: {0}", ConfigurationManager.AppSettings[_cleanupIntervalKey]));

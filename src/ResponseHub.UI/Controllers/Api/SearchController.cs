@@ -84,13 +84,13 @@ namespace Enivate.ResponseHub.UI.Controllers.Api
 				PagedResultSet<JobMessage> results = await JobMessageService.FindByKeyword(keywords, capcodes.Select(i => i.CapcodeAddress), messageTypes, dateFrom, dateTo, 50, model.Skip, true);
 
 				// Create the job message list view model
-				JobMessageListViewModel resultsModel = await CreateJobMessageListModel(capcodes, results.Items);
+				JobMessageListViewModel resultsModel = CreateJobMessageListModel(capcodes, results.Items);
 
 				// Create the model
 				SearchViewModel mappedResults = new SearchViewModel
 				{
 					SearchKeywords = keywords,
-					Results = resultsModel.Messages,
+					Results = resultsModel.JobMessages,
 					TotalResults = results.TotalResults,
 					DateFrom = (dateFromSet ? dateFrom : (DateTime?)null),
 					DateTo = (dateToSet ? dateTo : (DateTime?)null),
@@ -113,10 +113,10 @@ namespace Enivate.ResponseHub.UI.Controllers.Api
 		/// <param name="capcodes"></param>
 		/// <param name="jobMessages"></param>
 		/// <returns></returns>
-		public async Task<JobMessageListViewModel> CreateJobMessageListModel(IList<Capcode> capcodes, IList<JobMessage> jobMessages)
+		public JobMessageListViewModel CreateJobMessageListModel(IList<Capcode> capcodes, IList<JobMessage> jobMessages)
 		{
 			// Create the list of job message view models
-			IList<JobMessageViewModel> jobMessageViewModels = new List<JobMessageViewModel>();
+			IList<JobMessageListItemViewModel> jobMessageViewModels = new List<JobMessageListItemViewModel>();
 			foreach (JobMessage jobMessage in jobMessages)
 			{
 
@@ -124,81 +124,20 @@ namespace Enivate.ResponseHub.UI.Controllers.Api
 				Capcode capcode = capcodes.FirstOrDefault(i => i.CapcodeAddress == jobMessage.Capcode);
 
 				// Map the view model and add to the list
-				jobMessageViewModels.Add(await MapJobMessageToViewModel(jobMessage, capcode.FormattedName()));
+				JobMessageListItemViewModel jobListItem = JobMessageListItemViewModel.FromJobMessage(jobMessage, capcode, null);
+				if (jobListItem != null)
+				{
+					jobMessageViewModels.Add(jobListItem);
+				}
 
 			}
 
 			// Create the model object
 			JobMessageListViewModel model = new JobMessageListViewModel()
 			{
-				Messages = jobMessageViewModels,
-				UserCapcodes = capcodes
+				JobMessages = jobMessageViewModels
 			};
 			return model;
-		}
-
-		public async Task<JobMessageViewModel> MapJobMessageToViewModel(JobMessage job, string capcodeUnitName)
-		{
-
-
-			// Map the job notes to the list of job notes view models
-			IList<JobNoteViewModel> jobNotesModels = await JobMessageModelHelper.MapJobNotesToViewModel(job.Notes, UserService);
-
-			JobMessageViewModel model = new JobMessageViewModel()
-			{
-				Capcode = job.Capcode,
-				CapcodeUnitName = capcodeUnitName,
-				Id = job.Id,
-				JobNumber = job.JobNumber,
-				Location = job.Location,
-				MessageBody = job.MessageContent,
-				Notes = jobNotesModels,
-				Priority = job.Priority,
-				Timestamp = job.Timestamp.ToLocalTime()
-			};
-
-			// Set the on route, on scene, job clear values
-			model.OnRoute = await GetProgressModel(job, MessageProgressType.OnRoute);
-			model.OnScene = await GetProgressModel(job, MessageProgressType.OnScene);
-			model.JobClear = await GetProgressModel(job, MessageProgressType.JobClear);
-			model.Cancelled = await GetProgressModel(job, MessageProgressType.Cancelled);
-
-			// return the mapped job view model
-			return model;
-
-		}
-
-		/// <summary>
-		/// Gets the progress model for the specific progress type, if it exists. 
-		/// </summary>
-		/// <param name="job">The job to get the progress from. </param>
-		/// <param name="progressType">The progress type to get.</param>
-		/// <returns></returns>
-		public static async Task<MessageProgressViewModel> GetProgressModel(JobMessage job, MessageProgressType progressType)
-		{
-			MessageProgress progress = job.ProgressUpdates.FirstOrDefault(i => i.ProgressType == progressType);
-			if (progress != null)
-			{
-				MessageProgressViewModel progressModel = new MessageProgressViewModel()
-				{
-					Timestamp = progress.Timestamp.ToLocalTime(),
-					UserId = progress.UserId,
-					ProgressType = progress.ProgressType
-				};
-
-				// Get the user who updated the progress.
-				IdentityUser progressUser = await ServiceLocator.Get<IUserService>().FindByIdAsync(progress.UserId);
-				if (progressUser != null)
-				{
-					progressModel.UserFullName = progressUser.FullName;
-				}
-
-				return progressModel;
-			}
-			else
-			{
-				return null;
-			}
 		}
 
 		#endregion

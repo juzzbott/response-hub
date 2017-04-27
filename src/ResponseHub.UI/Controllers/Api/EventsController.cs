@@ -7,13 +7,17 @@ using System.Threading.Tasks;
 using System.Web.Http;
 
 using Enivate.ResponseHub.Common;
-using Enivate.ResponseHub.Logging;
 using Enivate.ResponseHub.Model;
-using Enivate.ResponseHub.Model.Agencies;
 using Enivate.ResponseHub.Model.Agencies.Interface;
-using Enivate.ResponseHub.Model.Events;
 using Enivate.ResponseHub.Model.Events.Interface;
+using Enivate.ResponseHub.Model.Crews;
+using Enivate.ResponseHub.Model.Identity;
 using Enivate.ResponseHub.UI.Models.Api.Events;
+using Enivate.ResponseHub.UI.Models.Events;
+using Enivate.ResponseHub.UI.Models.Users;
+using Enivate.ResponseHub.Model.Messages.Interface;
+using Enivate.ResponseHub.Model.Messages;
+using Enivate.ResponseHub.Model.Events;
 
 namespace Enivate.ResponseHub.UI.Controllers.Api
 {
@@ -22,76 +26,166 @@ namespace Enivate.ResponseHub.UI.Controllers.Api
 	public class EventsController : BaseApiController
     {
 
-		IEventService EventService
-		{
-			get
-			{
-				return ServiceLocator.Get<IEventService>();
-			}
-		}
+		IEventService EventService = ServiceLocator.Get<IEventService>();
+		IAgencyService AgencyService = ServiceLocator.Get<IAgencyService>();
+		IAuthorisationService AuthorisationService = ServiceLocator.Get<IAuthorisationService>();
+		IJobMessageService JobMessageService = ServiceLocator.Get<IJobMessageService>();
 
-		IAgencyService AgencyService
+		[Route("{eventId:guid}")]
+		[HttpGet]
+		public async Task<GetEventViewModel> GetEvent(Guid eventId)
 		{
-			get
-			{
-				return ServiceLocator.Get<IAgencyService>();
-			}
-		}
+			// Get the event based on the id
+			Event eventObj = await EventService.GetById(eventId);
 
-		IAuthorisationService AuthorisationService
-		{
-			get
-			{
-				return ServiceLocator.Get<IAuthorisationService>();
-			}
-		}
-
-		#region Resources
-
-		[Route("{id:guid}/resources")]
-		[HttpPost]
-		public async Task<AddResourceResponseModel> AddResource(Guid id, AddResourcePostModel model)
-		{
-			// Get the event by the id
-			Event eventObj = await EventService.GetById(id);
-			
-			// If the event is null, throw not found
+			// If the job is null, return 404
 			if (eventObj == null)
 			{
 				throw new HttpResponseException(HttpStatusCode.NotFound);
 			}
 
-			// Ensure the user can edit the event
-			if (!await AuthorisationService.CanEditEvent(eventObj, UserId))
+			GetEventViewModel model = new GetEventViewModel()
 			{
-				throw new HttpResponseException(HttpStatusCode.Forbidden);
+				Id = eventObj.Id,
+				FinishedDate = eventObj.FinishedDate,
+				StartDate = eventObj.StartDate,
+				Name = eventObj.Name,
+				Finished = eventObj.FinishedDate.HasValue,
+				Description = eventObj.Description
+			};
+
+			TimeSpan duration;
+
+			// If finsihed, set the duration string
+			if (model.Finished)
+			{
+				duration = model.FinishedDate.Value - model.StartDate;
+			}
+			else
+			{
+				// Use UtcNow as StartDate is stored in UTC time.
+				duration = DateTime.UtcNow - model.StartDate;
 			}
 
-			try
+			// Set the duration
+			model.DurationString = String.Format("{0} days {1} hours", duration.ToString("%d"), duration.ToString("%h"));
+
+			// Get the jobs for the event
+			model.Jobs = await GetJobsForEvent(eventObj.JobMessageIds, eventObj);
+			model.UnassignedJobsCount = model.Jobs.Count(i => !i.Assigned);
+			model.InProgressJobsCount = model.Jobs.Count(i => i.Status == EventJobStatus.InProgress);
+			model.CompletedJobsCount = model.Jobs.Count(i => i.Status == EventJobStatus.Completed);
+
+			// return the event model
+			return model;
+		}
+
+		#region Crews
+
+		[Route("{eventId:guid}/crews")]
+		[HttpGet]
+
+		public async Task<IList<CrewViewModel>> GetCrews(Guid eventId)
+		{
+			// Get the event based on the id
+			Event eventObj = await EventService.GetById(eventId);
+
+			// If the job is null, return 404
+			if (eventObj == null)
 			{
+				throw new HttpResponseException(HttpStatusCode.NotFound);
+			}
 
-				// Add the resource to the event
-				EventResource newResource = await EventService.AddResourceToEvent(id, model.Name, model.AgencyId, model.UserId, model.Type);
+			List<Guid> memberIds = new List<Guid>();
 
-				// Get the agency
-				Agency agency = await AgencyService.GetByID(model.AgencyId);
+			// Add the crew leaders
+			memberIds.AddRange(eventObj.Crews.Select(i => i.CrewLeaderId));
 
-				// return the response model.
-				return new AddResourceResponseModel()
+			// Add the crew members, excluding the crew leader user.
+			memberIds.AddRange(eventObj.Crews.SelectMany(i => i.CrewMembers));
+
+			// Remove any duplicates
+			memberIds = memberIds.Distinct().ToList();
+
+			// Get the users with the specific ids
+			IList<IdentityUser> members = await UserService.GetUsersByIds(memberIds);
+
+			// Create the list of crews
+			IList<CrewViewModel> crewModels = new List<CrewViewModel>();
+
+			// Loop through the crews
+			foreach (Crew crew in eventObj.Crews)
+			{
+				// Create the model
+				CrewViewModel crewModel = new CrewViewModel()
 				{
-					AgencyId = model.AgencyId,
-					AgencyName = agency.Name,
-					Id = newResource.Id,
-					Name = model.Name
+					Id = crew.Id,
+					Created = crew.Created,
+					Name = crew.Name,
+					Updated = crew.Updated,
+					CrewLeader = UnitMemberViewModel.FromIdentityUserWithoutRole(members.FirstOrDefault(i => i.Id == crew.CrewLeaderId)),
+					CrewMembers = members.Where(i => crew.CrewMembers.Where(x => x != crew.CrewLeaderId).Contains(i.Id)).Select(i => UnitMemberViewModel.FromIdentityUserWithoutRole(i)).ToList()
 				};
+				crewModels.Add(crewModel);
+			}
 
-			}
-			catch (Exception ex)
+			// return the crews
+			return crewModels;
+		}
+
+		[Route("{eventId:guid}/crew/{crewId:guid}")]
+		public async Task<CrewViewModel> GetCrew(Guid eventId, Guid crewId)
+		{
+			Crew crew = await EventService.GetCrewFromEvent(eventId, crewId);
+
+			// If the crew is null, throw not found
+			if (crew == null)
 			{
-				// Log the exception and throw http exception
-				await Log.Error(String.Format("Unable to create new event resource. Message: {0}", ex.Message), ex);
-				throw new HttpResponseException(HttpStatusCode.InternalServerError);
+				throw new HttpResponseException(HttpStatusCode.NotFound);
 			}
+
+			List<Guid> memberIds = new List<Guid>();
+
+			// Add the crew leaders
+			memberIds.Add(crew.CrewLeaderId);
+
+			// Add the crew members, excluding the crew leader user.
+			memberIds.AddRange(crew.CrewMembers);
+
+			// Remove any duplicates
+			memberIds = memberIds.Distinct().ToList();
+
+			// Get the users with the specific ids
+			IList<IdentityUser> members = await UserService.GetUsersByIds(memberIds);
+			
+			// Create the model
+			CrewViewModel crewModel = new CrewViewModel()
+			{
+				Id = crew.Id,
+				Created = crew.Created,
+				Name = crew.Name,
+				Updated = crew.Updated,
+				CrewLeader = UnitMemberViewModel.FromIdentityUserWithoutRole(members.FirstOrDefault(i => i.Id == crew.CrewLeaderId)),
+				CrewMembers = members.Where(i => crew.CrewMembers.Where(x => x != crew.CrewLeaderId).Contains(i.Id)).Select(i => UnitMemberViewModel.FromIdentityUserWithoutRole(i)).ToList()
+			};
+
+			// Get the jobs
+			IList<JobMessage> jobMessages = await JobMessageService.GetByIds(crew.JobMessageIds);
+
+			// Map the jobs to the assigned job view model
+			crewModel.AssignedJobs = jobMessages.Select(i => EventJobViewModel.FromJobMessage(i)).ToList();
+
+			// return the crewModel
+			return crewModel;
+
+		}
+
+		[Route("{eventId:guid}/crew/{crewId:guid}/assign-jobs")]
+		public async Task AssignJobsToCrew(Guid eventId, Guid crewId, AssignJobsToCrewPostModel model)
+		{
+
+			// Assign the jobs to the crews
+			await EventService.AssignJobsToCrew(eventId, crewId, model.JobMessageIds);
 
 		}
 
@@ -99,6 +193,38 @@ namespace Enivate.ResponseHub.UI.Controllers.Api
 
 		#region Helpers
 
+
+
+		/// <summary>
+		/// Gets the jobs for the specific list of job message ids.
+		/// </summary>
+		/// <param name="jobMessageIds"></param>
+		/// <returns></returns>
+		private async Task<IList<EventJobViewModel>> GetJobsForEvent(IList<Guid> jobMessageIds, Event eventObj)
+		{
+
+			// Get the messages for the capcodes
+			IList<JobMessage> jobMessages = await JobMessageService.GetByIds(jobMessageIds);
+
+			// Get the list of event jobs
+			IList<EventJobViewModel> eventJobs = jobMessages.Select(i => EventJobViewModel.FromJobMessage(i)).ToList();
+
+			// Get all jobs ids currently assigned to crews
+			IList<Guid> assignedJobIds = eventObj.Crews.SelectMany(i => i.JobMessageIds).ToList();
+
+			// Determine jobs that have been assigned
+			for (int i = 0; i < eventJobs.Count; i++)
+			{
+				// If the id is contained within the assigned jobs, then mark it as assigned
+				if (assignedJobIds.Contains(eventJobs[i].Id))
+				{
+					eventJobs[i].Assigned = true;
+				}
+			}
+
+			// return the event jobs
+			return eventJobs;
+		}
 
 		#endregion
 

@@ -161,20 +161,60 @@
 		// Set the graphic radioes and checkboxes
 		setGraphicRadiosCheckboxes();
 
+		// Activate selected tab from bootstrap
+		var hash = window.location.hash;
+		if (hash) {
+			var selectedTab = $('.nav li a[href="' + hash + '"]');
+			if (selectedTab.length > 0) {
+				selectedTab.trigger('click', true);
+				removeHash();
+			}
+		}
+
+	}
+
+	/**
+	 * Removes the hash from the url
+	 */
+	function removeHash() {
+		var scrollV, scrollH, loc = window.location;
+		if ("pushState" in history)
+			history.pushState("", document.title, loc.pathname + loc.search);
+		else {
+			// Prevent scrolling by storing the page's current scroll offset
+			scrollV = document.body.scrollTop;
+			scrollH = document.body.scrollLeft;
+
+			loc.hash = "";
+
+			// Restore the scroll offset, should be flicker free
+			document.body.scrollTop = scrollV;
+			document.body.scrollLeft = scrollH;
+		}
 	}
 
 	// Create the "graphic radio" and "graphic checkbox" functionality
 	function setGraphicRadiosCheckboxes() {
 		
 		$('.graphic-radio label, .graphic-checkbox label').each(function (index, elem) {
+			if ($(elem).find('i').length > 0)
+			{
+				return;
+			}
 			$(elem).contents().eq(2).wrap('<span/>');
 		});
 
 		$('.graphic-radio label input[type="radio"]').each(function (index, elem) {
+			if ($(elem).parent().find('i').length > 0) {
+				return;
+			}
 			$(elem).after('<i class="fa fa-circle-o"></i><i class="fa fa-dot-circle-o"></i>');
 		});
 
 		$('.graphic-checkbox label input[type="checkbox"]').each(function (index, elem) {
+			if ($(elem).parent().find('i').length > 0) {
+				return;
+			}
 			$(elem).after('<i class="fa fa-fw fa-square-o"></i><i class="fa  fa-fw fa-check-square-o"></i>');
 		});
 
@@ -184,6 +224,27 @@
 		// By default validator ignores hidden fields.
 		// change the setting here to ignore nothing
 		$.validator.setDefaults({ ignore: null });
+	}
+
+	/**
+	 * Gets a query string value based on the parameter.
+	 * @param {any} name
+	 * @param {any} url
+	 */
+	function getQueryString(name, url) {
+
+		// Default the url to the current location
+		if (!url) {
+			url = window.location.href;
+		}
+
+		// Get the name of the query string
+		name = name.replace(/[\[\]]/g, "\\$&");
+		var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+			results = regex.exec(url);
+		if (!results) return null;
+		if (!results[2]) return '';
+		return decodeURIComponent(results[2].replace(/\+/g, " "));
 	}
 
 	// Bind the modal
@@ -199,7 +260,21 @@
 	return {
 		apiPrefix: apiPrefix,
 		isMobile: isMobile,
-		executeFunctionByName: executeFunctionByName
+		executeFunctionByName: executeFunctionByName,
+		setGraphicRadiosCheckboxes: setGraphicRadiosCheckboxes,
+		getQueryString: getQueryString
 	}
 
 })();
+
+jQuery.fn.insertAt = function (index, element) {
+	var lastIndex = this.children().size();
+	if (index < 0) {
+		index = Math.max(0, lastIndex + 1 + index);
+	}
+	this.append(element);
+	if (index < lastIndex) {
+		this.children().eq(index).before(this.children().last());
+	}
+	return this;
+}

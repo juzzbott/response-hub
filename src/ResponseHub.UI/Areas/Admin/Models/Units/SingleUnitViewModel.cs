@@ -22,7 +22,7 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Models.Units
 
 		public string Capcode { get; set; }
 
-		public IList<UnitUserViewModel> Users { get; set; }
+		public IList<UnitMemberViewModel> Users { get; set; }
 
 		public Coordinates HeadquartersCoordinates { get; set; }
 
@@ -30,7 +30,7 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Models.Units
 
 		public SingleUnitViewModel()
 		{
-			Users = new List<UnitUserViewModel>();
+			Users = new List<UnitMemberViewModel>();
 			AdditionalCapcodes = new List<Capcode>();
 		}
 

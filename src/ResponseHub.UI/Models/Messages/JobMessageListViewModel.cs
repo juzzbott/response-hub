@@ -11,9 +11,7 @@ namespace Enivate.ResponseHub.UI.Models.Messages
 	public class JobMessageListViewModel
 	{
 
-		public IList<JobMessageViewModel> Messages { get; set; }
-
-		public IList<Capcode> UserCapcodes { get; set; }
+		public IList<JobMessageListItemViewModel> JobMessages { get; set; }
 
 		public JobMessageFilter Filter { get; set; }
 
@@ -21,8 +19,7 @@ namespace Enivate.ResponseHub.UI.Models.Messages
 
 		public JobMessageListViewModel()
 		{
-			Messages = new List<JobMessageViewModel>();
-			UserCapcodes = new List<Capcode>();
+			JobMessages = new List<JobMessageListItemViewModel>();
 			Filter = new JobMessageFilter();
 		}
 

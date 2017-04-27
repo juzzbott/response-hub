@@ -77,12 +77,12 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 			bool prioritySet = false;
 			if (messageTypes.HasFlag(MessageType.Job))
 			{
-				priorityFilter = priorityFilter | (builder.Eq(i => i.Priority, MessagePriority.Emergency) | builder.Eq(i => i.Priority, MessagePriority.NonEmergency));
+				priorityFilter = priorityFilter | builder.Eq(i => i.Type, MessageType.Job);
 				prioritySet = true;
 			}
 			if (messageTypes.HasFlag(MessageType.Message))
 			{
-				priorityFilter = priorityFilter | builder.Eq(i => i.Priority, MessagePriority.Administration);
+				priorityFilter = priorityFilter | builder.Eq(i => i.Type, MessageType.Message);
 				prioritySet = true;
 			}
 			if (prioritySet)
@@ -102,6 +102,71 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 
 			// return the messages
 			return messages;
+		}
+
+		/// <summary>
+		/// Gets the job messages for the list of capcodes specified between the specific dates. Results are limited to count number of items.
+		/// </summary>
+		/// <param name="capcodes"></param>
+		/// <param name="messageTypes"></param>
+		/// <param name="dateFrom"></param>
+		/// <param name="dateTo"></param>
+		/// <returns></returns>
+		public async Task<IList<Guid>> GetMessageIdsBetweenDates(IEnumerable<string> capcodes, MessageType messageTypes, DateTime? dateFrom, DateTime? dateTo)
+		{
+			// Create the filter and sort
+			FilterDefinitionBuilder<JobMessageDto> builder = Builders<JobMessageDto>.Filter;
+			FilterDefinition<JobMessageDto> filter = builder.In(i => i.Capcode, capcodes);
+
+			// If there is dateFrom and dateTo filters, add them
+			if (dateFrom.HasValue)
+			{
+				filter &= builder.Gte(i => i.Timestamp, dateFrom.Value.ToUniversalTime());
+			}
+			if (dateTo.HasValue)
+			{
+				filter &= builder.Lte(i => i.Timestamp, dateTo.Value.ToUniversalTime());
+			}
+
+
+			// Add the message type to the filter.
+			FilterDefinition<JobMessageDto> priorityFilter = builder.Or();
+			bool prioritySet = false;
+			if (messageTypes.HasFlag(MessageType.Job))
+			{
+				priorityFilter = priorityFilter | builder.Eq(i => i.Type, MessageType.Job);
+				prioritySet = true;
+			}
+			if (messageTypes.HasFlag(MessageType.Message))
+			{
+				priorityFilter = priorityFilter | builder.Eq(i => i.Type, MessageType.Message);
+				prioritySet = true;
+			}
+			if (prioritySet)
+			{
+				filter &= priorityFilter;
+			}
+
+			// Create the sort filter
+			SortDefinition<JobMessageDto> sort = Builders<JobMessageDto>.Sort.Descending(i => i.Timestamp);
+
+			// Create the projection to only include the ids
+			ProjectionDefinition<JobMessageDto> projection = Builders<JobMessageDto>.Projection.Include(i => i.Id);
+
+			// return the list of job message ids for the unit between the specified dates
+			var results = await Collection.Find(filter).Sort(sort).Project(projection).ToListAsync();
+
+			// Loop through the results
+			IList<Guid> jobMessageIds = new List<Guid>();
+			foreach(BsonDocument result in results)
+			{
+				// The first value is the id, so we want to map that to a guid
+				jobMessageIds.Add(result[0].AsGuid);
+			}
+
+			// return the list of job message ids
+			return jobMessageIds;
+
 		}
 
 		/// <summary>
@@ -241,6 +306,20 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 
 			// return the mapped job message
 			return MapDbObjectToModel(message);
+		}
+
+		/// <summary>
+		/// Gets a JobMessages based on the ids supplied.
+		/// </summary>
+		/// <param name="id">The collection of Ids to return job messages for.</param>
+		/// <returns>The job messages list..</returns>
+		public async Task<IList<JobMessage>> GetByIds(IEnumerable<Guid> ids)
+		{
+			// Get the data object from the db
+			IList<JobMessageDto> messages = await Collection.Find(Builders<JobMessageDto>.Filter.In(i => i.Id, ids)).ToListAsync();
+
+			// return the mapped job message
+			return messages.Select(i => MapDbObjectToModel(i)).ToList();
 		}
 
 		/// <summary>

@@ -3,6 +3,17 @@
 <ul class="nav nav-sidebar">
 	<li class="@(ViewContext.RouteData.Values["Controller"].ToString() == "Jobs" ? "active" : "")">
 		<a href="/jobs"><i class="fa fa-fw fa-list-alt"></i>Jobs</a>
+		@if (ViewContext.RouteData.Values["Controller"].ToString() == "Jobs")
+		{
+		<ul>
+			<li>
+				<a href="/jobs/event-jobs">Event jobs</a>
+			</li>
+			<li>
+				<a href="/jobs/all-jobs">All jobs</a>
+			</li>
+		</ul>
+		}
 	</li>
 	<li class="@(ViewContext.RouteData.Values["Controller"].ToString() == "Messages" ? "active" : "")">
 		<a href="/messages"><i class="fa fa-fw fa-sticky-note-o"></i>Messages</a>
@@ -21,11 +32,9 @@
 			</ul>
 		}
 	</li>
-	<!--
 	<li class="@(ViewContext.RouteData.Values["Controller"].ToString() == "Events" ? "active" : "")">
 		<a href="/events"><i class="fa fa-fw fa-bullhorn"></i>Events</a>
 	</li>
-	-->
 	<li class="@(ViewContext.RouteData.Values["Controller"].ToString() == "Wallboard" ? "active" : "")">
 		<a href="/wallboard"><i class="fa fa-fw fa-desktop"></i>Wallboard view</a>
 	</li>

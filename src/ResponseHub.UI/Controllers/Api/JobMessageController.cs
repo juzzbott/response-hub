@@ -32,26 +32,13 @@ namespace Enivate.ResponseHub.UI.Controllers.Api
 	[RoutePrefix("api/job-messages")]
     public class JobMessageController : BaseApiController
     {
-		protected IJobMessageService JobMessageService
-		{
-			get
-			{
-				return ServiceLocator.Get<IJobMessageService>();
-			}
-		}
-
-		protected ICapcodeService CapcodeService
-		{
-			get
-			{
-				return ServiceLocator.Get<ICapcodeService>();
-			}
-		}
+		protected readonly IJobMessageService JobMessageService = ServiceLocator.Get<IJobMessageService>();
+		protected readonly ICapcodeService CapcodeService = ServiceLocator.Get<ICapcodeService>();
 		protected readonly ISignInEntryService SignInEntryService = ServiceLocator.Get<ISignInEntryService>();
 
 		[Route]
 		[HttpGet]
-		public async Task<IList<JobMessageViewModel>> Get()
+		public async Task<IList<JobMessageListItemViewModel>> Get()
 		{
 
 			// Get the capcodes for the user.
@@ -59,6 +46,7 @@ namespace Enivate.ResponseHub.UI.Controllers.Api
 
 			// Store the skip and count values
 			int count = 50;
+			Int32.TryParse(ConfigurationManager.AppSettings["JobMessages.DefaultResultLimit"], out count);
 			int skip = 0;
 			MessageType messageType = MessageType.Job;
 
@@ -106,7 +94,7 @@ namespace Enivate.ResponseHub.UI.Controllers.Api
 					dateFrom = DateTime.ParseExact(qs.FirstOrDefault(x => x.Key == "date_from").Value, "dd/MM/yyyy", CultureInfo.CurrentCulture, DateTimeStyles.AssumeLocal);
 				}
 
-				if (qs.Count(i => i.Key.ToLower() == "date_to") > 0 && !String.IsNullOrEmpty(qs.FirstOrDefault(i => i.Key.ToLower() == "date_from").Value))
+				if (qs.Count(i => i.Key.ToLower() == "date_to") > 0 && !String.IsNullOrEmpty(qs.FirstOrDefault(i => i.Key.ToLower() == "date_to").Value))
 				{
 					dateTo = DateTime.ParseExact(qs.FirstOrDefault(x => x.Key == "date_to").Value, "dd/MM/yyyy", CultureInfo.CurrentCulture, DateTimeStyles.AssumeLocal);
 				}
@@ -116,28 +104,24 @@ namespace Enivate.ResponseHub.UI.Controllers.Api
 
 			}
 
-			// Get all the sign ins for the messages
-			IList<SignInEntry> allSignIns = await SignInEntryService.GetSignInsForJobMessages(jobMessages.Select(i => i.Id));
+			// Get all the user ids for the progress in te jobs
+			List<Guid> allUserIds = new List<Guid>();
+			allUserIds.AddRange(jobMessages.SelectMany(i => i.ProgressUpdates.Select(j => j.UserId)).ToList());
+			allUserIds = allUserIds.Distinct().ToList();
 
-			// Get all the users for the job sign ins
-			IList<IdentityUser> allSignInUsers = await UserService.GetUsersByIds(allSignIns.Select(i => i.UserId));
+			// Get all the users that match the ids
+			IList<IdentityUser> users = await UserService.GetUsersByIds(allUserIds);
 
 			// return the mapped view models
-			IList<JobMessageViewModel> models = new List<JobMessageViewModel>();
+			IList<JobMessageListItemViewModel> models = new List<JobMessageListItemViewModel>();
 			foreach(JobMessage message in jobMessages)
 			{
 
-				// Get the sign ins for the job
-				IList<SignInEntry> messageSignIns = allSignIns.Where(i => i.OperationDetails.JobId == message.Id).ToList();
-
-				// Get the list of users who signed in for the job
-				IList<IdentityUser> signInUsers = allSignInUsers.Where(i => messageSignIns.Select(u => u.UserId).Contains(i.Id)).ToList();
-
 				// Get the capcode
-				string capcodeUnitName = capcodes.FirstOrDefault(i => i.CapcodeAddress == message.Capcode).FormattedName();
+				Capcode capcode = capcodes.FirstOrDefault(i => i.CapcodeAddress == message.Capcode);
 
 				// Add the mapped job message view model
-				models.Add(await BaseJobsMessagesController.MapJobMessageToViewModel(message, capcodeUnitName, messageSignIns, signInUsers, null));
+				models.Add(JobMessageListItemViewModel.FromJobMessage(message, capcode, users));
 			}
 
 			// return the mapped models
@@ -150,6 +134,7 @@ namespace Enivate.ResponseHub.UI.Controllers.Api
 		public async Task<IList<JobMessage>> PagerMessages()
 		{
 			int count = 50;
+			Int32.TryParse(ConfigurationManager.AppSettings["JobMessages.DefaultResultLimit"], out count);
 			int skip = 0;
 
 			// Get the skip query string
@@ -386,7 +371,7 @@ namespace Enivate.ResponseHub.UI.Controllers.Api
 
 		[Route("latest-from-last-id")]
 		[HttpPost]
-		public async Task<IList<JobMessageViewModel>> GetLatestMessagesFromLast(PostGetLatestFromLastModel model)
+		public async Task<IList<JobMessageListItemViewModel>> GetLatestMessagesFromLast(PostGetLatestFromLastModel model)
 		{
 
 			try
@@ -400,13 +385,7 @@ namespace Enivate.ResponseHub.UI.Controllers.Api
 				IList<JobMessage> latestMessages = await JobMessageService.GetLatestFromLastMessage(model.LastMessageId, capcodeStrings, model.MessageType);
 
 				// Create the list of job message view models
-				IList<JobMessageViewModel> latestMessagesModels = new List<JobMessageViewModel>();
-
-				// Get all the sign ins for the messages
-				IList<SignInEntry> allSignIns = await SignInEntryService.GetSignInsForJobMessages(latestMessages.Select(i => i.Id));
-
-				// Get all the users for the job sign ins
-				IList<IdentityUser> allSignInUsers = await UserService.GetUsersByIds(allSignIns.Select(i => i.UserId));
+				IList<JobMessageListItemViewModel> latestMessagesModels = new List<JobMessageListItemViewModel>();
 
 				// Map the job messages to the JobMesageViewModel type
 				if (latestMessages != null && latestMessages.Count > 0)
@@ -416,23 +395,10 @@ namespace Enivate.ResponseHub.UI.Controllers.Api
 					foreach(JobMessage message in latestMessages)
 					{
 						// Get the capcode unit name from the list of capcodes
-						Capcode messageCapcode = capcodes.FirstOrDefault(i => i.CapcodeAddress == message.Capcode);
-						string capcodeUnitName = messageCapcode?.FormattedName();
-
-						// Get the sign ins for the job
-						IList<SignInEntry> messageSignIns = allSignIns.Where(i => i.OperationDetails.JobId == message.Id).ToList();
-
-						// Get the list of users who signed in for the job
-						IList<IdentityUser> signInUsers = allSignInUsers.Where(i => messageSignIns.Select(u => u.UserId).Contains(i.Id)).ToList();
-
-						// If there was no unit capcode name, just set to unknown
-						if (String.IsNullOrEmpty(capcodeUnitName))
-						{
-							capcodeUnitName = "Unknown";
-						}
+						Capcode capcode = capcodes.FirstOrDefault(i => i.CapcodeAddress == message.Capcode);
 
 						// Map to the JobMessageViewModel
-						latestMessagesModels.Add(await BaseJobsMessagesController.MapJobMessageToViewModel(message, capcodeUnitName, messageSignIns, signInUsers, null));
+						latestMessagesModels.Add(JobMessageListItemViewModel.FromJobMessage(message, capcode, null));
 					}
 
 				}

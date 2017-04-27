@@ -1,0 +1,70 @@
+﻿@model Enivate.ResponseHub.UI.Models.Events.EditEventViewModel
+
+@{
+    ViewBag.Title = "Edit event";
+}
+
+<h1>@ViewBag.Title</h1>
+
+<form action="@Request.Url.LocalPath" method="post">
+
+	@Html.AntiForgeryToken()
+
+	<div class="form-group">
+		<label for="Name">Name *</label>
+		<div class="row">
+			<div class="col-sm-8 col-md-6 col-lg-4">
+				@Html.TextBoxFor(model => model.Name, new { @class = "form-control", placeholder = "Event name" })
+			</div>
+		</div>
+		@Html.ValidationMessageFor(model => model.Name)
+	</div>
+
+	<div class="form-group">
+		<label for="Description">Description</label>
+		<div class="row">
+			<div class="col-sm-8 col-md-6">
+				@Html.TextAreaFor(model => model.Description, new { @class = "form-control", rows = "5" })
+			</div>
+		</div>
+	</div>
+
+	<div class="form-group">
+		<label for="DateStarted">Start date *</label>
+		<div class="row">
+			<div class="col-sm-8 col-md-6 col-lg-4">
+				<div class="input-group date datepicker-control" data-provide="datepicker" data-date-format="yyyy-mm-dd" data-date-autoclose="true" data-date-show-on-focus="false">
+					@Html.TextBoxFor(model => model.StartDate, new { @class = "form-control" })
+					<div class="input-group-addon">
+						<i class="fa fa-fw fa-calendar"></i>
+					</div>
+				</div>
+				<div class="text-muted"><em>Date format should be yyyy-mm-dd.</em></div>
+			</div>
+		</div>
+		@Html.ValidationMessageFor(model => model.StartDate)
+	</div>
+
+	<div class="form-group">
+		<label for="DateStarted">Start time *</label>
+		<div class="row">
+			<div class="col-sm-8 col-md-6 col-lg-4">
+				<div class="input-group timepicker-control">
+					@Html.TextBoxFor(model => model.StartTime, new { @class = "form-control" })
+					<div class="input-group-addon">
+						<i class="fa fa-fw fa-clock-o"></i>
+					</div>
+				</div>
+				<div class="text-muted"><em>Date format should be hh:mm and in 24 hour time.</em></div>
+			</div>
+		</div>
+		@Html.ValidationMessageFor(model => model.StartTime)
+	</div>
+
+	<div class="top-20">
+		<button type="submit" class="btn btn-primary">Save event</button>
+		<a href="@Request.Url.PathAndQuery.Replace("/edit", "")" class="btn btn-link">Cancel</a>
+	</div>
+
+
+</form>

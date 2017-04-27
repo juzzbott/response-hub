@@ -1,0 +1,55 @@
+﻿@model Enivate.ResponseHub.UI.Models.Events.EventViewModel
+
+@Html.Partial("_EventJobStats", Model)
+
+<div>
+	<ul id="event-map-legend" class="list-unstyled clearfix">
+		<li class="pull-right"><i class="fa fa-map-marker marker-cancelled"></i>Cancelled</li>
+		<li class="pull-right"><i class="fa fa-map-marker marker-requires-info"></i>Requires more info</li>
+		<li class="pull-right"><i class="fa fa-map-marker marker-in-progress"></i>In progress</li>
+		<li class="pull-right"><i class="fa fa-map-marker marker-completed"></i>Completed</li>
+		<li class="pull-right"><i class="fa fa-map-marker marker-assigned"></i>Assigned</li>
+		<li class="pull-right"><i class="fa fa-map-marker marker-unassigned"></i>Unassigned</li>
+	</ul>
+</div>
+
+<div id="map-messages"></div>
+<div id="map-canvas" style="height: 545px;"></div>
+<script type="text/javascript">
+
+	var jobLocations = [
+
+	@foreach(var job in Model.Jobs)
+	{
+		if (job.Coordinates == null || (job.Coordinates.Latitude == 0 && job.Coordinates.Longitude == 0))
+		{
+			continue;
+		}
+
+		var markerIcon = "event-unassigned";
+		if (job.Assigned)
+		{
+			markerIcon = "event-assigned";
+		}
+
+		switch (job.Status)
+		{
+			case Enivate.ResponseHub.Model.Events.EventJobStatus.Cancelled:
+				markerIcon = "event-cancelled";
+				break;
+			case Enivate.ResponseHub.Model.Events.EventJobStatus.Completed:
+				markerIcon = "event-completed";
+				break;
+			case Enivate.ResponseHub.Model.Events.EventJobStatus.FurtherInformationRequired:
+				markerIcon = "event-requires-info";
+				break;
+			case Enivate.ResponseHub.Model.Events.EventJobStatus.InProgress:
+				markerIcon = "event-in-progress";
+				break;
+		}
+
+		@:{ id: '@job.Id', jobNumber: '@job.JobNumber', messageBody: '@job.MessageBody', lat: @(job.Coordinates.Latitude), lon: @(job.Coordinates.Longitude), markerIcon: '@(markerIcon)'},
+	}
+	];
+
+</script>

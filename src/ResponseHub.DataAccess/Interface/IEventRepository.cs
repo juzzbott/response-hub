@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 using Enivate.ResponseHub.Model.Events;
+using Enivate.ResponseHub.Model.Crews;
 
 namespace Enivate.ResponseHub.DataAccess.Interface
 {
@@ -15,11 +16,29 @@ namespace Enivate.ResponseHub.DataAccess.Interface
 
 		Task<Event> GetById(Guid id);
 
-		Task<IList<Event>> GetEventsByUnit(IEnumerable<Guid> unitIds);
+		Task<IList<Event>> GetEventsByUnit(Guid unitIds);
 
-		Task<IList<Event>> FindByKeywords(string keywords, IEnumerable<Guid> unitIds);
+		Task<IList<Event>> FindByKeywords(string keywords, Guid unitId);
+		
+		Task<Crew> CreateCrew(Guid eventId, Crew crew);
 
-		Task<bool> AddResourceToEvent(Guid eventId, EventResource resource);
+		Task SaveCrew(Guid eventId, Crew crew);
+
+		Task<Crew> GetCrewFromEvent(Guid eventId, Guid crewId);
+
+		Task AssignJobsToCrew(Guid eventId, Guid crewId, IList<Guid> assignedJobIds);
+
+		Task FinishEvent(Guid eventId, DateTime finishDateTime);
+
+		Task SaveEvent(Guid eventId, string name, string description, DateTime startDate);
+
+		Task<IList<Event>> GetActiveEvents();
+
+		Task SetJobsToEvent(Guid eventId, IList<Guid> jobMessageIds);
+
+		Task<int> CountActiveEventsForUser(Guid userId);
+
+		Task<IList<Event>> GetActiveEventsForUser(Guid userId);
 
 	}
 }

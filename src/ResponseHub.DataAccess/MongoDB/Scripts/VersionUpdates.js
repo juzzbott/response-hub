@@ -2,10 +2,10 @@
 var schema_info_id = ObjectId("58e492e962cb703bc785da68");
 
 // Define the max schema version
-var schema_version = 6
+var schema_version = 7;
 
 // Ensure we have a schema to start with
-var schema_count = db.schema_info.count({})
+var schema_count = db.schema_info.count({});
 
 // If there is no schema version, then create one at version 1
 if (schema_count == 0) {
@@ -23,7 +23,7 @@ while (current_version < schema_version) {
 	current_version++;
 
 	// Print the current version
-	print(current_version);
+	print('Setting version: ' + current_version);
 
 	// Perform the schema upgrade
 	switch (current_version) {
@@ -85,6 +85,7 @@ while (current_version < schema_version) {
 			db.training_types.insert({ "_id": BinData(4, "6gLx6LzrSZmNgH3ZnuSbMA=="), "Name": "Four Wheel Drive", "ShortName": "4x4", "Description": "", "SortOrder": NumberInt(0) });
 			db.training_types.insert({ "_id": BinData(4, "D0c7VLbvRzafARf5t5b9YA=="), "Name": "Map and Navigation", "ShortName": "Map & Nav", "Description": "Reading and interpreting maps", "SortOrder": NumberInt(0) });
 			db.training_types.insert({ "_id": BinData(4, "rmcdDgsSRZ6iGAF9ELPl2A=="), "Name": "Other", "ShortName": "Other", "Description": "", "SortOrder": NumberInt(99) });
+			break;
 
 		case 5:
 			db.job_messages.update({}, { $set: { Version: NumberInt(1) } }, { multi: true });
@@ -111,6 +112,16 @@ while (current_version < schema_version) {
 			// Update 'Group Administrator' to 'Unit Administrator'
 			db.units.updateMany({ "Users.Role": "Group Administrator" }, { $set: { "Users.$.Role": "Unit Administrator" } });
 			db.users.updateMany({ "Claims.Value": "Group Administrator" }, { $set: { "Claims.$.Value": "Unit Administrator" } });
+			break;
+
+		case 7:
+			// Update events indexes
+			db.events.dropIndex('events_text');
+			db.events.createIndex({ Name: "text", Description: "text" }, { background: true, name: "events_text" });
+			db.events.createIndex({ 'Crews.CrewMembers': 1 }, { background: true, name: 'events_crews_users' });
+			db.events.dropIndex('unit_id_1');
+			db.events.createIndex({ "UnitId": 1 }, { background: true, name: 'unit_id' });
+
 	}
 
 	// Write the new schema version to the database

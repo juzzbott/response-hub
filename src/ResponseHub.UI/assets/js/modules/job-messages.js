@@ -277,9 +277,20 @@
 		$('#jobs-load-more .loading').removeClass('hidden');
 		$('#jobs-load-more button').addClass('hidden');
 
+		// Get the date_from and date_to
+		var dateTo = responseHub.getQueryString('date_to');
+		var dateFrom = responseHub.getQueryString('date_from');
+
+		// Build the filter query
+		var filterQuery = '';
+		if (dateTo != null || dateFrom != null)
+		{
+			filterQuery = 'date_from=' + dateFrom + '&date_to=' + dateTo;
+		}
+
 		// Create the ajax request
 		$.ajax({
-			url: responseHub.apiPrefix + '/job-messages/?skip=' + skipCount + '&msg_type=' + messageType,
+			url: responseHub.apiPrefix + '/job-messages/?skip=' + skipCount + '&msg_type=' + messageType + filterQuery,
 			dataType: 'json',
 			success: function (data) {
 
@@ -352,19 +363,19 @@
 		// Set the job status
 		if (jobMessage.Cancelled != null)
 		{
-			statusSpan.append('<i class="fa fa-ban"></i>');
+			statusSpan.append('<i class="fa fa-ban job-cancelled"></i>');
 		}
 		else if (jobMessage.JobClear != null)
 		{
-			statusSpan.append('<i class="fa fa-check-circle-o"></i>');
+			statusSpan.append('<i class="fa fa-check-circle-o job-clear"></i>');
 		}
 		else if (jobMessage.OnScene != null)
 		{
-			statusSpan.append('<i class="fa fa-hourglass-half"></i>');
+			statusSpan.append('<i class="fa fa-hourglass-half on-scene"></i>');
 		}
 		else if (jobMessage.OnRoute != null)
 		{
-			statusSpan.append('<i class="fa fa-arrow-circle-o-right"></i>');
+			statusSpan.append('<i class="fa fa-arrow-circle-o-right on-route"></i>');
 		}
 		else
 		{
@@ -676,16 +687,7 @@
 			$(this).find('.modal-body p').text(message);
 
 		});
-
-		// If we are on the job list page, then load the next jobs
-		if ($('#jobs-list-container').length > 0)
-		{
-			getNextJobMessages('job');
-		}
-		else if ($('#message-list-container').length > 0) {
-			// If we are on the job list page, then load the next jobs
-			getNextJobMessages('message');
-		}
+		
 	}
 
 	// Bind the UI

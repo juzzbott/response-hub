@@ -115,6 +115,20 @@ table {
 .btn-link-delete:hover {
   color: #a94442;
 }
+.btn-left-align {
+  padding-left: 0;
+  margin-left: 0;
+  border-left-width: 0;
+}
+.btn-link.btn-danger {
+  color: #a94442;
+}
+.btn-link.btn-danger:active {
+  color: #a94442;
+  background-color: transparent;
+  border-color: transparent;
+  text-decoration: underline;
+}
 .cursor-pointer {
   cursor: pointer;
 }
@@ -127,6 +141,9 @@ table {
     padding-left: 0;
   }
 }
+.panel-heading {
+  border-bottom: 1px solid #ddd;
+}
 /*
 	Top navbar styles
 */
@@ -138,6 +155,9 @@ table {
 .page-navbar a:hover,
 .page-navbar button:hover {
   text-decoration: none;
+}
+.page-navbar .navbar-brand {
+  font-family: 'Ubuntu', sans-serif;
 }
 .page-navbar .navbar-brand,
 .page-navbar .btn-link {
@@ -294,6 +314,7 @@ table {
   background-color: #202b30;
   border-right: 1px solid #eee;
   color: #808080;
+  font-family: 'Ubuntu', sans-serif;
 }
 .sidebar p.explore {
   letter-spacing: 2px;
@@ -487,7 +508,7 @@ footer p {
   font-size: 16px;
 }
 .main-content {
-  padding-bottom: 50px;
+  padding-bottom: 20px;
 }
 .content-container {
   padding: 0 20px;
@@ -915,6 +936,7 @@ i.p-message-admin {
   color: #ccc;
   display: block;
   float: left;
+  font-family: 'Ubuntu', sans-serif;
 }
 .wallboard-layout .navbar-brand,
 .weather-centre-layout .navbar-brand {
@@ -1067,6 +1089,18 @@ i.p-message-admin {
 .wallboard-layout ul.job-notes li small .wordback-icon,
 .wallboard-layout ul.job-notes li small .user-icon {
   padding-left: 10px;
+}
+.job-clear {
+  color: #64B752;
+}
+.on-scene {
+  color: #476890;
+}
+.on-route {
+  color: #DC9A63;
+}
+.job-cancelled {
+  color: #AA3939;
 }
 .weather-centre-layout .wallboard-warnings {
   background-color: #fff;
@@ -1563,17 +1597,146 @@ div.generated-report .notes li .wordback-icon {
 /**
  * Map styles
  */
-.current-map-location {
-  color: #7b74a8;
+.custom-icon-marker {
   margin-top: -10px;
   margin-left: -10px;
   display: block;
 }
-.lhq-map-location {
+.current-map-location {
+  color: #7b74a8;
+}
+.lhq-map-location,
+.event-marker {
   color: #FF862F;
-  margin-top: -10px;
-  margin-left: -10px;
+}
+.marker-unassigned {
+  color: #FF862F;
+}
+.marker-assigned {
+  color: #7b74a8;
+}
+.marker-completed {
+  color: #64B752;
+}
+.marker-in-progress {
+  color: #476890;
+}
+.marker-cancelled {
+  color: #AA3939;
+}
+.marker-requires-info {
+  color: #7F594D;
+}
+/**
+ * Event styles
+ */
+#event-map-legend li {
+  margin-right: 20px;
+}
+#event-map-legend li i {
+  font-size: 18px;
+  margin-right: 10px;
+}
+.event-map-view {
+  padding-bottom: 20px;
+}
+.event-overview-item {
+  text-align: center;
+  font-size: 16px;
+  margin-top: 20px;
+  margin-bottom: 15px;
+  padding-top: 0;
+  padding-bottom: 20px;
+  border-right: 3px solid #ddd;
+}
+.event-overview-item.no-border {
+  border-right: none;
+}
+.event-overview-item span {
   display: block;
+  font-size: 34px;
+}
+.event-job-allocation .jobs-list ul {
+  border-top: 1px solid #ddd;
+}
+.event-job-allocation .jobs-list li {
+  padding: 10px 20px 10px 10px;
+  border-bottom: 1px solid #ddd;
+}
+.event-job-allocation .jobs-list li:hover {
+  background-color: #fafafa;
+}
+.event-job-allocation .jobs-list li.allocated,
+.event-job-allocation .jobs-list li.allocated:hover {
+  background-color: #fcf6f2;
+}
+.event-job-allocation .jobs-list li h4 {
+  margin-top: 0;
+}
+.event-job-allocation .jobs-list li h4 span {
+  color: #31708f;
+}
+.event-job-allocation .jobs-list li .message-body {
+  max-height: 35px;
+  overflow-y: hidden;
+}
+.event-job-allocation .crew-allocation .assigned-jobs li {
+  border: 2px dashed #ddd;
+  margin: 10px 0;
+  padding: 10px;
+  background-color: #fafafa;
+  position: relative;
+}
+.event-job-allocation .crew-allocation .assigned-jobs li .drag-handle {
+  position: absolute;
+  top: 10px;
+  left: 0;
+  cursor: move;
+  color: #7b74a8;
+}
+.event-job-allocation .crew-allocation .assigned-jobs li .unassign {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  cursor: pointer;
+}
+.event-job-allocation .crew-allocation .assigned-jobs li .unassign button {
+  border: none;
+  padding: 0;
+  background: none;
+}
+.event-job-allocation .crew-allocation .assigned-jobs li .assigned-content {
+  margin-left: 30px;
+}
+.event-job-allocation .crew-allocation .assigned-jobs li .assigned-content h4 {
+  margin-top: 0;
+}
+.event-job-allocation .crew-allocation .assigned-jobs li .assigned-content h4 span {
+  padding-left: 15px;
+  color: #31708f;
+}
+.event-job-allocation .crew-allocation .assigned-jobs li .assigned-content p {
+  margin-bottom: 0;
+}
+.event-job-allocation .crew-allocation .assigned-jobs .assigned-jobs-highlight {
+  height: 70px;
+  border: 2px dashed #d0e5ef;
+  background-color: #f6fafc;
+}
+.crew-list .panel {
+  margin-bottom: 20px;
+  border-radius: 2px;
+}
+.crew-list .panel-heading a {
+  display: block;
+}
+.crew-list .panel-heading {
+  border-top-left-radius: 2px;
+  border-top-right-radius: 2px;
+}
+.crew-list .panel-body.crew-details {
+  padding-top: 0;
+  padding-bottom: 0;
 }
 /**
  * Mixins

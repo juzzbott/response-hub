@@ -20,11 +20,15 @@ namespace Enivate.ResponseHub.DataAccess.Interface
 
 		Task<IList<JobMessage>> GetMessagesBetweenDates(IEnumerable<string> capcodes, MessageType messageTypes, int count, int skip, DateTime? dateFrom, DateTime? dateTo);
 
+		Task<IList<Guid>> GetMessageIdsBetweenDates(IEnumerable<string> capcodes, MessageType messageTypes, DateTime? dateFrom, DateTime? dateTo);
+
 		Task<IList<JobMessage>> GetMostRecent(Guid lastId);
 
 		Task<IList<JobMessage>> GetLatestFromLastMessage(Guid lastId, IEnumerable<string> capcodes, MessageType messageTypes);
 
 		Task<JobMessage> GetById(Guid id);
+
+		Task<IList<JobMessage>> GetByIds(IEnumerable<Guid> ids);
 
 		Task<JobMessage> GetByJobNumber(string jobNumber);
 

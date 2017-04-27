@@ -5,7 +5,7 @@
 
 <h1>@ViewBag.Title</h1>
 
-<p>Events allow units to manage multiple jobs within a given timeframe. Within an event, you can create sectors and then assign jobs and resources to those sectors. Resources in the field can then view the assigned jobs, and work through the list of jobs.</p>
+<p>Events allow units to manage multiple jobs within a given timeframe. Within an event, you can create crews and then assign jobs and resources to those crews. Crews in the field can then view the assigned jobs, and work through the list of jobs.</p>
 
 <a href="/events/create" class="btn btn-primary btn-lg btn-icon"><i class="fa fa-plus"></i>Start new event</a>
 
@@ -15,16 +15,17 @@
 	<thead>
 		<tr>
 			<th>Name</th>
-			<th>Unit</th>
+			<th>Description</th>
 			<th>Started</th>
 			<th>Jobs</th>
+			<th>Crews</th>
 		</tr>
 	</thead>
 	<tbody>
 		@if (Model == null || Model.Count == 0)
 		{
 			<tr>
-				<td colspan="3">No events found.</td>
+				<td colspan="4">No events found.</td>
 			</tr>
 		}
 		else
@@ -33,9 +34,10 @@
 			{
 				<tr>
 					<td><a href="/events/@eventObj.Id">@eventObj.Name</a></td>
-					<td><a href="/events/@eventObj.UnitId">@eventObj.UnitName</a></td>
+					<td>@eventObj.Description</td>
 					<td>@eventObj.StartDate.ToString("d MMMM yyyy HH:mm")</td>
-					<td>0</td>
+					<td>@eventObj.JobsCount</td>
+					<td>@eventObj.CrewsCount</td>
 				</tr>
 			}
 		}

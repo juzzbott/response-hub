@@ -8,6 +8,7 @@ using Enivate.ResponseHub.DataAccess.Interface;
 using Enivate.ResponseHub.Logging;
 using Enivate.ResponseHub.Model.Events;
 using Enivate.ResponseHub.Model.Events.Interface;
+using Enivate.ResponseHub.Model.Crews;
 
 namespace Enivate.ResponseHub.ApplicationServices
 {
@@ -32,15 +33,16 @@ namespace Enivate.ResponseHub.ApplicationServices
 		/// <param name="userId"></param>
 		/// <param name="startDate"></param>
 		/// <returns></returns>
-		public async Task<Event> CreateEvent(string name, Guid unitId, Guid userId, DateTime startDate)
+		public async Task<Event> CreateEvent(string name, string description, Guid unitId, Guid userId, DateTime startDate)
 		{
 			// Create the new event
 			Event newEvent = new Event()
 			{
 				Created = DateTime.UtcNow,
-				EventStarted = startDate.ToUniversalTime(),
+				StartDate = startDate.ToUniversalTime(),
 				UnitId = unitId,
-				Name = name
+				Name = name,
+				Description = description
 			};
 
 			// Create the event
@@ -65,57 +67,159 @@ namespace Enivate.ResponseHub.ApplicationServices
 		/// </summary>
 		/// <param name="unitId">The id of the unit to get the events for.</param>
 		/// <returns>The colection of events for the unit.</returns>
-		public async Task<IList<Event>> GetEventsByUnit(IEnumerable<Guid> unitIds)
+		public async Task<IList<Event>> GetEventsByUnit(Guid unitId)
 		{
-			return await _repository.GetEventsByUnit(unitIds);
+			return await _repository.GetEventsByUnit(unitId);
 		}
 
 		/// <summary>
 		/// Find the event by the keywords. 
 		/// </summary>
 		/// <param name="keywords">Keywords to find the event for.</param>
-		/// <param name="unitIds">The collection of unit ids to limit the results to.</param>
+		/// <param name="unitId">The id of the unit to limit the results to.</param>
 		/// <returns>The list of events that match the search terms and unit ids.</returns>
-		public async Task<IList<Event>> FindByKeywords(string keywords, IEnumerable<Guid> unitIds)
+		public async Task<IList<Event>> FindByKeywords(string keywords, Guid unitId)
 		{
-			return await _repository.FindByKeywords(keywords, unitIds);
+			return await _repository.FindByKeywords(keywords, unitId);
 		}
 
 		/// <summary>
-		/// Adds the specified resource to the event. 
+		/// Creates a new Crew to be assigned to an event.
 		/// </summary>
-		/// <param name="eventId"></param>
-		/// <param name="name"></param>
-		/// <param name="agency"></param>
-		/// <param name="userId"></param>
-		/// <param name="resourceType"></param>
-		/// <returns></returns>
-		public async Task<EventResource> AddResourceToEvent(Guid eventId, string name, Guid agency, Guid? userId, ResourceType resourceType)
+		/// <param name="eventId">The ID of the event to create the crew for.</param>
+		/// <param name="name">The name of the crew</param>
+		/// <param name="crewMembers">The members for the crew</param>
+		/// <returns>The newly created crew object</returns>
+		public async Task<Crew> CreateCrew(Guid eventId, string name, IList<Guid> crewMembers, Guid crewLeaderId)
 		{
 
-			// Create the event resource
-			EventResource resource = new EventResource()
+			// Ensure there is a crew name
+			if (String.IsNullOrEmpty(name))
 			{
-				Active = true,
-				AgencyId = agency,
-				Name = name,
-				Type = resourceType,
-				UserId = userId,
-				Created = DateTime.UtcNow
-			};
-
-			// Add the resource to the event
-			bool result = await _repository.AddResourceToEvent(eventId, resource);
-
-			// If the result is null, throw exception
-			if (!result)
-			{
-				throw new ApplicationException("Count not add resource to event.");
+				throw new ArgumentException("The crew must have a name.");
 			}
 
-			return resource;
+			// Create the new crew object
+			Crew crew = new Crew()
+			{
+				Name = name,
+				CrewMembers = crewMembers,
+				CrewLeaderId = crewLeaderId,
+				Created = DateTime.UtcNow,
+				Updated = DateTime.UtcNow,
+			};
+
+			return await _repository.CreateCrew(eventId, crew);
 		}
 
+		/// <summary>
+		/// Saves the crew in the event.
+		/// </summary>
+		/// <param name="eventId">The id of the event to save the crew for.</param>
+		/// <param name="crew">The crew to save.</param>
+		public async Task SaveCrew(Guid eventId, Crew crew)
+		{
+			// Save the crew
+			await _repository.SaveCrew(eventId, crew);
+		}
+
+		/// <summary>
+		/// Gets the crews for the event.
+		/// </summary>
+		/// <param name="eventId">The Id of the event to get the crews for.</param>
+		/// <returns></returns>
+		public Task<IList<Crew>> GetCrewsForEvent(Guid eventId)
+		{
+			throw new NotImplementedException();
+		}
+
+		/// <summary>
+		/// Finishes the event by setting the finish date. 
+		/// </summary>
+		/// <param name="eventId">The id of the event to set the finish date for.</param>
+		/// <returns></returns>
+		public async Task FinishEvent(Guid eventId)
+		{
+			await _repository.FinishEvent(eventId, DateTime.UtcNow);
+		}
+
+		/// <summary>
+		/// Gets the crew from the event.
+		/// </summary>
+		/// <param name="eventId">The Id of the event to get the crew from.</param>
+		/// <param name="crewId">The Id of the crew to return</param>
+		/// <returns>The crew if found, otherwise null</returns>
+		public async Task<Crew> GetCrewFromEvent(Guid eventId, Guid crewId)
+		{
+			// return the crew
+			return await _repository.GetCrewFromEvent(eventId, crewId);
+
+		}
+
+		/// <summary>
+		/// Updates the crew within the event for the specified assigned job ids.
+		/// </summary>
+		/// <param name="eventId">The id of the event that contains the crew.</param>
+		/// <param name="crewId">The id of the crew to update.</param>
+		/// <param name="assignedJobIds">The list of job ids to set as the assigned jobs for the crew</param>
+		/// <returns></returns>
+		public async Task AssignJobsToCrew(Guid eventId, Guid crewId, IList<Guid> assignedJobIds)
+		{
+			await _repository.AssignJobsToCrew(eventId, crewId, assignedJobIds);
+		}
+
+		/// <summary>
+		/// Saves the name, description and datetime the event started to the specified event.
+		/// </summary>
+		/// <param name="eventId">The id of the event to update.</param>
+		/// <param name="name">The name of the event</param>
+		/// <param name="description">The description for the event.</param>
+		/// <param name="startDate">The date and time the event was started.</param>
+		/// <returns></returns>
+		public async Task SaveEvent(Guid eventId, string name, string description, DateTime startDate)
+		{
+			await _repository.SaveEvent(eventId, name, description, startDate);
+		}
+
+		/// <summary>
+		/// Returns a list of the currently actived events.
+		/// </summary>
+		/// <returns>The list of currently active events (where there is no finish date specified).</returns>
+		public async Task<IList<Event>> GetActiveEvents()
+		{
+			return await _repository.GetActiveEvents();
+		}
+
+		/// <summary>
+		/// Sets the specified list of job ids to the event. 
+		/// </summary>
+		/// <param name="eventId">The Id of the event to set the job ids for.</param>
+		/// <param name="jobMessageIds">The list of job message ids to set to the event.</param>
+		/// <returns></returns>
+		public async Task SetJobsToEvent(Guid eventId, IList<Guid> jobMessageIds)
+		{
+			await _repository.SetJobsToEvent(eventId, jobMessageIds);
+		}
+
+		/// <summary>
+		/// Counts the number of active events for the specified user.
+		/// </summary>
+		/// <param name="userId">The user id to check if there are active events for.</param>
+		/// <returns>The number of active events for the user.</returns>
+		public async Task<int> CountActiveEventsForUser(Guid userId)
+		{
+			return await _repository.CountActiveEventsForUser(userId);
+		}
+
+		/// <summary>
+		/// Returns the active events for the specified user.
+		/// </summary>
+		/// <param name="userId">The user id to check if there are active events for.</param>
+		/// <returns>The active events for the user.</returns>
+		public async Task<IList<Event>> GetActiveEventsForUser(Guid userId)
+		{
+			return await _repository.GetActiveEventsForUser(userId);
+		}
 
 	}
 }

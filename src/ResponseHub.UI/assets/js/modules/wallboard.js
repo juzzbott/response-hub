@@ -121,7 +121,7 @@
 
 		var lat = parseFloat($(elem).data('lat'));
 		var lon = parseFloat($(elem).data('lon'));
-
+		
 		if (lat != 0 && lon != 0) {
 
 			// Set the height of the map canvas

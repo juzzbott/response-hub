@@ -2,57 +2,54 @@
 
 @{
     ViewBag.Title = Model.Name;
+	ViewBag.BodyClass = "view-event-details";
 }
 
 <input type="hidden" id="EventId" value="@Model.Id" />
+<input type="hidden" id="EventFinished" value="@(Model.Finished ? "1" : "0")" />
 
-<div class="val-edit">
-	<h1 class="val">@ViewBag.Title</h1>
-	<div class="val-edit-input hidden">
-		<input type="text" class="form-control input-lg" name="Name" value="@ViewBag.Title" /> 
-		<div class="val-edit-controls">
-			<button class="btn btn-lg btn-default"><i class="fa fa-fw fa-check"></i></button>
-			<button class="btn btn-lg btn-default"><i class="fa fa-fw fa-times"></i></button>
-		</div>
+<div class="row title-row">
+	<div class="col-sm-9">
+		<h1><span>@ViewBag.Title</span> <small class="text-primary hidden event-detail-refresh-loading"><i class="fa fa-fw fa-spin fa-spinner text-primary"></i></small></h1>
+	</div>
+	<div class="col-sm-3">
+		<a href="@Request.Url.LocalPath/edit" class="btn btn-link btn-icon btn-lg pull-right"><i class="fa fa-pencil-square-o"></i>Edit event</a>
 	</div>
 </div>
 
-<div class="tab-container">
+@Html.SuccessFromQueryString("updated", "1", "The event has been successfully updated.")
+
+<div class="tab-container top-10">
 	<!-- Nav tabs -->
 	<ul class="nav nav-tabs tab-collapse" role="tablist">
-		<li role="presentation" class="active"><a href="#overview" aria-controls="overview" role="tab" data-toggle="tab" class="btn-icon"><i class="fa fa-fw fa-bar-chart"></i>Overview</a></li>
-		<li role="presentation"><a href="#resources" aria-controls="resources" role="tab" data-toggle="tab" class="btn-icon"><i class="fa fa-fw fa-cubes"></i>Resources</a></li>
-		<!-- <li role="presentation"><a href="#sectors" aria-controls="sectors" role="tab" data-toggle="tab" class="btn-icon"><i class="fa fa-fw fa-object-unit"></i>Sectors</a></li> -->
+		<li role="presentation" class="active"><a href="#overview" aria-controls="overview" role="tab" data-toggle="tab" class="btn-icon"><i class="fa fa-fw fa-list"></i>Overview</a></li>
+		<li role="presentation"><a href="#map-view" aria-controls="map-view" id="map-view-tab" role="tab" data-toggle="tab" class="btn-icon"><i class="fa fa-fw fa-map-o"></i>Map view</a></li>
+		<li role="presentation"><a href="#crew-job-allocation" aria-controls="crew-job-allocation" id="crew-job-allocation-tab" role="tab" data-toggle="tab" class="btn-icon"><i class="fa fa-fw fa-object-group"></i>Job allocation</a></li>
+		<li role="presentation"><a href="#crews" aria-controls="crews" role="tab" data-toggle="tab" class="btn-icon"><i class="fa fa-fw fa-users"></i>Crews</a></li>
 	</ul>
 
 	<!-- Tab panes -->
 	<div class="tab-content">
 		<div role="tabpanel" class="tab-pane active" id="overview">
-
+			@Html.Partial("Overview", Model)
 		</div>
-		<div role="tabpanel" class="tab-pane" id="resources">
-
-			<h3>Unit members</h3>
-
-			<div class="row">
-				@foreach (var resource in Model.UnitResources)
-				{
-					<div class="col-sm-6 col-md-4 col-lg-3 col-xl-2"><div class="checkbox"><label><input type="checkbox" value="@resource.UserId.Value" data-name="@resource.Name" /> @resource.Name</label></div></div>
-				}
-			</div>
-
-			<h3>Additional resources</h3>
-
-			<div class="row">
-				@if (Model.AdditionalResources == null || Model.AdditionalResources.Count == 0)
-				{
-					<div class="col-xs-12 no-additional-resources"><p>No additional resources have been allocated to this event yet.</p></div>
-				}
-			</div>
-
-			@Html.Partial("AddResourceForm", Model.AdditionalResourceModel)
-
+		<div role="tabpanel" class="tab-pane event-map-view" id="map-view">
+			@Html.Partial("MapDisplay", Model)
 		</div>
+		<div role="tabpanel" class="tab-pane" id="crew-job-allocation">
+			@if (Model.Finished)
+			{
+				<p class="text-info top-20"><strong>Job allocation is disabled as the event has finished.</strong></p>
+			}
+			else
+			{
+				@Html.Partial("CrewJobAllocation", Model)
+			}
+		</div>
+		<div role="tabpanel" class="tab-pane" id="crews">
+			@Html.Partial("Crews", Model)
+		</div>
+		
 	</div>
 
 </div>

@@ -24,6 +24,7 @@ module.exports = function(grunt) {
 					'bower_components/bootstrap/dist/js/bootstrap.js',
 					'bower_components/moment/min/moment.min.js',
 					'bower_components/bootstrap-select/dist/js/bootstrap-select.min.js',
+					'assets/js/lib/jquery-ui.min.js',
 					'assets/js/lib/bootstrap-datepicker.min.js',
 					'assets/js/lib/bootstrap-tabcollapse.js',
 					'assets/js/lib/bootstrap-typeahead.min.js',
@@ -45,6 +46,7 @@ module.exports = function(grunt) {
 				banner: '',
 				src: [
 					'assets/js/modules/_core.js',
+					'assets/js/modules/user-list.js',
 					'assets/js/modules/maps.js',
 					'assets/js/modules/job-messages.js',
 					'assets/js/modules/pager-messages.js',
@@ -60,7 +62,9 @@ module.exports = function(grunt) {
 					'assets/js/modules/weather-centre.js',
 					'assets/js/modules/sign-on.js',
 					'assets/js/modules/reports.js',
-					'assets/js/modules/training.js'
+					'assets/js/modules/training.js',
+					'assets/js/modules/resources.js',
+					'assets/js/modules/events.js'
 				],
 				dest: 'assets/js/script.js'
 			},
@@ -70,6 +74,7 @@ module.exports = function(grunt) {
 					'assets/css/lib/bootstrap-grid-xl.css',
 					'bower_components/fontawesome/css/font-awesome.min.css',
 					'bower_components/bootstrap-select/dist/css/bootstrap-select.min.css',
+					'assets/css/lib/jquery-ui.min.css',
 					'assets/css/lib/bootstrap-datepicker3.min.css',
 					'assets/css/lib/leaflet.css',
 					'assets/css/lib/fm.scrollator.jquery.css',

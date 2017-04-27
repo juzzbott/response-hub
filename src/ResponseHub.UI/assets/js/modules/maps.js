@@ -162,11 +162,10 @@
 					{
 
 						// Second location marker doesn exist, so we need to create it
-
-						var currentLocationMarker = new L.HtmlIcon({
-							html: '<div><i class="fa fa-bullseye fa-2x current-map-location"></i></div>',
-							iconSize: [20, 20], // size of the icon
-							iconAnchor: [-10, -10], // point of the icon which will correspond to marker's location
+						var currentLocationMarker = new L.Icon({
+							iconUrl: '/assets/images/map-icons/current-location.png',
+							iconSize: [21, 21], // size of the icon
+							iconAnchor: [10, 10], // point of the icon which will correspond to marker's location
 						});	
 
 						// Add the marker to the map
@@ -176,15 +175,13 @@
 						addPathFromPoint(pos.coords.latitude, pos.coords.longitude, true, '#00B226')
 
 						// Get the group of markers, destination and current location, and zoom window to fit
-						var group = new L.featureGroup([mapMarkers["job_location"], mapMarkers["current_location"]]);
-						map.fitBounds(group.getBounds().pad(0.1));
+						zoomToMarkerGroup([mapMarkers["job_location"], mapMarkers["current_location"]]);
 						
 						// Set the interval to resize the window every 30 secs.
 						mapBoundsInterval = setInterval(function () {
 							
 							// Get the group of markers, destination and current location, and zoom window to fit
-							var group = new L.featureGroup([mapMarkers["job_location"], mapMarkers["current_location"]]);
-							map.fitBounds(group.getBounds().pad(0.1));
+							zoomToMarkerGroup([mapMarkers["job_location"], mapMarkers["current_location"]]);
 
 						}, 30000)
 
@@ -194,7 +191,7 @@
 				function (error) {
 					$('#map-messages').append('<p>' + error.code + ': ' + error.message + '</p>');
 					console.log(error);
-				},
+				},	
 				{
 					enableHighAccuracy: true,
 					timeout: 15000,
@@ -205,18 +202,39 @@
 
 	}
 
+	function addCustomLocationMarkerToMap(lat, lon, icon, iconSize, iconAnchor, popupAnchor)
+	{
+
+		var customMarker = new L.Icon({
+			iconUrl: '/assets/images/map-icons/' + icon + '.png',
+			iconSize: iconSize, // size of the icon
+			iconAnchor: iconAnchor, // point of the icon which will correspond to marker's location
+			popupAnchor: popupAnchor
+		});	
+		
+		// Add the marker to the map
+		return L.marker([lat, lon], { icon: customMarker }).addTo(map);
+	}
+
+	function zoomToMarkerGroup(markers)
+	{
+		// Get the group of markers, destination and current location, and zoom window to fit
+		var group = new L.featureGroup(markers);
+		map.fitBounds(group.getBounds().pad(0.1));
+	}
+
 	function addLhqMarker(lat, lon)
 	{
 
 		// Create the custom marker
-		var currentLocationMarker = new L.HtmlIcon({
-			html: '<div><i class="fa fa-life-ring fa-2x lhq-map-location"></i></div>',
-			iconSize: [20, 20], // size of the icon
-			iconAnchor: [-10, -10], // point of the icon which will correspond to marker's location
-		});
+		var lhqMarker = new L.Icon({
+			iconUrl: '/assets/images/map-icons/lhq-marker.png',
+			iconSize: [24, 25], // size of the icon
+			iconAnchor: [12, 12], // point of the icon which will correspond to marker's location
+		});	
 
 		// Add the marker to the map
-		mapMarkers["lhq_location"] = L.marker([lat, lon], { icon: currentLocationMarker }).addTo(map);
+		mapMarkers["lhq_location"] = L.marker([lat, lon], { icon: lhqMarker }).addTo(map);
 
 		// Add the route from LHQ to the map
 		addPathFromPoint(lat, lon, true, '#FF862F');
@@ -254,8 +272,7 @@
 
 					// Get the group of markers, destination and current location, and zoom window to fit
 					if (!responseHub.isMobile()) {
-						var group = new L.featureGroup([mapMarkers["job_location"], mapMarkers["lhq_location"]]);
-						map.fitBounds(group.getBounds().pad(0.1));
+						zoomToMarkerGroup([mapMarkers["job_location"], mapMarkers["lhq_location"]]);
 					}
 				}
 
@@ -285,10 +302,12 @@
 	/**
 	 * Clears all the markers from the map.
 	 */
-	function clearMarkers() {
+	function clearMarkers(markers) {
 
-		for (var i = 0; i < mapMarkers.length; i++) {
-			map.removeLayer(mapMarkers[i]);
+		var markersToRemove = (markers != null ? markers : mapMarkers);
+
+		for (var i = 0; i < markersToRemove.length; i++) {
+			map.removeLayer(markersToRemove[i]);
 		}
 
 		// Clear the markers
@@ -355,7 +374,7 @@
 		}
 
 		if (typeof mapConfig != "undefined") {
-			displayMap(mapConfig);
+			map = displayMap(mapConfig);
 		}
 
 	}
@@ -374,7 +393,9 @@
 		setMapCenter: setMapCenter,
 		mapExists: mapExists,
 		addCurrentLocationToMap: addCurrentLocationToMap,
-		addLhqMarker, addLhqMarker
+		addLhqMarker: addLhqMarker,
+		addCustomLocationMarkerToMap: addCustomLocationMarkerToMap,
+		zoomToMarkerGroup: zoomToMarkerGroup
 	}
 
 })();

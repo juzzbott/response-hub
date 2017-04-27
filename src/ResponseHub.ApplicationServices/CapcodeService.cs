@@ -243,7 +243,38 @@ namespace Enivate.ResponseHub.ApplicationServices
 			return capcodes;
 
 		}
-		
+
+		/// <summary>
+		/// Gets the capcodes for the specified unit.
+		/// </summary>
+		/// <param name="userId">The id of the unit to get the capcodes for.</param>
+		/// <returns>The list of capcodes for the unit.</returns>
+		public async Task<IList<Capcode>> GetCapcodesForUnit(Guid unitId)
+		{
+
+			// Get the unit based on the id
+			Unit unit = await _unitService.GetById(unitId);
+
+			// If there are no units for the user, then return
+			if (unit == null)
+			{
+				return new List<Capcode>();
+			}
+
+			
+			List<Capcode> capcodes = new List<Capcode>();
+
+			// Get the unit capcode
+			capcodes.AddRange(await _repository.GetCapcodes(new List<string> { unit.Capcode }));
+
+			// Get the list of capcodes based on the additional capcodes list
+			capcodes.AddRange(await _repository.GetCapcodesById(unit.AdditionalCapcodes));
+
+			// return the list of capcodes for the user
+			return capcodes;
+
+		}
+
 		/// <summary>
 		/// Gets the capcodes that are not specified as Unit capcodes.
 		/// </summary>

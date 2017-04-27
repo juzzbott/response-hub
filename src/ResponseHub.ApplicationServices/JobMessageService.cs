@@ -91,6 +91,19 @@ namespace Enivate.ResponseHub.ApplicationServices
 		}
 
 		/// <summary>
+		/// Gets the job messages for the list of capcodes specified between the specific dates. Results are limited to count number of items.
+		/// </summary>
+		/// <param name="capcodes"></param>
+		/// <param name="messageTypes"></param>
+		/// <param name="dateFrom"></param>
+		/// <param name="dateTo"></param>
+		/// <returns></returns>
+		public async Task<IList<Guid>> GetMessageIdsBetweenDates(IEnumerable<Capcode> capcodes, MessageType messageTypes, DateTime? dateFrom, DateTime? dateTo)
+		{
+			return await _repository.GetMessageIdsBetweenDates(capcodes.Select(i => i.CapcodeAddress), messageTypes, dateFrom, dateTo);
+		}
+
+		/// <summary>
 		/// Gets the most recent count capcodes. 
 		/// </summary>
 		/// <param name="capcodes"></param>
@@ -131,6 +144,21 @@ namespace Enivate.ResponseHub.ApplicationServices
 			// return the message
 			return message;
 		}
+
+		/// <summary>
+		/// Gets the job messages by the Ids specified.
+		/// </summary>
+		/// <param name="ids">The Ids of the jobs to return.</param>
+		/// <returns>The job messages found.</returns>
+		public async Task<IList<JobMessage>> GetByIds(IEnumerable<Guid> ids)
+		{
+			// Return the list of job messages from the database.
+			IList<JobMessage> messages = await _repository.GetByIds(ids);
+			
+			// return the message
+			return messages;
+		}
+
 
 		/// <summary>
 		/// Gets the specific job message by the job number.
