@@ -226,6 +226,27 @@ var responseHub = (function () {
 		$.validator.setDefaults({ ignore: null });
 	}
 
+	/**
+	 * Gets a query string value based on the parameter.
+	 * @param {any} name
+	 * @param {any} url
+	 */
+	function getQueryString(name, url) {
+
+		// Default the url to the current location
+		if (!url) {
+			url = window.location.href;
+		}
+
+		// Get the name of the query string
+		name = name.replace(/[\[\]]/g, "\\$&");
+		var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+			results = regex.exec(url);
+		if (!results) return null;
+		if (!results[2]) return '';
+		return decodeURIComponent(results[2].replace(/\+/g, " "));
+	}
+
 	// Bind the modal
 	bindModals();
 
@@ -240,7 +261,8 @@ var responseHub = (function () {
 		apiPrefix: apiPrefix,
 		isMobile: isMobile,
 		executeFunctionByName: executeFunctionByName,
-		setGraphicRadiosCheckboxes: setGraphicRadiosCheckboxes
+		setGraphicRadiosCheckboxes: setGraphicRadiosCheckboxes,
+		getQueryString: getQueryString
 	}
 
 })();
@@ -1062,9 +1084,20 @@ responseHub.jobMessages = (function () {
 		$('#jobs-load-more .loading').removeClass('hidden');
 		$('#jobs-load-more button').addClass('hidden');
 
+		// Get the date_from and date_to
+		var dateTo = responseHub.getQueryString('date_to');
+		var dateFrom = responseHub.getQueryString('date_from');
+
+		// Build the filter query
+		var filterQuery = '';
+		if (dateTo != null || dateFrom != null)
+		{
+			filterQuery = 'date_from=' + dateFrom + '&date_to=' + dateTo;
+		}
+
 		// Create the ajax request
 		$.ajax({
-			url: responseHub.apiPrefix + '/job-messages/?skip=' + skipCount + '&msg_type=' + messageType,
+			url: responseHub.apiPrefix + '/job-messages/?skip=' + skipCount + '&msg_type=' + messageType + filterQuery,
 			dataType: 'json',
 			success: function (data) {
 
@@ -1137,19 +1170,19 @@ responseHub.jobMessages = (function () {
 		// Set the job status
 		if (jobMessage.Cancelled != null)
 		{
-			statusSpan.append('<i class="fa fa-ban"></i>');
+			statusSpan.append('<i class="fa fa-ban job-cancelled"></i>');
 		}
 		else if (jobMessage.JobClear != null)
 		{
-			statusSpan.append('<i class="fa fa-check-circle-o"></i>');
+			statusSpan.append('<i class="fa fa-check-circle-o job-clear"></i>');
 		}
 		else if (jobMessage.OnScene != null)
 		{
-			statusSpan.append('<i class="fa fa-hourglass-half"></i>');
+			statusSpan.append('<i class="fa fa-hourglass-half on-scene"></i>');
 		}
 		else if (jobMessage.OnRoute != null)
 		{
-			statusSpan.append('<i class="fa fa-arrow-circle-o-right"></i>');
+			statusSpan.append('<i class="fa fa-arrow-circle-o-right on-route"></i>');
 		}
 		else
 		{
@@ -1461,16 +1494,7 @@ responseHub.jobMessages = (function () {
 			$(this).find('.modal-body p').text(message);
 
 		});
-
-		// If we are on the job list page, then load the next jobs
-		if ($('#jobs-list-container').length > 0)
-		{
-			getNextJobMessages('job');
-		}
-		else if ($('#message-list-container').length > 0) {
-			// If we are on the job list page, then load the next jobs
-			getNextJobMessages('message');
-		}
+		
 	}
 
 	// Bind the UI
@@ -1745,7 +1769,7 @@ responseHub.wallboard = (function () {
 
 		var lat = parseFloat($(elem).data('lat'));
 		var lon = parseFloat($(elem).data('lon'));
-
+		
 		if (lat != 0 && lon != 0) {
 
 			// Set the height of the map canvas
@@ -3326,6 +3350,12 @@ responseHub.events = (function () {
 	 * @param {any} crewId
 	 */
 	function loadCrewJobAssignments(crewId) {
+		
+		// Enable job assignments
+		$('.event-job-allocation .jobs-list button').each(function (index, elem) {
+			$(elem).removeClass('disabled');
+			$(elem).removeAttr('disabled');
+		});
 
 		// Show the loading animation
 		$('.loading-crew-details').removeClass('hidden');
@@ -3335,6 +3365,9 @@ responseHub.events = (function () {
 
 		// Get the event id
 		var eventId = $('#EventId').val();
+
+		// Set the current crew id
+		$('#selected-crew-id').val(crewId);
 
 		$.ajax({
 			url: responseHub.apiPrefix + '/events/' + eventId + '/crew/' + crewId,
@@ -3364,7 +3397,11 @@ responseHub.events = (function () {
 						}
 
 					}
+
 				}
+
+				// Disable the button
+				$('.allocate-jobs button').attr('disabled', 'disabled').addClass('disabled');
 
 			},
 			complete: function () {
@@ -3410,14 +3447,20 @@ responseHub.events = (function () {
 			data: postData,
 			success: function (data) {
 
+				$('.allocate-jobs button i').addClass('fa-indent').removeClass('fa-spin fa-spinner');
+
+				// If there are no jobs assigned, hide the button
+				if ($('.assigned-jobs li').length == 0) {
+					$('.allocate-jobs').addClass('hidden');
+				}
 			},
 			error: function (jqXHR, textStatus, errorThrown) {
 
-			}, 
-			complete: function () {
 				$('.allocate-jobs button').removeAttr('disabled');
 				$('.allocate-jobs button').removeClass('disabled');
 				$('.allocate-jobs button i').addClass('fa-indent').removeClass('fa-spin fa-spinner');
+			}, 
+			complete: function () {
 			}
 		});
 
@@ -3548,6 +3591,14 @@ responseHub.events = (function () {
 		// rebind the assign controls
 		bindAssignJobToCrew();
 
+		// If there are no jobs assigned, show the no jobs message
+		if ($('.assigned-jobs li').length == 0) {
+			$('.crew-job-list .no-jobs').removeClass('hidden');
+		}
+
+		// Enable the assign button
+		$('.allocate-jobs button').removeClass("disabled").removeAttr("disabled");
+
 	}
 
 	function bindSortable() {
@@ -3591,6 +3642,9 @@ responseHub.events = (function () {
 			// Hide the no assigned jobs message
 			$('.crew-job-list .no-jobs').addClass('hidden');
 			$('.allocate-jobs').removeClass('hidden');
+
+			// Enable the assign button
+			$('.allocate-jobs button').removeClass("disabled").removeAttr("disabled");
 
 		});
 
@@ -3772,16 +3826,21 @@ responseHub.events = (function () {
 
 		});
 
-		$('#CrewSelect').on('change', function () {
+		$('#CrewSelect').on('change', function (e) {
+			
+			// The button is not disabled, then there are changes and we shouldn't allow that'
+			if ($('.allocate-jobs button[disabled="disabled"]').length == 0)
+			{
+				$('#confirm-change-crew').modal('show');
+				return;
+			} else {
 
-			// Enable job assignments
-			$('.event-job-allocation .jobs-list button').each(function (index, elem) {
-				$(elem).removeClass('disabled');
-				$(elem).removeAttr('disabled');
-			});
+				var crewId = $(this).val();
 
-			// Load the crew assignments
-			loadCrewJobAssignments($(this).val());
+				// Load the crew assignments
+				loadCrewJobAssignments(crewId);
+
+			}
 
 		});
 
@@ -3841,7 +3900,8 @@ responseHub.events = (function () {
 	return {
 		addJobsToMap: addJobsToMap,
 		unassignJobFromCrew: unassignJobFromCrew,
-		removeCrewMember: removeCrewMember
+		removeCrewMember: removeCrewMember,
+		loadCrewJobAssignments: loadCrewJobAssignments
 	}
 
 })();

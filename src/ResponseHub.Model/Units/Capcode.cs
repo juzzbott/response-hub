@@ -25,7 +25,7 @@ namespace Enivate.ResponseHub.Model.Units
 
 		public bool IsUnitCapcode { get; set; }
 
-		public string FormattedName()
+		public override string ToString()
 		{
 			return String.Format("{0} [{1}]", Name, ShortName);
 		}

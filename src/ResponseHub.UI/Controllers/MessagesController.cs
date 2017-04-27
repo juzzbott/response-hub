@@ -34,17 +34,10 @@ namespace Enivate.ResponseHub.UI.Controllers
 			// Get the current user id
 			Guid userId = new Guid(User.Identity.GetUserId());
 
-			// Get the capcodes for the current user
-			IList<Capcode> capcodes = await CapcodeService.GetCapcodesForUser(userId);
+			// Get the initial messages list
+			JobMessageListViewModel model = await GetAllJobsMessagesViewModel(userId, MessageType.Message);
 
-			// Get the messages for the capcodes
-			IList<JobMessage> messages = await JobMessageService.GetMostRecent(capcodes, MessageType.Message, 50, 0);
-
-			// Create the message list view model.
-			JobMessageListViewModel model = await CreateJobMessageListModel(capcodes, messages);
-			model.MessageType = MessageType.Message;
-
-			return View("~/Views/Jobs/Index.cshtml", model);
+			return View("~/Views/Jobs/AllJobs.cshtml", model);
 		}
 
 		[Route("{id:guid}")]
@@ -73,7 +66,7 @@ namespace Enivate.ResponseHub.UI.Controllers
 				IList<IdentityUser> signInUsers = await UserService.GetUsersByIds(jobSignIns.Select(i => i.UserId));
 
 				// Create the model object.
-				JobMessageViewModel model = await MapJobMessageToViewModel(job, capcode.FormattedName(), jobSignIns, signInUsers, null);
+				JobMessageViewModel model = await MapJobMessageToViewModel(job, capcode.ToString(), jobSignIns, signInUsers, null);
 				
 				// return the job view
 				return View(model);

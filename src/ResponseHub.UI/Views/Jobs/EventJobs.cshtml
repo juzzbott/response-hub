@@ -1,0 +1,63 @@
+﻿@model IEnumerable<Enivate.ResponseHub.UI.Models.Messages.EventJobListViewModel>
+
+@{
+    ViewBag.Title = "Event jobs";
+}
+
+<h1>@ViewBag.Title</h1>
+
+@if (Model == null || Model.Count() == 0)
+{
+	<p class="lead">There are currently no active events to display jobs for.</p>
+}
+
+@foreach (var eventObj in Model)
+{
+	<div class="row">
+		<div class="col-sm-12">
+
+			<h2><a href="/events/@eventObj.EventId">@eventObj.EventName</a></h2>
+			<p class="lead">@eventObj.EventDescription</p>
+
+			<hr />
+
+			@if (eventObj.Jobs == null || eventObj.Jobs.Count == 0)
+			{
+				<p>There is no jobs currently assigned to this event.</p>
+			}
+			else
+			{
+
+				<h3 class="text-info">Jobs assigned to me</h3>
+				if (eventObj.MyJobs == null || eventObj.MyJobs.Count == 0)
+				{
+					<p>There is no jobs currently assigned to you.</p>
+				}
+				else
+				{
+					<ul class="job-list list-unstyled">
+						@foreach (var jobMessage in eventObj.MyJobs)
+						{
+							@Html.Partial("~/Views/Jobs/JobListItem.cshtml", jobMessage);
+						}
+					</ul>
+				}
+
+				<hr />
+
+				<h3 class="text-info">All jobs in event</h3>
+				<ul class="job-list list-unstyled">
+					@foreach (var jobMessage in eventObj.Jobs)
+					{
+						@Html.Partial("~/Views/Jobs/JobListItem.cshtml", jobMessage);
+					}
+				</ul>
+			}
+
+
+		</div>
+	</div>
+	
+}
+
+

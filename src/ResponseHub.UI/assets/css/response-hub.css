@@ -120,6 +120,15 @@ table {
   margin-left: 0;
   border-left-width: 0;
 }
+.btn-link.btn-danger {
+  color: #a94442;
+}
+.btn-link.btn-danger:active {
+  color: #a94442;
+  background-color: transparent;
+  border-color: transparent;
+  text-decoration: underline;
+}
 .cursor-pointer {
   cursor: pointer;
 }
@@ -131,6 +140,9 @@ table {
     float: left !important;
     padding-left: 0;
   }
+}
+.panel-heading {
+  border-bottom: 1px solid #ddd;
 }
 /*
 	Top navbar styles
@@ -1072,6 +1084,18 @@ i.p-message-admin {
 .wallboard-layout ul.job-notes li small .wordback-icon,
 .wallboard-layout ul.job-notes li small .user-icon {
   padding-left: 10px;
+}
+.job-clear {
+  color: #64B752;
+}
+.on-scene {
+  color: #476890;
+}
+.on-route {
+  color: #DC9A63;
+}
+.job-cancelled {
+  color: #AA3939;
 }
 .weather-centre-layout .wallboard-warnings {
   background-color: #fff;

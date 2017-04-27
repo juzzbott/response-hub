@@ -253,5 +253,37 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 			await Collection.UpdateOneAsync(filter, update);
 		}
 
+		/// <summary>
+		/// Counts the number of active events for the specified user.
+		/// </summary>
+		/// <param name="userId">The user id to check if there are active events for.</param>
+		/// <returns>The number of active events for the user.</returns>
+		public async Task<int> CountActiveEventsForUser(Guid userId)
+		{
+			// Define the filter
+			FilterDefinition<Event> filter = Builders<Event>.Filter.ElemMatch(i => i.Crews, Builders<Crew>.Filter.AnyEq(i => i.CrewMembers, userId)) & Builders<Event>.Filter.Eq(i => i.FinishedDate, null);
+
+			// return the number of events that match the filter
+			long results = await Collection.Find(filter).CountAsync();
+
+			// return the results
+			return (int)results;
+
+		}
+
+		/// <summary>
+		/// Returns the active events for the specified user.
+		/// </summary>
+		/// <param name="userId">The user id to check if there are active events for.</param>
+		/// <returns>The active events for the user.</returns>
+		public async Task<IList<Event>> GetActiveEventsForUser(Guid userId)
+		{
+			// Define the filter
+			FilterDefinition<Event> filter = Builders<Event>.Filter.ElemMatch(i => i.Crews, Builders<Crew>.Filter.AnyEq(i => i.CrewMembers, userId)) & Builders<Event>.Filter.Eq(i => i.FinishedDate, null);
+
+			// return the number of events that match the filter
+			return await Collection.Find(filter).ToListAsync();
+		}
+
 	}
 }

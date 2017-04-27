@@ -1,4 +1,4 @@
-﻿@model Enivate.ResponseHub.UI.Models.Messages.JobMessageViewModel
+﻿@model Enivate.ResponseHub.UI.Models.Messages.JobMessageListItemViewModel
 @{ 
 	string controller = (Model.Priority == Enivate.ResponseHub.Model.Messages.MessagePriority.Administration ? "messages" : "jobs");
 }
@@ -31,19 +31,19 @@
 		<span class="job-status">
 			@if (Model.Cancelled != null)
 			{
-				<i class="fa fa-ban"></i>
+				<i class="fa fa-ban job-cancelled"></i>
 			}
 			else if (Model.JobClear != null)
 			{
-				<i class="fa fa-check-circle-o"></i>
+				<i class="fa fa-check-circle-o job-clear"></i>
 			}
 			else if (Model.OnScene != null)
 			{
-				<i class="fa fa-hourglass-half"></i>
+				<i class="fa fa-hourglass-half on-scene"></i>
 			}
 			else if (Model.OnRoute != null)
 			{
-				<i class="fa fa-arrow-circle-o-right"></i>
+				<i class="fa fa-arrow-circle-o-right on-route"></i>
 			}
 			else
 			{

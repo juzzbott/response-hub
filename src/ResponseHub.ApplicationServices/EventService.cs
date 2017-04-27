@@ -82,7 +82,7 @@ namespace Enivate.ResponseHub.ApplicationServices
 		{
 			return await _repository.FindByKeywords(keywords, unitId);
 		}
-		
+
 		/// <summary>
 		/// Creates a new Crew to be assigned to an event.
 		/// </summary>
@@ -142,7 +142,7 @@ namespace Enivate.ResponseHub.ApplicationServices
 		{
 			await _repository.FinishEvent(eventId, DateTime.UtcNow);
 		}
-		
+
 		/// <summary>
 		/// Gets the crew from the event.
 		/// </summary>
@@ -199,6 +199,26 @@ namespace Enivate.ResponseHub.ApplicationServices
 		public async Task SetJobsToEvent(Guid eventId, IList<Guid> jobMessageIds)
 		{
 			await _repository.SetJobsToEvent(eventId, jobMessageIds);
+		}
+
+		/// <summary>
+		/// Counts the number of active events for the specified user.
+		/// </summary>
+		/// <param name="userId">The user id to check if there are active events for.</param>
+		/// <returns>The number of active events for the user.</returns>
+		public async Task<int> CountActiveEventsForUser(Guid userId)
+		{
+			return await _repository.CountActiveEventsForUser(userId);
+		}
+
+		/// <summary>
+		/// Returns the active events for the specified user.
+		/// </summary>
+		/// <param name="userId">The user id to check if there are active events for.</param>
+		/// <returns>The active events for the user.</returns>
+		public async Task<IList<Event>> GetActiveEventsForUser(Guid userId)
+		{
+			return await _repository.GetActiveEventsForUser(userId);
 		}
 
 	}

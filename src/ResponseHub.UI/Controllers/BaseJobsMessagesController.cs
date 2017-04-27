@@ -1,9 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
+using System.Globalization;
+using System.IO;
 using System.Linq;
-using System.Web;
+using System.Threading.Tasks;
 
 using Enivate.ResponseHub.Common;
+using Enivate.ResponseHub.Common.Constants;
 using Enivate.ResponseHub.Model.Attachments.Interface;
 using Enivate.ResponseHub.Model.Units.Interface;
 using Enivate.ResponseHub.Model.Units;
@@ -12,10 +16,7 @@ using Enivate.ResponseHub.Model.Messages;
 using Enivate.ResponseHub.UI.Models.Messages;
 using Enivate.ResponseHub.Model.Identity;
 using Enivate.ResponseHub.Model.Identity.Interface;
-using System.Threading.Tasks;
 using Enivate.ResponseHub.Model.Attachments;
-using System.IO;
-using Enivate.ResponseHub.Common.Constants;
 using Enivate.ResponseHub.UI.Helpers;
 using Enivate.ResponseHub.Model.SignIn.Interface;
 using Enivate.ResponseHub.Model.SignIn;
@@ -33,45 +34,87 @@ namespace Enivate.ResponseHub.UI.Controllers
 
 		#region Helpers
 
+		protected async Task<JobMessageListViewModel> GetAllJobsMessagesViewModel(Guid userId, MessageType messageType)
+		{
+
+
+			// Get the capcodes for the current user
+			IList<Capcode> capcodes = await CapcodeService.GetCapcodesForUser(userId);
+
+			// create the job messages list
+			IList<JobMessage> jobMessages;
+
+			int count = 50;
+			Int32.TryParse(ConfigurationManager.AppSettings["JobMessages.DefaultResultLimit"], out count);
+			int skip = 0;
+
+			// Determine if filter is applied
+			bool filterApplied = false;
+
+			// If there are no job messages between dates, then just return the most recent
+			if (String.IsNullOrEmpty(Request.QueryString["date_from"]) && String.IsNullOrEmpty(Request.QueryString["date_to"]))
+			{
+				// Get the messages for the capcodes
+				jobMessages = await JobMessageService.GetMostRecent(capcodes, messageType, count, skip);
+			}
+			else
+			{
+
+				// Get the date from an date to values
+				DateTime? dateFrom = null;
+				DateTime? dateTo = null;
+
+				// If there is a date from, set it
+				if (!String.IsNullOrEmpty(Request.QueryString["date_from"]))
+				{
+					dateFrom = DateTime.ParseExact(Request.QueryString["date_from"], "dd/MM/yyyy", CultureInfo.CurrentCulture, DateTimeStyles.AssumeLocal);
+					filterApplied = true;
+				}
+
+				// If there is a date from, set it
+				if (!String.IsNullOrEmpty(Request.QueryString["date_to"]))
+				{
+					dateTo = DateTime.ParseExact(Request.QueryString["date_to"], "dd/MM/yyyy", CultureInfo.CurrentCulture, DateTimeStyles.AssumeLocal);
+					filterApplied = true;
+				}
+
+				// Get the messages for the capcodes
+				jobMessages = await JobMessageService.GetMessagesBetweenDates(capcodes, messageType, count, skip, dateFrom, dateTo);
+			}
+
+			// Create the jobs list view model.
+			JobMessageListViewModel model = CreateJobMessageListModel(capcodes, jobMessages);
+			model.MessageType = messageType;
+			model.Filter.FilterApplied = filterApplied;
+
+			return model;
+		}
+
 		/// <summary>
 		/// Creates the JobMessageListViewModel object from the list of messages and capcodes.
 		/// </summary>
 		/// <param name="capcodes"></param>
 		/// <param name="jobMessages"></param>
 		/// <returns></returns>
-		public async Task<JobMessageListViewModel> CreateJobMessageListModel(IList<Capcode> capcodes, IList<JobMessage> jobMessages)
+		public JobMessageListViewModel CreateJobMessageListModel(IList<Capcode> capcodes, IList<JobMessage> jobMessages)
 		{
-
-			// Get all the sign ins for the messages
-			IList<SignInEntry> allSignIns = await SignInEntryService.GetSignInsForJobMessages(jobMessages.Select(i => i.Id));
-
-			// Get all the users for the job sign ins
-			IList<IdentityUser> allSignInUsers = await UserService.GetUsersByIds(allSignIns.Select(i => i.UserId));
-
 			// Create the list of job message view models
-			IList<JobMessageViewModel> jobMessageViewModels = new List<JobMessageViewModel>();
+			IList<JobMessageListItemViewModel> jobMessageViewModels = new List<JobMessageListItemViewModel>();
 			foreach (JobMessage jobMessage in jobMessages)
 			{
-
-				// Get the sign ins for the job
-				IList<SignInEntry> jobSignIns = allSignIns.Where(i => i.OperationDetails.JobId == jobMessage.Id).ToList();
-
-				// Get the list of users who signed in for the job
-				IList<IdentityUser> signInUsers = allSignInUsers.Where(i => jobSignIns.Select(u => u.UserId).Contains(i.Id)).ToList();
 
 				// Get the capcode for the job message
 				Capcode capcode = capcodes.FirstOrDefault(i => i.CapcodeAddress == jobMessage.Capcode);
 
 				// Map the view model and add to the list
-				jobMessageViewModels.Add(await MapJobMessageToViewModel(jobMessage, capcode.FormattedName(), jobSignIns, signInUsers, null));
+				jobMessageViewModels.Add(JobMessageListItemViewModel.FromJobMessage(jobMessage, capcode, null));
 
 			}
 
 			// Create the model object
 			JobMessageListViewModel model = new JobMessageListViewModel()
 			{
-				Messages = jobMessageViewModels,
-				UserCapcodes = capcodes
+				JobMessages = jobMessageViewModels
 			};
 			return model;
 		}

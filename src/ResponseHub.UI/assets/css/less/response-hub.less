@@ -28,6 +28,7 @@
 
 @brand-primary: #7b74a8;
 @text-info: #31708f;
+@text-danger: #a94442;
 
 @font-family: 'Segoe UI', 'Open Sans', sans-serif;
 @heading-font-family: 'Ubuntu', sans-serif;
@@ -180,6 +181,17 @@ table {
 	border-left-width: 0;
 }
 
+.btn-link.btn-danger {
+	color: @text-danger;
+
+	&:active {
+		color: @text-danger;
+		background-color: transparent;
+		border-color: transparent;
+		text-decoration: underline;
+	}
+}
+
 .cursor-pointer {
 	cursor: pointer;
 }
@@ -194,6 +206,11 @@ table {
 		padding-left: 0;
 	}
 }
+
+.panel-heading {
+	border-bottom: 1px solid #ddd;
+}
+
 /*
 	Top navbar styles
 */
@@ -1349,6 +1366,22 @@ i.p-message-admin {
 			}
 		}
 	}
+}
+
+.job-clear {
+	color: @job-clear-color;
+}
+
+.on-scene {
+	color: @on-scene-color;
+}
+
+.on-route {
+	color: @on-route-color;
+}
+
+.job-cancelled {
+	color: @cancelled-color;
 }
 
 .weather-centre-layout {
