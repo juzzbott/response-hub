@@ -73,7 +73,8 @@ namespace Enivate.ResponseHub.UI.Controllers
 					StartDate = eventObj.StartDate.ToLocalTime(),
 					FinishDate = eventObj.FinishedDate,
 					JobsCount = eventObj.JobMessageIds.Count,
-					Description = eventObj.Description
+					Description = eventObj.Description,
+					CrewsCount = eventObj.Crews.Count
 				});
 			}
 

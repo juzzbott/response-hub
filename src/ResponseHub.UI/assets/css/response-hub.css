@@ -156,6 +156,9 @@ table {
 .page-navbar button:hover {
   text-decoration: none;
 }
+.page-navbar .navbar-brand {
+  font-family: 'Ubuntu', sans-serif;
+}
 .page-navbar .navbar-brand,
 .page-navbar .btn-link {
   color: #fafafa;
@@ -311,6 +314,7 @@ table {
   background-color: #202b30;
   border-right: 1px solid #eee;
   color: #808080;
+  font-family: 'Ubuntu', sans-serif;
 }
 .sidebar p.explore {
   letter-spacing: 2px;
@@ -932,6 +936,7 @@ i.p-message-admin {
   color: #ccc;
   display: block;
   float: left;
+  font-family: 'Ubuntu', sans-serif;
 }
 .wallboard-layout .navbar-brand,
 .weather-centre-layout .navbar-brand {

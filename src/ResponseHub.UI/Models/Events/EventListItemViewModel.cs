@@ -22,6 +22,8 @@ namespace Enivate.ResponseHub.UI.Models.Events
 
 		public int JobsCount { get; set; }
 
+		public int CrewsCount { get; set; }
+
 		public string Description { get; set; }
 
 	}

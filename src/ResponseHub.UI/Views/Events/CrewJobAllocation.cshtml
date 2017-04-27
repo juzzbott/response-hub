@@ -25,20 +25,30 @@
 	<div class="col-sm-8 crew-allocation">
 		<h3>Crew allocation</h3>
 
-		<div class="form-group">
-			<label for="AvailableMembers">Crew</label>
-			<div class="row">
-				<div class="col-sm-8 col-md-8 col-lg-6">
-					<select class="form-control selectpicker" data-live-search="true" id="CrewSelect" title="Select crew...">
-						@foreach (var crew in Model.Crews)
-						{
-							<option data-tokens="@crew.Name @crew.CrewLeader.FullName" value="@crew.Id">@crew.Name  - Crew Leader: @crew.CrewLeader.FullName</option>
-						}
-					</select>
-					<hidden id="selected-crew-id" value=""></hidden>
+
+		@if (Model.Crews.Count > 0)
+		{
+			<div class="form-group">
+				<label for="AvailableMembers">Crew</label>
+				<div class="row">
+					<div class="col-sm-8 col-md-8 col-lg-6">
+						<select class="form-control selectpicker" data-live-search="true" id="CrewSelect" title="Select crew...">
+							@foreach (var crew in Model.Crews)
+							{
+								<option data-tokens="@crew.Name @crew.CrewLeader.FullName" value="@crew.Id">@crew.Name  - Crew Leader: @crew.CrewLeader.FullName</option>
+							}
+						</select>
+						<hidden id="selected-crew-id" value=""></hidden>
+					</div>
 				</div>
 			</div>
-		</div>
+
+		}
+		else
+		{
+			<p>You must create a crew before jobs can be assigned to one.</p>
+			<p><a href="@Request.Url.LocalPath/create-crew" class="btn btn-default">Create crew</a></p>
+		}
 
 		<div class="row">
 			<div class=" col-sm-12 loading-crew-details text-center text-primary hidden">

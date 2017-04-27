@@ -23,6 +23,39 @@
 	<p class="event-desc">@Model.Description</p>
 }
 
+<h3>Crews</h3>
+
+<table class="table table-striped table-hovered" id="event-crews-list">
+	<thead>
+		<tr>
+			<th width="250">Crew name</th>
+			<th>Crew leader</th>
+			<th width="130">Members</th>
+			<th width="80">Edit</th>
+		</tr>
+	</thead>
+	<tbody>
+		@if (Model.Crews.Count == 0)
+		{
+			<tr>
+				<td colspan="4">No crews have been created for the event.</td>
+			</tr>
+		}
+		else
+		{
+			foreach(var crew in Model.Crews)
+			{
+				<tr>
+					<td>@crew.Name</td>
+					<td>@crew.CrewLeader.FullName</td>
+					<td>@crew.CrewMemberCount</td>
+					<td><a href="@Request.Url.LocalPath/crews/@crew.Id" class="btn-icon"><i class="fa fa-fw fa-pencil-square-o"></i></a></td>
+				</tr>
+			}
+		}
+	</tbody>
+</table>
+
 <h3>Jobs</h3>
 
 <table class="table table-striped table-hovered" id="event-jobs-list">
@@ -41,7 +74,7 @@
 				<td colspan="4">No jobs have been added to the event yet.</td>
 			</tr>
 		}
-		@foreach(var job in Model.Jobs)
+		@foreach (var job in Model.Jobs)
 		{
 			<tr>
 				<td>
@@ -73,7 +106,7 @@
 					{
 						<span class="">@Html.EnumDescription(job.Status)</span>
 					}
-					
+
 				</td>
 			</tr>
 		}

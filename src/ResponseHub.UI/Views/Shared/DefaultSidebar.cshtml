@@ -3,6 +3,8 @@
 <ul class="nav nav-sidebar">
 	<li class="@(ViewContext.RouteData.Values["Controller"].ToString() == "Jobs" ? "active" : "")">
 		<a href="/jobs"><i class="fa fa-fw fa-list-alt"></i>Jobs</a>
+		@if (ViewContext.RouteData.Values["Controller"].ToString() == "Jobs")
+		{
 		<ul>
 			<li>
 				<a href="/jobs/event-jobs">Event jobs</a>
@@ -11,6 +13,7 @@
 				<a href="/jobs/all-jobs">All jobs</a>
 			</li>
 		</ul>
+		}
 	</li>
 	<li class="@(ViewContext.RouteData.Values["Controller"].ToString() == "Messages" ? "active" : "")">
 		<a href="/messages"><i class="fa fa-fw fa-sticky-note-o"></i>Messages</a>
