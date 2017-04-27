@@ -85,9 +85,52 @@ namespace Enivate.ResponseHub.UI.Controllers.Api
 		[Route("{eventId:guid}/crews")]
 		[HttpGet]
 
-		public async Task<IList<Crew>> GetCrews(Guid eventId)
+		public async Task<IList<CrewViewModel>> GetCrews(Guid eventId)
 		{
-			throw new NotImplementedException();
+			// Get the event based on the id
+			Event eventObj = await EventService.GetById(eventId);
+
+			// If the job is null, return 404
+			if (eventObj == null)
+			{
+				throw new HttpResponseException(HttpStatusCode.NotFound);
+			}
+
+			List<Guid> memberIds = new List<Guid>();
+
+			// Add the crew leaders
+			memberIds.AddRange(eventObj.Crews.Select(i => i.CrewLeaderId));
+
+			// Add the crew members, excluding the crew leader user.
+			memberIds.AddRange(eventObj.Crews.SelectMany(i => i.CrewMembers));
+
+			// Remove any duplicates
+			memberIds = memberIds.Distinct().ToList();
+
+			// Get the users with the specific ids
+			IList<IdentityUser> members = await UserService.GetUsersByIds(memberIds);
+
+			// Create the list of crews
+			IList<CrewViewModel> crewModels = new List<CrewViewModel>();
+
+			// Loop through the crews
+			foreach (Crew crew in eventObj.Crews)
+			{
+				// Create the model
+				CrewViewModel crewModel = new CrewViewModel()
+				{
+					Id = crew.Id,
+					Created = crew.Created,
+					Name = crew.Name,
+					Updated = crew.Updated,
+					CrewLeader = UnitMemberViewModel.FromIdentityUserWithoutRole(members.FirstOrDefault(i => i.Id == crew.CrewLeaderId)),
+					CrewMembers = members.Where(i => crew.CrewMembers.Where(x => x != crew.CrewLeaderId).Contains(i.Id)).Select(i => UnitMemberViewModel.FromIdentityUserWithoutRole(i)).ToList()
+				};
+				crewModels.Add(crewModel);
+			}
+
+			// return the crews
+			return crewModels;
 		}
 
 		[Route("{eventId:guid}/crew/{crewId:guid}")]

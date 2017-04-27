@@ -363,19 +363,19 @@
 		// Set the job status
 		if (jobMessage.Cancelled != null)
 		{
-			statusSpan.append('<i class="fa fa-ban"></i>');
+			statusSpan.append('<i class="fa fa-ban job-cancelled"></i>');
 		}
 		else if (jobMessage.JobClear != null)
 		{
-			statusSpan.append('<i class="fa fa-check-circle-o"></i>');
+			statusSpan.append('<i class="fa fa-check-circle-o job-clear"></i>');
 		}
 		else if (jobMessage.OnScene != null)
 		{
-			statusSpan.append('<i class="fa fa-hourglass-half"></i>');
+			statusSpan.append('<i class="fa fa-hourglass-half on-scene"></i>');
 		}
 		else if (jobMessage.OnRoute != null)
 		{
-			statusSpan.append('<i class="fa fa-arrow-circle-o-right"></i>');
+			statusSpan.append('<i class="fa fa-arrow-circle-o-right on-route"></i>');
 		}
 		else
 		{

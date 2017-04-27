@@ -137,6 +137,12 @@
 	 * @param {any} crewId
 	 */
 	function loadCrewJobAssignments(crewId) {
+		
+		// Enable job assignments
+		$('.event-job-allocation .jobs-list button').each(function (index, elem) {
+			$(elem).removeClass('disabled');
+			$(elem).removeAttr('disabled');
+		});
 
 		// Show the loading animation
 		$('.loading-crew-details').removeClass('hidden');
@@ -146,6 +152,9 @@
 
 		// Get the event id
 		var eventId = $('#EventId').val();
+
+		// Set the current crew id
+		$('#selected-crew-id').val(crewId);
 
 		$.ajax({
 			url: responseHub.apiPrefix + '/events/' + eventId + '/crew/' + crewId,
@@ -175,7 +184,11 @@
 						}
 
 					}
+
 				}
+
+				// Disable the button
+				$('.allocate-jobs button').attr('disabled', 'disabled').addClass('disabled');
 
 			},
 			complete: function () {
@@ -221,14 +234,20 @@
 			data: postData,
 			success: function (data) {
 
+				$('.allocate-jobs button i').addClass('fa-indent').removeClass('fa-spin fa-spinner');
+
+				// If there are no jobs assigned, hide the button
+				if ($('.assigned-jobs li').length == 0) {
+					$('.allocate-jobs').addClass('hidden');
+				}
 			},
 			error: function (jqXHR, textStatus, errorThrown) {
 
-			}, 
-			complete: function () {
 				$('.allocate-jobs button').removeAttr('disabled');
 				$('.allocate-jobs button').removeClass('disabled');
 				$('.allocate-jobs button i').addClass('fa-indent').removeClass('fa-spin fa-spinner');
+			}, 
+			complete: function () {
 			}
 		});
 
@@ -359,6 +378,14 @@
 		// rebind the assign controls
 		bindAssignJobToCrew();
 
+		// If there are no jobs assigned, show the no jobs message
+		if ($('.assigned-jobs li').length == 0) {
+			$('.crew-job-list .no-jobs').removeClass('hidden');
+		}
+
+		// Enable the assign button
+		$('.allocate-jobs button').removeClass("disabled").removeAttr("disabled");
+
 	}
 
 	function bindSortable() {
@@ -402,6 +429,9 @@
 			// Hide the no assigned jobs message
 			$('.crew-job-list .no-jobs').addClass('hidden');
 			$('.allocate-jobs').removeClass('hidden');
+
+			// Enable the assign button
+			$('.allocate-jobs button').removeClass("disabled").removeAttr("disabled");
 
 		});
 
@@ -583,16 +613,21 @@
 
 		});
 
-		$('#CrewSelect').on('change', function () {
+		$('#CrewSelect').on('change', function (e) {
+			
+			// The button is not disabled, then there are changes and we shouldn't allow that'
+			if ($('.allocate-jobs button[disabled="disabled"]').length == 0)
+			{
+				$('#confirm-change-crew').modal('show');
+				return;
+			} else {
 
-			// Enable job assignments
-			$('.event-job-allocation .jobs-list button').each(function (index, elem) {
-				$(elem).removeClass('disabled');
-				$(elem).removeAttr('disabled');
-			});
+				var crewId = $(this).val();
 
-			// Load the crew assignments
-			loadCrewJobAssignments($(this).val());
+				// Load the crew assignments
+				loadCrewJobAssignments(crewId);
+
+			}
 
 		});
 
@@ -652,7 +687,8 @@
 	return {
 		addJobsToMap: addJobsToMap,
 		unassignJobFromCrew: unassignJobFromCrew,
-		removeCrewMember: removeCrewMember
+		removeCrewMember: removeCrewMember,
+		loadCrewJobAssignments: loadCrewJobAssignments
 	}
 
 })();

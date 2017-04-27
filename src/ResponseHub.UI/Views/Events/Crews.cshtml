@@ -13,39 +13,40 @@
 	{
 		<div class="panel panel-default">
 			<div class="panel-heading" role="tab" id="crew-accordion-heading-@i">
-				<h4 class="panel-title"><a class="accordion-toggle collapsed" data-toggle="collapse" href="#crew-accordion-@i">@Model.Crews[i].Name - Crew leader: @Model.Crews[i].CrewLeader.FullName</a></h4>
+				<h4 class="panel-title"><i class="fa fa-fw fa-users text-info"></i> @Model.Crews[i].Name - Crew leader: @Model.Crews[i].CrewLeader.FullName</h4>
 			</div>
-			<div id="crew-accordion-@i" class="panel-collapse collapse">
-				<div class="panel-body crew-details">
-					<h4>Crew leader:</h4>
-					<p>@Model.Crews[i].CrewLeader.FullName</p>
-					<h4>Crew members:</h4>
-					<p>
-						@foreach (var crewMember in Model.Crews[i].CrewMembers)
-						{
-							@crewMember.FullName <br />
-						}
-					</p>
-					<p><a href="/events/@Model.Id/crews/@Model.Crews[i].Id" class="btn btn-link btn-icon btn-left-align"><i class="fa fa-fw fa-pencil-square-o"></i>Edit crew</a></p>
-				</div>
+			<div class="panel-body crew-details">
+				<h4>Crew leader:</h4>
+				<p>@Model.Crews[i].CrewLeader.FullName</p>
+				<h4>Crew members:</h4>
+				<p>
+					@foreach (var crewMember in Model.Crews[i].CrewMembers)
+					{
+						@crewMember.FullName <br />
+					}
+				</p>
+				<p><a href="/events/@Model.Id/crews/@Model.Crews[i].Id" class="btn btn-link btn-icon btn-left-align"><i class="fa fa-fw fa-pencil-square-o"></i>Edit crew</a></p>
 			</div>
 		</div>
 	}
 
 </div>
 
-@if (!Model.Finished)
-{
-	if (!Model.AllMembersAllocated)
+<div class="bottom-20">
+
+	@if (!Model.Finished)
 	{
-		<p><a href="@Request.Url.LocalPath/create-crew" class="btn btn-primary">Create crew</a></p>
+		if (!Model.AllMembersAllocated)
+		{
+			<p><a href="@Request.Url.LocalPath/create-crew" class="btn btn-primary">Create crew</a></p>
+		}
+		else
+		{
+			<p class="text-info"><strong>All available members have been assigned to crews, no new crews can be created.</strong></p>
+		}
 	}
 	else
 	{
-		<p class="text-info"><strong>All available members have been assigned to crews, no new crews can be created.</strong></p>
+		<p class="text-info"><strong>No new crews can be added as the event has finished.</strong></p>
 	}
-}
-else
-{
-	<p class="text-info"><strong>No new crews can be added as the event has finished.</strong></p>
-}
+</div>

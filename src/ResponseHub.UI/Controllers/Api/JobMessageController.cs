@@ -46,6 +46,7 @@ namespace Enivate.ResponseHub.UI.Controllers.Api
 
 			// Store the skip and count values
 			int count = 50;
+			Int32.TryParse(ConfigurationManager.AppSettings["JobMessages.DefaultResultLimit"], out count);
 			int skip = 0;
 			MessageType messageType = MessageType.Job;
 
@@ -133,6 +134,7 @@ namespace Enivate.ResponseHub.UI.Controllers.Api
 		public async Task<IList<JobMessage>> PagerMessages()
 		{
 			int count = 50;
+			Int32.TryParse(ConfigurationManager.AppSettings["JobMessages.DefaultResultLimit"], out count);
 			int skip = 0;
 
 			// Get the skip query string

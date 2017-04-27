@@ -1,9 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
+using System.Globalization;
+using System.IO;
 using System.Linq;
-using System.Web;
+using System.Threading.Tasks;
 
 using Enivate.ResponseHub.Common;
+using Enivate.ResponseHub.Common.Constants;
 using Enivate.ResponseHub.Model.Attachments.Interface;
 using Enivate.ResponseHub.Model.Units.Interface;
 using Enivate.ResponseHub.Model.Units;
@@ -12,14 +16,10 @@ using Enivate.ResponseHub.Model.Messages;
 using Enivate.ResponseHub.UI.Models.Messages;
 using Enivate.ResponseHub.Model.Identity;
 using Enivate.ResponseHub.Model.Identity.Interface;
-using System.Threading.Tasks;
 using Enivate.ResponseHub.Model.Attachments;
-using System.IO;
-using Enivate.ResponseHub.Common.Constants;
 using Enivate.ResponseHub.UI.Helpers;
 using Enivate.ResponseHub.Model.SignIn.Interface;
 using Enivate.ResponseHub.Model.SignIn;
-using System.Globalization;
 
 namespace Enivate.ResponseHub.UI.Controllers
 {
@@ -44,7 +44,8 @@ namespace Enivate.ResponseHub.UI.Controllers
 			// create the job messages list
 			IList<JobMessage> jobMessages;
 
-			int count = 5;
+			int count = 50;
+			Int32.TryParse(ConfigurationManager.AppSettings["JobMessages.DefaultResultLimit"], out count);
 			int skip = 0;
 
 			// Determine if filter is applied

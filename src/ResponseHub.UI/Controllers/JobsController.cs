@@ -14,6 +14,7 @@ using Enivate.ResponseHub.Model.Identity;
 using Enivate.ResponseHub.Model.SignIn;
 using Enivate.ResponseHub.Model.Events.Interface;
 using Enivate.ResponseHub.Model.Events;
+using Enivate.ResponseHub.Model.Crews;
 
 namespace Enivate.ResponseHub.UI.Controllers
 {
@@ -233,6 +234,16 @@ namespace Enivate.ResponseHub.UI.Controllers
 
 				// Add the event jobs model to the list
 				eventJobs.Add(model);
+
+				// Now that we have all the jobs for the event, get the subset that are assigned to the current user
+				// Find the crew the user is assigned to
+				Crew userCrew = eventObj.Crews.FirstOrDefault(i => i.CrewMembers.Contains(UserId));
+
+				// If the crew exists, get the jobs assigned to that crew
+				if (userCrew != null)
+				{
+					model.MyJobs = model.Jobs.Where(i => userCrew.JobMessageIds.Contains(i.Id)).ToList();
+				}
 
 			}
 

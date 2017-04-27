@@ -7,6 +7,7 @@ using Enivate.ResponseHub.Common.Extensions;
 using Enivate.ResponseHub.Model.Messages;
 using Enivate.ResponseHub.Model.Units;
 using Enivate.ResponseHub.Model.Identity;
+using Enivate.ResponseHub.Model.Spatial;
 
 namespace Enivate.ResponseHub.UI.Models.Messages
 {
@@ -34,6 +35,8 @@ namespace Enivate.ResponseHub.UI.Models.Messages
 		public string CapcodeUnitName { get; set; }
 
 		public MessagePriority Priority { get; set; }
+
+		public LocationInfo Location { get; set; }
 
 		public MessageProgressViewModel OnRoute { get; set; }
 
@@ -67,7 +70,8 @@ namespace Enivate.ResponseHub.UI.Models.Messages
 				JobNumber = jobMessage.JobNumber,
 				MessageBody = jobMessage.MessageContent,
 				Priority = jobMessage.Priority,
-				Timestamp = jobMessage.Timestamp.ToLocalTime()
+				Timestamp = jobMessage.Timestamp.ToLocalTime(),
+				Location = jobMessage.Location
 			};
 
 			// Set the on route, on scene, job clear values

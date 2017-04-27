@@ -17,9 +17,12 @@ namespace Enivate.ResponseHub.UI.Models.Messages
 
 		public IList<JobMessageListItemViewModel> Jobs { get; set; }
 
+		public IList<JobMessageListItemViewModel> MyJobs { get; set; }
+
 		public EventJobListViewModel()
 		{
 			Jobs = new List<JobMessageListItemViewModel>();
+			MyJobs = new List<JobMessageListItemViewModel>();
 		}
 
 	}
