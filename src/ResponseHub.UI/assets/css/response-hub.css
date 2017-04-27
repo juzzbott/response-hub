@@ -144,6 +144,23 @@ table {
 .panel-heading {
   border-bottom: 1px solid #ddd;
 }
+.panel {
+  border-radius: 2px;
+}
+.panel .panel-heading {
+  border-top-left-radius: 2px;
+  border-top-right-radius: 2px;
+}
+.panel-alert .panel-heading {
+  font-weight: bold;
+}
+.panel-alert .panel-heading i {
+  font-size: 1.2em;
+  margin-right: 8px;
+}
+.panel-danger .panel-body {
+  background-color: #fcf8f8;
+}
 /*
 	Top navbar styles
 */

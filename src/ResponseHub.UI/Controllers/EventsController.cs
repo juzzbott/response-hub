@@ -305,13 +305,41 @@ namespace Enivate.ResponseHub.UI.Controllers
 		#region Finish Event
 
 		[Route("{id:guid}/finish-event")]
-		public async Task<ActionResult> FinishEvent(Guid id)
+		public ActionResult FinishEvent(Guid id)
+		{
+			// Create the model and return the view
+			FinishEventViewModel model = new FinishEventViewModel()
+			{
+				EventId = id,
+				FinishDate = DateTime.Now.ToString("yyyy-MM-dd"),
+				FinishTime = DateTime.Now.ToString("HH:mm")
+			};
+
+			// return the view
+			return View(model);
+		}
+
+		[Route("{id:guid}/finish-event")]
+		[ValidateAntiForgeryToken]
+		[HttpPost]
+		public async Task<ActionResult> FinishEvent(Guid id, FinishEventViewModel model)
 		{
 			try
 			{
 
+				// Set the event id to the model and ensure it's valid.
+				model.EventId = id;
+				if (!ModelState.IsValid)
+				{
+					return View(model);
+				}
+				
+				// Parse the finish date
+				string finishDateComplete = String.Format("{0} {1}:00", model.FinishDate, model.FinishTime);
+				DateTime finishDate = DateTime.ParseExact(finishDateComplete, "yyyy-MM-dd HH:mm:ss", CultureInfo.CurrentCulture).ToUniversalTime();
+
 				// Finish the event
-				await EventService.FinishEvent(id);
+				await EventService.FinishEvent(id, finishDate);
 
 				// Redirect to the event
 				return new RedirectResult(String.Format("/events/{0}?finished=1", id));

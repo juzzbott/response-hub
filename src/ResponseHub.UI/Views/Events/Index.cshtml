@@ -17,6 +17,7 @@
 			<th>Name</th>
 			<th>Description</th>
 			<th>Started</th>
+			<th>Finished</th>
 			<th>Jobs</th>
 			<th>Crews</th>
 		</tr>
@@ -25,7 +26,7 @@
 		@if (Model == null || Model.Count == 0)
 		{
 			<tr>
-				<td colspan="4">No events found.</td>
+				<td colspan="6">No events found.</td>
 			</tr>
 		}
 		else
@@ -35,7 +36,8 @@
 				<tr>
 					<td><a href="/events/@eventObj.Id">@eventObj.Name</a></td>
 					<td>@eventObj.Description</td>
-					<td>@eventObj.StartDate.ToString("d MMMM yyyy HH:mm")</td>
+					<td>@eventObj.StartDate.ToLocalTime().ToString("d MMMM yyyy HH:mm")</td>
+					<td>@(eventObj.FinishDate.HasValue ? eventObj.FinishDate.Value.ToLocalTime().ToString("d MMMM yyyy HH:mm") : "Ongoing")</td>
 					<td>@eventObj.JobsCount</td>
 					<td>@eventObj.CrewsCount</td>
 				</tr>
