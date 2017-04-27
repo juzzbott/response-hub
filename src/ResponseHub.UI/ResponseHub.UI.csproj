@@ -329,6 +329,14 @@
     <Content Include="assets\images\leaflet\marker-icon-2x.png" />
     <Content Include="assets\images\leaflet\marker-icon.png" />
     <Content Include="assets\images\leaflet\marker-shadow.png" />
+    <Content Include="assets\images\map-icons\current-location.png" />
+    <Content Include="assets\images\map-icons\event-assigned.png" />
+    <Content Include="assets\images\map-icons\event-cancelled.png" />
+    <Content Include="assets\images\map-icons\event-completed.png" />
+    <Content Include="assets\images\map-icons\event-in-progress.png" />
+    <Content Include="assets\images\map-icons\event-requires-info.png" />
+    <Content Include="assets\images\map-icons\event-unassigned.png" />
+    <Content Include="assets\images\map-icons\lhq-marker.png" />
     <Content Include="assets\images\map-marker.png" />
     <Content Include="assets\js\framework.js" />
     <Content Include="assets\js\lib\bootstrap-datepicker.min.js" />
