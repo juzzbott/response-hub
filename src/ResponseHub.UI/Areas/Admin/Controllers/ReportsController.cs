@@ -51,7 +51,7 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
             return View();
         }
 
-		[Route("unit-capcodes")]
+		[Route("units-capcodes")]
 		public async Task<ActionResult> UnitsCapcodes()
 		{
 
