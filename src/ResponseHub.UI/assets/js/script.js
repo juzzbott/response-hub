@@ -2931,13 +2931,19 @@ responseHub.signIn = (function () {
 	}
 
 	// Shows the elements for operation details
-	function showOperationDetails() {
-		$('#operation-task').removeClass('hidden');
-	}
-
-	// Hides the elements for operation details
-	function hideOperationDetails() {
+	function setActivityDetails(activity) {
 		$('#operation-task').addClass('hidden');
+		$('#other-task').addClass('hidden');
+
+		switch (activity) {
+			case 'operation':
+				$('#operation-task').removeClass('hidden');
+				break;
+
+			case 'other':
+				$('#other-task').removeClass('hidden');
+				break;
+		}
 	}
 
 	// Shows the sign out form for the specific sign in entry
@@ -2956,8 +2962,7 @@ responseHub.signIn = (function () {
 
 	return {
 		setOperationJobNumber: setOperationJobNumber,
-		showOperationDetails: showOperationDetails,
-		hideOperationDetails: hideOperationDetails,
+		setActivityDetails: setActivityDetails,
 		showSignOutForm: showSignOutForm,
 		hideSignOutForm: hideSignOutForm
 	}

@@ -25,6 +25,8 @@ namespace Enivate.ResponseHub.Model.SignIn
 
 		public OperationActivity OperationDetails { get; set; }
 
+		public OtherActivity OtherActivity { get; set; }
+
 		public SignInEntry()
 		{
 			Id = Guid.NewGuid();

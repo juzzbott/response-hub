@@ -8,10 +8,10 @@ using Enivate.ResponseHub.Model.Training;
 
 namespace Enivate.ResponseHub.Model.SignIn
 {
-	public class TrainingActivity : Activity
+	public class OtherActivity
 	{
 
-		public TrainingType TrainingType { get; set; }
+		public OtherSignInType OtherType { get; set; }
 
 		public string OtherDescription { get; set; }
 

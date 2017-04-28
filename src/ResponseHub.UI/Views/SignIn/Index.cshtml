@@ -6,14 +6,6 @@
 
 <h1>@ViewBag.Title</h1>
 
-@if (Model.SignOutRequired)
-{
-	<div class="alert alert-warning alert-dismissible" role="alert">
-		<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-		<strong>You need to sign out!</strong><br />You have not yet signed out from previous sign ins. <a href="/sign-in/sign-out">Go an sign out now.</a>
-	</div>
-}
-
 @Html.SuccessFromQueryString("sign_in_complete", "1", "The member has been successfully signed in.")
 
 <form action="@Request.Url" method="post">
@@ -84,12 +76,16 @@
 		<div class="row">
 			<div class="col-sm-12 graphic-radio">
 				<label class="radio-inline" for="SignOnType1">
-					<input type="radio" name="SignOnType" id="SignOnType1" value="1" checked="checked" onclick="responseHub.signIn.showOperationDetails();">
+					<input type="radio" name="SignOnType" id="SignOnType1" value="1" checked="checked" onclick="responseHub.signIn.setActivityDetails('operation');">
 					Operation
 				</label>
 				<label class="radio-inline" for="SignOnType2">
-					<input type="radio" name="SignOnType" id="SignOnType2" value="2" onclick="responseHub.signIn.hideOperationDetails();">
+					<input type="radio" name="SignOnType" id="SignOnType2" value="2" onclick="responseHub.signIn.setActivityDetails('training');">
 					Training
+				</label>
+				<label class="radio-inline" for="SignOnType4">
+					<input type="radio" name="SignOnType" id="SignOnType2" value="4" onclick="responseHub.signIn.setActivityDetails('other');">
+					Other
 				</label>
 			</div>
 		</div>
@@ -119,6 +115,10 @@
 			}
 
 		</div>
+	</div>
+
+	<div id="other-task">
+		<p><strong>Other details</strong></p>
 	</div>
 
 	<div class="top-20">

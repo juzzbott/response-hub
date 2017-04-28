@@ -37,7 +37,7 @@ namespace Enivate.ResponseHub.UI.Controllers
 		{
 			
 			// Get the initial model
-			SignInViewModel model = await GetSignInModel(false, true);
+			SignInViewModel model = await GetSignInModel(false, false);
 
 			// Set the user id, as we are forcing it to be our current logged in user.
 			model.UserId = UserId;
