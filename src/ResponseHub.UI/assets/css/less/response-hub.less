@@ -211,6 +211,32 @@ table {
 	border-bottom: 1px solid #ddd;
 }
 
+.panel {
+	border-radius: 2px;
+
+	.panel-heading {
+		border-top-left-radius: 2px;
+		border-top-right-radius: 2px;
+	}
+}
+
+.panel-alert {
+	.panel-heading {
+		font-weight: bold;
+
+		i {
+			font-size: 1.2em;
+			margin-right: 8px;
+		}
+	}
+}
+
+.panel-danger {
+	.panel-body {
+		background-color: lighten(@text-danger, 52%)
+	}
+}
+
 /*
 	Top navbar styles
 */

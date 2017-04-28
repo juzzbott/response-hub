@@ -28,7 +28,7 @@ namespace Enivate.ResponseHub.Model.Events.Interface
 
 		Task AssignJobsToCrew(Guid eventId, Guid crewId, IList<Guid> assignedJobIds);
 
-		Task FinishEvent(Guid eventId);
+		Task FinishEvent(Guid eventId, DateTime finishDateTime);
 		
 		Task SaveEvent(Guid eventId, string name, string description, DateTime startDate);
 

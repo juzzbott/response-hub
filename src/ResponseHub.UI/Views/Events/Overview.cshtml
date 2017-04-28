@@ -12,7 +12,7 @@
 {
 	<div class="row">
 		<div class="col-sm-12">
-			<p><button class="btn btn-danger btn-icon" data-toggle="modal" data-target="#confirm-finish-event"><i class="fa fa-fw fa-stop-circle"></i>Finish event</button></p>
+			<p><a href="/events/@Model.Id/finish-event" class="btn btn-danger btn-icon"><i class="fa fa-fw fa-stop-circle"></i>Finish event</a></p>
 		</div>
 	</div>
 }
@@ -112,22 +112,3 @@
 		}
 	</tbody>
 </table>
-
-
-<div class="modal fade" id="confirm-finish-event" tabindex="-1" role="dialog" aria-labelledby="confirm-finish-label">
-	<div class="modal-dialog">
-		<div class="modal-content">
-			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-				<h4 class="modal-title" id="confirm-cancel-label">Finish event?</h4>
-			</div>
-			<div class="modal-body">
-				<p>Are you sure you wish to finish this event? Once a job is finished, no further jobs will be added and no changes can be made to crews or job assignments.</p>
-			</div>
-			<div class="modal-footer">
-				<button type="button" class="btn btn-link" data-dismiss="modal">Close</button>
-				<a href="/events/@Model.Id/finish-event" class="btn btn-danger">Finish event</a>
-			</div>
-		</div><!-- /.modal-content -->
-	</div><!-- /.modal-dialog -->
-</div><!-- /.modal -->

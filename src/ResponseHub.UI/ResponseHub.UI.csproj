@@ -17,6 +17,7 @@
     <AssemblyName>ResponseHub.UI</AssemblyName>
     <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <MvcBuildViews>false</MvcBuildViews>
+    <PrecompileRazorFiles>true</PrecompileRazorFiles>
     <UseIISExpress>true</UseIISExpress>
     <IISExpressSSLPort />
     <IISExpressAnonymousAuthentication />
@@ -115,6 +116,9 @@
       <HintPath>..\packages\Owin.1.0\lib\net40\Owin.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="RazorGenerator.Mvc, Version=2.0.0.0, Culture=neutral, PublicKeyToken=7b26dc2a43f6a0d4, processorArchitecture=MSIL">
+      <HintPath>..\packages\RazorGenerator.Mvc.2.4.9\lib\net40\RazorGenerator.Mvc.dll</HintPath>
+    </Reference>
     <Reference Include="StackifyHttpTracer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=93c44ce23f2048dd, processorArchitecture=MSIL">
       <HintPath>..\packages\StackifyHttpModule.1.0.28.0\lib\net45\StackifyHttpTracer.dll</HintPath>
       <Private>True</Private>
@@ -173,6 +177,9 @@
       <Private>True</Private>
       <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.Razor.dll</HintPath>
     </Reference>
+    <Reference Include="WebActivatorEx, Version=2.0.0.0, Culture=neutral, PublicKeyToken=7b26dc2a43f6a0d4, processorArchitecture=MSIL">
+      <HintPath>..\packages\WebActivatorEx.2.0.3\lib\net40\WebActivatorEx.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System.Net.Http.Formatting">
@@ -187,6 +194,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\FilterConfig.cs" />
+    <Compile Include="App_Start\RazorGeneratorMvcStart.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Areas\Admin\AdminAreaRegistration.cs" />
@@ -255,6 +263,7 @@
     <Compile Include="Areas\Admin\Models\Reports\UnitsCapcodesReportViewModel.cs" />
     <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Models\Events\CreateEventViewModel.cs" />
+    <Compile Include="Models\Events\FinishEventViewModel.cs" />
     <Compile Include="Models\Messages\EventJobListViewModel.cs" />
     <Compile Include="Models\Messages\JobMessageFilter.cs" />
     <Compile Include="Models\Messages\JobMessageListItemViewModel.cs" />
@@ -324,6 +333,34 @@
     <Content Include="assets\css\response-hub.css" />
     <Content Include="assets\fonts\fontawesome-webfont.svg" />
     <Content Include="assets\images\email\response-hub-logo.png" />
+    <Content Include="assets\images\favicon\android-icon-144x144.png" />
+    <Content Include="assets\images\favicon\android-icon-192x192.png" />
+    <Content Include="assets\images\favicon\android-icon-36x36.png" />
+    <Content Include="assets\images\favicon\android-icon-48x48.png" />
+    <Content Include="assets\images\favicon\android-icon-72x72.png" />
+    <Content Include="assets\images\favicon\android-icon-96x96.png" />
+    <Content Include="assets\images\favicon\apple-icon-114x114.png" />
+    <Content Include="assets\images\favicon\apple-icon-120x120.png" />
+    <Content Include="assets\images\favicon\apple-icon-144x144.png" />
+    <Content Include="assets\images\favicon\apple-icon-152x152.png" />
+    <Content Include="assets\images\favicon\apple-icon-180x180.png" />
+    <Content Include="assets\images\favicon\apple-icon-57x57.png" />
+    <Content Include="assets\images\favicon\apple-icon-60x60.png" />
+    <Content Include="assets\images\favicon\apple-icon-72x72.png" />
+    <Content Include="assets\images\favicon\apple-icon-76x76.png" />
+    <Content Include="assets\images\favicon\apple-icon-precomposed.png" />
+    <Content Include="assets\images\favicon\apple-icon.png" />
+    <Content Include="assets\images\favicon\browserconfig.xml" />
+    <Content Include="assets\images\favicon\favicon-16x16.png" />
+    <Content Include="assets\images\favicon\favicon-32x32.png" />
+    <Content Include="assets\images\favicon\favicon-96x96.png" />
+    <Content Include="assets\images\favicon\favicon.ico" />
+    <Content Include="assets\images\favicon\ms-icon-144x144.png" />
+    <Content Include="assets\images\favicon\ms-icon-150x150.png" />
+    <Content Include="assets\images\favicon\ms-icon-310x310.png" />
+    <Content Include="assets\images\favicon\ms-icon-70x70.png" />
+    <Content Include="assets\images\favicon_img.png" />
+    <Content Include="assets\images\homescreen-icon.png" />
     <Content Include="assets\images\leaflet\layers-2x.png" />
     <Content Include="assets\images\leaflet\layers.png" />
     <Content Include="assets\images\leaflet\marker-icon-2x.png" />
@@ -632,6 +669,12 @@
   <ItemGroup>
     <Content Include="Views\Jobs\EventJobs.cshtml" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Events\FinishEvent.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="assets\images\favicon\manifest.json" />
+  </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
@@ -715,6 +758,8 @@
     <Error Condition="!Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.3\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.3\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props'))" />
     <Error Condition="!Exists('..\packages\Microsoft.Net.Compilers.2.1.0\build\Microsoft.Net.Compilers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Net.Compilers.2.1.0\build\Microsoft.Net.Compilers.props'))" />
     <Error Condition="!Exists('..\packages\OctoPack.3.6.0\build\OctoPack.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\OctoPack.3.6.0\build\OctoPack.targets'))" />
+    <Error Condition="!Exists('..\packages\RazorGenerator.MsBuild.2.4.7\build\RazorGenerator.MsBuild.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\RazorGenerator.MsBuild.2.4.7\build\RazorGenerator.MsBuild.targets'))" />
   </Target>
   <Import Project="..\packages\OctoPack.3.6.0\build\OctoPack.targets" Condition="Exists('..\packages\OctoPack.3.6.0\build\OctoPack.targets')" />
+  <Import Project="..\packages\RazorGenerator.MsBuild.2.4.7\build\RazorGenerator.MsBuild.targets" Condition="Exists('..\packages\RazorGenerator.MsBuild.2.4.7\build\RazorGenerator.MsBuild.targets')" />
 </Project>

@@ -1,0 +1,59 @@
+﻿@model Enivate.ResponseHub.UI.Models.Events.FinishEventViewModel
+
+@{
+    ViewBag.Title = "Finish event";
+}
+
+<h1>@ViewBag.Title</h1>
+
+<div class="panel panel-danger panel-alert">
+	<div class="panel-heading">
+		<i class="fa fa-exclamation-circle"></i> Finish event?
+	</div>
+	<div class="panel-body">
+		Once a job is finished, no further jobs will be added and no changes can be made to crews or job assignments.
+	</div>
+</div>
+
+<form action="@Request.Url.LocalPath" method="post">
+
+	@Html.AntiForgeryToken()
+
+	<div class="form-group">
+		<label for="DateStarted">Finish date *</label>
+		<div class="row">
+			<div class="col-sm-8 col-md-6 col-lg-4">
+				<div class="input-group date datepicker-control" data-provide="datepicker" data-date-format="yyyy-mm-dd" data-date-autoclose="true" data-date-show-on-focus="false">
+					@Html.TextBoxFor(model => model.FinishDate, new { @class = "form-control" })
+					<div class="input-group-addon">
+						<i class="fa fa-fw fa-calendar"></i>
+					</div>
+				</div>
+				<div class="text-muted"><em>Date format should be yyyy-mm-dd.</em></div>
+			</div>
+		</div>
+		@Html.ValidationMessageFor(model => model.FinishDate)
+	</div>
+
+	<div class="form-group">
+		<label for="DateStarted">Finish time *</label>
+		<div class="row">
+			<div class="col-sm-8 col-md-6 col-lg-4">
+				<div class="input-group timepicker-control">
+					@Html.TextBoxFor(model => model.FinishTime, new { @class = "form-control" })
+					<div class="input-group-addon">
+						<i class="fa fa-fw fa-clock-o"></i>
+					</div>
+				</div>
+				<div class="text-muted"><em>Date format should be hh:mm and in 24 hour time.</em></div>
+			</div>
+		</div>
+		@Html.ValidationMessageFor(model => model.FinishTime)
+	</div>
+
+	<div class="top-20">
+		<button type="submit" class="btn btn-primary">Finish event</button>
+		<a href="/events/@Model.EventId" class="btn btn-link">Cancel</a>
+	</div>
+
+</form>

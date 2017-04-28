@@ -138,9 +138,9 @@ namespace Enivate.ResponseHub.ApplicationServices
 		/// </summary>
 		/// <param name="eventId">The id of the event to set the finish date for.</param>
 		/// <returns></returns>
-		public async Task FinishEvent(Guid eventId)
+		public async Task FinishEvent(Guid eventId, DateTime finishDateTime)
 		{
-			await _repository.FinishEvent(eventId, DateTime.UtcNow);
+			await _repository.FinishEvent(eventId, finishDateTime.ToUniversalTime());
 		}
 
 		/// <summary>
