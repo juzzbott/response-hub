@@ -17,7 +17,7 @@
     <AssemblyName>ResponseHub.UI</AssemblyName>
     <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <MvcBuildViews>false</MvcBuildViews>
-	<PrecompileRazorFiles>true</PrecompileRazorFiles>
+    <PrecompileRazorFiles>true</PrecompileRazorFiles>
     <UseIISExpress>true</UseIISExpress>
     <IISExpressSSLPort />
     <IISExpressAnonymousAuthentication />
@@ -333,6 +333,34 @@
     <Content Include="assets\css\response-hub.css" />
     <Content Include="assets\fonts\fontawesome-webfont.svg" />
     <Content Include="assets\images\email\response-hub-logo.png" />
+    <Content Include="assets\images\favicon\android-icon-144x144.png" />
+    <Content Include="assets\images\favicon\android-icon-192x192.png" />
+    <Content Include="assets\images\favicon\android-icon-36x36.png" />
+    <Content Include="assets\images\favicon\android-icon-48x48.png" />
+    <Content Include="assets\images\favicon\android-icon-72x72.png" />
+    <Content Include="assets\images\favicon\android-icon-96x96.png" />
+    <Content Include="assets\images\favicon\apple-icon-114x114.png" />
+    <Content Include="assets\images\favicon\apple-icon-120x120.png" />
+    <Content Include="assets\images\favicon\apple-icon-144x144.png" />
+    <Content Include="assets\images\favicon\apple-icon-152x152.png" />
+    <Content Include="assets\images\favicon\apple-icon-180x180.png" />
+    <Content Include="assets\images\favicon\apple-icon-57x57.png" />
+    <Content Include="assets\images\favicon\apple-icon-60x60.png" />
+    <Content Include="assets\images\favicon\apple-icon-72x72.png" />
+    <Content Include="assets\images\favicon\apple-icon-76x76.png" />
+    <Content Include="assets\images\favicon\apple-icon-precomposed.png" />
+    <Content Include="assets\images\favicon\apple-icon.png" />
+    <Content Include="assets\images\favicon\browserconfig.xml" />
+    <Content Include="assets\images\favicon\favicon-16x16.png" />
+    <Content Include="assets\images\favicon\favicon-32x32.png" />
+    <Content Include="assets\images\favicon\favicon-96x96.png" />
+    <Content Include="assets\images\favicon\favicon.ico" />
+    <Content Include="assets\images\favicon\ms-icon-144x144.png" />
+    <Content Include="assets\images\favicon\ms-icon-150x150.png" />
+    <Content Include="assets\images\favicon\ms-icon-310x310.png" />
+    <Content Include="assets\images\favicon\ms-icon-70x70.png" />
+    <Content Include="assets\images\favicon_img.png" />
+    <Content Include="assets\images\homescreen-icon.png" />
     <Content Include="assets\images\leaflet\layers-2x.png" />
     <Content Include="assets\images\leaflet\layers.png" />
     <Content Include="assets\images\leaflet\marker-icon-2x.png" />
@@ -643,6 +671,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Events\FinishEvent.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="assets\images\favicon\manifest.json" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
