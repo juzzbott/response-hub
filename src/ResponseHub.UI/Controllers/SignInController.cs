@@ -177,16 +177,26 @@ namespace Enivate.ResponseHub.UI.Controllers
 				UserId = specifiedUserId,
 				UnitId = model.UnitId,
 				SignInTime = signInTime,
-				SignInType = model.SignOnType
+				SignInType = model.SignInType
 			};
 
-			// Set the specific 
-			if (model.SignOnType == SignInType.Operation)
+			// Set the details for the operation
+			if (model.SignInType == SignInType.Operation)
 			{
 				signOn.OperationDetails = new OperationActivity()
 				{
 					Description = model.OperationDescription,
 					JobId = model.OperationJobId.Value
+				};
+			}
+
+			// Set the details for the other sign in type
+			if (model.SignInType == SignInType.Other)
+			{
+				signOn.OtherDetails = new OtherActivity()
+				{
+					OtherType = model.SignInTypeOther,
+					OtherDescription = (model.SignInTypeOther == OtherSignInType.Other ? model.OtherTypeDescription : "")
 				};
 			}
 

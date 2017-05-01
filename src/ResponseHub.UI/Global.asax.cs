@@ -27,6 +27,10 @@ namespace Enivate.ResponseHub.UI
             GlobalConfiguration.Configure(WebApiConfig.Register);
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
-        }
+
+			// Disable automatic validation for non-nullable value types.
+			DataAnnotationsModelValidatorProvider.AddImplicitRequiredAttributeForValueTypes = false;
+
+		}
     }
 }

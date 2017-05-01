@@ -638,13 +638,12 @@ h4.legend {
   padding: 10px;
 }
 .input-validation-error {
-  border-color: #de3226;
-  background-color: #fef7f6;
+  border-color: #de3226 !important;
+  background-color: #fef7f6 !important;
 }
 .input-validation-error:focus,
 .input-validation-error:active {
-  background-color: #fff;
-  border-color: #de3226;
+  border-color: #de3226 !important;
 }
 .current-location-spinner {
   margin-left: 10px;

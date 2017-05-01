@@ -8,6 +8,7 @@ using System.Web.Mvc;
 using Enivate.ResponseHub.Common.Extensions;
 using Enivate.ResponseHub.Model.SignIn;
 using Enivate.ResponseHub.Model.Training;
+using Enivate.ResponseHub.UI.Validators;
 
 namespace Enivate.ResponseHub.UI.Models.SignIn
 {
@@ -21,13 +22,24 @@ namespace Enivate.ResponseHub.UI.Models.SignIn
 		public string StartTime { get; set; }
 
 		[Required(ErrorMessage = "You must select a sign on type.")]
-		public SignInType SignOnType { get; set; }
+		public SignInType SignInType { get; set; }
 
+		[SignInTypeDescription("SignInType", SignInType.Operation, ErrorMessage = "You must enter a description for the operation.")]
 		public string OperationDescription { get; set; }
 
 		public Guid? OperationJobId { get; set; }
 
 		public IList<SignInOperationItem> AvailableOperations { get; set; }
+
+		[SignInTypeDescription("SignInType", SignInType.Training, ErrorMessage = "You must enter a description for the training session.")]
+		public string TrainingDescription { get; set; }
+
+		public IList<SelectListItem> AvailableOtherTypes { get; set; }
+
+		[SignInTypeDescription("SignInType", SignInType.Other, ErrorMessage = "You must select a type of sign on from the list.")]
+		public OtherSignInType SignInTypeOther { get; set; }
+
+		public string OtherTypeDescription { get; set; }
 
 		public IList<SelectListItem> AvailableUsers { get; set; }
 
@@ -43,6 +55,12 @@ namespace Enivate.ResponseHub.UI.Models.SignIn
 		{
 			AvailableOperations = new List<SignInOperationItem>();
 			AvailableUsers = new List<SelectListItem>();
+			AvailableOtherTypes = new List<SelectListItem>();
+
+			foreach (OtherSignInType otherType in Enum.GetValues(typeof(OtherSignInType)))
+			{
+				AvailableOtherTypes.Add(new SelectListItem() { Value = ((int)otherType).ToString(), Text = otherType.GetEnumDescription() });
+			}
 
 		}
 

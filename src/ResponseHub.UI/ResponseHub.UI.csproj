@@ -315,6 +315,8 @@
     <Compile Include="Models\WeatherCentre\WeatherCentreViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
+    <Compile Include="Validators\SignInOtherDescriptionAttribute.cs" />
+    <Compile Include="Validators\SignInTypeDescriptionAttribute.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="App_Data\EmailTemplates\activate_account.html" />
@@ -400,6 +402,7 @@
     <Content Include="assets\js\modules\sign-on.js" />
     <Content Include="assets\js\modules\training.js" />
     <Content Include="assets\js\modules\user-list.js" />
+    <Content Include="assets\js\modules\validation.js" />
     <Content Include="assets\js\modules\wallboard.js" />
     <Content Include="assets\js\modules\weather-centre.js" />
     <Content Include="assets\js\modules\_core.js" />
