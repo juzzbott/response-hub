@@ -332,6 +332,8 @@
     <Content Include="assets\css\lib\leaflet.css" />
     <Content Include="assets\css\response-hub.css" />
     <Content Include="assets\fonts\fontawesome-webfont.svg" />
+    <Content Include="assets\images\email\header-bar-bg.png" />
+    <Content Include="assets\images\email\response-hub-logo-white.png" />
     <Content Include="assets\images\email\response-hub-logo.png" />
     <Content Include="assets\images\favicon\android-icon-144x144.png" />
     <Content Include="assets\images\favicon\android-icon-192x192.png" />
