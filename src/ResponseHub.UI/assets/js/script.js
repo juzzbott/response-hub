@@ -2936,6 +2936,12 @@ responseHub.signIn = (function () {
 		$('#training-task').addClass('hidden');
 		$('#other-task').addClass('hidden');
 
+		// Clear any error messages
+		$('.training-types-messages .field-validation-error').empty().addClass('field-validation-valid').removeClass('field-validation-error');
+		$('#operation-task .input-validation-error, #training-task .input-validation-error, #other-task .input-validation-error').removeAttr('aria-invalid').removeClass('input-validation-error');
+		$('.validation-summary-errors').addClass('validation-summary-valid').removeClass('validation-summary-errors');
+		$('.validation-summary-valid ul').empty().append('<li style="display:none"></li>');
+
 		switch (activity) {
 			case 'operation':
 				$('#operation-task').removeClass('hidden');
@@ -3938,9 +3944,7 @@ responseHub.events = (function () {
 
 // Value is the element to be validated, params is the array of name/value pairs of the parameters extracted from the HTML, element is the HTML element that the validator is attached to
 $.validator.addMethod("signintypedescriptionset", function (value, element, params) {
-
 	
-
 	// Get the element as a jq object
 	var jqElem = $(element);
 
@@ -3950,12 +3954,7 @@ $.validator.addMethod("signintypedescriptionset", function (value, element, para
 
 	// Get the selected type from the element
 	var validationSignInType = $(jqElem).data("val-signintypedescriptionset-expectedsignintype");
-
-	console.log(signInType);
-	console.log(signInTypeDesc);
-	console.log(validationSignInType);
-	console.log("------------------------------");
-
+	
 	// If the selected sign in type matches the expected sign in type and the value is empty, return false to set as invalid
 	if (signInTypeDesc == validationSignInType && value == '')
 	{
@@ -3980,6 +3979,23 @@ function getSignInTypeDescription(signInType)
 		return "Other"
 	}
 }
+
+// Value is the element to be validated, params is the array of name/value pairs of the parameters extracted from the HTML, element is the HTML element that the validator is attached to
+$.validator.addMethod("othersignindescriptionset", function (value, element, params) {
+
+
+	// Get the current value of the selected other sign in type
+	var otherType = $("#SignInTypeOther").val();
+
+	// If the other sign in type is set to "Other" and there is no description, fail validation
+	if (otherType == "99" && value == '')
+	{
+		return false;
+	}
+
+	return true;
+
+});
 
 
 /* The adapter signature:
@@ -4013,4 +4029,10 @@ The jQuery messages array for this HTML element. The adapter is expected to add 
 $.validator.unobtrusive.adapters.add("signintypedescriptionset", ["signintypefield", "expectedsignintype"], function (options) {
 	options.rules["signintypedescriptionset"] = "#" + options.params.signintypefield;
 	options.messages["signintypedescriptionset"] = options.message;
+});
+
+
+$.validator.unobtrusive.adapters.add("othersignindescriptionset", ["othertypefield"], function (options) {
+	options.rules["othersignindescriptionset"] = "#" + options.params.othertypefield;
+	options.messages["othersignindescriptionset"] = options.message;
 });

@@ -123,7 +123,7 @@ while (current_version < schema_version) {
 			db.events.createIndex({ "UnitId": 1 }, { background: true, name: 'unit_id' });
 
 		case 8:
-			db.user_sign_ins.updateMany({}, { $set: { OtherDetails: null } });
+			db.user_sign_ins.updateMany({}, { $set: { OtherDetails: null }, $set: { TrainingDetails: null } });
 
 	}
 

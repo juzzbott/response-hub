@@ -190,6 +190,15 @@ namespace Enivate.ResponseHub.UI.Controllers
 				};
 			}
 
+			// Set the details for the training activity
+			if (model.SignInType == SignInType.Training)
+			{
+				signOn.TrainingDetails = new TrainingActivity()
+				{
+					Description = model.TrainingDescription
+				};
+			}
+
 			// Set the details for the other sign in type
 			if (model.SignInType == SignInType.Other)
 			{

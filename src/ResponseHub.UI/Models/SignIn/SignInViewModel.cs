@@ -39,6 +39,7 @@ namespace Enivate.ResponseHub.UI.Models.SignIn
 		[SignInTypeDescription("SignInType", SignInType.Other, ErrorMessage = "You must select a type of sign on from the list.")]
 		public OtherSignInType SignInTypeOther { get; set; }
 
+		[SignInOtherDescription("SignInTypeOther", ErrorMessage = "You need to enter a description for the sign in, as you have selected 'Other'.")]
 		public string OtherTypeDescription { get; set; }
 
 		public IList<SelectListItem> AvailableUsers { get; set; }

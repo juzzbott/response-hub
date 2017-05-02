@@ -30,6 +30,12 @@ namespace Enivate.ResponseHub.UI.Validators
 			ExpectedSignInType = expectedSignInType;
 		}
 
+		/// <summary>
+		/// Determines if the field is valid. Valid is if the specific option is selected and there is a value in the corresponding description input field.
+		/// </summary>
+		/// <param name="value"></param>
+		/// <param name="validationContext"></param>
+		/// <returns></returns>
 		protected override ValidationResult IsValid(object value, ValidationContext validationContext)
 		{
 			// Set the default validation result

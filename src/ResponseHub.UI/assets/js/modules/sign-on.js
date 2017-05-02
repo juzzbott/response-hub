@@ -14,6 +14,12 @@
 		$('#training-task').addClass('hidden');
 		$('#other-task').addClass('hidden');
 
+		// Clear any error messages
+		$('.training-types-messages .field-validation-error').empty().addClass('field-validation-valid').removeClass('field-validation-error');
+		$('#operation-task .input-validation-error, #training-task .input-validation-error, #other-task .input-validation-error').removeAttr('aria-invalid').removeClass('input-validation-error');
+		$('.validation-summary-errors').addClass('validation-summary-valid').removeClass('validation-summary-errors');
+		$('.validation-summary-valid ul').empty().append('<li style="display:none"></li>');
+
 		switch (activity) {
 			case 'operation':
 				$('#operation-task').removeClass('hidden');

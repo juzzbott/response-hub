@@ -8,7 +8,7 @@
 
 @Html.SuccessFromQueryString("sign_in_complete", "1", "The member has been successfully signed in.")
 
-<form action="@Request.Url" method="post">
+<form action="@Request.Url" method="post" id="sign-in-form">
 
 	@Html.AntiForgeryToken()
 
@@ -90,9 +90,11 @@
 			</div>
 		</div>
 		@Html.ValidationMessageFor(model => model.SignInType)
-		@Html.ValidationMessageFor(model => model.OperationDescription)
-		@Html.ValidationMessageFor(model => model.TrainingDescription)
-		@Html.ValidationMessageFor(model => model.SignInTypeOther)
+		<div class="training-types-messages">
+			@Html.ValidationMessageFor(model => model.OperationDescription)
+			@Html.ValidationMessageFor(model => model.TrainingDescription)
+			@Html.ValidationMessageFor(model => model.SignInTypeOther)
+		</div>
 	</div>
 
 	<div id="operation-task">
@@ -158,8 +160,7 @@
 	</div>
 
 	<div class="top-20">
-		<button type="submit" class="btn btn-lg btn-primary btn-icon"><i class="fa fa-sign-in"></i>Sign in</button>
-		<a href="/sign-on" class="btn btn-link">Cancel</a>
+		<button type="submit" class="btn btn-primary btn-mobile-block btn-icon"><i class="fa fa-sign-in"></i>Sign in</button>
 	</div>
 
 </form>

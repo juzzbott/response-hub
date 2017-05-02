@@ -25,6 +25,8 @@ namespace Enivate.ResponseHub.Model.SignIn
 
 		public OperationActivity OperationDetails { get; set; }
 
+		public TrainingActivity TrainingDetails { get; set; }
+
 		public OtherActivity OtherDetails { get; set; }
 
 		public SignInEntry()
