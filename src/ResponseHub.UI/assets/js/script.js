@@ -2931,13 +2931,30 @@ responseHub.signIn = (function () {
 	}
 
 	// Shows the elements for operation details
-	function showOperationDetails() {
-		$('#operation-task').removeClass('hidden');
-	}
-
-	// Hides the elements for operation details
-	function hideOperationDetails() {
+	function setActivityDetails(activity) {
 		$('#operation-task').addClass('hidden');
+		$('#training-task').addClass('hidden');
+		$('#other-task').addClass('hidden');
+
+		// Clear any error messages
+		$('.training-types-messages .field-validation-error').empty().addClass('field-validation-valid').removeClass('field-validation-error');
+		$('#operation-task .input-validation-error, #training-task .input-validation-error, #other-task .input-validation-error').removeAttr('aria-invalid').removeClass('input-validation-error');
+		$('.validation-summary-errors').addClass('validation-summary-valid').removeClass('validation-summary-errors');
+		$('.validation-summary-valid ul').empty().append('<li style="display:none"></li>');
+
+		switch (activity) {
+			case 'operation':
+				$('#operation-task').removeClass('hidden');
+				break;
+
+			case 'training':
+				$('#training-task').removeClass('hidden');
+				break;
+
+			case 'other':
+				$('#other-task').removeClass('hidden');
+				break;
+		}
 	}
 
 	// Shows the sign out form for the specific sign in entry
@@ -2954,12 +2971,93 @@ responseHub.signIn = (function () {
 		$('.show-sign-out-form').removeClass('hidden');
 	}
 
+	/**
+	 * Signs the current user into the job.
+	 * @param {any} jobMessageId
+	 * @param {any} description
+	 */
+	function signInToJob(jobMessageId, description) {
+
+		// Disable and set spinner
+		$('.member-sign-in button').attr('disabled', 'disabled').addClass('disabled');
+		$('.member-sign-in button i').removeClass('fa-sign-in').addClass('fa-spin fa-spinner');
+
+		// Create the ajax request
+		$.ajax({
+			url: responseHub.apiPrefix + '/sign-in',
+			type: 'POST',
+			dataType: 'json',
+			data: { JobMessageId: jobMessageId, Description: description, SignInType: 1 },
+			success: function (data) {
+
+				if (data != null) {
+
+					// Show the message and remove the button
+					$('.member-sign-in button').remove();
+					$('.member-sign-in').append('<div class="alert alert-success alert-dismissible" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>You have been successfully signed in.</div>')
+
+					// remove the no members row
+					$('.no-members-signed-in').remove();
+
+					// add the information to the table
+					var row = $('<tr></tr>');
+					row.append('<td>' + data.FullName + '</td>');
+					row.append('<td>' + data.MemberNumber + '</td>');
+
+					var signInDate = moment(data.SignInTime).local();
+					row.append('<td>' + signInDate.format('YYYY-MM-DD HH:mm') + '</td>');
+
+					// Add the row to the table
+					$('#signed-in-members tbody').append(row);
+
+					// increment the user count
+					var memberCount = parseInt($('#tab-header-members .member-count').text());
+					$('#tab-header-members .member-count').text(memberCount + 1);
+
+
+				}
+				else {
+					$('.member-sign-in').append('<p class="text-danger">There was an error signing you into the job.</p>');
+					$('.member-sign-in button').removeAttr('disabled').removeClass('disabled');
+					$('.member-sign-in button i').removeClass('fa-spin fa-spinner').addClass('fa-sign-in');
+				}
+
+			},
+			error: function (jqXHR, errorThrown, textStatus) {
+				$('.member-sign-in').append('<p class="text-danger">There was an error signing you into the job.</p>');
+				$('.member-sign-in button').removeAttr('disabled').removeClass('disabled');
+				$('.member-sign-in button i').removeClass('fa-spin fa-spinner').addClass('fa-sign-in');
+			}
+		});
+
+	}
+
+	function bindUI()
+	{
+
+		// Bind the other type select box to determine if the other option description should be shown
+		$('#SignInTypeOther').change(function () {
+
+			if ($(this).val() == "99")
+			{
+				$('.other-type-other').removeClass('hidden');
+			} else {
+				$('.other-type-other').addClass('hidden');
+			}
+
+		});
+
+	}
+
+	// Bind ui
+	bindUI();
+
 	return {
 		setOperationJobNumber: setOperationJobNumber,
-		showOperationDetails: showOperationDetails,
-		hideOperationDetails: hideOperationDetails,
+		setActivityDetails: setActivityDetails,
 		showSignOutForm: showSignOutForm,
-		hideSignOutForm: hideSignOutForm
+		hideSignOutForm: hideSignOutForm,
+		signInToJob: signInToJob
 	}
 
 })();
@@ -3905,3 +4003,98 @@ responseHub.events = (function () {
 	}
 
 })();
+
+// Value is the element to be validated, params is the array of name/value pairs of the parameters extracted from the HTML, element is the HTML element that the validator is attached to
+$.validator.addMethod("signintypedescriptionset", function (value, element, params) {
+	
+	// Get the element as a jq object
+	var jqElem = $(element);
+
+	// Get the current value of the selected sign in type
+	var signInType = $("input[name='SignInType']:checked").val();
+	var signInTypeDesc = getSignInTypeDescription(signInType);
+
+	// Get the selected type from the element
+	var validationSignInType = $(jqElem).data("val-signintypedescriptionset-expectedsignintype");
+	
+	// If the selected sign in type matches the expected sign in type and the value is empty, return false to set as invalid
+	if (signInTypeDesc == validationSignInType && value == '')
+	{
+		return false;
+	}
+
+	// return true to default to true validation result
+	return true;
+
+});
+
+function getSignInTypeDescription(signInType)
+{
+	if (signInType == "1")
+	{
+		return "Operation";
+	}
+	else if (signInType == "2") {
+		return "Training";
+	}
+	else if (signInType == "4") {
+		return "Other"
+	}
+}
+
+// Value is the element to be validated, params is the array of name/value pairs of the parameters extracted from the HTML, element is the HTML element that the validator is attached to
+$.validator.addMethod("othersignindescriptionset", function (value, element, params) {
+
+
+	// Get the current value of the selected other sign in type
+	var otherType = $("#SignInTypeOther").val();
+
+	// If the other sign in type is set to "Other" and there is no description, fail validation
+	if (otherType == "99" && value == '')
+	{
+		return false;
+	}
+
+	return true;
+
+});
+
+
+/* The adapter signature:
+adapterName is the name of the adapter, and matches the name of the rule in the HTML element.
+ 
+params is an array of parameter names that you're expecting in the HTML attributes, and is optional. If it is not provided,
+then it is presumed that the validator has no parameters.
+ 
+fn is a function which is called to adapt the HTML attribute values into jQuery Validate rules and messages.
+ 
+The function will receive a single parameter which is an options object with the following values in it:
+element
+The HTML element that the validator is attached to
+ 
+form
+The HTML form element
+ 
+message
+The message string extract from the HTML attribute
+ 
+params
+The array of name/value pairs of the parameters extracted from the HTML attributes
+ 
+rules
+The jQuery rules array for this HTML element. The adapter is expected to add item(s) to this rules array for the specific jQuery Validate validators
+that it wants to attach. The name is the name of the jQuery Validate rule, and the value is the parameter values for the jQuery Validate rule.
+ 
+messages
+The jQuery messages array for this HTML element. The adapter is expected to add item(s) to this messages array for the specific jQuery Validate validators that it wants to attach, if it wants a custom error message for this rule. The name is the name of the jQuery Validate rule, and the value is the custom message to be displayed when the rule is violated.
+*/
+$.validator.unobtrusive.adapters.add("signintypedescriptionset", ["signintypefield", "expectedsignintype"], function (options) {
+	options.rules["signintypedescriptionset"] = "#" + options.params.signintypefield;
+	options.messages["signintypedescriptionset"] = options.message;
+});
+
+
+$.validator.unobtrusive.adapters.add("othersignindescriptionset", ["othertypefield"], function (options) {
+	options.rules["othersignindescriptionset"] = "#" + options.params.othertypefield;
+	options.messages["othersignindescriptionset"] = options.message;
+});

@@ -55,5 +55,20 @@ namespace Enivate.ResponseHub.UI.Controllers.Api
 			return await UserService.FindByIdAsync(UserId);
 		}
 
+		public void ThrowResponseException(HttpStatusCode statusCode)
+		{
+			ThrowResponseException(statusCode, null);
+		}
+
+		public void ThrowResponseException(HttpStatusCode statusCode, string messageContent)
+		{
+			HttpResponseMessage message = new HttpResponseMessage(statusCode);
+			if (!String.IsNullOrEmpty(messageContent))
+			{
+				message.Content = new StringContent(messageContent);
+			}
+			throw new HttpResponseException(message);
+		}
+
 	}
 }

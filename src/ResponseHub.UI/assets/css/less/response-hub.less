@@ -103,6 +103,7 @@ input[type="date"]::-webkit-input-placeholder{
 
 .mobile-block {
 	display: block;
+	width: 100%;
 }
 
 .dl-horizontal dt {
@@ -137,6 +138,7 @@ h5 i {
 @media (min-width: 768px) {
 	.mobile-block {
 		display: inline;	
+		width: auto;
 	}
 }
 
@@ -826,13 +828,12 @@ h4.legend {
 }
 
 .input-validation-error {
-    border-color: @validation-error-color;
-    background-color: @validation-error-highlight;
+    border-color: @validation-error-color !important;
+    background-color: @validation-error-highlight !important;
 
 	&:focus,
 	&:active {
-		background-color: #fff;
-		border-color: @validation-error-color;
+		border-color: @validation-error-color !important;
 	}
 }
 

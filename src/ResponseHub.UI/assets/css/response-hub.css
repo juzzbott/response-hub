@@ -53,6 +53,7 @@ input[type="date"]::-webkit-input-placeholder {
 }
 .mobile-block {
   display: block;
+  width: 100%;
 }
 .dl-horizontal dt {
   text-align: left;
@@ -86,6 +87,7 @@ h5 i {
 @media (min-width: 768px) {
   .mobile-block {
     display: inline;
+    width: auto;
   }
 }
 table {
@@ -638,13 +640,12 @@ h4.legend {
   padding: 10px;
 }
 .input-validation-error {
-  border-color: #de3226;
-  background-color: #fef7f6;
+  border-color: #de3226 !important;
+  background-color: #fef7f6 !important;
 }
 .input-validation-error:focus,
 .input-validation-error:active {
-  background-color: #fff;
-  border-color: #de3226;
+  border-color: #de3226 !important;
 }
 .current-location-spinner {
   margin-left: 10px;
