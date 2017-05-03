@@ -2971,6 +2971,67 @@ responseHub.signIn = (function () {
 		$('.show-sign-out-form').removeClass('hidden');
 	}
 
+	/**
+	 * Signs the current user into the job.
+	 * @param {any} jobMessageId
+	 * @param {any} description
+	 */
+	function signInToJob(jobMessageId, description) {
+
+		// Disable and set spinner
+		$('.member-sign-in button').attr('disabled', 'disabled').addClass('disabled');
+		$('.member-sign-in button i').removeClass('fa-sign-in').addClass('fa-spin fa-spinner');
+
+		// Create the ajax request
+		$.ajax({
+			url: responseHub.apiPrefix + '/sign-in',
+			type: 'POST',
+			dataType: 'json',
+			data: { JobMessageId: jobMessageId, Description: description, SignInType: 1 },
+			success: function (data) {
+
+				if (data != null) {
+
+					// Show the message and remove the button
+					$('.member-sign-in button').remove();
+					$('.member-sign-in').append('<div class="alert alert-success alert-dismissible" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>You have been successfully signed in.</div>')
+
+					// remove the no members row
+					$('.no-members-signed-in').remove();
+
+					// add the information to the table
+					var row = $('<tr></tr>');
+					row.append('<td>' + data.FullName + '</td>');
+					row.append('<td>' + data.MemberNumber + '</td>');
+
+					var signInDate = moment(data.SignInTime).local();
+					row.append('<td>' + signInDate.format('YYYY-MM-DD HH:mm') + '</td>');
+
+					// Add the row to the table
+					$('#signed-in-members tbody').append(row);
+
+					// increment the user count
+					var memberCount = parseInt($('#tab-header-members .member-count').text());
+					$('#tab-header-members .member-count').text(memberCount + 1);
+
+
+				}
+				else {
+					$('.member-sign-in').append('<p class="text-danger">There was an error signing you into the job.</p>');
+					$('.member-sign-in button').removeAttr('disabled').removeClass('disabled');
+					$('.member-sign-in button i').removeClass('fa-spin fa-spinner').addClass('fa-sign-in');
+				}
+
+			},
+			error: function (jqXHR, errorThrown, textStatus) {
+				$('.member-sign-in').append('<p class="text-danger">There was an error signing you into the job.</p>');
+				$('.member-sign-in button').removeAttr('disabled').removeClass('disabled');
+				$('.member-sign-in button i').removeClass('fa-spin fa-spinner').addClass('fa-sign-in');
+			}
+		});
+
+	}
+
 	function bindUI()
 	{
 
@@ -2995,7 +3056,8 @@ responseHub.signIn = (function () {
 		setOperationJobNumber: setOperationJobNumber,
 		setActivityDetails: setActivityDetails,
 		showSignOutForm: showSignOutForm,
-		hideSignOutForm: hideSignOutForm
+		hideSignOutForm: hideSignOutForm,
+		signInToJob: signInToJob
 	}
 
 })();

@@ -60,7 +60,7 @@ module.exports = function(grunt) {
 					'assets/js/modules/attachments.js',
 					'assets/js/modules/gallery.js',
 					'assets/js/modules/weather-centre.js',
-					'assets/js/modules/sign-on.js',
+					'assets/js/modules/sign-in.js',
 					'assets/js/modules/reports.js',
 					'assets/js/modules/training.js',
 					'assets/js/modules/resources.js',

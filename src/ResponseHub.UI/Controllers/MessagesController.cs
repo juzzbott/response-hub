@@ -66,7 +66,7 @@ namespace Enivate.ResponseHub.UI.Controllers
 				IList<IdentityUser> signInUsers = await UserService.GetUsersByIds(jobSignIns.Select(i => i.UserId));
 
 				// Create the model object.
-				JobMessageViewModel model = await MapJobMessageToViewModel(job, capcode.ToString(), jobSignIns, signInUsers, null);
+				JobMessageViewModel model = await MapJobMessageToViewModel(job, capcode.ToString(), jobSignIns, signInUsers, null, UserId);
 				
 				// return the job view
 				return View(model);
