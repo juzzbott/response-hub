@@ -218,6 +218,8 @@
     <Compile Include="Areas\ControlPanel\Controllers\TrainingController.cs" />
     <Compile Include="Areas\ControlPanel\Models\Home\UnitSelectionViewModel.cs" />
     <Compile Include="Areas\ControlPanel\Controllers\ReportsController.cs" />
+    <Compile Include="Areas\ControlPanel\Models\Reports\Attendance\AttendanceReportViewModel.cs" />
+    <Compile Include="Areas\ControlPanel\Models\Reports\Attendance\MemberAttendanceReportItem.cs" />
     <Compile Include="Areas\ControlPanel\Models\Reports\Operations\OperationsFilterViewModel.cs" />
     <Compile Include="Areas\ControlPanel\Models\Reports\ReportFilterViewModel.cs" />
     <Compile Include="Areas\ControlPanel\Models\Reports\Training\UnitTrainingMemberReportItem.cs" />
@@ -688,6 +690,12 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Jobs\JobMembers.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Areas\ControlPanel\Views\Reports\AttendanceReport.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Areas\ControlPanel\Views\Reports\GenerateAttendanceReportHtml.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

@@ -18,6 +18,7 @@ using Enivate.ResponseHub.Model;
 using Enivate.ResponseHub.Model.Spatial;
 using Enivate.ResponseHub.Common.Constants;
 using Enivate.ResponseHub.Caching;
+using Enivate.ResponseHub.Model.Identity.Interface;
 
 namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 {
@@ -26,29 +27,9 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 		
 		protected const string AddMemberViewModelSessionKey = "NewUserViewModel";
 
-		protected IUnitService UnitService
-		{
-			get
-			{
-				return ServiceLocator.Get<IUnitService>();
-			}
-		}
-		
-		protected ICapcodeService CapcodeService
-		{
-			get
-			{
-				return ServiceLocator.Get<ICapcodeService>();
-			}
-		}
-		
-		protected IMailService MailService
-		{
-			get
-			{
-				return ServiceLocator.Get<IMailService>();
-			}
-		}
+		protected IUnitService UnitService = ServiceLocator.Get<IUnitService>();
+		protected ICapcodeService CapcodeService = ServiceLocator.Get<ICapcodeService>();		
+		protected IMailService MailService = ServiceLocator.Get<IMailService>();
 
 		protected string AreaPrefix
 		{

@@ -56,6 +56,18 @@ namespace Enivate.ResponseHub.ApplicationServices
 		}
 
 		/// <summary>
+		/// Gets the list of training sessions for the specific unit between the specified date ranges.
+		/// </summary>
+		/// <param name="unitId">The id of the unit to get the training sessions for.</param>
+		/// <param name="dateFrom">The date to get the training sessions from.</param>
+		/// <param name="dateTo">The date to get the training sessions to.</param>
+		/// <returns>The list of training sessions.</returns>
+		public async Task<IList<TrainingSession>> GetTrainingSessionsForUnit(Guid unitId, DateTime dateFrom, DateTime dateTo)
+		{
+			return await _sessionRepository.GetTrainingSessionsForUnit(unitId, dateFrom, dateTo, await GetAllTrainingTypes());
+		}
+
+		/// <summary>
 		/// Gets the training session from the database.
 		/// </summary>
 		/// <param name="id">The ID of the training session.</param>

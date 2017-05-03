@@ -1445,6 +1445,9 @@ div.generated-report .notes li {
 div.generated-report .notes li .wordback-icon {
   margin-left: 5px;
 }
+div.generated-report .month-group td {
+  background-color: #efeef5;
+}
 /**
 	Sign on functionality
 */
