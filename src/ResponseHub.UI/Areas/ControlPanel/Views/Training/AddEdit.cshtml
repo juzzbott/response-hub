@@ -18,7 +18,7 @@
 		<div class="row">
 			<div class="col-sm-6 col-md-4">
 				<div class="input-group date datepicker-control" data-provide="datepicker" data-date-format="dd/mm/yyyy" data-date-autoclose="true" data-date-show-on-focus="false">
-					@Html.TextBoxFor(model => model.SessionDate, new { @class = "form-control", @Value = DateTime.Now.ToString("dd/MM/yyyy") })
+					@Html.TextBoxFor(model => model.SessionDate, new { @class = "form-control" })
 					<div class="input-group-addon">
 						<i class="fa fa-fw fa-calendar"></i>
 					</div>
