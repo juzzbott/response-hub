@@ -55,8 +55,6 @@ namespace Enivate.ResponseHub.UI.Models.Messages
 
 		public IList<JobMessageSignInEntry> SignIns { get; set; }
 
-		public bool AlreadySignedIn { get; set; }
-
 		[Required(ErrorMessage = "Please ensure you have entered a date.")]
 		public string EditProgressDate { get; set; }
 

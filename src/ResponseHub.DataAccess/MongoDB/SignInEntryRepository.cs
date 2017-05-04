@@ -38,9 +38,19 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 		/// </summary>
 		/// <param name="signOn">The sign on entry to store in the database.</param>
 		/// <returns></returns>
-		public async Task SignUserIn(SignInEntry signOn)
+		public async Task AddSignIn(SignInEntry signOn)
 		{
 			await Add(signOn);
+		}
+
+		/// <summary>
+		/// Adds the sequence of sign in entry documents to the database.
+		/// </summary>
+		/// <param name="signIns">The sequence of sign in entries to add.</param>
+		/// <returns></returns>
+		public async Task AddSignIns(IEnumerable<SignInEntry> signIns)
+		{
+			await Collection.InsertManyAsync(signIns);
 		}
 
 		/// <summary>

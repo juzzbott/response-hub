@@ -38,7 +38,35 @@ namespace Enivate.ResponseHub.ApplicationServices
 		/// <returns></returns>
 		public async Task SignUserIn(SignInEntry signOn)
 		{
-			await _repository.SignUserIn(signOn);
+			await _repository.AddSignIn(signOn);
+		}
+
+		public async Task SignUsersIntoJob(Guid jobId, string jobNumber, DateTime signInTime, IList<Guid> userIds, Guid unitId)
+		{
+			// Create the list of sign in entries for the users
+			IList<SignInEntry> signIns = new List<SignInEntry>();
+
+			// Loop through each user and create the sign in
+			foreach(Guid userId in userIds)
+			{
+				// Create the sign in entry
+				SignInEntry userSignIn = new SignInEntry()
+				{
+					Created = DateTime.UtcNow,
+					OperationDetails = new OperationActivity() { Description = jobNumber, JobId = jobId },
+					SignInTime = signInTime.ToUniversalTime(),
+					SignInType = SignInType.Operation,
+					UnitId = unitId,
+					UserId = userId
+				};
+
+				// Add the sign in the to list
+				signIns.Add(userSignIn);
+			}
+
+			// Add the sign ins to the database
+			await _repository.AddSignIns(signIns);
+
 		}
 
 		/// <summary>

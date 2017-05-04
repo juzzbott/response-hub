@@ -11,7 +11,9 @@ namespace Enivate.ResponseHub.DataAccess.Interface
 	public interface ISignInEntryRepository
 	{
 
-		Task SignUserIn(SignInEntry signOn);
+		Task AddSignIn(SignInEntry signOn);
+
+		Task AddSignIns(IEnumerable<SignInEntry> signIns);
 
 		Task SignUserOut(Guid signOnId, DateTime signOutTime);
 

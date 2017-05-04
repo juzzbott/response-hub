@@ -16,5 +16,7 @@ namespace Enivate.ResponseHub.UI.Models.Api.Messages
 
 		public int NewVersion { get; set; }
 
+		public bool UserSignedIn { get; set; }
+
 	}
 }

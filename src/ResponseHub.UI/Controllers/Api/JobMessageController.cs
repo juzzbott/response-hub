@@ -35,6 +35,7 @@ namespace Enivate.ResponseHub.UI.Controllers.Api
 		protected readonly IJobMessageService JobMessageService = ServiceLocator.Get<IJobMessageService>();
 		protected readonly ICapcodeService CapcodeService = ServiceLocator.Get<ICapcodeService>();
 		protected readonly ISignInEntryService SignInEntryService = ServiceLocator.Get<ISignInEntryService>();
+		protected readonly IUnitService UnitService = ServiceLocator.Get<IUnitService>();
 
 		[Route]
 		[HttpGet]
@@ -283,17 +284,22 @@ namespace Enivate.ResponseHub.UI.Controllers.Api
 
 				// Create the progress object and return it
 				MessageProgress progress = await JobMessageService.SaveProgress(id, progressDateTime, UserId, model.ProgressType);
+
+				// Check if the user needs to be signed in
+				bool userSignedIn = await SignUserIn(id, job, progress);
+
 				return new MessageProgressResponseModel()
 				{
 					Timestamp = progress.Timestamp,
 					UserId = UserId,
 					UserFullName = user.FullName,
 					Success = true,
-					NewVersion = model.Version + 1
+					NewVersion = model.Version + 1,
+					UserSignedIn = userSignedIn
 				};
 
-			} 
-			catch(Exception ex)
+			}
+			catch (Exception ex)
 			{
 				// If the exception messge relates to not being able to set the progress update because a progress type already exists, treat as warning
 				if (ex.Message.StartsWith("The job message already contains a progress update", StringComparison.CurrentCultureIgnoreCase))
@@ -323,6 +329,56 @@ namespace Enivate.ResponseHub.UI.Controllers.Api
 
 
 
+		}
+
+		/// <summary>
+		/// Checks the sign ins for the current job. If ther user hasn't been signed in, then do so now. 
+		/// </summary>
+		/// <param name="id"></param>
+		/// <param name="job"></param>
+		/// <param name="progress"></param>
+		/// <returns></returns>
+		private async Task<bool> SignUserIn(Guid id, JobMessage job, MessageProgress progress)
+		{
+			bool signInCompleted = false;
+
+			try
+			{
+
+				// Get the sign ins for the job
+				IList<SignInEntry> jobSignIns = await SignInEntryService.GetSignInsForJobMessage(job.Id);
+
+				// If the user isn't already signed in, then do so now
+				if (!jobSignIns.Any(i => i.UserId == UserId))
+				{
+
+					// Get the capcode for the message
+					Capcode capcode = await CapcodeService.GetByCapcodeAddress(job.Capcode);
+
+					// Get the units based on the capcode
+					Unit unit = await UnitService.GetUnitByCapcode(capcode);
+
+					// Create the sign in entry
+					SignInEntry signIn = new SignInEntry()
+					{
+						Created = DateTime.UtcNow,
+						OperationDetails = new OperationActivity() { Description = job.JobNumber, JobId = id },
+						SignInTime = progress.Timestamp.ToUniversalTime(),
+						SignInType = SignInType.Operation,
+						UnitId = unit.Id,
+						UserId = UserId
+					};
+
+					await SignInEntryService.SignUserIn(signIn);
+					signInCompleted = true;
+				}
+			}
+			catch (Exception ex)
+			{
+				await Log.Error(String.Format("Error signing in user with job progress. Message: {0}", ex.Message), ex);
+			}
+
+			return signInCompleted;
 		}
 
 		[Route("{id:guid}/progress/delete")]
