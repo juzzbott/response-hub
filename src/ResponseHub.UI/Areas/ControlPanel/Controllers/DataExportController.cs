@@ -9,12 +9,9 @@ using System.Web.Mvc;
 using Enivate.ResponseHub.Model.Identity;
 using Enivate.ResponseHub.UI.Filters;
 using Enivate.ResponseHub.UI.Areas.ControlPanel.Models.DataExport;
-using Enivate.ResponseHub.Model.Units;
-using Enivate.ResponseHub.Model.Messages;
 using Enivate.ResponseHub.Model.Messages.Interface;
 using Enivate.ResponseHub.Common;
 using Enivate.ResponseHub.Model.DataExport.Interface;
-using System.Globalization;
 
 namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 {
@@ -25,21 +22,8 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 	public class DataExportController : BaseControlPanelController
     {
 
-		protected IJobMessageService JobMessageService
-		{
-			get
-			{
-				return ServiceLocator.Get<IJobMessageService>();
-			}
-		}
-
-		protected IDataExportService DataExportService
-		{
-			get
-			{
-				return ServiceLocator.Get<IDataExportService>();
-			}
-		}
+		protected IJobMessageService JobMessageService = ServiceLocator.Get<IJobMessageService>();
+		protected IDataExportService DataExportService = ServiceLocator.Get<IDataExportService>();
 
 		[Route]
 		[HttpGet]

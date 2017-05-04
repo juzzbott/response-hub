@@ -17,7 +17,7 @@
 	<h1 class="text-primary">Job data report</h1>
 
 	<p class="lead text-info">
-		Export contains @Model.Jobs.Count job@(Model.Jobs.Count != 1 ? "s" : "") and @Model.Messages.Count message@(Model.Messages.Count != 1 ? "s" : "")
+		Report contains @Model.Jobs.Count job@(Model.Jobs.Count != 1 ? "s" : "") and @Model.Messages.Count message@(Model.Messages.Count != 1 ? "s" : "")
 		between @Model.StartDate.ToLocalTime().ToString("yyyy-MM-dd") and @Model.FinishDate.ToLocalTime().ToString("yyyy-MM-dd").
 	</p>
 
