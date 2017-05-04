@@ -1,15 +1,18 @@
 ﻿@model Enivate.ResponseHub.UI.Models.Messages.JobMessageViewModel
+	
+<h3>Sign in</h3>
 
 @if (!Model.AlreadySignedIn)
 {
-
-	<h3>Sign in</h3>
-
 	<div class="member-sign-in">
-		<button class="btn btn-primary btn-icon mobile-block btn-lg" onclick="responseHub.signIn.signInToJob('@Model.Id', '@Model.JobNumber');"><i class="fa fa-fw fa-sign-in"></i>Sign in</button>
+		<button class="btn btn-primary btn-icon mobile-block btn-lg" onclick="responseHub.signIn.signInToJob('@Model.Id', '@Model.JobNumber');"><i class="fa fa-fw fa-sign-in"></i>Sign me in</button>
 	</div>
-
 }
+
+	<div>
+		<h4>Sign in members for this job</h4>
+		<p><a href="/jobs/@Model.Id/sign-in" class="btn btn-primary btn-icon"><i class="fa fa-fw fa-sign-in"></i>Sign members in</a></p>
+	</div>
 
 	<h3>Members</h3>
 

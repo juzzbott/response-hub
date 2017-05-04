@@ -464,6 +464,29 @@
 	}
 
 	/**
+	 * Set the signed in member to the list
+	 */
+	function setSignedInMember(elem) {
+
+		// Get the current list of members
+		var selectedMembers = $('#SelectedMembers').val();
+
+		// Get the selected if
+		var selectedMemberId = $(elem).val() + '|';
+
+		// If the element is checked, add the id to the list, otherwise remove it from the list
+		if ($(elem).is(':checked'))
+		{
+			$('#SelectedMembers').val(selectedMembers + selectedMemberId);
+		}
+		else
+		{
+			$('#SelectedMembers').val(selectedMembers.replace(selectedMemberId, ''));
+		}
+
+	}
+
+	/**
 	 * Binds the job progress actions
 	 */
 	function bindJobProgressEditUndo()
@@ -697,7 +720,8 @@
 		getNextJobMessages: getNextJobMessages,
 		submitEditProgressTime: submitEditProgressTime,
 		closeEditProgressForm: closeEditProgressForm,
-		getDistanceBetweenJobs: getDistanceBetweenJobs
+		getDistanceBetweenJobs: getDistanceBetweenJobs,
+		setSignedInMember: setSignedInMember
 	};
 
 })();

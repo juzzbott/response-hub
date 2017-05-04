@@ -1,0 +1,84 @@
+﻿@model Enivate.ResponseHub.UI.Models.Messages.JobMessageSignInViewModel
+
+@{
+    ViewBag.Title = String.Format("Member sign in - {0}", Model.JobNumber);
+}
+
+<div class="row">
+	<div class="col-sm-7">
+
+		<h1>
+			@if (Model.Priority == Enivate.ResponseHub.Model.Messages.MessagePriority.Emergency)
+			{
+				<i class="fa fa-exclamation-triangle p-message-emergency"></i>
+			}
+			else if (Model.Priority == Enivate.ResponseHub.Model.Messages.MessagePriority.NonEmergency)
+			{
+				<i class="fa fa-exclamation-circle p-message-non-emergency"></i>
+			}
+			else
+			{
+				<i class="fa fa-info-circle p-message-admin"></i>
+			}
+			@Model.JobNumber
+		</h1>
+
+	</div>
+	<div class="col-sm-5">
+		<h3 class="text-right text-xs-left text-info">@Model.Timestamp.ToString("yyyy-MM-dd HH:mm:ss")</h3>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-xs-12">
+		<p class="lead text-muted"><em>@Model.CapcodeUnitName</em></p>
+	</div>
+</div>
+
+<h3 class="top-0">Member sign in</h3>
+<p>Select the members of unit you wish to sign in.</p>
+
+<form action="@Request.Url.LocalPath" method="post">
+
+	@Html.AntiForgeryToken()
+
+	@Html.ValidationSummary()
+
+	<table class="table table-striped table-hover"	>
+		<thead>
+			<tr>
+				<th>Member name</th>
+			</tr>
+		</thead>
+		<tbody>
+			@foreach (var member in Model.AvailableMembers)
+			{
+				<tr>
+					<td>
+						<div class="checkbox graphic-checkbox">
+							<label style="display: block">
+								@if (Model.SelectedMembers.Contains(member.Key.ToString()))
+								{
+									<input type="checkbox" name="User_@member.Key" id="User_@member.Key" value="@member.Key" checked="checked" disabled="disabled" class="disabled">
+								}
+								else
+								{
+									<input type="checkbox" name="User_@member.Key" id="User_@member.Key" value="@member.Key" onclick="responseHub.jobMessages.setSignedInMember(this);">
+								}
+								@member.Value
+							</label>
+						</div>
+					</td>
+				</tr>
+			}
+		</tbody>
+	</table>
+
+	@Html.HiddenFor(model => model.SelectedMembers)
+
+	<div class="top-20">
+		<button type="submit" class="btn btn-primary btn-icon"><i class="fa fa-fw fa-sign-in"></i>Sign in members</button>
+		<a href="/jobs/@Model.JobId" class="btn btn-link">Cancel</a>
+	</div>
+
+</form>
