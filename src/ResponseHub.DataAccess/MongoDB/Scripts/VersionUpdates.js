@@ -125,7 +125,7 @@ while (current_version < schema_version) {
 		case 8:
 			db.user_sign_ins.updateMany({ OtherDetails: { $exists: false } }, { $set: { OtherDetails: null } });
 			db.user_sign_ins.updateMany({ TrainingDetails: { $exists: false } }, { $set: { TrainingDetails: null } });
-			db.units.update({ _id: UUID('2E54F8EA25E640C5A64B7950D84A059C') }, { $set: { TrainingNight: { DayOfWeek: 2, StartTime: "19:30" } } });
+			db.units.updateMany({}, { $set: { TrainingNight: { DayOfWeek: 2, StartTime: "19:30" } } });
 
 	}
 
