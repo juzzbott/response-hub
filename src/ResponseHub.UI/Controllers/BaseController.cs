@@ -16,21 +16,8 @@ namespace Enivate.ResponseHub.UI.Controllers
 {
     public class BaseController : Controller
     {
-		protected ILogger Log
-		{
-			get
-			{
-				return ServiceLocator.Get<ILogger>();
-			}
-		}
-
-		protected IUserService UserService
-		{
-			get
-			{
-				return ServiceLocator.Get<IUserService>();
-			}
-		}
+		protected ILogger Log = ServiceLocator.Get<ILogger>();
+		protected IUserService UserService = ServiceLocator.Get<IUserService>();
 
 		public Guid UserId
 		{

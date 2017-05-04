@@ -119,7 +119,7 @@ namespace Enivate.ResponseHub.UI.Controllers
 			return model;
 		}
 
-		public static async Task<JobMessageViewModel> MapJobMessageToViewModel(JobMessage job, string capcodeUnitName, IList<SignInEntry> jobSignIns, IList<IdentityUser> signInUsers, Unit unit)
+		public static async Task<JobMessageViewModel> MapJobMessageToViewModel(JobMessage job, string capcodeUnitName, IList<SignInEntry> jobSignIns, IList<IdentityUser> signInUsers, Unit unit, Guid currentUserId)
 		{
 
 			IUserService userService = ServiceLocator.Get<IUserService>();
@@ -190,6 +190,12 @@ namespace Enivate.ResponseHub.UI.Controllers
 							MemberNumber = signInUser.Profile.MemberNumber,
 							SignInTime = signIn.SignInTime
 						});
+
+						// If the user id matches the current user id, then they have already signed in
+						if (signIn.UserId == currentUserId)
+						{
+							model.AlreadySignedIn = true;
+						}
 					}
 
 				}

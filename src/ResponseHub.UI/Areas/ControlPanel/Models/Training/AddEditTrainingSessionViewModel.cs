@@ -14,8 +14,10 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Models.Training
 	{
 
 		[Required(ErrorMessage = "You must enter a date for the training session.")]
-		[DataType(DataType.Date, ErrorMessage = "Please enter a valid date (dd/mm/yyyy).")]
-		public DateTime SessionDate { get; set; }
+		public string SessionDate { get; set; }
+
+		[Required(ErrorMessage = "You must enter a time for the training session.")]
+		public string SessionTime { get; set; }
 
 		[Required(ErrorMessage = "You must select a training type.")]
 		public string TrainingTypes { get; set; }

@@ -2,7 +2,7 @@
 var schema_info_id = ObjectId("58e492e962cb703bc785da68");
 
 // Define the max schema version
-var schema_version = 7;
+var schema_version = 8;
 
 // Ensure we have a schema to start with
 var schema_count = db.schema_info.count({});
@@ -121,6 +121,11 @@ while (current_version < schema_version) {
 			db.events.createIndex({ 'Crews.CrewMembers': 1 }, { background: true, name: 'events_crews_users' });
 			db.events.dropIndex('unit_id_1');
 			db.events.createIndex({ "UnitId": 1 }, { background: true, name: 'unit_id' });
+
+		case 8:
+			db.user_sign_ins.updateMany({ OtherDetails: { $exists: false } }, { $set: { OtherDetails: null } });
+			db.user_sign_ins.updateMany({ TrainingDetails: { $exists: false } }, { $set: { TrainingDetails: null } });
+			db.units.update({ _id: UUID('2E54F8EA-25E6-40C5-A64B-7950D84A059C') }, { $set: { TrainingNight: { DayOfWeek: 2, StartTime: "19:30" } } });
 
 	}
 

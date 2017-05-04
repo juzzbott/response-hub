@@ -83,8 +83,11 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 			// Set the message types
 			filter = filter & builder.BitsAnySet(i => i.SignInType, (long)signInTypes);
 
+			// Create the sort
+			SortDefinition<SignInEntry> sort = Builders<SignInEntry>.Sort.Descending(i => i.SignInTime);
+
 			// return the sign in entries
-			IList<SignInEntry> signIns = await Collection.Find(filter).ToListAsync();
+			IList<SignInEntry> signIns = await Collection.Find(filter).Sort(sort).ToListAsync();
 
 			// Map the results to model objects
 			return signIns;

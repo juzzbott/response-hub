@@ -1,0 +1,43 @@
+﻿@model Enivate.ResponseHub.UI.Models.Messages.JobMessageViewModel
+
+@if (!Model.AlreadySignedIn)
+{
+
+	<h3>Sign in</h3>
+
+	<div class="member-sign-in">
+		<button class="btn btn-primary btn-icon mobile-block btn-lg" onclick="responseHub.signIn.signInToJob('@Model.Id', '@Model.JobNumber');"><i class="fa fa-fw fa-sign-in"></i>Sign in</button>
+	</div>
+
+}
+
+	<h3>Members</h3>
+
+	<table id="signed-in-members" class="table table-striped table-hover">
+		<thead>
+			<tr>
+				<th>Name</th>
+				<th>Member number</th>
+				<th>Sign in time</th>
+			</tr>
+		</thead>
+		<tbody>
+			@if (Model.SignIns == null || Model.SignIns.Count == 0)
+			{
+				<tr class="no-members-signed-in">
+					<td colspan="3">No members have signed in for this job yet.</td>
+				</tr>
+			}
+			else
+			{
+				foreach (var signIn in Model.SignIns)
+				{
+					<tr>
+						<td>@signIn.FullName</td>
+						<td>@signIn.MemberNumber</td>
+						<td>@signIn.SignInTime.ToLocalTime().ToString("yyyy-MM-dd HH:mm")</td>
+					</tr>
+				}
+			}
+		</tbody>
+	</table>

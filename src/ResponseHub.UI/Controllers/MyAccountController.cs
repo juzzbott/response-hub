@@ -42,29 +42,9 @@ namespace Enivate.ResponseHub.UI.Controllers
 			}
 		}
 				
-		protected IMailService MailService
-		{
-			get
-			{
-				return ServiceLocator.Get<IMailService>();
-			}
-		}
-
-		protected ISignInEntryService SignInService
-		{
-			get
-			{
-				return ServiceLocator.Get<ISignInEntryService>();
-			}
-		}
-
-		protected IUnitService UnitService
-		{
-			get
-			{
-				return ServiceLocator.Get<IUnitService>();
-			}
-		}
+		protected IMailService MailService = ServiceLocator.Get<IMailService>();
+		protected ISignInEntryService SignInService = ServiceLocator.Get<ISignInEntryService>();
+		protected IUnitService UnitService = ServiceLocator.Get<IUnitService>();
 
 		#region Login
 
@@ -752,7 +732,27 @@ namespace Enivate.ResponseHub.UI.Controllers
 			}
 			else if (entry.SignInType == SignInType.Training)
 			{
-				viewModel.Description = "Training";
+				viewModel.Description = (entry.TrainingDetails != null ? entry.TrainingDetails.Description : "Training");
+			}
+			else if (entry.SignInType == SignInType.Other)
+			{
+
+				if (entry.OtherDetails != null)
+				{
+
+					if (entry.OtherDetails.OtherType != OtherSignInType.Other)
+					{
+						viewModel.Description = entry.OtherDetails.OtherType.GetEnumDescription();
+					}
+					else
+					{
+						viewModel.Description = String.Format("Other - {0}", entry.OtherDetails.OtherDescription);
+					}
+				}
+				else
+				{
+					viewModel.Description = "Other";
+				}
 			}
 
 			// return the view model

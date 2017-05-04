@@ -6,17 +6,9 @@
 
 <h1>@ViewBag.Title</h1>
 
-@if (Model.SignOutRequired)
-{
-	<div class="alert alert-warning alert-dismissible" role="alert">
-		<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-		<strong>You need to sign out!</strong><br />You have not yet signed out from previous sign ins. <a href="/sign-in/sign-out">Go an sign out now.</a>
-	</div>
-}
-
 @Html.SuccessFromQueryString("sign_in_complete", "1", "The member has been successfully signed in.")
 
-<form action="@Request.Url" method="post">
+<form action="@Request.Url" method="post" id="sign-in-form">
 
 	@Html.AntiForgeryToken()
 
@@ -83,17 +75,26 @@
 		<h3>Sign in type *</h3>
 		<div class="row">
 			<div class="col-sm-12 graphic-radio">
-				<label class="radio-inline" for="SignOnType1">
-					<input type="radio" name="SignOnType" id="SignOnType1" value="1" checked="checked" onclick="responseHub.signIn.showOperationDetails();">
+				<label class="radio-inline" for="SignInType1">
+					<input type="radio" name="SignInType" id="SignInType1" value="1" checked="checked" onclick="responseHub.signIn.setActivityDetails('operation');">
 					Operation
 				</label>
-				<label class="radio-inline" for="SignOnType2">
-					<input type="radio" name="SignOnType" id="SignOnType2" value="2" onclick="responseHub.signIn.hideOperationDetails();">
+				<label class="radio-inline" for="SignInType2">
+					<input type="radio" name="SignInType" id="SignInType2" value="2" onclick="responseHub.signIn.setActivityDetails('training');">
 					Training
+				</label>
+				<label class="radio-inline" for="SignInType4">
+					<input type="radio" name="SignInType" id="SignInType4" value="4" onclick="responseHub.signIn.setActivityDetails('other');">
+					Other
 				</label>
 			</div>
 		</div>
-		@Html.ValidationMessageFor(model => model.SignOnType)
+		@Html.ValidationMessageFor(model => model.SignInType)
+		<div class="training-types-messages">
+			@Html.ValidationMessageFor(model => model.OperationDescription)
+			@Html.ValidationMessageFor(model => model.TrainingDescription)
+			@Html.ValidationMessageFor(model => model.SignInTypeOther)
+		</div>
 	</div>
 
 	<div id="operation-task">
@@ -121,9 +122,45 @@
 		</div>
 	</div>
 
+	<div id="training-task" class="hidden">
+		<p><strong>Training details</strong></p>
+
+		<div class="form-group">
+			<label for="TrainingDescription">Training description:</label>
+			<div class="row">
+				<div class="col-sm-8 col-md-6 col-lg-4">
+					@Html.TextBoxFor(model => model.TrainingDescription, new { @class = "form-control", placeholder = "Training course, session etc." })
+				</div>
+			</div>
+		</div>
+
+	</div>
+
+	<div id="other-task" class="hidden">
+		<p><strong>Other details</strong></p>
+
+		<div class="form-group">
+			<label for="TrainingType">Sign in type</label>
+			<div class="row">
+				<div class="col-sm-8 col-md-6 col-lg-4">
+					@Html.DropDownListFor(model => model.SignInTypeOther, Model.AvailableOtherTypes, new { @class = "form-control selectpicker", @data_live_search = "true", @title = "Select type..." })
+				</div>
+			</div>
+		</div>
+
+		<div class="form-group other-type-other hidden">
+			<label for="OtherTypeDescription">Other:</label>
+			<div class="row">
+				<div class="col-sm-8 col-md-6 col-lg-4">
+					@Html.TextBoxFor(model => model.OtherTypeDescription, new { @class = "form-control", placeholder = "" })
+				</div>
+			</div>
+		</div>
+
+	</div>
+
 	<div class="top-20">
-		<button type="submit" class="btn btn-lg btn-primary btn-icon"><i class="fa fa-sign-in"></i>Sign in</button>
-		<a href="/sign-on" class="btn btn-link">Cancel</a>
+		<button type="submit" class="btn btn-primary btn-mobile-block btn-icon"><i class="fa fa-sign-in"></i>Sign in</button>
 	</div>
 
 </form>

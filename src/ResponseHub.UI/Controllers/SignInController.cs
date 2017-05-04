@@ -37,7 +37,7 @@ namespace Enivate.ResponseHub.UI.Controllers
 		{
 			
 			// Get the initial model
-			SignInViewModel model = await GetSignInModel(false, true);
+			SignInViewModel model = await GetSignInModel(false, false);
 
 			// Set the user id, as we are forcing it to be our current logged in user.
 			model.UserId = UserId;
@@ -177,16 +177,35 @@ namespace Enivate.ResponseHub.UI.Controllers
 				UserId = specifiedUserId,
 				UnitId = model.UnitId,
 				SignInTime = signInTime,
-				SignInType = model.SignOnType
+				SignInType = model.SignInType
 			};
 
-			// Set the specific 
-			if (model.SignOnType == SignInType.Operation)
+			// Set the details for the operation
+			if (model.SignInType == SignInType.Operation)
 			{
 				signOn.OperationDetails = new OperationActivity()
 				{
 					Description = model.OperationDescription,
 					JobId = model.OperationJobId.Value
+				};
+			}
+
+			// Set the details for the training activity
+			if (model.SignInType == SignInType.Training)
+			{
+				signOn.TrainingDetails = new TrainingActivity()
+				{
+					Description = model.TrainingDescription
+				};
+			}
+
+			// Set the details for the other sign in type
+			if (model.SignInType == SignInType.Other)
+			{
+				signOn.OtherDetails = new OtherActivity()
+				{
+					OtherType = model.SignInTypeOther,
+					OtherDescription = (model.SignInTypeOther == OtherSignInType.Other ? model.OtherTypeDescription : "")
 				};
 			}
 

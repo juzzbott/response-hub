@@ -32,6 +32,8 @@ namespace Enivate.ResponseHub.Model.Units
 
 		public Coordinates HeadquartersCoordinates { get; set; }
 
+		public TrainingNightInfo TrainingNight { get; set; }
+
 		public Unit()
 		{
 			Id = Guid.NewGuid();

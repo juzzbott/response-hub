@@ -38,6 +38,31 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 		/// Gets the list of training sessions for the specific unit.
 		/// </summary>
 		/// <param name="unitId">The id of the unit to get the training sessions for.</param>
+		/// <param name="dateFrom">The date to get the training sessions from.</param>
+		/// <param name="dateTo">The date to get the training sessions to.</param>
+		/// <returns>The list of training sessions.</returns>
+		public async Task<IList<TrainingSession>> GetTrainingSessionsForUnit(Guid unitId, DateTime from, DateTime to, IEnumerable<TrainingType> trainingTypes)
+		{
+			FilterDefinitionBuilder<TrainingSessionDto> builder = Builders<TrainingSessionDto>.Filter;
+			FilterDefinition<TrainingSessionDto> filter = builder.Eq(i => i.UnitId, unitId);
+
+			// Set the date range
+			filter = filter & builder.Gte(i => i.SessionDate, from) & builder.Lte(i => i.SessionDate, to);
+
+			// Create the sort
+			SortDefinition<TrainingSessionDto> sort = Builders<TrainingSessionDto>.Sort.Descending(i => i.SessionDate);
+
+			// Get the results from the db
+			IList<TrainingSessionDto> sessions = await Collection.Find(filter).Sort(sort).ToListAsync();
+
+			// return the mapped results
+			return sessions.Select(i => MapDbObjectToModel(i, trainingTypes)).ToList();
+		}
+
+		/// <summary>
+		/// Gets the list of training sessions for the specific unit.
+		/// </summary>
+		/// <param name="unitId">The id of the unit to get the training sessions for.</param>
 		/// <returns>The list of training sessions.</returns>
 		public async Task<IList<TrainingSession>> GetTrainingSessionsForUnit(Guid unitId, int limit, IEnumerable<TrainingType> trainingTypes)
 		{
