@@ -81,6 +81,7 @@
     <Compile Include="Units\Capcode.cs" />
     <Compile Include="Units\Interface\ICapcodeService.cs" />
     <Compile Include="Units\Interface\IUnitService.cs" />
+    <Compile Include="Units\TrainingNightInfo.cs" />
     <Compile Include="Units\Unit.cs" />
     <Compile Include="Units\Region.cs" />
     <Compile Include="Units\UserMapping.cs" />

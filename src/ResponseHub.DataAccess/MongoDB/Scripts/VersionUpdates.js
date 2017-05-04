@@ -123,7 +123,9 @@ while (current_version < schema_version) {
 			db.events.createIndex({ "UnitId": 1 }, { background: true, name: 'unit_id' });
 
 		case 8:
-			db.user_sign_ins.updateMany({}, { $set: { OtherDetails: null }, $set: { TrainingDetails: null } });
+			db.user_sign_ins.updateMany({ OtherDetails: { $exists: false } }, { $set: { OtherDetails: null } });
+			db.user_sign_ins.updateMany({ TrainingDetails: { $exists: false } }, { $set: { TrainingDetails: null } });
+			db.units.update({ _id: UUID('2E54F8EA-25E6-40C5-A64B-7950D84A059C') }, { $set: { TrainingNight: { DayOfWeek: 2, StartTime: "19:30" } } });
 
 	}
 

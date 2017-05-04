@@ -304,7 +304,8 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 				RegionId = modelObj.Region.Id,
 				Service = modelObj.Service,
 				Users = modelObj.Users,
-				HeadquartersCoordinates = new GeoJson2DGeographicCoordinates(modelObj.HeadquartersCoordinates.Longitude, modelObj.HeadquartersCoordinates.Latitude)
+				HeadquartersCoordinates = new GeoJson2DGeographicCoordinates(modelObj.HeadquartersCoordinates.Longitude, modelObj.HeadquartersCoordinates.Latitude),
+				TrainingNight = modelObj.TrainingNight
 			};
 		}
 
@@ -334,7 +335,8 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 				Region = regions.FirstOrDefault(i => i.Id == dbObj.RegionId),
 				Service = dbObj.Service,
 				Users = dbObj.Users,
-				HeadquartersCoordinates = new Coordinates(dbObj.HeadquartersCoordinates.Latitude, dbObj.HeadquartersCoordinates.Longitude)
+				HeadquartersCoordinates = new Coordinates(dbObj.HeadquartersCoordinates.Latitude, dbObj.HeadquartersCoordinates.Longitude),
+				TrainingNight = dbObj.TrainingNight
 			};
 		}
 

@@ -43,7 +43,7 @@ namespace Enivate.ResponseHub.ApplicationServices
 		/// <param name="name">The name of the unit.</param>
 		/// <param name="service">The service the unit belongs to.</param>
 		/// <returns>The created unit object.</returns>
-		public async Task<Unit> CreateUnit(string name, ServiceType service, string capcode, IList<Guid> additionalCapcodes, Guid unitAdministratorId, string description, Region region, Coordinates headquartersCoords)
+		public async Task<Unit> CreateUnit(string name, ServiceType service, string capcode, IList<Guid> additionalCapcodes, Guid unitAdministratorId, string description, Region region, Coordinates headquartersCoords, TrainingNightInfo trainingNight)
 		{
 			Unit unit = new Unit()
 			{
@@ -55,7 +55,8 @@ namespace Enivate.ResponseHub.ApplicationServices
 				AdditionalCapcodes = additionalCapcodes,
 				Description = description,
 				Region = region,
-				HeadquartersCoordinates = headquartersCoords
+				HeadquartersCoordinates = headquartersCoords,
+				TrainingNight = trainingNight
 			};
 
 			// Add the user mapping for the unit administrator

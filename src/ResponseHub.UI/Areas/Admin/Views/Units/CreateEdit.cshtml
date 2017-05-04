@@ -164,10 +164,39 @@
 		</div>
 	</div>
 
+	<hr />
+	<h3>Training night</h3>
+
+	<div class="form-group">
+		<label for="Service">Training night *</label>
+		<div class="row">
+			<div class="col-sm-8 col-md-6 col-lg-4">
+				@Html.DropDownListFor(model => model.TrainingNight, Model.AvailableTrainingNights, new { @class = "form-control" })
+			</div>
+		</div>
+		@Html.ValidationMessageFor(model => model.TrainingNight)
+	</div>
+
+	<div class="form-group">
+		<label for="StartTime">Training start time *</label>
+		<div class="row">
+			<div class="col-sm-8 col-md-6 col-lg-4">
+				<div class="input-group timepicker-control">
+					@Html.TextBoxFor(model => model.TrainingStartTime, new { @class = "form-control" })
+					<div class="input-group-addon">
+						<i class="fa fa-fw fa-clock-o"></i>
+					</div>
+				</div>
+				<div class="text-muted"><em>Date format should be hh:mm and in 24 hour time.</em></div>
+			</div>
+		</div>
+		@Html.ValidationMessageFor(model => model.TrainingStartTime)
+	</div>
+
 	@if (ViewBag.AddUnitAdministrator == true)
 	{
-
-		<h3 class="legend">Unit administrator</h3>
+		<hr />
+		<h3>Unit administrator</h3>
 
 		<div class="row">
 			<div class="col-lg-10 col-xl-6">

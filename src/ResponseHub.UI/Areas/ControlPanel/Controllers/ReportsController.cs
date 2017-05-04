@@ -338,7 +338,7 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 		{
 			// Get the training sessions
 			IList<TrainingSession> trainingSessions = await TrainingService.GetTrainingSessionsForUnit(unitId, dateFrom, dateTo);
-			int trainingSessionDays = trainingSessions.GroupBy(i => i.SessionDate).Count();
+			int trainingSessionDays = trainingSessions.GroupBy(i => i.SessionDate.Date).Count();
 
 			// Get the members for the unit
 			IList<IdentityUser> unitMembers = await UnitService.GetUsersForUnit(unitId);
@@ -400,7 +400,7 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 					memberTrainingRecord.TrainingSessions.Add(trainingType.ShortName, userSessions.Where(i => i.TrainingTypes.Contains(trainingType)).Count());
 
 					// Get the dates the user was training for.
-					memberTrainingRecord.TrainingDates.Add(trainingType.ShortName, userSessions.Where(i => i.TrainingTypes.Contains(trainingType)).Select(i => i.SessionDate).ToList());
+					memberTrainingRecord.TrainingDates.Add(trainingType.ShortName, userSessions.Where(i => i.TrainingTypes.Contains(trainingType)).Select(i => i.SessionDate.Date).ToList());
 				}
 
 				// Add to the list of members
@@ -454,59 +454,7 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 			// Create the list of report items
 			List<MemberAttendanceReportItem> reportItems = new List<MemberAttendanceReportItem>();
 			reportItems.AddRange(unitSignIns.Select(i => MapMemberAttendanceReportItem(i, signInUsers)));
-
-			// Loop through the training sessions
-			foreach(TrainingSession trainingSession in trainingSessions)
-			{
-				// Get the session description
-				string description = String.Join(", ", trainingSession.TrainingTypes.Select(i => i.Name));
-
-				// Loop through the members in the training sessions
-				foreach (Guid userId in trainingSession.Members)
-				{
-
-					// Get the user from the list
-					IdentityUser user = signInUsers.FirstOrDefault(i => i.Id == userId);
-
-					// If the user is not null, get the report item and add to the list
-					if (user != null)
-					{
-
-						MemberAttendanceReportItem reportItem = new MemberAttendanceReportItem()
-						{
-							SignInTime = trainingSession.SessionDate,
-							SignInType = SignInType.Training,
-							Description = description,
-							FullName = user.FirstName,
-							MemberNumber = user.Profile.MemberNumber
-						};
-						reportItems.Add(reportItem);
-					}
-				}
-
-				// Loop through the members in the training sessions
-				foreach (Guid userId in trainingSession.Trainers)
-				{
-
-					// Get the user from the list
-					IdentityUser user = signInUsers.FirstOrDefault(i => i.Id == userId);
-
-					// If the user is not null, get the report item and add to the list
-					if (user != null)
-					{
-
-						MemberAttendanceReportItem reportItem = new MemberAttendanceReportItem()
-						{
-							SignInTime = trainingSession.SessionDate,
-							SignInType = SignInType.Training,
-							Description = description,
-							FullName = user.FirstName,
-							MemberNumber = user.Profile.MemberNumber
-						};
-						reportItems.Add(reportItem);
-					}
-				}
-			}
+			reportItems.AddRange(trainingSessions.SelectMany(i => MapMemberAttendanceReportItem(i, signInUsers)));			
 
 			// Create the list of the sign in entry report items
 			IDictionary<string, List<MemberAttendanceReportItem>> groupedReportItems = new Dictionary<string, List<MemberAttendanceReportItem>>();
@@ -539,6 +487,64 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 			};
 
 			return model;
+		}
+
+		private IList<MemberAttendanceReportItem> MapMemberAttendanceReportItem(TrainingSession trainingSession, IList<IdentityUser> signInUsers)
+		{
+
+			// Create the list of report items
+			IList<MemberAttendanceReportItem> reportItems = new List<MemberAttendanceReportItem>();
+
+			// Get the session description
+			string description = String.Join(", ", trainingSession.TrainingTypes.Select(i => i.Name));
+
+			// Loop through the members in the training sessions
+			foreach (Guid userId in trainingSession.Members)
+			{
+
+				// Get the user from the list
+				IdentityUser user = signInUsers.FirstOrDefault(i => i.Id == userId);
+
+				// If the user is not null, get the report item and add to the list
+				if (user != null)
+				{
+
+					MemberAttendanceReportItem reportItem = new MemberAttendanceReportItem()
+					{
+						SignInTime = trainingSession.SessionDate.ToLocalTime(),
+						SignInType = SignInType.Training,
+						Description = description,
+						FullName = user.FirstName,
+						MemberNumber = user.Profile.MemberNumber
+					};
+					reportItems.Add(reportItem);
+				}
+			}
+
+			// Loop through the members in the training sessions
+			foreach (Guid userId in trainingSession.Trainers)
+			{
+
+				// Get the user from the list
+				IdentityUser user = signInUsers.FirstOrDefault(i => i.Id == userId);
+
+				// If the user is not null, get the report item and add to the list
+				if (user != null)
+				{
+
+					MemberAttendanceReportItem reportItem = new MemberAttendanceReportItem()
+					{
+						SignInTime = trainingSession.SessionDate.ToLocalTime(),
+						SignInType = SignInType.Training,
+						Description = description,
+						FullName = user.FirstName,
+						MemberNumber = user.Profile.MemberNumber
+					};
+					reportItems.Add(reportItem);
+				}
+			}
+
+			return reportItems;
 		}
 
 		private static MemberAttendanceReportItem MapMemberAttendanceReportItem(SignInEntry signIn, IList<IdentityUser> signInUsers)

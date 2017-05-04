@@ -28,6 +28,10 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Models.Units
 
 		public IList<Capcode> AdditionalCapcodes { get; set; }
 
+		public string TrainingNight { get; set; }
+
+		public string TrainingNightStartTime { get; set; }
+
 		public SingleUnitViewModel()
 		{
 			Users = new List<UnitMemberViewModel>();

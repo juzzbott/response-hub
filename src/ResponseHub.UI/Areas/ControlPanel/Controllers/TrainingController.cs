@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Text;
@@ -14,6 +15,7 @@ using Enivate.ResponseHub.Model.Training;
 using Enivate.ResponseHub.Model.Training.Interface;
 using Enivate.ResponseHub.Common;
 using Enivate.ResponseHub.Common.Extensions;
+using Enivate.ResponseHub.Model.Units;
 
 namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 {
@@ -72,9 +74,22 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 
 			// Set the available training types
 			model.AvailableTrainingTypes = await TrainingService.GetAllTrainingTypes();
-			
+
+			// Get the unit for the training session
+			Unit unit = await UnitService.GetById(GetControlPanelUnitId());
+
+			// If the unit is null, add model error
+			if (unit == null)
+			{
+				ModelState.AddModelError("", "There was no unit found to get members for.");
+				return View("AddEdit", model);
+			}
+
+			// Set the start time from the unit start time
+			model.SessionTime = unit.TrainingNight.StartTime;
+
 			// Load the users for the model
-			IList<IdentityUser> users = await UnitService.GetUsersForUnit(GetControlPanelUnitId());
+			IList<IdentityUser> users = await UnitService.GetUsersForUnit(unit.Id);
 			foreach(IdentityUser user in users)
 			{
 				model.AvailableUsers.Add(new Tuple<Guid, string, string>(user.Id, user.FullName, user.Profile.MemberNumber));
@@ -115,12 +130,15 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 				// Get the list of guids from the selected training types
 				IList<Guid> trainingTypeIds = model.TrainingTypes.Split(new char[] { '|' }, StringSplitOptions.RemoveEmptyEntries).Select(i => new Guid(i)).ToList();
 
+				// Set the time of session date
+				DateTime sessionDate = DateTime.ParseExact(String.Format("{0} {1}", model.SessionDate, model.SessionTime), "dd/MM/yyyy HH:mm", CultureInfo.CurrentCulture, DateTimeStyles.AssumeLocal);
+
 				// Create the training session
 				TrainingSession session = new TrainingSession()
 				{
 					Created = DateTime.UtcNow,
 					UnitId = GetControlPanelUnitId(),
-					SessionDate = model.SessionDate.ToUniversalTime(),
+					SessionDate = sessionDate.ToUniversalTime(),
 					TrainingTypes = trainingTypes.Where(i => trainingTypeIds.Contains(i.Id)).ToList(),
 					Name = model.Name,
 					Description = model.Description,
@@ -244,7 +262,8 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 			{
 				Name = session.Name,
 				Description = session.Description,
-				SessionDate = session.SessionDate,
+				SessionDate = session.SessionDate.ToLocalTime().ToString("dd/MM/yyyy"),
+				SessionTime = session.SessionDate.ToLocalTime().ToString("HH:mm"),
 				SessionType = session.SessionType,
 				TrainingTypes = String.Format("{0}|", String.Join("|", session.TrainingTypes.Select(i => i.Id))),
 				Duration = session.Duration,
@@ -310,8 +329,11 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 				// Get the list of guids from the selected training types
 				IList<Guid> trainingTypeIds = model.TrainingTypes.Split(new char[] { '|' }, StringSplitOptions.RemoveEmptyEntries).Select(i => new Guid(i)).ToList();
 
+				// Set the time of session date
+				DateTime sessionDate = DateTime.ParseExact(String.Format("{0} {1}", model.SessionDate, model.SessionTime), "dd/MM/yyyy HH:mm", CultureInfo.CurrentCulture, DateTimeStyles.AssumeLocal);
+
 				// Set the session details
-				session.SessionDate = model.SessionDate.ToUniversalTime();
+				session.SessionDate = sessionDate.ToUniversalTime();
 				session.TrainingTypes = trainingTypes.Where(i => trainingTypeIds.Contains(i.Id)).ToList();
 				session.Name = model.Name;
 				session.Description = model.Description;
