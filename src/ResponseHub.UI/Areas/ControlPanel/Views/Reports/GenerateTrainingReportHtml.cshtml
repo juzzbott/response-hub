@@ -15,6 +15,10 @@
 
 	<h1 id="training-report">@ViewBag.Title</h1>
 
+	<p class="lead text-info">
+		Report contains training sessions between @Model.DateFrom.ToLocalTime().ToString("dd/MM/yyyy") and @Model.DateTo.ToLocalTime().ToString("dd/MM/yyyy")
+	</p>
+
 	<h2>Training overview</h2>
 
 	<div id="training-overview-chart" class="ct-chart ct-perfect-fourth" style="width: 900px; height: 400px;"></div>
@@ -67,32 +71,6 @@
 							}
 						</strong>
 					</td>
-				</tr>
-			}
-		</tbody>
-	</table>
-
-	<h2 style="page-break-before: always">Member training dates</h2>
-
-	<table class="table table-striped results-overview table-small">
-		<thead>
-			<tr>
-				<th>&nbsp;</th>
-				@foreach (var trainingType in Model.TrainingTypes)
-			{
-					<th>@trainingType.Value</th>
-			}
-			</tr>
-		</thead>
-		<tbody>
-			@foreach (var memberReport in Model.MemberReports)
-			{
-				<tr>
-					<td>@memberReport.Name</td>
-					@foreach (var trainingSession in memberReport.TrainingDates)
-				{
-						<td>@Html.Raw(String.Join("<br />", trainingSession.Value.Select(i => i.ToString("yyyy-MM-dd")).ToList()))</td>
-				}
 				</tr>
 			}
 		</tbody>

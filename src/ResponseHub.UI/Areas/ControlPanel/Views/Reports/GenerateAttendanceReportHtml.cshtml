@@ -15,6 +15,10 @@
 
 	<h1 id="attendance-report">@ViewBag.Title</h1>
 
+	<p class="lead text-info">
+		Report contains @Model.AttendanceReportItems.Sum(i => i.Value.Count) entries between @Model.DateFrom.ToLocalTime().ToString("dd/MM/yyyy") and @Model.DateTo.ToLocalTime().ToString("dd/MM/yyyy")
+	</p>
+
 	<table class="table table-striped results-overview table-small">
 		<thead>
 			<tr>
