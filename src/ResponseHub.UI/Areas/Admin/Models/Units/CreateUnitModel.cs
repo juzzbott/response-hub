@@ -55,6 +55,14 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Models.Units
 		[Range(-180, 180, ErrorMessage = "Please enter a longitude coordinate between -180 and 180.")]
 		public double? Longitude { get; set; }
 
+		[Required(ErrorMessage = "You must select the training night.")]
+		public int TrainingNight { get; set; }
+
+		public List<SelectListItem> AvailableTrainingNights { get; set; }
+
+		[Required(ErrorMessage = "You must select the training night start time.")]
+		public string TrainingStartTime { get; set; }
+
 		public CreateUnitModel()
 		{
 
@@ -65,6 +73,17 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Models.Units
 			AvailableAdditionalCapcodes = new List<Capcode>();
 
 			AvailableUnitCapcodes = new List<Capcode>();
+
+			AvailableTrainingNights = new List<SelectListItem>()
+			{
+				new SelectListItem() { Text = "Sunday", Value = "0" },
+				new SelectListItem() { Text = "Monday", Value = "1" },
+				new SelectListItem() { Text = "Tuesday", Value = "2" },
+				new SelectListItem() { Text = "Wednesday", Value = "3" },
+				new SelectListItem() { Text = "Thursday", Value = "4" },
+				new SelectListItem() { Text = "Friday", Value = "5" },
+				new SelectListItem() { Text = "Saturday", Value = "6" }
+			};
 
 		}
 

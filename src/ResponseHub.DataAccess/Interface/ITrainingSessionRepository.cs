@@ -14,6 +14,8 @@ namespace Enivate.ResponseHub.DataAccess.Interface
 
 		Task<IList<TrainingSession>> GetTrainingSessionsForUnit(Guid unitId, IEnumerable<TrainingType> trainingTypes);
 
+		Task<IList<TrainingSession>> GetTrainingSessionsForUnit(Guid unitId, DateTime from, DateTime to, IEnumerable<TrainingType> trainingTypes);
+
 		Task<IList<TrainingSession>> GetTrainingSessionsForUnit(Guid unitId, int limit, IEnumerable<TrainingType> trainingTypes);
 
 		Task Add(TrainingSession session);

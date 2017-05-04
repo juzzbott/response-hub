@@ -14,5 +14,7 @@ namespace Enivate.ResponseHub.Model.Reports.Interface
 
 		Task<byte[]> GenerationOperationsReportPdfFile(Guid unitId, DateTime dateFrom, DateTime dateTo, bool includeAdditionalCapcodes, HttpCookieCollection cookies);
 
+		Task<byte[]> GenerateAttendanceReportPdfFile(Guid unitId, DateTime dateFrom, DateTime dateTo, HttpCookieCollection cookies);
+
 	}
 }

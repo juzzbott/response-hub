@@ -34,6 +34,8 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB.DataObjects.Units
 
 		public GeoJson2DGeographicCoordinates HeadquartersCoordinates { get; set; }
 
+		public TrainingNightInfo TrainingNight { get; set; }
+
 		public UnitDto()
 		{
 			Id = Guid.NewGuid();

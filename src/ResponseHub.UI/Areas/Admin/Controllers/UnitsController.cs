@@ -235,6 +235,13 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 				return View("ConfirmUser", model);
 			}
 
+			// Create the training night info
+			TrainingNightInfo trainingNight = new TrainingNightInfo()
+			{
+				DayOfWeek = createUnitModel.TrainingNight,
+				StartTime = createUnitModel.TrainingStartTime
+			};
+
 			// Create the headquarters coords
 			Coordinates coords = new Coordinates(createUnitModel.Latitude.Value, createUnitModel.Longitude.Value);
 
@@ -245,7 +252,7 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Controllers
 			await CheckAndCreateCapcode(createUnitModel.Capcode, createUnitModel.Name, service);
 
 			// Create the unit
-			await UnitService.CreateUnit(createUnitModel.Name, service, createUnitModel.Capcode, additionalCapcodes, unitAdmin.Id, createUnitModel.Description, region, coords);
+			await UnitService.CreateUnit(createUnitModel.Name, service, createUnitModel.Capcode, additionalCapcodes, unitAdmin.Id, createUnitModel.Description, region, coords, trainingNight);
 
 			// Send the new unit email to the unit admin
 			await MailService.SendUnitCreatedEmail(unitAdmin, createUnitModel.Name, service, createUnitModel.Capcode);

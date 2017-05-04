@@ -11,7 +11,7 @@ namespace Enivate.ResponseHub.Model.Units.Interface
 	public interface IUnitService
 	{
 
-		Task<Unit> CreateUnit(string name, ServiceType service, string capcode, IList<Guid> additionalCapcodes, Guid unitAdministratorId, string description, Region region, Coordinates headquartersCoords);
+		Task<Unit> CreateUnit(string name, ServiceType service, string capcode, IList<Guid> additionalCapcodes, Guid unitAdministratorId, string description, Region region, Coordinates headquartersCoords, TrainingNightInfo trainingNight);
 
 		Task<IList<Unit>> GetAll();
 

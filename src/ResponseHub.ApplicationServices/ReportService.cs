@@ -35,6 +35,11 @@ namespace Enivate.ResponseHub.ApplicationServices
 				dateFrom.ToString("yyyyMMddHHmmss"),
 				dateTo.ToString("yyyyMMddHHmmss")));
 
+			request.ServerCertificateValidationCallback = delegate (object s, System.Security.Cryptography.X509Certificates.X509Certificate certificate, System.Security.Cryptography.X509Certificates.X509Chain chain, System.Net.Security.SslPolicyErrors sslPolicyErrors)
+			{
+				return true;
+			};
+
 			HttpWebResponse response = (HttpWebResponse)await request.GetResponseAsync();
 
 			// If the response is not successful, then throw exception
@@ -54,7 +59,42 @@ namespace Enivate.ResponseHub.ApplicationServices
 			return await _pdfGenerationService.GeneratePdfFromHtml(htmlContent, false, cookies);
 
 		}
-		
+
+		public async Task<byte[]> GenerateAttendanceReportPdfFile(Guid unitId, DateTime dateFrom, DateTime dateTo, HttpCookieCollection cookies)
+		{
+			// Get the web response for the report
+			// To force a page break: style="page-break-before: always"
+			HttpWebRequest request = HttpWebRequest.CreateHttp(String.Format("{0}/control-panel/reports/generate-attendance-report-html?unit_id={1}&date_from={2}&date_to={3}",
+				ConfigurationManager.AppSettings[ConfigurationKeys.BaseWebsiteUrl],
+				unitId,
+				dateFrom.ToString("yyyyMMddHHmmss"),
+				dateTo.ToString("yyyyMMddHHmmss")));
+
+			request.ServerCertificateValidationCallback = delegate (object s, System.Security.Cryptography.X509Certificates.X509Certificate certificate, System.Security.Cryptography.X509Certificates.X509Chain chain, System.Net.Security.SslPolicyErrors sslPolicyErrors)
+			{
+				return true;
+			};
+
+			HttpWebResponse response = (HttpWebResponse)await request.GetResponseAsync();
+
+			// If the response is not successful, then throw exception
+			if (response.StatusCode != HttpStatusCode.OK)
+			{
+				throw new Exception("There was an error response from the Generate PDF Export request.");
+			}
+
+			// Get the test from the response
+			string htmlContent = "";
+			using (StreamReader reader = new StreamReader(response.GetResponseStream()))
+			{
+				htmlContent = reader.ReadToEnd();
+			}
+
+			// Return the pdf bytes
+			return await _pdfGenerationService.GeneratePdfFromHtml(htmlContent, false, cookies);
+
+		}
+
 		/// <summary>
 		/// Builds the operations report pdf file.
 		/// </summary>
@@ -73,6 +113,11 @@ namespace Enivate.ResponseHub.ApplicationServices
 				dateFrom.ToString("yyyyMMddHHmmss"),
 				dateTo.ToString("yyyyMMddHHmmss"),
 				includeAdditionalCapcodes));
+
+			request.ServerCertificateValidationCallback = delegate (object s, System.Security.Cryptography.X509Certificates.X509Certificate certificate, System.Security.Cryptography.X509Certificates.X509Chain chain, System.Net.Security.SslPolicyErrors sslPolicyErrors)
+			{
+				return true;
+			};
 
 			HttpWebResponse response = (HttpWebResponse)await request.GetResponseAsync();
 

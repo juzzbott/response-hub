@@ -103,6 +103,7 @@ input[type="date"]::-webkit-input-placeholder{
 
 .mobile-block {
 	display: block;
+	width: 100%;
 }
 
 .dl-horizontal dt {
@@ -137,6 +138,7 @@ h5 i {
 @media (min-width: 768px) {
 	.mobile-block {
 		display: inline;	
+		width: auto;
 	}
 }
 
@@ -826,13 +828,12 @@ h4.legend {
 }
 
 .input-validation-error {
-    border-color: @validation-error-color;
-    background-color: @validation-error-highlight;
+    border-color: @validation-error-color !important;
+    background-color: @validation-error-highlight !important;
 
 	&:focus,
 	&:active {
-		background-color: #fff;
-		border-color: @validation-error-color;
+		border-color: @validation-error-color !important;
 	}
 }
 
@@ -1750,7 +1751,7 @@ body.pdf-export {
 }
 
 div.generated-report {
-	
+
 	table {
 		font-size: 12px;
 
@@ -1767,18 +1768,19 @@ div.generated-report {
 			.job-number {
 				width: 110px;
 			}
+
 			.date-time {
 				width: 150px;
 			}
 		}
 	}
 
-	.job-progress-table  {
+	.job-progress-table {
 
 		thead th {
 			border-bottom: 0px;
 		}
-	
+
 		td {
 			border-top: 0px;
 		}
@@ -1811,7 +1813,6 @@ div.generated-report {
 			width: 48px;
 			height: 48px;
 		}
-
 	}
 
 	.notes li {
@@ -1830,6 +1831,9 @@ div.generated-report {
 		}
 	}
 
+	.month-group td {
+		background-color: lighten(@brand-primary, 39%);
+	}
 }
 
 /**

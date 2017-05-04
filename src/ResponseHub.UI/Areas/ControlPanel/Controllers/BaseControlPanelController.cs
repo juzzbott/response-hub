@@ -18,6 +18,7 @@ using Enivate.ResponseHub.Model;
 using Enivate.ResponseHub.Model.Spatial;
 using Enivate.ResponseHub.Common.Constants;
 using Enivate.ResponseHub.Caching;
+using Enivate.ResponseHub.Model.Identity.Interface;
 
 namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 {
@@ -26,29 +27,9 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 		
 		protected const string AddMemberViewModelSessionKey = "NewUserViewModel";
 
-		protected IUnitService UnitService
-		{
-			get
-			{
-				return ServiceLocator.Get<IUnitService>();
-			}
-		}
-		
-		protected ICapcodeService CapcodeService
-		{
-			get
-			{
-				return ServiceLocator.Get<ICapcodeService>();
-			}
-		}
-		
-		protected IMailService MailService
-		{
-			get
-			{
-				return ServiceLocator.Get<IMailService>();
-			}
-		}
+		protected IUnitService UnitService = ServiceLocator.Get<IUnitService>();
+		protected ICapcodeService CapcodeService = ServiceLocator.Get<ICapcodeService>();		
+		protected IMailService MailService = ServiceLocator.Get<IMailService>();
 
 		protected string AreaPrefix
 		{
@@ -136,8 +117,15 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 				AdditionalCapcodes = additionalCapcodes,
 				Users = unitUserModels,
 				Region = unit.Region.Name,
-				HeadquartersCoordinates = unit.HeadquartersCoordinates
+				HeadquartersCoordinates = unit.HeadquartersCoordinates,
 			};
+
+			// Set the training night details
+			if (unit.TrainingNight != null)
+			{
+				model.TrainingNight = ((DayOfWeek)unit.TrainingNight.DayOfWeek).GetEnumDescription();
+				model.TrainingNightStartTime = unit.TrainingNight.StartTime;
+			}
 
 			return View(viewPath, model);
 		}
@@ -175,6 +163,8 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 			model.Longitude = unit.HeadquartersCoordinates.Longitude;
 			model.Name = unit.Name;
 			model.Region = unit.Region.Id;
+			model.TrainingNight = (unit.TrainingNight != null ? unit.TrainingNight.DayOfWeek : 0);
+			model.TrainingStartTime = (unit.TrainingNight != null ? unit.TrainingNight.StartTime : "");
 
 			// Set the page title.
 			ViewBag.Title = "Edit unit";
@@ -231,6 +221,11 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 				unit.Updated = DateTime.UtcNow;
 				unit.HeadquartersCoordinates = coords;
 				unit.Region = region;
+				unit.TrainingNight = new TrainingNightInfo()
+				{
+					DayOfWeek = model.TrainingNight,
+					StartTime = model.TrainingStartTime
+				};
 
 				if (adminEdit)
 				{

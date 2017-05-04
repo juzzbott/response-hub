@@ -76,9 +76,12 @@
     <Compile Include="Events\Interface\IEventService.cs" />
     <Compile Include="Addresses\Interface\IAddressService.cs" />
     <Compile Include="Messages\JobNumberComparer.cs" />
+    <Compile Include="SignIn\OtherSignInType.cs" />
+    <Compile Include="SignIn\TrainingActivity.cs" />
     <Compile Include="Units\Capcode.cs" />
     <Compile Include="Units\Interface\ICapcodeService.cs" />
     <Compile Include="Units\Interface\IUnitService.cs" />
+    <Compile Include="Units\TrainingNightInfo.cs" />
     <Compile Include="Units\Unit.cs" />
     <Compile Include="Units\Region.cs" />
     <Compile Include="Units\UserMapping.cs" />
@@ -103,10 +106,9 @@
     <Compile Include="PdfGeneration\Interface\IPdfGenerationService.cs" />
     <Compile Include="Reports\Interface\IReportService.cs" />
     <Compile Include="SignIn\Interface\ISignInEntryService.cs" />
-    <Compile Include="SignIn\Activity.cs" />
     <Compile Include="SignIn\SignInEntry.cs" />
     <Compile Include="SignIn\OperationActivity.cs" />
-    <Compile Include="SignIn\TrainingActivity.cs" />
+    <Compile Include="SignIn\OtherActivity.cs" />
     <Compile Include="SignIn\SignInType.cs" />
     <Compile Include="Spatial\DirectionsInfo.cs" />
     <Compile Include="Training\Interface\ITrainingService.cs" />

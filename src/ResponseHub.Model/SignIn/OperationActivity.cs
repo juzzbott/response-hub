@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Enivate.ResponseHub.Model.SignIn
 {
-	public class OperationActivity : Activity
+	public class OperationActivity
 	{
 
 		public Guid JobId { get; set; }
