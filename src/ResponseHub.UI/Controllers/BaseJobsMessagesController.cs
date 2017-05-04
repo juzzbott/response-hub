@@ -190,12 +190,6 @@ namespace Enivate.ResponseHub.UI.Controllers
 							MemberNumber = signInUser.Profile.MemberNumber,
 							SignInTime = signIn.SignInTime
 						});
-
-						// If the user id matches the current user id, then they have already signed in
-						if (signIn.UserId == currentUserId)
-						{
-							model.AlreadySignedIn = true;
-						}
 					}
 
 				}

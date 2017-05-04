@@ -915,46 +915,31 @@ td .checkbox {
 		padding-left: 5px;
 	}
 
-	label input[type="radio"] ~ i.fa.fa-circle-o {
+	label input[type="radio"] ~ i.fa.fa-circle-o,
+	label input[type="radio"]:checked.disabled ~ i.fa.fa-dot-circle-o,
+	label input[type="checkbox"] ~ i.fa.fa-square-o,
+	label input[type="checkbox"]:checked.disabled ~ i.fa.fa-check-square-o {
 		color: #c8c8c8;
 		display: inline;
 	}
 
-	label input[type="radio"] ~ i.fa.fa-dot-circle-o {
-		display: none;
-	}
-
-	label input[type="radio"]:checked ~ i.fa.fa-circle-o {
-		display: none;
-	}
-
-	label input[type="radio"]:checked ~ i.fa.fa-dot-circle-o {
-		color: @brand-primary;
-		display: inline;
-	}
-
-	label:hover input[type="radio"] ~ i.fa {
-		color: @brand-primary;
-	}
-
-	label input[type="checkbox"] ~ i.fa.fa-square-o {
-		color: #c8c8c8;
-		display: inline;
-	}
-
+	label input[type="radio"] ~ i.fa.fa-dot-circle-o,
 	label input[type="checkbox"] ~ i.fa.fa-check-square-o {
 		display: none;
 	}
 
+	label input[type="radio"]:checked ~ i.fa.fa-circle-o,
 	label input[type="checkbox"]:checked ~ i.fa.fa-square-o {
 		display: none;
 	}
 
+	label input[type="radio"]:checked ~ i.fa.fa-dot-circle-o,
 	label input[type="checkbox"]:checked ~ i.fa.fa-check-square-o {
 		color: @brand-primary;
 		display: inline;
 	}
 
+	label:hover input[type="radio"] ~ i.fa,
 	label:hover input[type="checkbox"] ~ i.fa {
 		color: @brand-primary;
 	}

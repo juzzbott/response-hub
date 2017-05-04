@@ -27,5 +27,7 @@ namespace Enivate.ResponseHub.Model.SignIn.Interface
 
 		Task<IList<SignInEntry>> GetSignInsWithoutSignOutsForUser(Guid userId);
 
+		Task SignUsersIntoJob(Guid jobId, string jobNumber, DateTime signInTime, IList<Guid> userIds, Guid unitId);
+
 	}
 }

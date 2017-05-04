@@ -79,7 +79,6 @@ namespace Enivate.ResponseHub.UI.Controllers
 						
 			// Get the job message from the database
 			JobMessage job = await JobMessageService.GetById(id);
-
 			
 			// If the job is null, return 404
 			if (job == null)
@@ -176,6 +175,125 @@ namespace Enivate.ResponseHub.UI.Controllers
 			// redirect back to the job
 			return new RedirectResult(String.Format("/jobs/{0}?attachment_removed=1", jobId));
 
+		}
+
+		[Route("{jobId:guid}/sign-in")]
+		public async Task<ActionResult> SignIn(Guid jobId)
+		{
+
+			// Get the job based on the id
+			JobMessage job = await JobMessageService.GetById(jobId);
+
+			// If the job is null, return 404
+			if (job == null)
+			{
+				throw new HttpException((int)HttpStatusCode.NotFound, "The requested page cannot be found.");
+			}
+
+			// Get the capcode for the message
+			Capcode capcode = await CapcodeService.GetByCapcodeAddress(job.Capcode);
+
+			// Get the units based on the capcode
+			Unit unit = await UnitService.GetUnitByCapcode(capcode);
+
+			// Get the sign ins for the job
+			IList<SignInEntry> jobSignIns = await SignInEntryService.GetSignInsForJobMessage(job.Id);
+
+			// Create the model
+			JobMessageSignInViewModel model = new JobMessageSignInViewModel()
+			{
+				JobId = jobId,
+				JobNumber = job.JobNumber,
+				Priority = job.Priority,
+				Timestamp = job.Timestamp.ToLocalTime(),
+				CapcodeUnitName = capcode.ToString(),
+				SelectedMembers = String.Format("{0}|", String.Join("|", jobSignIns.Select(i => i.UserId).ToList()))
+			};
+
+			// Get the list of members for the unit
+			IList<IdentityUser> unitMembers = await UnitService.GetUsersForUnit(unit.Id);
+
+			// Loop through the users and add to the list
+			foreach(IdentityUser member in unitMembers)
+			{
+				model.AvailableMembers.Add(member.Id, member.FullName);
+			}
+
+			// If the current user is not signed in, then set the UserToSignIn so they are selected by default
+			if (!jobSignIns.Any(i => i.UserId == UserId))
+			{
+				model.UserToSignIn = UserId.ToString();
+			}
+
+			return View(model);
+		}
+
+		[Route("{jobId:guid}/sign-in")]
+		[HttpPost]
+		public async Task<ActionResult> SignIn(Guid jobId, JobMessageSignInViewModel model)
+		{
+
+			// Get the job based on the id
+			JobMessage job = await JobMessageService.GetById(jobId);
+
+			// If the job is null, return 404
+			if (job == null)
+			{
+				throw new HttpException((int)HttpStatusCode.NotFound, "The requested page cannot be found.");
+			}
+
+			// Get the capcode for the message
+			Capcode capcode = await CapcodeService.GetByCapcodeAddress(job.Capcode);
+
+			// Get the units based on the capcode
+			Unit unit = await UnitService.GetUnitByCapcode(capcode);
+
+			// Get the sign ins for the job
+			IList<SignInEntry> jobSignIns = await SignInEntryService.GetSignInsForJobMessage(job.Id);
+
+			// Create the model
+			model.JobId = jobId;
+			model.JobNumber = job.JobNumber;
+			model.Priority = job.Priority;
+			model.Timestamp = job.Timestamp.ToLocalTime();
+			model.CapcodeUnitName = capcode.ToString();
+
+			// Get the list of members for the unit
+			IList<IdentityUser> unitMembers = await UnitService.GetUsersForUnit(unit.Id);
+
+			// Loop through the users and add to the list
+			foreach (IdentityUser member in unitMembers)
+			{
+				model.AvailableMembers.Add(member.Id, member.FullName);
+			}
+
+			try
+			{
+
+				// Get the list of Guids that have been selected
+				IList<Guid> selectedMemeberIds = model.SelectedMembers.Split(new char[] { '|' }, StringSplitOptions.RemoveEmptyEntries).Select(i => new Guid(i)).ToList();
+
+				// Remove users already signed in
+				selectedMemeberIds = selectedMemeberIds.Except(jobSignIns.Select(i => i.UserId)).ToList();
+
+				// Create the sign ins for the users 
+				if (selectedMemeberIds.Count > 0)
+				{
+					await SignInEntryService.SignUsersIntoJob(jobId, job.JobNumber, DateTime.UtcNow, selectedMemeberIds, unit.Id);
+				}
+
+				// redirec the user back to the job
+				return new RedirectResult(String.Format("/jobs/{0}", jobId));
+
+
+			}
+			catch (Exception ex)
+			{
+				// Log and display the error
+				await Log.Error(String.Format("Error signing users into the job. Message: {0}", ex.Message), ex);
+				ModelState.AddModelError("", "There was a problem signing the users into the job.");
+				return View(model);
+			}
 		}
 
 		#region Helpers
