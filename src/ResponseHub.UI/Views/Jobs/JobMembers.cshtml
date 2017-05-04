@@ -2,19 +2,12 @@
 	
 <h3>Sign in</h3>
 
-@if (!Model.AlreadySignedIn)
-{
-	<div class="member-sign-in">
-		<button class="btn btn-primary btn-icon mobile-block btn-lg" onclick="responseHub.signIn.signInToJob('@Model.Id', '@Model.JobNumber');"><i class="fa fa-fw fa-sign-in"></i>Sign me in</button>
-	</div>
-}
-
 	<div>
-		<h4>Sign in members for this job</h4>
-		<p><a href="/jobs/@Model.Id/sign-in" class="btn btn-primary btn-icon"><i class="fa fa-fw fa-sign-in"></i>Sign members in</a></p>
+		<p class="lead">Sign in members for this job</p>
+		<p><a href="/jobs/@Model.Id/sign-in" class="btn btn-primary btn-icon btn-lg mobile-block"><i class="fa fa-fw fa-sign-in"></i>Sign members in</a></p>
 	</div>
 
-	<h3>Members</h3>
+	<h3>Members signed in</h3>
 
 	<table id="signed-in-members" class="table table-striped table-hover">
 		<thead>

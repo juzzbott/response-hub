@@ -143,36 +143,46 @@
 				// If there is a failed result, display that
 				if (data.Success == true) {
 
-					var progressDate = moment(data.Timestamp).local();
+					console.log(data);
 
-					switch (statusType) {
-
-						case "on_route":
-							addProgressMarkup($('.progress-on-route'), "On route", progressDate, data.UserFullName);
-							break;
-
-						case "on_scene":
-							addProgressMarkup($('.progress-on-scene'), "On scene", progressDate, data.UserFullName);
-							break;
-
-						case "job_clear":
-							addProgressMarkup($('.progress-job-clear'), "Job clear", progressDate, data.UserFullName);
-							break;
-
-					}
-
-					// Update the version
-					$('#Version').val(data.NewVersion);
-
-					if (sender != null) {
-						$(sender).remove();
+					// If the user was signed in, we want to send them to the sign in page to sign other members in, otherwise we just want to display the progress updates
+					if (data.UserSignedIn) {
+						console.log('redirecting...');
+						window.location = window.location + '/sign-in';
 					}
 					else {
-						// Sender is null, so sender is actually the edit form, so we want to close the form
-						closeEditProgressForm();
+
+						var progressDate = moment(data.Timestamp).local();
+
+						switch (statusType) {
+
+							case "on_route":
+								addProgressMarkup($('.progress-on-route'), "On route", progressDate, data.UserFullName);
+								break;
+
+							case "on_scene":
+								addProgressMarkup($('.progress-on-scene'), "On scene", progressDate, data.UserFullName);
+								break;
+
+							case "job_clear":
+								addProgressMarkup($('.progress-job-clear'), "Job clear", progressDate, data.UserFullName);
+								break;
+
+						}
+
+						// Update the version
+						$('#Version').val(data.NewVersion);
+
+						if (sender != null) {
+							$(sender).remove();
+						}
+						else {
+							// Sender is null, so sender is actually the edit form, so we want to close the form
+							closeEditProgressForm();
+						}
 					}
 
-				} else {
+				} else { // data.Success = false
 
 					// Reset the button
 					if (sender != null) {
@@ -258,6 +268,9 @@
 
 	}
 
+	/**
+	 * Closes the edit progress form controls.
+	 */
 	function closeEditProgressForm()
 	{
 		$('#edit-progress-update').addClass('hidden');

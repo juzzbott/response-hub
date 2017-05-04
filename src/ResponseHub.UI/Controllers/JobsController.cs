@@ -219,6 +219,12 @@ namespace Enivate.ResponseHub.UI.Controllers
 				model.AvailableMembers.Add(member.Id, member.FullName);
 			}
 
+			// If the current user is not signed in, then set the UserToSignIn so they are selected by default
+			if (!jobSignIns.Any(i => i.UserId == UserId))
+			{
+				model.UserToSignIn = UserId.ToString();
+			}
+
 			return View(model);
 		}
 

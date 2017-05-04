@@ -22,6 +22,8 @@ namespace Enivate.ResponseHub.UI.Models.Messages
 
 		public string CapcodeUnitName { get; set; }
 
+		public string UserToSignIn { get; set; }
+
 		public string SelectedMembers { get; set; }
 
 		public JobMessageSignInViewModel()

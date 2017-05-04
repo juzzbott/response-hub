@@ -44,6 +44,8 @@
 
 	@Html.ValidationSummary()
 
+	@Html.HiddenFor(model => model.SelectedMembers)
+
 	<table class="table table-striped table-hover"	>
 		<thead>
 			<tr>
@@ -61,6 +63,13 @@
 								{
 									<input type="checkbox" name="User_@member.Key" id="User_@member.Key" value="@member.Key" checked="checked" disabled="disabled" class="disabled">
 								}
+								else if (!String.IsNullOrEmpty(Model.UserToSignIn) && Model.UserToSignIn.ToLower() == member.Key.ToString().ToLower())
+								{
+									<input type="checkbox" name="User_@member.Key" id="User_@member.Key" value="@member.Key" onclick="responseHub.jobMessages.setSignedInMember(this);" checked="checked">
+									<script type="text/javascript">
+										document.getElementById('SelectedMembers').value = document.getElementById('SelectedMembers').value + '@(member.Key.ToString())|';
+									</script>
+								}
 								else
 								{
 									<input type="checkbox" name="User_@member.Key" id="User_@member.Key" value="@member.Key" onclick="responseHub.jobMessages.setSignedInMember(this);">
@@ -73,8 +82,6 @@
 			}
 		</tbody>
 	</table>
-
-	@Html.HiddenFor(model => model.SelectedMembers)
 
 	<div class="top-20">
 		<button type="submit" class="btn btn-primary btn-icon"><i class="fa fa-fw fa-sign-in"></i>Sign in members</button>
