@@ -316,8 +316,8 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 			// Create the model
 			OperationsReportViewModel model = new OperationsReportViewModel
 			{
-				Messages = jobMessages.Where(i => i.Type == MessageType.Message).ToList(),
-				Jobs = jobMessages.Where(i => i.Type == MessageType.Job).OrderBy(i => i.Priority).ToList(),
+				Messages = jobMessages.Where(i => i.Type == MessageType.Message).OrderByDescending(i => i.Timestamp).ToList(),
+				Jobs = jobMessages.Where(i => i.Type == MessageType.Job).OrderByDescending(i => i.Timestamp).ToList(),
 				StartDate = dateFrom,
 				FinishDate = dateTo
 			};
