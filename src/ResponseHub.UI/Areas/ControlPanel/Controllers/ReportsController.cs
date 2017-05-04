@@ -454,7 +454,10 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 			// Create the list of report items
 			List<MemberAttendanceReportItem> reportItems = new List<MemberAttendanceReportItem>();
 			reportItems.AddRange(unitSignIns.Select(i => MapMemberAttendanceReportItem(i, signInUsers)));
-			reportItems.AddRange(trainingSessions.SelectMany(i => MapMemberAttendanceReportItem(i, signInUsers)));			
+			reportItems.AddRange(trainingSessions.SelectMany(i => MapMemberAttendanceReportItem(i, signInUsers)));
+
+			// Sort by sign in time desc
+			reportItems = reportItems.OrderByDescending(i => i.SignInTime).ToList();
 
 			// Create the list of the sign in entry report items
 			IDictionary<string, List<MemberAttendanceReportItem>> groupedReportItems = new Dictionary<string, List<MemberAttendanceReportItem>>();
@@ -514,7 +517,7 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 						SignInTime = trainingSession.SessionDate.ToLocalTime(),
 						SignInType = SignInType.Training,
 						Description = description,
-						FullName = user.FirstName,
+						FullName = user.FullName,
 						MemberNumber = user.Profile.MemberNumber
 					};
 					reportItems.Add(reportItem);
@@ -537,7 +540,7 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 						SignInTime = trainingSession.SessionDate.ToLocalTime(),
 						SignInType = SignInType.Training,
 						Description = description,
-						FullName = user.FirstName,
+						FullName = user.FullName,
 						MemberNumber = user.Profile.MemberNumber
 					};
 					reportItems.Add(reportItem);

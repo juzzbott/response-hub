@@ -123,7 +123,7 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 			// Set the training night details
 			if (unit.TrainingNight != null)
 			{
-				model.TrainingNight = ((DayOfWeek)unit.TrainingNight.DayOfWeek).GetEnumDescription();
+				model.TrainingNight = String.Format("{0}s", ((DayOfWeek)unit.TrainingNight.DayOfWeek).GetEnumDescription());
 				model.TrainingNightStartTime = unit.TrainingNight.StartTime;
 			}
 
