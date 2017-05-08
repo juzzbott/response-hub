@@ -573,7 +573,28 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 			// Perform the update
 			await Collection.UpdateOneAsync(filter, update);
 		}
-		
+
+		/// <summary>
+		/// Updates the claims list to be the specified list of claims. This is replace function. Any claims the user previously had, that is not in the list of claims, will be removed.
+		/// </summary>
+		/// <param name="userId"></param>
+		/// <param name="claims"></param>
+		/// <returns></returns>
+		public async Task SetClaimsToUser(Guid userId, IList<Claim> claims)
+		{
+			// Create the list of claim dtos
+			List<ClaimDto> mappedClaimes = claims.Select(MapClaimToDbObject).ToList();
+
+			// Create the filter to find the user to update
+			FilterDefinition<IdentityUserDto> filter = Builders<IdentityUserDto>.Filter.Eq(i => i.Id, userId);
+
+			// Create the update document
+			UpdateDefinition<IdentityUserDto> update = Builders<IdentityUserDto>.Update.Set(i => i.Claims, mappedClaimes);
+
+			// Perform the update
+			await Collection.UpdateOneAsync(filter, update);
+		}
+
 		#endregion
 
 		#region Mappers
