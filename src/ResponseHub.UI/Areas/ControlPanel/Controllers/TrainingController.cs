@@ -86,6 +86,7 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 			}
 
 			// Set the start time from the unit start time
+			model.SessionDate = DateTime.Now.ToString("dd/MM/yyyy");
 			model.SessionTime = unit.TrainingNight.StartTime;
 
 			// Load the users for the model
