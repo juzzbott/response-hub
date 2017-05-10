@@ -14,14 +14,11 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Models.Reports.Training
 
 		public IDictionary<string, int> TrainingSessions { get; set; }
 
-		public IDictionary<string, IList<DateTime>> TrainingDates { get; set; }
-
 		public int AttendancePercent { get; set; }
 
 		public UnitTrainingMemberReportItem()
 		{
 			TrainingSessions = new Dictionary<string, int>();
-			TrainingDates = new Dictionary<string, IList<DateTime>>();
 		}
 
 	}

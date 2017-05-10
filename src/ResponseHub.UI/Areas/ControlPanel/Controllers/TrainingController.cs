@@ -33,9 +33,12 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
         public async Task<ActionResult> Index()
 		{
 
+			// Get the current training sessions
+			IList<TrainingSession> trainingSessions = await TrainingService.GetTrainingSessionsForUnit(GetControlPanelUnitId());
+
 			// Create the model
 			TrainingHomeViewModel model = new TrainingHomeViewModel();
-			model.TrainingSessions = await TrainingService.GetTrainingSessionsForUnit(GetControlPanelUnitId());
+			model.TrainingSessions = trainingSessions.Select(TrainingSessionListItemViewModel.FromTrainingSession).ToList();
 
 			// Get the aggregate chart data
 			IDictionary<string, int> aggregate = new Dictionary<string, int>();
@@ -233,7 +236,7 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 			// Determine the percent of members training for this session
 			if (users.Count > 0)
 			{
-				model.MemberPercentTrained = (int)(((decimal)session.Members.Count / (decimal)users.Count) * 100);
+				model.MemberPercentTrained = (int)(((decimal)session.Members.Union(session.Trainers).Distinct().Count() / (decimal)users.Count) * 100);
 			}
 
 			return View(model);

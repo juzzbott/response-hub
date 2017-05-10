@@ -41,7 +41,7 @@ else
 				<td>@trainingSession.SessionDate.ToLocalTime().ToString("d MMMM, yyyy")</td>
 				<td>@trainingSession.Duration hour@(trainingSession.Duration == 1 ? "" : "s")</td>
 				<td>@Html.EnumDescription(trainingSession.SessionType)</td>
-				<td>@trainingSession.Members.Count</td>
+				<td>@trainingSession.MemberCount</td>
 				<td><a href="/control-panel/training/session/@trainingSession.Id/edit"><i class="fa fa-fw fa-pencil-square-o"></i></a></td>
 			</tr>
 			}
