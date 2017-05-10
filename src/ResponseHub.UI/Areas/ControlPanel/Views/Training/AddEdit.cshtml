@@ -209,7 +209,7 @@
 
 	<h3>Trainers</h3>
 	<div class="form-group">
-		<label for="AvailableTrainers">Find trainers *</label>
+		<label for="AvailableTrainers">Find trainers</label>
 		<div class="row">
 			<div class="col-sm-8 col-md-6 col-lg-4">
 				<select class="form-control selectpicker" data-live-search="true" id="AvailableTrainers" title="Select trainer...">
@@ -220,7 +220,6 @@
 				</select>
 			</div>
 		</div>
-		@Html.ValidationMessageFor(model => model.SelectedTrainers)
 	</div>
 	@Html.HiddenFor(model => model.SelectedTrainers)
 

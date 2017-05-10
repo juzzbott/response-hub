@@ -390,15 +390,18 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 			}
 
 			// Add the users to the training session
-			foreach (string userId in model.SelectedTrainers.Split(new char[] { '|' }, StringSplitOptions.RemoveEmptyEntries))
+			if (!String.IsNullOrEmpty(model.SelectedTrainers))
 			{
-				// If the string is empty, continue
-				if (String.IsNullOrEmpty(userId))
+				foreach (string userId in model.SelectedTrainers.Split(new char[] { '|' }, StringSplitOptions.RemoveEmptyEntries))
 				{
-					continue;
-				}
+					// If the string is empty, continue
+					if (String.IsNullOrEmpty(userId))
+					{
+						continue;
+					}
 
-				session.Trainers.Add(new Guid(userId));
+					session.Trainers.Add(new Guid(userId));
+				}
 			}
 		}
 
