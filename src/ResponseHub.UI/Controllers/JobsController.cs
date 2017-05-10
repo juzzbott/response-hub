@@ -28,6 +28,7 @@ namespace Enivate.ResponseHub.UI.Controllers
 		[Route]
 		public async Task<ActionResult> Index()
 		{
+
 			// Determine if the user has any active events, if there is, redirect to active event jobs, otherwise redirect to all events
 			int activeEvents = await EventService.CountActiveEventsForUser(UserId);
 
