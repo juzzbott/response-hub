@@ -11,6 +11,9 @@ using Enivate.ResponseHub.Model.Units;
 using Enivate.ResponseHub.Model.Units.Interface;
 using Enivate.ResponseHub.Model.Spatial;
 using Enivate.ResponseHub.Model.Identity;
+using System.Security.Claims;
+using System.Configuration;
+using Enivate.ResponseHub.Common.Constants;
 
 namespace Enivate.ResponseHub.ApplicationServices
 {
@@ -322,6 +325,34 @@ namespace Enivate.ResponseHub.ApplicationServices
 
 			// Save the unit to the database.
 			await _repository.ChangeUserRoleInUnit(unitId, userId, newRole);
+
+			// Get the current user mapping
+			IDictionary<Guid, UserMapping> userMappings = await GetUserMappingsForUser(userId);
+
+			// Get the claims issuer
+			string claimIssuer = ConfigurationManager.AppSettings[ConfigurationKeys.ClaimsIssuer];
+			if (String.IsNullOrWhiteSpace(claimIssuer))
+			{
+				claimIssuer = "ResponseHub";
+			}
+
+			// Reset claims to the roles they have
+			IList<Claim> claims = new List<Claim>()
+			{
+				new Claim(ClaimTypes.Role, RoleTypes.GeneralUser, ClaimValueTypes.String, claimIssuer)
+			};
+
+			// Get the list of roles for the user
+			IList<string> roles = userMappings.Select(i => i.Value.Role).ToList();
+
+			// Set the roles
+			foreach(string role in roles)
+			{
+				claims.Add(new Claim(ClaimTypes.Role, role, ClaimValueTypes.String, claimIssuer));
+			}
+
+			// Update the claims
+			await _userRepository.SetClaimsToUser(userId, claims);
 
 			// Remove the unit from cache so that a fresh reload occurs
 			CacheManager.RemoveItem(RecentlyAddedUnitsCacheKey);

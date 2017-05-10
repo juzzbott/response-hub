@@ -1751,6 +1751,25 @@ div.generated-report .month-group td {
   padding-top: 0;
   padding-bottom: 0;
 }
+.error-page-grpahic {
+  text-align: center;
+  font-size: 140px;
+}
+.error-page-grpahic .fa-ban.fa-stack-2x {
+  color: #a8a3c5;
+  opacity: 0.9;
+}
+.error-page-grpahic .fa-lock.fa-stack-1x {
+  font-size: 180px;
+}
+.error-page-grpahic .fa-key.fa-stack-1x {
+  font-size: 50px;
+  margin-top: 20px;
+  color: white;
+}
+.error-page-grpahic .fa-exclamation-triangle {
+  font-size: 180px;
+}
 /**
  * Mixins
  */

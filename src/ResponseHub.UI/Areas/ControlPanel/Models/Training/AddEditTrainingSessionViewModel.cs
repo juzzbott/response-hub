@@ -32,7 +32,6 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Models.Training
 		[Required(ErrorMessage = "You need to add at least one member to the training session.")]
 		public string SelectedMembers { get; set; }
 
-		[Required(ErrorMessage = "You need to add at least one trainer to the training session.")]
 		public string SelectedTrainers { get; set; }
 
 		public string Description { get; set; }

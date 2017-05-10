@@ -31,6 +31,14 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Models.Training
 
 		public decimal Duration { get; set; }
 
+		public int MemberCount
+		{
+			get
+			{
+				return Members.Union(Trainers).Distinct().Count();
+			}
+		}
+
 		public ViewTrainingSessionViewModel()
 		{
 			Members = new List<Tuple<Guid, string, string>>();

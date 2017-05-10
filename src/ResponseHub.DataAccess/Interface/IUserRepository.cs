@@ -129,6 +129,8 @@ namespace Enivate.ResponseHub.DataAccess.Interface
 
 		Task UpdateActivationCode(Guid userId, string activationCode);
 
+		Task SetClaimsToUser(Guid userId, IList<Claim> claims);
+
 		#endregion
 
 	}

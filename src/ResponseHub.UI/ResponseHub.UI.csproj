@@ -226,10 +226,12 @@
     <Compile Include="Areas\ControlPanel\Models\Reports\Training\TrainingReportViewModel.cs" />
     <Compile Include="Areas\ControlPanel\Models\Training\AddEditTrainingSessionViewModel.cs" />
     <Compile Include="Areas\ControlPanel\Models\Training\TrainingHomeViewModel.cs" />
+    <Compile Include="Areas\ControlPanel\Models\Training\TrainingSessionListItemViewModel.cs" />
     <Compile Include="Areas\ControlPanel\Models\Training\ViewTrainingSessionViewModel.cs" />
     <Compile Include="Controllers\Api\GoogleApiController.cs" />
     <Compile Include="Controllers\Api\SearchController.cs" />
     <Compile Include="Controllers\Api\SignInController.cs" />
+    <Compile Include="Controllers\ErrorController.cs" />
     <Compile Include="Controllers\PagerMessagesController.cs" />
     <Compile Include="Areas\ControlPanel\Controllers\BaseControlPanelController.cs" />
     <Compile Include="Areas\ControlPanel\Controllers\DataExportController.cs" />
@@ -437,6 +439,7 @@
     <Folder Include="Areas\Admin\Views\UnitSelection\" />
     <Folder Include="Areas\ControlPanel\Views\BaseControlPanel\" />
     <Folder Include="Views\Base\" />
+    <Folder Include="Views\Errors\" />
     <Folder Include="Views\Media\" />
   </ItemGroup>
   <ItemGroup>
@@ -700,6 +703,15 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Jobs\SignIn.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Error\NotFound.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Error\ServerError.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Error\Forbidden.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

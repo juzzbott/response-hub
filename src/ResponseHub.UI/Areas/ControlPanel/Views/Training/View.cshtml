@@ -41,7 +41,7 @@
 
 <p>
 	<strong>Unit members trained:</strong><br />
-	@Model.Members.Count <br />
+	@Model.MemberCount <br />
 	@if (Model.MemberPercentTrained > 30)
 	{
 		<span class="text-success small">@String.Format("{0}%", Model.MemberPercentTrained) of unit</span>
@@ -86,12 +86,21 @@
 		</tr>
 	</thead>
 	<tbody>
-		@foreach (var member in Model.Trainers)
+		@if (Model.Trainers == null || Model.Trainers.Count == 0)
 		{
 			<tr>
-				<td>@member.Item2</td>
-				<td>@member.Item3</td>
+				<td colspan="2">No trainers selected for this session.</td>
 			</tr>
+		}
+		else
+		{
+			foreach (var member in Model.Trainers)
+			{
+				<tr>
+					<td>@member.Item2</td>
+					<td>@member.Item3</td>
+				</tr>
+			}
 		}
 	</tbody>
 </table>

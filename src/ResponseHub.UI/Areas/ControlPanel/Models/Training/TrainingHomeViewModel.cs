@@ -11,11 +11,11 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Models.Training
 
 		public string TrainingOverviewChartData { get; set; }
 
-		public IList<TrainingSession> TrainingSessions { get; set; }
+		public IList<TrainingSessionListItemViewModel> TrainingSessions { get; set; }
 
 		public TrainingHomeViewModel()
 		{
-			TrainingSessions = new List<TrainingSession>();
+			TrainingSessions = new List<TrainingSessionListItemViewModel>();
 		}
 
 	}

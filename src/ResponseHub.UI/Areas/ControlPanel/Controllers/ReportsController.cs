@@ -384,7 +384,7 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 				};
 
 				// Get the training session where the user is recorded as either a member or trainer
-				IList<TrainingSession> userSessions = trainingSessions.Where(i => i.Members.Contains(user.Id) || i.Trainers.Contains(user.Id)).ToList();
+				IList<TrainingSession> userSessions = trainingSessions.Where(i => i.Members.Contains(user.Id) || i.Trainers.Contains(user.Id)).Distinct().ToList();
 
 				// Get the percentage of attendance
 				if (trainingSessions.Count > 0)
@@ -398,9 +398,6 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 
 					// Get the total amount of training sessions for each session
 					memberTrainingRecord.TrainingSessions.Add(trainingType.ShortName, userSessions.Where(i => i.TrainingTypes.Contains(trainingType)).Count());
-
-					// Get the dates the user was training for.
-					memberTrainingRecord.TrainingDates.Add(trainingType.ShortName, userSessions.Where(i => i.TrainingTypes.Contains(trainingType)).Select(i => i.SessionDate.Date).ToList());
 				}
 
 				// Add to the list of members

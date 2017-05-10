@@ -2179,13 +2179,37 @@ div.generated-report {
 		padding-bottom: 0;
 	}
 }
-	
+
+.error-page-grpahic {
+	text-align: center;
+	font-size: 140px;
+
+	.fa-ban.fa-stack-2x {
+		color: lighten(@brand-primary, 15%);
+		opacity: 0.9;
+	}
+
+	.fa-lock.fa-stack-1x {
+		font-size: 180px;
+	}
+
+	.fa-key.fa-stack-1x {
+		font-size: 50px;
+		margin-top: 20px;
+		color: white;
+	}
+
+	.fa-exclamation-triangle {
+		font-size: 180px;
+	}
+}
+
 /**
  * Mixins
  */
-	.margin-top(@margin) {
-		margin-top: @margin;
-	}
+.margin-top(@margin) {
+	margin-top: @margin;
+}
 
 	.margin-bottom(@margin) {
 		margin-bottom: @margin;

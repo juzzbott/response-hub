@@ -33,9 +33,12 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
         public async Task<ActionResult> Index()
 		{
 
+			// Get the current training sessions
+			IList<TrainingSession> trainingSessions = await TrainingService.GetTrainingSessionsForUnit(GetControlPanelUnitId());
+
 			// Create the model
 			TrainingHomeViewModel model = new TrainingHomeViewModel();
-			model.TrainingSessions = await TrainingService.GetTrainingSessionsForUnit(GetControlPanelUnitId());
+			model.TrainingSessions = trainingSessions.Select(TrainingSessionListItemViewModel.FromTrainingSession).ToList();
 
 			// Get the aggregate chart data
 			IDictionary<string, int> aggregate = new Dictionary<string, int>();
@@ -86,6 +89,7 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 			}
 
 			// Set the start time from the unit start time
+			model.SessionDate = DateTime.Now.ToString("dd/MM/yyyy");
 			model.SessionTime = unit.TrainingNight.StartTime;
 
 			// Load the users for the model
@@ -232,7 +236,7 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 			// Determine the percent of members training for this session
 			if (users.Count > 0)
 			{
-				model.MemberPercentTrained = (int)(((decimal)session.Members.Count / (decimal)users.Count) * 100);
+				model.MemberPercentTrained = (int)(((decimal)session.Members.Union(session.Trainers).Distinct().Count() / (decimal)users.Count) * 100);
 			}
 
 			return View(model);
@@ -386,15 +390,18 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 			}
 
 			// Add the users to the training session
-			foreach (string userId in model.SelectedTrainers.Split(new char[] { '|' }, StringSplitOptions.RemoveEmptyEntries))
+			if (!String.IsNullOrEmpty(model.SelectedTrainers))
 			{
-				// If the string is empty, continue
-				if (String.IsNullOrEmpty(userId))
+				foreach (string userId in model.SelectedTrainers.Split(new char[] { '|' }, StringSplitOptions.RemoveEmptyEntries))
 				{
-					continue;
-				}
+					// If the string is empty, continue
+					if (String.IsNullOrEmpty(userId))
+					{
+						continue;
+					}
 
-				session.Trainers.Add(new Guid(userId));
+					session.Trainers.Add(new Guid(userId));
+				}
 			}
 		}
 

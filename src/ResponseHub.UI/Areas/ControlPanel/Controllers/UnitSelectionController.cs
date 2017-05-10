@@ -37,6 +37,12 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 			IList<Unit> units = await UnitService.GetByIds(unitIds);
 			units = units.OrderBy(i => i.Name).ToList();
 
+			// If there are no units, return 403 forbidden
+			if (units == null || units.Count == 0)
+			{
+				throw new HttpException(403, "No units available for this user.");
+			}
+
 			// Create the dictionary of unit ids and names
 			IDictionary<Guid, string> unitDictionary = new Dictionary<Guid, string>();
 			foreach (Unit unit in units)
