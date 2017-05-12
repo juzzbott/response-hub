@@ -1,0 +1,12 @@
+﻿
+@{
+    ViewBag.Title = "Release notes";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<h1>@ViewBag.Title</h1>
+
+<div class="release-notes">
+	@Html.Raw(ViewBag.ReleaseNotes)
+</div>
+
