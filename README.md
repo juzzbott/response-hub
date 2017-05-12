@@ -21,9 +21,10 @@ ResponseHub functionality includes, but is not limited to:
 
 # Build and test
 The solution contains the following components:
-* **ResponseHub.UI** - Website application project
-* **ResponseHub.PagerDecoder** - Windows service to read PDW log files and parse pager messages as jobs and insert into the ResponseHub database 
-* **ResponseHub.WebTasks** - Windows service to perform period tasks for the website, such as caching BoM radar and weather data.
+
+* __ResponseHub.UI__ - Website application project
+* __ResponseHub.PagerDecoder__ - Windows service to read PDW log files and parse pager messages as jobs and insert into the ResponseHub database 
+* __ResponseHub.WebTasks__ - Windows service to perform period tasks for the website, such as caching BoM radar and weather data.
 * Other projects such as model, data access, application services etc...
 
 ## Build results
