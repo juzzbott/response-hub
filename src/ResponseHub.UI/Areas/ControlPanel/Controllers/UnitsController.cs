@@ -51,6 +51,13 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 		[HttpGet]
 		public async Task<ActionResult> Edit(Guid id)
 		{
+
+			// If the current user is not a unit admin of the specified unit, error out.
+			if (await CurrentUserIsAdminOfUnit(id) == false)
+			{
+				throw new HttpException(403, "The user does not have access to this url.");
+			}
+
 			return await GetEditUnitViewResult(id, "~/Areas/ControlPanel/Views/Units/Edit.cshtml");
 		}
 
@@ -59,6 +66,13 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 		[HttpPost]
 		public async Task<ActionResult> Edit(Guid id, CreateUnitModel model)
 		{
+
+			// If the current user is not a unit admin of the specified unit, error out.
+			if (await CurrentUserIsAdminOfUnit(id) == false)
+			{
+				throw new HttpException(403, "The user does not have access to this url.");
+			}
+
 			return await PostEditUnitViewResult(id, model, "~/Areas/ControlPanel/Views/Units/Edit.cshtml", false);
 		}
 
@@ -70,6 +84,13 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 		[HttpGet]
 		public async Task<ActionResult> AddMember(Guid unitId)
 		{
+
+			// If the current user is not a unit admin of the specified unit, error out.
+			if (await CurrentUserIsAdminOfUnit(unitId) == false)
+			{
+				throw new HttpException(403, "The user does not have access to this url.");
+			}
+
 			return await GetAddMemberViewResult(unitId);
 		}
 
@@ -79,6 +100,13 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 		[ValidateAntiForgeryToken]
 		public async Task<ActionResult> AddMember(Guid unitId, NewUserViewModel model)
 		{
+
+			// If the current user is not a unit admin of the specified unit, error out.
+			if (await CurrentUserIsAdminOfUnit(unitId) == false)
+			{
+				throw new HttpException(403, "The user does not have access to this url.");
+			}
+
 			return await PostAddMemberViewResult(unitId, model);
 		}
 
@@ -86,6 +114,13 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 		[HttpGet]
 		public async Task<ActionResult> ConfirmMember(Guid unitId)
 		{
+
+			// If the current user is not a unit admin of the specified unit, error out.
+			if (await CurrentUserIsAdminOfUnit(unitId) == false)
+			{
+				throw new HttpException(403, "The user does not have access to this url.");
+			}
+
 			return await GetConfirmMemberViewResult(unitId, "~/Areas/ControlPanel/Views/Units/ConfirmUser.cshtml");
 		}
 
@@ -94,6 +129,13 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 		[ValidateAntiForgeryToken]
 		public async Task<ActionResult> ConfirmMember(Guid unitId, ConfirmUserViewModel model)
 		{
+
+			// If the current user is not a unit admin of the specified unit, error out.
+			if (await CurrentUserIsAdminOfUnit(unitId) == false)
+			{
+				throw new HttpException(403, "The user does not have access to this url.");
+			}
+
 			return await PostConfirmMemberViewResult(unitId, model, "~/Areas/ControlPanel/Views/Units/ConfirmUser.cshtml");
 		}
 
@@ -104,6 +146,13 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 		[Route("{unitId:guid}/remove-user/{userId:guid}")]
 		public async Task<ActionResult> RemoveUserFromUnit(Guid unitId, Guid userId)
 		{
+
+			// If the current user is not a unit admin of the specified unit, error out.
+			if (await CurrentUserIsAdminOfUnit(unitId) == false)
+			{
+				throw new HttpException(403, "The user does not have access to this url.");
+			}
+
 			return await GetRemoveUserFromUnit(unitId, userId, "control-panel");
 		}
 
@@ -113,8 +162,15 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 
 		[Route("{unitId:guid}/change-role/{userId:guid}")]
 		[HttpGet]
-		public ActionResult ChangeUserRole(Guid unitId, Guid userId)
+		public async Task<ActionResult> ChangeUserRole(Guid unitId, Guid userId)
 		{
+
+			// If the current user is not a unit admin of the specified unit, error out.
+			if (await CurrentUserIsAdminOfUnit(unitId) == false)
+			{
+				throw new HttpException(403, "The user does not have access to this url.");
+			}
+
 			return GetChangeUserRoleViewResult(unitId, userId, "~/Areas/ControlPanel/Views/Units/ChangeUserRole.cshtml");
 		}
 
@@ -123,6 +179,13 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 		[ValidateAntiForgeryToken]
 		public async Task<ActionResult> ChangeUserRole(Guid unitId, Guid userId, ChangeUserRoleViewModel model)
 		{
+			
+			// If the current user is not a unit admin of the specified unit, error out.
+			if (await CurrentUserIsAdminOfUnit(unitId) == false)
+			{
+				throw new HttpException(403, "The user does not have access to this url.");
+			}
+
 			return await ViewChangeUserRoleViewResult(unitId, userId, model, "~/Areas/ControlPanel/Views/Units/ChangeUserRole.cshtml", "control-panel");
 		}
 

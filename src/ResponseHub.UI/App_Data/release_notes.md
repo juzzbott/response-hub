@@ -1,4 +1,4 @@
-# Introduction
+﻿## Introduction
 ResponseHub is a website that allows SES units to manage responses to requests for assistance.  The system works by parsing the data from decoded pager messages, and inserting those messages into the database. Members can login and view jobs for their unit.
 
 ResponseHub functionality includes, but is not limited to:
@@ -19,7 +19,7 @@ ResponseHub functionality includes, but is not limited to:
 
 **Note:** *ResponseHub is not designed to be an alerting platform. Units and members must still using their primary alerting system for responding to requests for assistance.*
 
-# Build and test
+## Build and test
 The solution contains the following components:
 
 * __ResponseHub.UI__ - Website application project
@@ -27,10 +27,10 @@ The solution contains the following components:
 * __ResponseHub.WebTasks__ - Windows service to perform period tasks for the website, such as caching BoM radar and weather data.
 * Other projects such as model, data access, application services etc...
 
-## Build results
+### Build results
 |Test|Production|
 |---|---|
 |![alt text](https://responsehub.visualstudio.com/_apis/public/build/definitions/500d2900-f667-4dc5-9eb4-56dc83bcb1e6/1/badge "Test build result")|![alt text](https://responsehub.visualstudio.com/_apis/public/build/definitions/500d2900-f667-4dc5-9eb4-56dc83bcb1e6/2/badge "Production build result")|
 
-## Tests
+### Tests
 Tests are written using the xUnit testing framework.

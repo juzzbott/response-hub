@@ -25,6 +25,9 @@
 	<li class="@(ViewContext.RouteData.Values["Controller"].ToString() == "PagerMessages" ? "active" : "")">
 		<a href="/pager-messages"><i class="fa fa-fw fa-feed"></i>Pager Messages</a>
 	</li>
+	<li class="@(ViewContext.RouteData.Values["Controller"].ToString() == "ReleaseNotes" ? "active" : "")">
+		<a href="/admin/release-notes"><i class="fa fa-fw fa-file-code-o"></i>Release notes</a>
+	</li>
 	<li class="@(ViewContext.RouteData.Values["Controller"].ToString() == "MyAccount" ? "active" : "")">
 		<a href="/my-account"><i class="fa fa-fw fa-user"></i>My account</a>
 	</li>
