@@ -63,6 +63,16 @@ namespace Enivate.ResponseHub.PagerDecoder
 		/// </summary>
 		private string _lastMessageFileKey = "LastMessageFile";
 
+		/// <summary>
+		/// The configuration key for the last message file.
+		/// </summary>
+		private string _pagerMessageSourceKey = "PagerMessageSource";
+
+		/// <summary>
+		/// The source for the pager messages loaded from the configuration
+		/// </summary>
+		private string _pagerMessageSource;
+
 		protected ILogger Log = ServiceLocator.Get<ILogger>();
 		protected IMapIndexRepository MapIndexRepository = ServiceLocator.Get<IMapIndexRepository>();
 		protected IJobMessageService JobMessageService = ServiceLocator.Get<IJobMessageService>();
@@ -77,6 +87,16 @@ namespace Enivate.ResponseHub.PagerDecoder
 			int timerInterval = 10000;
             int cleanupInterval = 86400000;
 			int invalidMessagesInterval = 3600000;
+
+			// Set pager message source
+			_pagerMessageSource = ConfigurationManager.AppSettings[_pagerMessageSourceKey];
+
+			// Validate the value, default to web as fallback
+			if (String.IsNullOrEmpty(_pagerMessageSource))
+			{
+				Log.Debug(String.Format("{0} configuration value not set, defaulting to web", _pagerMessageSourceKey));
+				_pagerMessageSource = "web";
+			}
 
 			// If there is no interval setting, then log warning
 			if (String.IsNullOrEmpty(ConfigurationManager.AppSettings[_serviceIntervalKey]))
@@ -180,6 +200,7 @@ namespace Enivate.ResponseHub.PagerDecoder
 			sbStartLog.AppendLine(String.Format("  Message Timer Interval: {0}", ConfigurationManager.AppSettings[_serviceIntervalKey]));
             sbStartLog.AppendLine(String.Format("  Cleanup Timer Interval: {0}", ConfigurationManager.AppSettings[_cleanupIntervalKey]));
 			sbStartLog.AppendLine(String.Format("  Invalid Message Timer Interval: {0}", ConfigurationManager.AppSettings[_invalidMessagesIntervalKey]));
+			sbStartLog.AppendLine(String.Format("  Pager Message Source: {0}", _pagerMessageSource));
 			sbStartLog.AppendLine(String.Format("  Log Level: {0}", LoggingConfiguration.Current.LogLevel));
 			sbStartLog.AppendLine(String.Format("  Log Directory: {0}", LoggingConfiguration.Current.LogDirectory));
 			sbStartLog.AppendLine(String.Format("  Last Message File: {0}", ConfigurationManager.AppSettings[_lastMessageFileKey]));
@@ -195,8 +216,16 @@ namespace Enivate.ResponseHub.PagerDecoder
 			try {
 
 				// Create the PdwLogFileParser
-				PdwLogFileParser pdwParser = new PdwLogFileParser(Log, MapIndexRepository, DecoderStatusRepository, JobMessageService, AddressService);
-				pdwParser.ProcessLogFiles();
+				if (_pagerMessageSource.ToLower() == "pdw")
+				{
+					PdwLogFileParser pdwParser = new PdwLogFileParser(Log, MapIndexRepository, DecoderStatusRepository, JobMessageService, AddressService);
+					pdwParser.GetLatestMessages();
+				}
+				else
+				{
+					MazzanetWebParser webParser = new MazzanetWebParser(Log, MapIndexRepository, DecoderStatusRepository, JobMessageService, AddressService);
+					webParser.GetLatestMessages();
+				}
 
 			}
 			catch (Exception ex)

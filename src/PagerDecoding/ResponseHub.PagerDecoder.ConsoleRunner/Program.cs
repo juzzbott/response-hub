@@ -78,7 +78,19 @@ namespace Enivate.ResponseHub.PagerDecoder.ConsoleRunner
 				
 				// Create the PdwLogFileParser
 				PdwLogFileParser pdwParser = new PdwLogFileParser(log, mapIndexRepository, decoderStatusRepository, jobMessageService, addressService);
-				pdwParser.ProcessLogFiles();
+				pdwParser.GetLatestMessages();
+
+				Console.WriteLine("Press any key to exit.");
+				Console.Read();
+
+			}
+
+			if (args.Length > 0 && args[0].ToLower() == "-web")
+			{
+
+				// Create the PdwLogFileParser
+				MazzanetWebParser pdwParser = new MazzanetWebParser(log, mapIndexRepository, decoderStatusRepository, jobMessageService, addressService);
+				pdwParser.GetLatestMessages();
 
 				Console.WriteLine("Press any key to exit.");
 				Console.Read();

@@ -18,6 +18,7 @@ using System.Diagnostics;
 using Enivate.ResponseHub.Model;
 using Enivate.ResponseHub.Model.Messages.Interface;
 using Enivate.ResponseHub.Model.Addresses.Interface;
+using System.IO;
 
 namespace Enivate.ResponseHub.WindowsService.Tests
 {
@@ -188,6 +189,25 @@ namespace Enivate.ResponseHub.WindowsService.Tests
 
 			// Ensure the address is the expected address value
 			Assert.Equal(expectedAddressValue, addressValue);
+
+		}
+
+		[Trait("Category", "Parser tests - HTML source")]
+		[Fact(DisplayName = "Can parse pager messages from HTML")]
+		public void CanParsePagerMessagesFromHtml()
+		{
+
+			// Get the html from the file
+			string html = File.ReadAllText(String.Format("{0}\\mazzonet_html.txt", Environment.CurrentDirectory));
+
+			// Create the Mazzonet Web Parser
+			MazzanetWebParser parser = new MazzanetWebParser(new Mock<ILogger>().Object, new Mock<IMapIndexRepository>().Object, new Mock<IDecoderStatusRepository>().Object, new Mock<IJobMessageService>().Object, new Mock<IAddressService>().Object);
+
+			// Parse the html into pager messages
+			IList<PagerMessage> messages = parser.ParsePagerMessagesFromHtml(html);
+
+			Assert.NotNull(messages);
+			Assert.True(messages.Count > 0);
 
 		}
 
