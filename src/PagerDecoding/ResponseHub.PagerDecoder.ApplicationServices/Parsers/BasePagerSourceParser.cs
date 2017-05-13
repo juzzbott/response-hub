@@ -121,7 +121,11 @@ namespace Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers
 			ParsePagerMessagesToJobMessages();
 
 			// Submit the messages
-			//JobMessageService.AddMessages(JobMessagesToSubmit.Select(i => i.Value).ToList()).Wait();
+			Task t = Task.Run(async () =>
+			{
+				await JobMessageService.AddMessages(JobMessagesToSubmit.Select(i => i.Value).ToList());
+			});
+			t.Wait();
 
 			if (PagerMessagesToSubmit.Count > 0)
 			{
