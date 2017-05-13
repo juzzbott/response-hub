@@ -40,6 +40,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <appConfig>ResponseHub.PagerDecoder.exe.config</appConfig>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -49,6 +50,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <appConfig>ResponseHub.PagerDecoder.exe.config</appConfig>
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject />
@@ -62,6 +64,7 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <Prefer32Bit>true</Prefer32Bit>
+    <appConfig>ResponseHub.PagerDecoder.exe.config</appConfig>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Staging|AnyCPU'">
     <OutputPath>bin\Staging\</OutputPath>
@@ -72,6 +75,7 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <Prefer32Bit>true</Prefer32Bit>
+    <appConfig>ResponseHub.PagerDecoder.exe.config</appConfig>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="DotSpatial.Data, Version=1.9.0.0, Culture=neutral, PublicKeyToken=c29dbf30e059ca9d, processorArchitecture=MSIL">
@@ -142,10 +146,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="ResponseHub.PagerDecoder.exe.config">
+    <Content Include="ResponseHub.PagerDecoder.exe.config">
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
+    </Content>
     <Content Include="ResponseHub.PagerDecoder.exe.Debug.config">
       <DependentUpon>ResponseHub.PagerDecoder.exe.config</DependentUpon>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -162,6 +166,7 @@
       <DependentUpon>ResponseHub.PagerDecoder.exe.config</DependentUpon>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="App.config" />
     <None Include="packages.config" />
     <None Include="Unity.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
