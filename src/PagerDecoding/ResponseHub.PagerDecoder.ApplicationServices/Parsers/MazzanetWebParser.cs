@@ -167,7 +167,7 @@ namespace Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers
 				string message = node.ChildNodes[2].InnerText;
 
 				// Because we only have a few details, we need to backfill to get a "PDW style" pager message
-				string rawMessage = String.Format("{0} {1} POCSAG-1  ALPHA   512  {2}", capcode, timestamp.ToUniversalTime().ToString("HH:mm:ss dd-MM-yy"), message);
+				string rawMessage = String.Format("{0} {1} POCSAG-1  ALPHA   512  {2}", capcode, timestamp.ToString("HH:mm:ss dd-MM-yy"), message);
 
 				try
 				{
