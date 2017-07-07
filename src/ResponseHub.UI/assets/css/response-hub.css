@@ -1399,7 +1399,7 @@ div.generated-report .job-progress-table thead th {
 div.generated-report .job-progress-table td {
   border-top: 0px;
 }
-div.generated-report .job-progress-table .on-route {
+div.generated-report .job-progress-table .no-padding {
   padding-left: 0;
 }
 div.generated-report .job-progress-table h4 {

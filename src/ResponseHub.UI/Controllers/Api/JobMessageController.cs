@@ -285,9 +285,6 @@ namespace Enivate.ResponseHub.UI.Controllers.Api
 				// Create the progress object and return it
 				MessageProgress progress = await JobMessageService.SaveProgress(id, progressDateTime, UserId, model.ProgressType);
 
-				// Check if the user needs to be signed in
-				bool userSignedIn = await SignUserIn(id, job, progress);
-
 				return new MessageProgressResponseModel()
 				{
 					Timestamp = progress.Timestamp,
@@ -295,7 +292,7 @@ namespace Enivate.ResponseHub.UI.Controllers.Api
 					UserFullName = user.FullName,
 					Success = true,
 					NewVersion = model.Version + 1,
-					UserSignedIn = userSignedIn
+					UserSignedIn = false
 				};
 
 			}

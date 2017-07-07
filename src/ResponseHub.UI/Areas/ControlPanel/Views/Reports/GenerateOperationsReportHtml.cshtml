@@ -74,14 +74,14 @@
 			<table class="table job-progress-table">
 				<thead>
 					<tr>
-						<th class="on-route"><h4>On route</h4></th>
+						<th class="no-padding"><h4>On route</h4></th>
 						<th><h4>On scene</h4></th>
 						<th><h4>Job clear</h4></th>
 					</tr>
 				</thead>
 				<tbody>
 					<tr>
-						<td class="on-route">
+						<td class="no-padding">
 							@{
 								var onRoute = message.ProgressUpdates.FirstOrDefault(i => i.ProgressType == Enivate.ResponseHub.Model.Messages.MessageProgressType.OnRoute);
 								if (onRoute != null)

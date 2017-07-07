@@ -34,6 +34,7 @@
 				{
 					<th>@trainingType.Value</th>
 				}
+				<th>Total</th>
 				<th>Attendance</th>
 			</tr>
 		</thead>
@@ -44,16 +45,23 @@
 					<td>@memberReport.Name</td>
 					@foreach (var trainingSession in memberReport.TrainingSessions)
 					{
-						<td>
-							@if (trainingSession.Value != 0)
-							{
-								<span class="text-success"><strong>@trainingSession.Value</strong></span>
-							}
-							else
-							{
-								<span class="text-muted">@trainingSession.Value</span>
-							}
-						</td>
+						if (trainingSession.Key.ToLower() != "total")
+						{
+							<td>
+								@if (trainingSession.Value != 0)
+								{
+									<span class="text-success"><strong>@trainingSession.Value</strong></span>
+								}
+								else
+								{
+									<span class="text-muted">@trainingSession.Value</span>
+								}
+							</td>
+						}
+						else
+						{
+							<td><strong>@trainingSession.Value</strong></td>
+						}
 					}
 					<td>
 						<strong>

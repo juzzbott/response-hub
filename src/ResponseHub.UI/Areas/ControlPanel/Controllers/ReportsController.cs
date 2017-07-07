@@ -400,6 +400,9 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 					memberTrainingRecord.TrainingSessions.Add(trainingType.ShortName, userSessions.Where(i => i.TrainingTypes.Contains(trainingType)).Count());
 				}
 
+				// Add the total row
+				memberTrainingRecord.TrainingSessions.Add("Total", userSessions.Count);
+
 				// Add to the list of members
 				unitMemberReports.Add(memberTrainingRecord);
 			}
