@@ -512,7 +512,7 @@ responseHub.maps = (function () {
 						mapMarkers["current_location"] = L.marker([pos.coords.latitude, pos.coords.longitude], { icon: currentLocationMarker }).addTo(map);
 
 						// Add the route from LHQ to the map
-						addPathFromPoint(pos.coords.latitude, pos.coords.longitude, true, '#00B226')
+						addPathFromPoint(pos.coords.latitude, pos.coords.longitude, false, '#00B226')
 
 						// Get the group of markers, destination and current location, and zoom window to fit
 						zoomToMarkerGroup([mapMarkers["job_location"], mapMarkers["current_location"]]);
