@@ -21,6 +21,8 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB.DataObjects.Messages
 
 		public string MessageContent { get; set; }
 
+		public IList<AdditionalMessage> AdditionalMessages { get; set; }
+
 		public string JobNumber { get; set; }
 
 		public LocationInfoDto Location { get; set; }
@@ -53,6 +55,8 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB.DataObjects.Messages
 			ProgressUpdates = new List<MessageProgress>();
 
 			AttachmentIds = new List<Guid>();
+
+			AdditionalMessages = new List<AdditionalMessage>();
 		}
 
 	}

@@ -25,6 +25,8 @@ namespace Enivate.ResponseHub.UI.Models.Messages
 			}
 		}
 
+		public IList<AdditionalMessage> AdditionalMessages { get; set; }
+
 		public DateTime Timestamp { get; set; }
 
 		public string JobNumber { get; set; }
@@ -77,6 +79,7 @@ namespace Enivate.ResponseHub.UI.Models.Messages
 			Attachments = new List<Attachment>();
 			ImageAttachments = new List<Attachment>();
 			SignIns = new List<JobMessageSignInEntry>();
+			AdditionalMessages = new List<AdditionalMessage>();
 
 			// Set the default date and time values
 			EditProgressDate = DateTime.Now.ToString("yyyy-MM-dd");

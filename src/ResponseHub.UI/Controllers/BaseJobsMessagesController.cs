@@ -135,6 +135,7 @@ namespace Enivate.ResponseHub.UI.Controllers
 				JobNumber = job.JobNumber,
 				Location = job.Location,
 				MessageBody = job.MessageContent,
+				AdditionalMessages = job.AdditionalMessages,
 				Notes = jobNotesModels,
 				Priority = job.Priority,
 				Timestamp = job.Timestamp.ToLocalTime(),

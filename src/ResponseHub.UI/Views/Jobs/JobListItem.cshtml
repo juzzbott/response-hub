@@ -23,7 +23,14 @@
 		}
 		else
 		{
-			<a href="/@controller/@Model.Id">@Model.JobNumber</a>
+			if (Model.AdditionalMessageCount > 0)
+			{
+				<a href="/@controller/@Model.Id">@Model.JobNumber</a> <span class="badge">@Model.AdditionalMessageCount</span>
+			}
+			else
+			{
+				<a href="/@controller/@Model.Id">@Model.JobNumber</a>
+			}
 			<span class="text-muted message-date btn-icon">@Model.Timestamp.ToString("dd/MM/yyyy HH:mm:ss")</span>
 		}
 	</h3>

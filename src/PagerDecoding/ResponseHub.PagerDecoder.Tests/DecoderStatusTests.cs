@@ -12,7 +12,7 @@ using Xunit;
 namespace Enivate.ResponseHub.PagerDecoder.Tests
 {
 
-	public class DecoderStatusTests : IClassFixture<UnityCollectionFixture>
+	public class DecoderStatusTests	
 	{
 
 		//[Trait("Category", "Decoder status tests")]

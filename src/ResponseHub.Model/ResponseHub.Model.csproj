@@ -75,6 +75,7 @@
     <Compile Include="Events\EventJobStatus.cs" />
     <Compile Include="Events\Interface\IEventService.cs" />
     <Compile Include="Addresses\Interface\IAddressService.cs" />
+    <Compile Include="Messages\AdditionalMessage.cs" />
     <Compile Include="Messages\JobNumberComparer.cs" />
     <Compile Include="SignIn\OtherSignInType.cs" />
     <Compile Include="SignIn\TrainingActivity.cs" />

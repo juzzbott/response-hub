@@ -26,6 +26,10 @@ namespace Enivate.ResponseHub.DataAccess.Interface
 
 		Task<IList<JobMessage>> GetLatestFromLastMessage(Guid lastId, IEnumerable<string> capcodes, MessageType messageTypes);
 
+		Task<IList<KeyValuePair<string, Guid>>> GetJobMessageIdsFromCapcodeJobNumbers(IList<KeyValuePair<string, string>> capcodeJobNumbers);
+
+		Task AddAdditionalMessages(IList<KeyValuePair<Guid, AdditionalMessage>> additionalMessages);
+
 		Task<JobMessage> GetById(Guid id);
 
 		Task<IList<JobMessage>> GetByIds(IEnumerable<Guid> ids);

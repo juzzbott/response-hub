@@ -18,6 +18,8 @@ namespace Enivate.ResponseHub.UI.Models.Messages
 
 		public string MessageBody { get; set; }
 
+		public int AdditionalMessageCount { get; set; }
+
 		public string MessageBodyTruncated
 		{
 			get
@@ -69,6 +71,7 @@ namespace Enivate.ResponseHub.UI.Models.Messages
 				Id = jobMessage.Id,
 				JobNumber = jobMessage.JobNumber,
 				MessageBody = jobMessage.MessageContent,
+				AdditionalMessageCount = jobMessage.AdditionalMessages != null ? jobMessage.AdditionalMessages.Count : 0,
 				Priority = jobMessage.Priority,
 				Timestamp = jobMessage.Timestamp.ToLocalTime(),
 				Location = jobMessage.Location

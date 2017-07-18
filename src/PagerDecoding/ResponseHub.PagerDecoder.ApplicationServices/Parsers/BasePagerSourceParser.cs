@@ -123,7 +123,52 @@ namespace Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers
 			// Submit the messages
 			Task t = Task.Run(async () =>
 			{
-				await JobMessageService.AddMessages(JobMessagesToSubmit.Select(i => i.Value).ToList());
+
+				// Get the list of key value pair of job numbers and capcodes from the list of messages to submit
+				IList<KeyValuePair<string, string>> capcodeJobNumbers = JobMessagesToSubmit
+				.Where(i => !String.IsNullOrEmpty(i.Value.JobNumber))
+				.Select(i => new KeyValuePair<string, string>(i.Value.Capcode, i.Value.JobNumber))
+				.ToList();
+
+				// Now we need to get the messages that 
+				IList<KeyValuePair<string, Guid>> existingMessages = await JobMessageService.GetJobMessageIdsFromCapcodeJobNumbers(capcodeJobNumbers);
+
+				// Create a list to store the update messages in
+				IList<KeyValuePair<Guid, AdditionalMessage>> updateMessages = new List<KeyValuePair<Guid, AdditionalMessage>>();
+
+				// For each of the existng messages, add the additional messages to them
+				foreach(KeyValuePair<string, Guid> existingMessage in existingMessages)
+				{
+					// Get the messages for that job number
+					IList<JobMessage> jobMessages = JobMessagesToSubmit.Where(i => i.Value.JobNumber == existingMessage.Key).Select(i => i.Value).ToList();
+
+					// For each of the results, add the message to the additional message list
+					foreach(JobMessage jobMessage in jobMessages)
+					{
+
+						// Create the additional message object
+						AdditionalMessage additionalMessage = new AdditionalMessage()
+						{
+							MessageContent = jobMessage.MessageContent,
+							Timestamp = jobMessage.Timestamp
+						};
+
+						updateMessages.Add(new KeyValuePair<Guid, AdditionalMessage>(existingMessage.Value, additionalMessage));
+					}
+				}
+
+				// Submit the additional messages to the database
+				await JobMessageService.AddAdditionalMessages(updateMessages);
+
+				// Get new messages only to add
+				IList<string> existingJobNumbers = existingMessages.Select(i => i.Key).Distinct().ToList();
+				IList<JobMessage> newJobMessages = JobMessagesToSubmit
+					.Where(i => !existingJobNumbers.Contains(i.Value.JobNumber))
+					.Select(i => i.Value)
+					.ToList();
+
+				// Submit any new messages to the database
+				await JobMessageService.AddMessages(newJobMessages);
 			});
 			t.Wait();
 

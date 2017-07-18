@@ -42,6 +42,20 @@
 
 <p class="lead">@Model.MessageBody</p>
 
+@if (Model.AdditionalMessages != null && Model.AdditionalMessages.Count > 0)
+{
+	<h4>Additional messages</h4>
+	<div class="bottom-20">
+		@foreach(var additionalMessage in Model.AdditionalMessages)
+		{
+		<p>
+			<span class="text-info">@additionalMessage.Timestamp.ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss")</span><br />
+			@additionalMessage.MessageContent
+		</p>
+		}
+	</div>
+}
+
 <div id="job-tabs">
 
 	<!-- Nav tabs -->

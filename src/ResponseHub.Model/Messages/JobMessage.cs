@@ -20,6 +20,8 @@ namespace Enivate.ResponseHub.Model.Messages
 
 		public string MessageContent { get; set; }
 
+		public IList<AdditionalMessage> AdditionalMessages { get; set; }
+
 		public string JobNumber { get; set; }
 
 		public LocationInfo Location { get; set; }
@@ -52,6 +54,8 @@ namespace Enivate.ResponseHub.Model.Messages
 			ProgressUpdates = new List<MessageProgress>();
 
 			AttachmentIds = new List<Guid>();
+
+			AdditionalMessages = new List<AdditionalMessage>();
 		}
 
 	}
