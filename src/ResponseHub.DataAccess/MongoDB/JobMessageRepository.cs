@@ -294,6 +294,89 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 
 		}
 
+		public async Task<IList<KeyValuePair<string, Guid>>> GetJobMessageIdsFromCapcodeJobNumbers(IList<KeyValuePair<string, string>> capcodeJobNumbers)
+		{
+
+			// If the list is null or empty, return empty list
+			if (capcodeJobNumbers == null || capcodeJobNumbers.Count == 0)
+			{
+				return new List<KeyValuePair<string, Guid>>();
+			}
+
+			// Create the filter builder
+			FilterDefinitionBuilder<JobMessageDto> builder = Builders<JobMessageDto>.Filter;
+
+			// Create the main filter from the first capcode job number combo
+			FilterDefinition<JobMessageDto> mainFilter = builder.Eq(i => i.Capcode, capcodeJobNumbers[0].Key) & builder.Eq(i => i.JobNumber, capcodeJobNumbers[0].Value.ToUpper());
+
+			// Create the list of filters
+			IList<FilterDefinition<JobMessageDto>> filters = new List<FilterDefinition<JobMessageDto>>();
+
+			// Loop through the remaining capcode and job numbers to create the filters
+			foreach (KeyValuePair<string, string> capcodeJobNumber in capcodeJobNumbers.Skip(1))
+			{
+				// Create the filter
+				FilterDefinition<JobMessageDto> filter = builder.Eq(i => i.Capcode, capcodeJobNumber.Key) & builder.Eq(i => i.JobNumber, capcodeJobNumber.Value.ToUpper());
+				filters.Add(filter);
+			}
+
+			// loop through the fitlers and add them as "Or" filters to the main filter
+			foreach (FilterDefinition<JobMessageDto> filter in filters)
+			{
+				mainFilter = mainFilter | filter;
+			}
+
+			// Create the sort definition
+			SortDefinition<JobMessageDto> sort = Builders<JobMessageDto>.Sort.Ascending(i => i.Timestamp);
+
+			// Create the projection to only include the id and job numbers
+			ProjectionDefinition<JobMessageDto> projection = Builders<JobMessageDto>.Projection.Include(i => i.Id).Include(i => i.JobNumber);
+
+			// Find the results
+			var results = await Collection.Find(mainFilter).Sort(sort).Project(projection).ToListAsync();
+
+			// Loop through the results
+			IList<KeyValuePair<string, Guid>> resultIds = new List<KeyValuePair<string, Guid>>();
+			foreach (BsonDocument result in results.Distinct())
+			{
+
+				// If the job number already exists, then dont' re-add it
+				if (resultIds.Any(i => i.Key == result["JobNumber"].AsString))
+				{
+					continue;
+				}
+
+				// The first value is the id, so we want to map that to a guid
+				resultIds.Add(new KeyValuePair<string, Guid>(result["JobNumber"].AsString, result["_id"].AsGuid));
+			}
+
+			// return the result ids
+			return resultIds;
+		}
+
+		public async Task AddAdditionalMessages(IList<KeyValuePair<Guid, AdditionalMessage>> additionalMessages)
+		{
+			// Validate the parameters
+			if (additionalMessages == null || additionalMessages.Count == 0)
+			{
+				return;
+			}
+
+			// Loop through the list of additional messages
+			foreach (KeyValuePair<Guid, AdditionalMessage> additionalMessage in additionalMessages)
+			{
+				
+				// Create the filter
+				FilterDefinition<JobMessageDto> filter = Builders<JobMessageDto>.Filter.Eq(i => i.Id, additionalMessage.Key);
+
+				// Create the update
+				UpdateDefinition<JobMessageDto> update = Builders<JobMessageDto>.Update.Push(i => i.AdditionalMessages, additionalMessage.Value);
+
+				// Send to mongo
+				await Collection.UpdateOneAsync(filter, update);
+			}
+		}
+
 		/// <summary>
 		/// Gets a JobMessage based on the id.
 		/// </summary>
@@ -582,6 +665,7 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 				Id = dbObject.Id,
 				JobNumber = dbObject.JobNumber,
 				MessageContent = dbObject.MessageContent,
+				AdditionalMessages = dbObject.AdditionalMessages,
 				Priority = dbObject.Priority,
 				Timestamp = dbObject.Timestamp,
 				Notes = dbObject.Notes,
@@ -622,6 +706,7 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 				Id = modelObject.Id,
 				JobNumber = modelObject.JobNumber,
 				MessageContent = modelObject.MessageContent,
+				AdditionalMessages = modelObject.AdditionalMessages,
 				Priority = modelObject.Priority,
 				Timestamp = modelObject.Timestamp,
 				Notes = modelObject.Notes,

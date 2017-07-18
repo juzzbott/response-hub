@@ -126,6 +126,16 @@ namespace Enivate.ResponseHub.ApplicationServices
 			return await _repository.GetLatestFromLastMessage(lastId, capcodes, messageTypes);
 		}
 
+		public async Task<IList<KeyValuePair<string, Guid>>> GetJobMessageIdsFromCapcodeJobNumbers(IList<KeyValuePair<string, string>> capcodeJobNumbers)
+		{
+			return await _repository.GetJobMessageIdsFromCapcodeJobNumbers(capcodeJobNumbers);
+		}
+
+		public async Task AddAdditionalMessages(IList<KeyValuePair<Guid, AdditionalMessage>> additionalMessages)
+		{
+			await _repository.AddAdditionalMessages(additionalMessages);
+		}
+
 		/// <summary>
 		/// Gets the specific job message by the Id.
 		/// </summary>
@@ -158,7 +168,6 @@ namespace Enivate.ResponseHub.ApplicationServices
 			// return the message
 			return messages;
 		}
-
 
 		/// <summary>
 		/// Gets the specific job message by the job number.

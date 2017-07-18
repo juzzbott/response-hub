@@ -901,6 +901,9 @@ timepicker-control input[readonly] {
   margin-right: 1px;
   text-align: left;
 }
+.job-list h3 .badge {
+  vertical-align: super;
+}
 .job-list .job-message-meta {
   /*text-transform: uppercase; */
   font-style: italic;
