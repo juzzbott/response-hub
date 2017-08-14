@@ -7,18 +7,18 @@ using Enivate.ResponseHub.Model.Training;
 
 namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Models.Reports.Training
 {
-	public class UnitTrainerReportItem
+	public class UnitTrainingMemberReportItem
 	{
 
 		public string Name { get; set; }
 
-		public IList<TrainerSessionItem> TrainingSessions { get; set; }
+		public IDictionary<string, int> TrainingSessions { get; set; }
 
-		public int TotalSessionsTrained { get; set; }
+		public int AttendancePercent { get; set; }
 
-		public UnitTrainerReportItem()
+		public UnitTrainingMemberReportItem()
 		{
-			TrainingSessions = new List<TrainerSessionItem>();
+			TrainingSessions = new Dictionary<string, int>();
 		}
 
 	}
