@@ -1,0 +1,54 @@
+﻿@model Enivate.ResponseHub.UI.Areas.ControlPanel.Models.Reports.Training.TrainersReportViewModel
+@{
+	ViewBag.Title = "Trainers report";
+	if (Model.UseStandardLayout)
+	{
+		Layout = "~/Areas/ControlPanel/Views/Shared/_Layout.cshtml";
+	}
+	else
+	{
+		Layout = "~/Areas/ControlPanel/Views/Shared/HtmlExportLayout.cshtml";
+	}
+}
+
+<div class="generated-report">
+
+	<h1 id="trainer-report">@ViewBag.Title</h1>
+
+	<p class="lead text-info">
+		Report contains training sessions between @Model.DateFrom.ToLocalTime().ToString("dd/MM/yyyy") and @Model.DateTo.ToLocalTime().ToString("dd/MM/yyyy")
+	</p>
+
+	<h2>Members conducting training</h2>
+
+	<table class="table table-striped results-overview table-small">
+		<thead>
+			<tr>
+				<th width="300">Member name</th>
+				<th>Session name</th>
+				<th>Training type</th>
+				<th>Training date</th>
+				<th>Description</th>
+			</tr>
+		</thead>
+		<tbody>
+			@foreach (var memberReport in Model.TrainerReports)
+			{
+				<tr>
+					<td colspan="5"><strong>@memberReport.Name</strong> - <span class="text-muted"><em>@memberReport.TotalSessionsTrained @String.Format("session{0}", (memberReport.TotalSessionsTrained != 1 ? "s" : "")) trained</em></span></td>
+				</tr>
+				foreach (var trainingSession in memberReport.TrainingSessions)
+				{
+					<tr>
+						<td width="300">&nbsp;</td>
+						<td>@trainingSession.Name</td>
+						<td>@trainingSession.SessionTypes</td>
+						<td>@trainingSession.SessionDate.ToString("dd/MM/yyyy")</td>
+						<td>@trainingSession.Description</td>
+					</tr>
+				}
+			}
+		</tbody>
+	</table>
+
+</div>

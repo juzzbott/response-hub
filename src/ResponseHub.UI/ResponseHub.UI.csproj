@@ -229,6 +229,9 @@
     <Compile Include="Areas\ControlPanel\Models\Reports\Attendance\MemberAttendanceReportItem.cs" />
     <Compile Include="Areas\ControlPanel\Models\Reports\Operations\OperationsFilterViewModel.cs" />
     <Compile Include="Areas\ControlPanel\Models\Reports\ReportFilterViewModel.cs" />
+    <Compile Include="Areas\ControlPanel\Models\Reports\Training\TrainerSessionItem.cs" />
+    <Compile Include="Areas\ControlPanel\Models\Reports\Training\TrainersReportViewModel.cs" />
+    <Compile Include="Areas\ControlPanel\Models\Reports\Training\UnitTrainerReportItem.cs" />
     <Compile Include="Areas\ControlPanel\Models\Reports\Training\UnitTrainingMemberReportItem.cs" />
     <Compile Include="Areas\ControlPanel\Models\Reports\Training\TrainingReportViewModel.cs" />
     <Compile Include="Areas\ControlPanel\Models\Training\AddEditTrainingSessionViewModel.cs" />
@@ -725,6 +728,12 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Areas\Admin\Views\ReleaseNotes\Index.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Areas\ControlPanel\Views\Reports\TrainersReport.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Areas\ControlPanel\Views\Reports\GenerateTrainersReportHtml.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

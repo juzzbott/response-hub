@@ -104,6 +104,64 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 
 		#endregion
 
+		#region Trainers report
+
+		[Route("trainers-report")]
+		public ActionResult TrainersReport()
+		{
+			return View();
+		}
+
+		[Route("trainers-report")]
+		[HttpPost]
+		public async Task<ActionResult> TrainersReport(ReportFilterViewModel model)
+		{
+
+			// Get the list of jobs between the start and end dates
+			DateTime dateFrom = model.DateFrom.Date;
+			DateTime dateTo = new DateTime(model.DateTo.Year, model.DateTo.Month, model.DateTo.Day, 23, 59, 59);
+
+			if (model.ReportFormat.ToLower() == "display")
+			{
+				TrainersReportViewModel reportViewModel = await GetTrainersReportModel(GetControlPanelUnitId(), dateFrom, dateTo);
+				reportViewModel.UseStandardLayout = true;
+				return View("GenerateTrainersReportHtml", reportViewModel);
+			}
+			else if (model.ReportFormat.ToLower() == "pdf")
+			{
+				// Get the PDF bytes
+				byte[] pdfBytes = await ReportService.GenerateTrainersReportPdfFile(GetControlPanelUnitId(), dateFrom, dateTo, Request.Cookies);
+
+				FileContentResult result = new FileContentResult(pdfBytes, "application/pdf");
+				result.FileDownloadName = String.Format("trainers-report-{0}.pdf", DateTime.Now.ToString("yyyy-MM-dd"));
+				return result;
+			}
+			else
+			{
+				throw new HttpException((int)HttpStatusCode.BadRequest, "Bad request.");
+			}
+		}
+
+		[Route("generate-trainers-report-html")]
+		[HttpGet]
+		[AllowAnonymous]
+		public async Task<ActionResult> GenerateTrainersReportHtml()
+		{
+
+			// Get the parameters from the query string
+			Guid unitId = new Guid(Request.QueryString["unit_id"]);
+			DateTime dateFrom = DateTime.ParseExact(Request.QueryString["date_from"], "yyyyMMddHHmmss", CultureInfo.CurrentCulture);
+			DateTime dateTo = DateTime.ParseExact(Request.QueryString["date_to"], "yyyyMMddHHmmss", CultureInfo.CurrentCulture);
+
+			// Get the training report model
+			TrainersReportViewModel model = await GetTrainersReportModel(unitId, dateFrom, dateTo);
+
+			return View(model);
+
+		}
+
+		#endregion
+
 		#region Operations report
 
 		[Route("operations-report")]
@@ -413,6 +471,88 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 				ChartDataJs = sbChartData.ToString(),
 				ChartOptionsJs = sbChartOptionsJs.ToString(),
 				MemberReports = unitMemberReports,
+				DateFrom = dateFrom,
+				DateTo = dateTo
+			};
+
+			// Get the training types
+			foreach (TrainingType trainingType in trainingTypes)
+			{
+				model.TrainingTypes.Add(trainingType, trainingType.ShortName);
+			}
+
+			return model;
+		}
+
+		/// <summary>
+		/// Gets the training report model to display to the page.
+		/// </summary>
+		/// <param name="unitId"></param>
+		/// <param name="dateFrom"></param>
+		/// <param name="dateTo"></param>
+		/// <returns></returns>
+		private async Task<TrainersReportViewModel> GetTrainersReportModel(Guid unitId, DateTime dateFrom, DateTime dateTo)
+		{
+			// Get the training sessions
+			IList<TrainingSession> trainingSessions = await TrainingService.GetTrainingSessionsForUnit(unitId, dateFrom, dateTo);
+			int trainingSessionDays = trainingSessions.GroupBy(i => i.SessionDate.Date).Count();
+
+			// Get the members for the unit
+			IList<IdentityUser> unitMembers = await UnitService.GetUsersForUnit(unitId);
+
+			// Get the training types.
+			IList<TrainingType> trainingTypes = await TrainingService.GetAllTrainingTypes();
+			
+			// Build the member reports
+			IList<UnitTrainerReportItem> unitMemberReports = new List<UnitTrainerReportItem>();
+
+			// Create the member report items
+			foreach (IdentityUser user in unitMembers)
+			{
+				// Create the training item
+				UnitTrainerReportItem memberTrainingRecord = new UnitTrainerReportItem()
+				{
+					Name = user.FullName
+				};
+
+				// Get the training session where the user is recorded as either a member or trainer
+				IList<TrainingSession> userSessions = trainingSessions.Where(i => i.Trainers.Contains(user.Id)).Distinct().ToList();
+
+				// If there was no sessions the user trained in, then just continue to the next user, otherwise set the count of sessions trained.
+				if (userSessions.Count == 0)
+				{
+					continue;
+				}
+				else
+				{
+					memberTrainingRecord.TotalSessionsTrained = userSessions.Count;
+				}
+
+				// Get the training types
+				foreach (TrainingSession trainingSession in userSessions)
+				{
+
+					// Get the training types
+					string trainingTypeNames = String.Join(", ", trainingSession.TrainingTypes.Select(i => i.Name));
+
+					// Add the training session item
+					memberTrainingRecord.TrainingSessions.Add(new TrainerSessionItem
+					{
+						SessionDate = trainingSession.SessionDate.ToLocalTime(),
+						Description = trainingSession.Description,
+						SessionTypes = trainingTypeNames,
+						Name = trainingSession.Name
+					});
+				}
+
+				// Add to the list of trainers if they have a training session
+				unitMemberReports.Add(memberTrainingRecord);
+			}
+
+			// Create the model
+			TrainersReportViewModel model = new TrainersReportViewModel()
+			{
+				TrainerReports = unitMemberReports,
 				DateFrom = dateFrom,
 				DateTo = dateTo
 			};
