@@ -1,0 +1,40 @@
+﻿@model IList<Enivate.ResponseHub.UI.Areas.ControlPanel.Models.Upkeep.ViewAssetModel>
+@{
+    ViewBag.Title = "Assets";
+    Layout = "~/Areas/ControlPanel/Views/Shared/_Layout.cshtml";
+}
+
+<h1>@ViewBag.Title</h1>
+
+<p class="lead">Assets are unit resources that you can assign inventory lists to that can be added to crew maintenance reports.</p>
+
+<h2>Unit assets</h2>
+
+@if  (Model == null || Model.Count == 0)
+{
+	<p class="lead">No assets have been created yet.</p>
+	<p><a href="/control-panel/upkeep/assets/add" class="btn btn-primary btn-icon"><i class="fa fa-fw fa-plus"></i>Add asset</a></p>
+}
+else
+{
+	<p class="lead">Found @Model.Count asset@(Model.Count != 1 ? "s" : "")</p>
+	<p><a href="/control-panel/upkeep/assets/add" class="btn btn-primary btn-icon"><i class="fa fa-fw fa-plus"></i>Add asset</a></p>
+	<table class="table table-striped table-responsive table-hover">
+		<thead>
+			<tr>
+				<th>Name</th>
+				<th>Description</th>
+			</tr>
+		</thead>
+		<tbody>
+			@foreach (var unitAsset in Model)
+			{
+				<tr>
+					<td><a href="/control-panel/upkeep/assets/@unitAsset.Id">@unitAsset.Name</a></td>
+					<td>@unitAsset.Description</td>
+				</tr>
+			}
+		</tbody>
+	</table>
+}
+

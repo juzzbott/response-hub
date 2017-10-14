@@ -27,6 +27,7 @@
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
     <DeploymentFolder>C:\inetpub\websites\ResponseHub</DeploymentFolder>
+    <Use64BitIISExpress />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -210,6 +211,7 @@
     <Compile Include="Areas\Admin\Controllers\UnitsController.cs" />
     <Compile Include="Areas\Admin\Controllers\TrainingTypesController.cs" />
     <Compile Include="Areas\Admin\Models\TrainingTypes\AddEditTrainingTypeViewModel.cs" />
+    <Compile Include="Areas\ControlPanel\Models\Upkeep\AddAssetModel.cs" />
     <Compile Include="Areas\Admin\Models\Users\EditUserViewModel.cs" />
     <Compile Include="Areas\ControlPanel\Controllers\UnitSelectionController.cs" />
     <Compile Include="Areas\Admin\Controllers\HomeController.cs" />
@@ -223,6 +225,7 @@
     <Compile Include="Areas\Admin\Models\SystemSettings\SystemSettingsViewModel.cs" />
     <Compile Include="Areas\ControlPanel\Controllers\ResendActivationEmailController.cs" />
     <Compile Include="Areas\ControlPanel\Controllers\TrainingController.cs" />
+    <Compile Include="Areas\ControlPanel\Controllers\UpkeepController.cs" />
     <Compile Include="Areas\ControlPanel\Models\Home\UnitSelectionViewModel.cs" />
     <Compile Include="Areas\ControlPanel\Controllers\ReportsController.cs" />
     <Compile Include="Areas\ControlPanel\Models\Reports\Attendance\AttendanceReportViewModel.cs" />
@@ -238,6 +241,7 @@
     <Compile Include="Areas\ControlPanel\Models\Training\TrainingHomeViewModel.cs" />
     <Compile Include="Areas\ControlPanel\Models\Training\TrainingSessionListItemViewModel.cs" />
     <Compile Include="Areas\ControlPanel\Models\Training\ViewTrainingSessionViewModel.cs" />
+    <Compile Include="Areas\ControlPanel\Models\Upkeep\ViewAssetModel.cs" />
     <Compile Include="Controllers\Api\GoogleApiController.cs" />
     <Compile Include="Controllers\Api\SearchController.cs" />
     <Compile Include="Controllers\Api\SignInController.cs" />
@@ -734,6 +738,18 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Areas\ControlPanel\Views\Reports\GenerateTrainersReportHtml.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Areas\ControlPanel\Views\Upkeep\Index.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Areas\ControlPanel\Views\Upkeep\AssetsIndex.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Areas\ControlPanel\Views\Upkeep\AddAsset.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Areas\ControlPanel\Views\Upkeep\ViewAsset.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

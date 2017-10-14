@@ -21,10 +21,20 @@
 	<li class="@(ViewContext.RouteData.Values["Controller"].ToString() == "DataExport" ? "active" : "")">
 		<a href="/control-panel/data-export"><i class="fa fa-fw fa-database"></i>Data export</a>
 	</li>
+	<li class="@(ViewContext.RouteData.Values["Controller"].ToString() == "Upkeep" ? "active" : "")">
+		<a href="/control-panel/upkeep"><i class="fa fa-fw fa-code-fork"></i>UpKeep</a>
+		@if (ViewContext.RouteData.Values["Controller"].ToString() == "Upkeep")
+		{
+			<ul>
+				<li><a href="/control-panel/upkeep/assets">Assets</a></li>
+				<li><a href="/control-panel/upkeep/tasks">Tasks</a></li>
+			</ul>
+		}
+	</li>
 	<li class="@(ViewContext.RouteData.Values["Controller"].ToString() == "MyAccount" ? "active" : "")">
 		<a href="/my-account"><i class="fa fa-fw fa-user"></i>My account</a>
 	</li>
 	<li class="muted-nav">
-		<a href="/"><i class="fa fa-fw fa-arrow-left"></i>Return to jobs list</a>
+		<a href="/"><i class="fa fa-fw fa-arrow-left"></i>Exit control panel</a>
 	</li>
 </ul>

@@ -95,6 +95,7 @@
     <Compile Include="Interface\ISignInEntryRepository.cs" />
     <Compile Include="Interface\ITrainingSessionRepository.cs" />
     <Compile Include="Interface\ITrainingTypeRepository.cs" />
+    <Compile Include="Interface\IUpkeepRepository.cs" />
     <Compile Include="Interface\IUserRepository.cs" />
     <Compile Include="MongoDB\AddressRepository.cs" />
     <Compile Include="MongoDB\AgencyRepository.cs" />
@@ -121,6 +122,7 @@
     <Compile Include="MongoDB\SignInEntryRepository.cs" />
     <Compile Include="MongoDB\TrainingSessionRepository.cs" />
     <Compile Include="MongoDB\TrainingTypeRepository.cs" />
+    <Compile Include="MongoDB\UpkeepRepository.cs" />
     <Compile Include="MongoDB\UserRepository.cs" />
     <Compile Include="MongoRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

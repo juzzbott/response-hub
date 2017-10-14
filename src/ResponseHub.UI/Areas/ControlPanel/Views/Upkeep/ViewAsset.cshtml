@@ -1,0 +1,46 @@
+﻿@model Enivate.ResponseHub.UI.Areas.ControlPanel.Models.Upkeep.ViewAssetModel
+
+@{
+    Layout = "~/Areas/ControlPanel/Views/Shared/_Layout.cshtml";
+}
+
+<h1>@ViewBag.Title</h1>
+
+<form action="@Request.Url.LocalPath" method="post">
+
+	@Html.AntiForgeryToken()
+
+	@Html.ValidationSummary()
+
+	<div class="form-group">
+		<label for="Name">Name *</label>
+		<div class="row">
+			<div class="col-sm-8 col-md-6 col-lg-4">
+				@Html.TextBoxFor(model => model.Name, new { @class = "form-control", placeholder = "Unit name" })
+			</div>
+		</div>
+		@Html.ValidationMessageFor(model => model.Name)
+	</div>
+
+	<div class="form-group">
+		<label for="Name">Description *</label>
+		<div class="row">
+			<div class="col-sm-8 col-md-6 col-lg-4">
+				@Html.TextAreaFor(model => model.Description, new { @class = "form-control", rows = "4" })
+			</div>
+		</div>
+	</div>
+
+	<h3>Containers</h3>
+
+	<div class="new-container">
+		<input type="text" name="new-container" />
+	</div>
+
+	<div class="top-20">
+		<button type="submit" class="btn btn-primary">Save</button>
+		<a href="@Request.Url.LocalPath.ToLower().Replace(String.Format("/{0}", Model.Id), "")" class="btn btn-link">Cancel</a>
+	</div>
+
+</form>
+

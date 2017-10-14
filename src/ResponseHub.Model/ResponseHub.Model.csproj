@@ -121,6 +121,8 @@
     <Compile Include="Messages\JobMessage.cs" />
     <Compile Include="Messages\MessagePriority.cs" />
     <Compile Include="Messages\PagerMessage.cs" />
+    <Compile Include="Upkeep\Asset.cs" />
+    <Compile Include="Upkeep\Interface\IUpkeepService.cs" />
     <Compile Include="WeatherData\Interface\IWeatherDataService.cs" />
     <Compile Include="ServiceType.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
