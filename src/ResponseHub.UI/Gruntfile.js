@@ -65,6 +65,7 @@ module.exports = function(grunt) {
 					'assets/js/modules/training.js',
 					'assets/js/modules/resources.js',
 					'assets/js/modules/events.js',
+					'assets/js/modules/upkeep.js',
 					'assets/js/modules/validation.js'
 				],
 				dest: 'assets/js/script.js'

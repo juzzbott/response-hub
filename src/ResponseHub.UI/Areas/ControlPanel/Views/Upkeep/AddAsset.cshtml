@@ -1,4 +1,4 @@
-﻿@model Enivate.ResponseHub.UI.ControlPanel.Admin.Models.Upkeep.AddEditAsset
+﻿@model Enivate.ResponseHub.UI.ControlPanel.Admin.Models.Upkeep.AddAssetModel
 
 @{
     Layout = "~/Areas/ControlPanel/Views/Shared/_Layout.cshtml";
@@ -16,7 +16,7 @@
 		<label for="Name">Name *</label>
 		<div class="row">
 			<div class="col-sm-8 col-md-6 col-lg-4">
-				@Html.TextBoxFor(model => model.Name, new { @class = "form-control", placeholder = "Unit name" })
+				@Html.TextBoxFor(model => model.Name, new { @class = "form-control", placeholder = "Asset name" })
 			</div>
 		</div>
 		@Html.ValidationMessageFor(model => model.Name)

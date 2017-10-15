@@ -425,6 +425,7 @@
     <Content Include="assets\js\modules\search.js" />
     <Content Include="assets\js\modules\sign-in.js" />
     <Content Include="assets\js\modules\training.js" />
+    <Content Include="assets\js\modules\upkeep.js" />
     <Content Include="assets\js\modules\user-list.js" />
     <Content Include="assets\js\modules\validation.js" />
     <Content Include="assets\js\modules\wallboard.js" />

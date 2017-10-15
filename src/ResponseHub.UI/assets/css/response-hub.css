@@ -1774,6 +1774,44 @@ div.generated-report .month-group td {
   font-size: 180px;
 }
 /**
+ * Asset catalog builder
+ */
+#catalog-builder {
+  margin: 20px 0;
+}
+#catalog-builder .catalog-container {
+  margin: 15px 0 0;
+  border: 2px dashed #888;
+  padding: 10px;
+  border-radius: 5px;
+}
+#catalog-builder .catalog-container .catalog-items {
+  margin-left: 22px;
+}
+#catalog-builder .container-items {
+  margin-bottom: 10px;
+}
+#catalog-builder .container-items .btn-new-container {
+  margin-left: 10px;
+}
+#catalog-builder .catalog-item {
+  margin-bottom: 10px;
+}
+#catalog-builder .catalog-item .col-xs-2 {
+  padding-right: 0;
+}
+#catalog-builder .handle {
+  display: inline-block;
+  width: 8px;
+  background-color: #ccc;
+  border: 1px solid #bbb;
+  height: 30px;
+  margin-top: 2px;
+}
+#confirm-delete .modal-body p span {
+  font-weight: bold;
+}
+/**
  * Mixins
  */
 /**

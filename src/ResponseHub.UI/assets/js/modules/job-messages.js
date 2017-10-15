@@ -716,11 +716,7 @@
 		$('#confirm-delete.delete-attachment').on('show.bs.modal', function (e) {
 
 			// Generate the confirm message
-			var message = $(this).find('.modal-body p').text();
-			message = message.replace('#FILE#', $(e.relatedTarget).data('filename'));
-
-			// Set the confirm message
-			$(this).find('.modal-body p').text(message);
+			$(this).find('.modal-body p span').text($(e.relatedTarget).data('filename'));
 
 		});
 		

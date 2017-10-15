@@ -9,12 +9,8 @@
 		$('#confirm-delete.delete-user').on('show.bs.modal', function (e) {
 			
 			// Generate the confirm message
-			var message = $(this).find('.modal-body p').text();
-			message = message.replace('#USER#', $(e.relatedTarget).data('user-name'));
-
-			// Set the confirm message
-			$(this).find('.modal-body p').text(message);
-
+			$(this).find('.modal-body p span').text($(e.relatedTarget).data('user-name'));
+			
 		});
 
 	}

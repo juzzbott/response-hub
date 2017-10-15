@@ -1,7 +1,5 @@
 ﻿responseHub.userList = (function () {
-
-
-
+	
 	// Adds the user to the specified list, as either a trainer or a member.
 	function addUserToList(userId, listId, selectedId, tableId, removeCallbackMethodName) {
 
