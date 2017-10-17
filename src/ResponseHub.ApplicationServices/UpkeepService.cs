@@ -38,11 +38,25 @@ namespace Enivate.ResponseHub.ApplicationServices
 			};
 
 			// Create the asset
-			await _repository.AddAsset(asset);
+			await _repository.SaveAsset(asset);
 
 			// reutrn the asset
 			return asset;
 
+		}
+
+		/// <summary>
+		/// Saves the asset to the database.
+		/// </summary>
+		/// <param name="asset">The asset to save to the datbase.</param>
+		/// <returns>The saved asset object.</returns>
+		public async Task<Asset> SaveAsset(Asset asset)
+		{
+			// Create the asset
+			await _repository.SaveAsset(asset);
+
+			// reutrn the asset
+			return asset;
 		}
 
 		/// <summary>

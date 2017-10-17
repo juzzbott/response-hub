@@ -15,5 +15,7 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Models.Upkeep
 		public string Name { get; set; }
 
 		public string Description { get; set; }
+
+		public string InventoryJson { get; set; }
 	}
 }

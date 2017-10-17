@@ -52,12 +52,17 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 		}
 
 		/// <summary>
-		/// Adds an asset to the database.
+		/// Saves an asset to the database. If the asset does not exist, it is created.
 		/// </summary>
 		/// <param name="asset">The asset to add to the database</param>
-		public async Task AddAsset(Asset asset)
+		public async Task<Asset> SaveAsset(Asset asset)
 		{
-			await _assetCollection.InsertOneAsync(asset);
+
+			// Save the object to the collection.
+			ReplaceOneResult result = await _assetCollection.ReplaceOneAsync(Builders<Asset>.Filter.Eq(i => i.Id, asset.Id), asset, new UpdateOptions() { IsUpsert = true });
+
+			// return the saved user object.
+			return asset;
 		}
 
 		/// <summary>

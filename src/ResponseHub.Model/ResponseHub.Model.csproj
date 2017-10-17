@@ -122,7 +122,10 @@
     <Compile Include="Messages\MessagePriority.cs" />
     <Compile Include="Messages\PagerMessage.cs" />
     <Compile Include="Upkeep\Asset.cs" />
+    <Compile Include="Upkeep\CatalogItem.cs" />
+    <Compile Include="Upkeep\Container.cs" />
     <Compile Include="Upkeep\Interface\IUpkeepService.cs" />
+    <Compile Include="Upkeep\Inventory.cs" />
     <Compile Include="WeatherData\Interface\IWeatherDataService.cs" />
     <Compile Include="ServiceType.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

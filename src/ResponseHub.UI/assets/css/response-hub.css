@@ -1776,31 +1776,44 @@ div.generated-report .month-group td {
 /**
  * Asset catalog builder
  */
-#catalog-builder {
+#inventory-builder {
   margin: 20px 0;
 }
-#catalog-builder .catalog-container {
+#inventory-builder .catalog-container {
   margin: 15px 0 0;
   border: 2px dashed #888;
   padding: 10px;
   border-radius: 5px;
 }
-#catalog-builder .catalog-container .catalog-items {
+#inventory-builder .catalog-container .container-name .container-name-control {
+  margin-right: 20px;
+}
+#inventory-builder .catalog-container .container-name .container-remove {
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+#inventory-builder .catalog-container .container-name .container-remove button {
+  font-size: 18px;
+  padding-top: 3px;
+  padding-right: 8px;
+}
+#inventory-builder .catalog-container .catalog-items {
   margin-left: 22px;
 }
-#catalog-builder .container-items {
+#inventory-builder .container-items {
   margin-bottom: 10px;
 }
-#catalog-builder .container-items .btn-new-container {
+#inventory-builder .container-items .btn-new-container {
   margin-left: 10px;
 }
-#catalog-builder .catalog-item {
+#inventory-builder .catalog-item {
   margin-bottom: 10px;
 }
-#catalog-builder .catalog-item .col-xs-2 {
+#inventory-builder .catalog-item .col-xs-2 {
   padding-right: 0;
 }
-#catalog-builder .handle {
+#inventory-builder .handle {
   display: inline-block;
   width: 8px;
   background-color: #ccc;

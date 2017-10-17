@@ -17,6 +17,8 @@ namespace Enivate.ResponseHub.Model.Upkeep
 
 		public string Description { get; set; }
 
+		public Inventory Inventory { get; set; }
+
 		public Asset()
 		{
 			Id = Guid.NewGuid();

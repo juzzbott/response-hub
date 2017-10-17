@@ -4036,7 +4036,28 @@ responseHub.upkeep = (function () {
 	/**
 	 * Initialises the admin control panel.
 	 */
-	function init() {
+	function init()
+	{
+
+		// If there is no inventory builder, return
+		if ($('#inventory-builder').length == 0)
+		{
+			return;
+		}
+
+		// Initialise the inventory builder
+		initInventoryBuilder();
+
+		// Initialise the inventory
+		if ($('#InventoryJson').val() != "")
+		{
+
+			// Get the inventory object
+			var inventory = JSON.parse($('#InventoryJson').val())
+
+			setInventory(inventory);
+			setInventoryBuilder(inventory);
+		}
 
 		// Add the catalog item event handlers
 		$(".catalog-item input[type='text']").each(function () {
@@ -4055,17 +4076,26 @@ responseHub.upkeep = (function () {
 		});
 
 		// Find the last catalog container add new button and set the event
-		$('#catalog-builder > .container-items > .btn-new-container').on('click', function () {
+		$('#inventory-builder > .container-items > .btn-new-container').on('click', function () {
 			addContainerItem($(this).parent());
 		});
+
+		// Bind the container remove elements
+		bindContainerRemove();
 
 	}
 
 	function bindUI()
 	{
+		
+		// If there is no inventory builder, return
+		if ($('#inventory-builder').length == 0) {
+			return;
+		}
+
 		$('#confirm-delete.delete-container').on('show.bs.modal', function (e) {
 
-			var containerName = $(e.relatedTarget).closest('.container-name').children('.container-name-control').find('input').val();
+			var containerName = $(e.relatedTarget).closest('.container-name').children('.container-name-row').find('.container-name-control input').val();
 			if (containerName == "")
 			{
 				containerName = "unnamed";
@@ -4081,6 +4111,81 @@ responseHub.upkeep = (function () {
 			});
 			
 		});
+	}
+
+	/**
+	 * Set the inventory list items in the inventory screen. This is the read only, table view of the inventory.
+	 * @param {any} inventory
+	 */
+	function setInventory(inventory)
+	{
+
+		var table = $('<table class="table table-responsive table-condensed table-striped"><thead><tr><th width="75">Qty</th><th>Item</th></tr></thead><tbody></tbody></table>');
+
+		// Ensure we have an inventory to list
+		if (inventory == null)
+		{
+			return;
+		}
+
+		// Loop through the containers
+		table = addInventoryContainers(inventory.Containers, table);
+
+		// add the items
+		table = addInventoryItems(inventory.Items, table);
+
+		// If there is an empty last row, remove it
+		if (table.find('tbody tr:last-child td').hasClass('empty-row'))
+		{
+			table.find('tbody tr:last-child').remove();
+		}
+
+		// Add the table to the inventory list div
+		$('#inventory-list').append(table);
+
+		// Hide the loading animation.
+		$('#inventory-list .content-loading').remove();
+
+	}
+
+	function addInventoryContainers(containers, table)
+	{
+
+		// Loop through the containers
+		for (var i = 0; i < containers.length; i++)
+		{
+
+			// Append the name
+			table.find('tbody').append('<tr><td colspan="2"><strong><em><small><center>' + containers[i].Name + '</center></small></em></strong></td></tr>');
+
+			// append the containers
+			table = addInventoryContainers(containers[i].Containers, table);
+
+			// Append the container items
+			table = addInventoryItems(containers[i].Items, table);
+
+			table.find('tbody').append('<tr><td colspan="2" class="empty-row">&nbsp;</td></tr>');
+
+		}
+
+		// return the table
+		return table;
+
+	}
+
+	function addInventoryItems(items, table)
+	{
+		// Loop through 
+		for (var i = 0; i < items.length; i++) {
+			table.find('tbody').append('<tr><td>' + items[i].Quantity + '</td><td>' + items[i].Name + '</td></tr>')
+		}
+
+		return table;
+	}
+
+	function setInventoryBuilder(inventory)
+	{
+
 	}
 
 	/*
@@ -4149,7 +4254,7 @@ responseHub.upkeep = (function () {
 			}
 
 		});
-
+		
 		catalogContainer.find('.btn-new-container').on('click', function () {
 			addContainerItem(catalogItemsContainer);
 		});
@@ -4160,16 +4265,18 @@ responseHub.upkeep = (function () {
 	 * Adds a new container item to the page.
 	 */
 	function addContainerItem(containerParent) {
-
+		
 		var newContainer = $('<div class="catalog-container"></div>');
 
 		var newContainerName = $('<div class="container-name clearfix"></div>');
 		newContainerName.append('<div class="handle container-handle pull-left"></div>');
-		newContainerName.append('<div class="col-xs-10 col-sm-6 container-name-control"><input class="form-control" type="text" placeholder="Container name"></div>');
-		newContainerName.append('<div class="col-xs-1 col-sm-1 container-remove"><button type="button" class="btn btn-link"><i class="fa fa-times-circle-o text-danger"></i></button ></div >')
+		var containerNameControls = $('<div class="col-xs-12 col-sm-6 container-name-row"></div>');
+		containerNameControls.append('<div class="container-name-control"><input class="form-control" type="text" placeholder="Container name"></div>');
+		containerNameControls.append('<div class="container-remove"><button type="button" class="btn btn-link"><i class="fa fa-times-circle-o text-danger"></i></button></div>');
+		newContainerName.append(containerNameControls);
 
 		newContainer.append(newContainerName);
-		newContainer.append('<button type="button" class="btn btn-link btn-new-container">Add new container</button>');
+		newContainer.append('<div class="container-items"><button type="button" class="btn btn-link btn-new-container">Add new container</button></div>');
 		newContainer.append('<div class="catalog-items"></div>');
 
 		// Set the container events
@@ -4188,8 +4295,43 @@ responseHub.upkeep = (function () {
 	 *Bind the container remove event.
 	 */
 	function bindContainerRemove() {
+
 		$('.container-remove button').off('click');
 		$('.container-remove button').click(function () {
+
+			// If there is no name, no containers and no catalog items, just remove it. 
+			var containerName = $(this).closest('.catalog-container').children('.container-name').find('input').val();
+			var catalogItemsExists = true;
+			var containerItemsExists = true;
+
+			// Detemine if the catalog items exists
+			var catalogItemCount = $(this).closest('.catalog-container').children('.catalog-items').children('.catalog-item').length;
+			if (catalogItemCount == 0)
+			{
+				catalogItemsExists = false;
+			}
+			if (catalogItemCount == 1)
+			{
+				var firstCatalogItemName = $(this).closest('.catalog-container').children('.catalog-items').find('.catalog-item .catalog-item-name').val();
+				if (firstCatalogItemName == "")
+				{
+					catalogItemsExists = false;
+				}
+			}
+
+			// Determine if any container items exists
+			var containerItemCount = $(this).closest('.catalog-container').children('.container-items').children('.catalog-container').length;
+			if (containerItemCount == 0)
+			{
+				containerItemsExists = false;
+			}
+
+			if (containerName == "" && !catalogItemsExists && !containerItemsExists)
+			{
+				$(this).closest('.catalog-container').remove();
+				return;
+			}
+
 			$('#confirm-delete.delete-container').modal('toggle', $(this));
 		});
 	}
@@ -4197,7 +4339,7 @@ responseHub.upkeep = (function () {
 	/**
 	 * Build the inventory object
 	 */
-	function buildInventoryObject()
+	function buildInventory()
 	{
 
 		// Create the inventory object
@@ -4207,7 +4349,7 @@ responseHub.upkeep = (function () {
 		}
 
 		// Define the parent
-		var parent = $("#catalog-builder");
+		var parent = $("#inventory-builder");
 
 		// Start with the containers
 		inventory.containers = getContainerItems(parent);
@@ -4215,7 +4357,7 @@ responseHub.upkeep = (function () {
 		// Set the catalog items
 		inventory.catalogItems = getCatalogItems(parent);
 
-		console.log(inventory);
+		$('#InventoryJson').val(JSON.stringify(inventory));
 
 	}
 
@@ -4235,13 +4377,16 @@ responseHub.upkeep = (function () {
 			// get the name
 			var name = $(elem).find('.container-name:first-child input').val();
 
+			// Get the containers
+			var containers = getContainerItems(elem);
+
 			// Get the catalog items
 			var catalogItems = getCatalogItems(elem);
 
 			var container = {
 				name: name,
-				containers: null,
-				catalogItems: catalogItems
+				containers: containers,
+				items: catalogItems
 			};
 			containerItems.push(container);
 
@@ -4286,12 +4431,35 @@ responseHub.upkeep = (function () {
 
 	}
 
+	function initInventoryBuilder()
+	{
+		// Create the container items
+		var containerItems = $('<div class="container-items"><button type="button" class="btn btn-link btn-new-container">Add new container</button></div>');
+
+		// Add the container items to the builder, and then set the first container item
+		$('#inventory-builder').append(containerItems);
+
+		// Add the first container items element.
+		addContainerItem(containerItems);
+
+		// Create the initial catalog item
+		var catalogItems = $('<div class="catalog-items"></div>');
+		$('#inventory-builder').append(catalogItems);
+		
+		// Add the first catalog item element.
+		addCatalogItem(catalogItems);
+
+		// Hide the loading animation.
+		$('#inventory-builder .content-loading').remove();
+
+	}
+
 	// Init the upkeep controls.
 	init();
 	bindUI();
 
 	return {
-		buildInventoryObject: buildInventoryObject
+		buildInventory: buildInventory
 	}
 
 })();

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using System.Threading.Tasks;
@@ -11,8 +12,9 @@ using Enivate.ResponseHub.UI.Filters;
 using Enivate.ResponseHub.Model.Upkeep.Interface;
 using Enivate.ResponseHub.Common;
 using Enivate.ResponseHub.Model.Upkeep;
-using System.Net;
 using Enivate.ResponseHub.UI.Areas.ControlPanel.Models.Upkeep;
+
+using Newtonsoft.Json;
 
 namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 {
@@ -96,16 +98,60 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 				throw new HttpException((int)HttpStatusCode.NotFound, "The requested page cannot be found.");
 			}
 
+			// If there is an inventory, then deserialise it
+			string inventoryJson = asset.Inventory != null ? JsonConvert.SerializeObject(asset.Inventory) : "";
+			
 			// Create the model from the asset
 			ViewAssetModel model = new ViewAssetModel
 			{
 				Id = asset.Id,
 				Description = asset.Description,
-				Name = asset.Name
+				Name = asset.Name,
+				InventoryJson = inventoryJson
 			};
 
 			// Set the title
 			ViewBag.Title = model.Name;
+
+			// Load the asset from the database
+			return View("ViewAsset", model);
+		}
+
+		[Route("assets/{id:guid}")]
+		[HttpPost]
+		public async Task<ActionResult> ViewAsset(Guid id, ViewAssetModel model)
+		{
+
+			// Get the asset based on the id
+			Asset asset = await UpkeepService.GetAssetById(id);
+
+			// If the unit is null, throw 404
+			if (asset == null)
+			{
+				throw new HttpException((int)HttpStatusCode.NotFound, "The requested page cannot be found.");
+			}
+
+			// If the model state is invalid, then return
+			if (!ModelState.IsValid)
+			{
+				return View("ViewAsset", model);
+			}
+
+			// From the JSON data, deserialise to an Inventory object
+			if (!String.IsNullOrEmpty(model.InventoryJson))
+			{
+				Inventory inventory = JsonConvert.DeserializeObject<Inventory>(model.InventoryJson);
+				asset.Inventory = inventory;
+			}
+			else
+			{
+				model.InventoryJson = "";
+			}
+			asset.Description = model.Description;
+			asset.Name = model.Name;
+
+			// Save the asset
+			await UpkeepService.SaveAsset(asset);
 
 			// Load the asset from the database
 			return View("ViewAsset", model);

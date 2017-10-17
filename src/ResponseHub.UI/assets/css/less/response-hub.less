@@ -2215,7 +2215,7 @@ div.generated-report {
 /**
  * Asset catalog builder
  */
-#catalog-builder {
+#inventory-builder {
 	margin: 20px 0;
 
 	.catalog-container {
@@ -2225,6 +2225,21 @@ div.generated-report {
 		border-radius: 5px;
 
 		.container-name {
+			.container-name-control {
+				margin-right: 20px;
+			}
+
+			.container-remove {
+				position: absolute;
+				right: 0;
+				top: 0;
+
+				button {
+					font-size: 18px;
+					padding-top: 3px;
+					padding-right: 8px;
+				}
+			}
 		}
 
 		.catalog-items {
