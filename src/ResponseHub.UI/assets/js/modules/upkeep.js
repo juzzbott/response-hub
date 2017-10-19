@@ -123,7 +123,7 @@
 		{
 
 			// Append the name
-			table.find('tbody').append('<tr><td colspan="2"><strong><em><small><center>' + containers[i].Name + '</center></small></em></strong></td></tr>');
+			table.find('tbody').append('<tr><td></td><td><strong><em><small>' + containers[i].Name + '</small></em></strong></td></tr>');
 
 			// append the containers
 			table = addInventoryContainers(containers[i].Containers, table);
