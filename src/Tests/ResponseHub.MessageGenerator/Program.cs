@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-using Microsoft.Practices.Unity;
+using Unity;
 using Microsoft.Practices.Unity.Configuration;
 
 using Enivate.ResponseHub.Common;

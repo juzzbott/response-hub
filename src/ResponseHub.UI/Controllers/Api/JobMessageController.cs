@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using System.Web.Http;
 
 using Microsoft.AspNet.Identity;
-using Microsoft.Practices.Unity;
+using Unity;
 
 using Enivate.ResponseHub.Common;
 using Enivate.ResponseHub.Model.Units;

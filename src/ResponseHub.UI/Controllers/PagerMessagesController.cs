@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 
-using Microsoft.Practices.Unity;
+using Unity;
 
 using Enivate.ResponseHub.Common;
 using Enivate.ResponseHub.Model.Messages;

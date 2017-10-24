@@ -9,7 +9,7 @@ using Microsoft.Owin.Security.Cookies;
 
 using Owin;
 
-using Microsoft.Practices.Unity;
+using Unity;
 
 using Enivate.ResponseHub.ApplicationServices;
 using Enivate.ResponseHub.Common;

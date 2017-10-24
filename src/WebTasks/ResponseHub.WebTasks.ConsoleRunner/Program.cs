@@ -9,10 +9,8 @@ using Enivate.ResponseHub.Logging;
 using Enivate.ResponseHub.Model.WeatherData.Interface;
 using Enivate.ResponseHub.WebTasks.ApplicationServices;
 
-using Microsoft.Practices.Unity;
 using Microsoft.Practices.Unity.Configuration;
-using System.Configuration;
-using System.Diagnostics;
+using Unity;
 using Enivate.ResponseHub.Model.Messages.Interface;
 using Enivate.ResponseHub.Model.Units.Interface;
 using Enivate.ResponseHub.Model.Events.Interface;
