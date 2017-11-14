@@ -13,8 +13,8 @@ using Enivate.ResponseHub.Model.Messages.Interface;
 using Enivate.ResponseHub.Common;
 using Enivate.ResponseHub.Model.Addresses.Interface;
 
-using Microsoft.Practices.Unity;
 using Microsoft.Practices.Unity.Configuration;
+using Unity;
 
 namespace Enivate.ResponseHub.PagerDecoder.ConsoleRunner
 {

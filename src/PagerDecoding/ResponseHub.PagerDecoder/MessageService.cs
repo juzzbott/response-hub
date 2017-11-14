@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using System.Timers;
 
 using Microsoft.Practices.Unity;
+using Unity;
 
 using Enivate.ResponseHub.Common;
 using Enivate.ResponseHub.DataAccess.Interface;

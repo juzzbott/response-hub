@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 using Enivate.ResponseHub.Common;
 
-using Microsoft.Practices.Unity;
 using Microsoft.Practices.Unity.Configuration;
+using Unity;
 
 namespace Enivate.ResponseHub.PagerDecoder.Tests.Fixtures
 {

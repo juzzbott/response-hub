@@ -8,7 +8,7 @@ using System.Web.Mvc;
 
 using Microsoft.AspNet.Identity;
 
-using Microsoft.Practices.Unity;
+using Unity;
 
 using Enivate.ResponseHub.ApplicationServices;
 using Enivate.ResponseHub.Common;

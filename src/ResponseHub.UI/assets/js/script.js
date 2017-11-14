@@ -278,7 +278,6 @@ jQuery.fn.insertAt = function (index, element) {
 	}
 	return this;
 }
-
 responseHub.userList = (function () {
 
 
@@ -337,7 +336,6 @@ responseHub.userList = (function () {
 	}
 
 })();
-
 responseHub.maps = (function () {
 
 	/**
@@ -804,7 +802,6 @@ $(document).ready(function () {
 	});
 
 });
-
 responseHub.jobMessages = (function () {
 
 	/**
@@ -1545,7 +1542,6 @@ responseHub.jobMessages = (function () {
 	};
 
 })();
-
 responseHub.pagerMessages = (function () {
 
 	/**
@@ -1682,7 +1678,6 @@ responseHub.pagerMessages = (function () {
 
 
 })();
-
 responseHub.wallboard = (function () {
 
 	var jobListPollingInterval = 30000;
@@ -2201,7 +2196,6 @@ responseHub.wallboard = (function () {
 	loadUI();
 
 })();
-
 responseHub.units = (function () {
 
 	function bindUI() {
@@ -2227,7 +2221,6 @@ responseHub.units = (function () {
 	bindUI();
 
 })();
-
 var passwordStrength = (function () {
 
 	function scorePassword(pass) {
@@ -2303,7 +2296,6 @@ var passwordStrength = (function () {
 	});
 
 })();
-
 responseHub.capcodes = (function () {
 
 
@@ -2425,7 +2417,6 @@ responseHub.capcodes = (function () {
 	}
 
 })();
-
 responseHub.resources = (function () {
 
 	/** 
@@ -2493,7 +2484,6 @@ responseHub.resources = (function () {
 	}
 
 })();
-
 responseHub.logs = (function () {
 
 	function bindUI() {
@@ -2521,7 +2511,6 @@ responseHub.logs = (function () {
 	bindUI();
 
 })();
-
 responseHub.search = (function () {
 
 	function getNextResults() {
@@ -2705,7 +2694,6 @@ responseHub.search = (function () {
 	}
 
 })();
-
 responseHub.attachments = (function () {
 
 	function bindUI() {
@@ -2862,11 +2850,9 @@ responseHub.attachments = (function () {
 
 
 })();
-
 responseHub.gallery = (function () {
 
 })();
-
 responseHub.wallboard = (function () {
 
 	var currentRadarImageIndex = { };
@@ -2956,7 +2942,6 @@ responseHub.wallboard = (function () {
 	}
 
 })();
-
 responseHub.signIn = (function () {
 
 	// Sets the job number and the job id when selected.
@@ -3098,7 +3083,6 @@ responseHub.signIn = (function () {
 	}
 
 })();
-
 responseHub.reports = (function () {
 
 
@@ -3130,7 +3114,6 @@ responseHub.reports = (function () {
 	bindUI();
 
 })();
-
 responseHub.training = (function () {
 
 	function bindUserSelectList() {
@@ -3345,7 +3328,6 @@ responseHub.training = (function () {
 	}
 
 })();
-
 responseHub.events = (function () {
 
 	/*
@@ -4040,7 +4022,6 @@ responseHub.events = (function () {
 	}
 
 })();
-
 // Value is the element to be validated, params is the array of name/value pairs of the parameters extracted from the HTML, element is the HTML element that the validator is attached to
 $.validator.addMethod("signintypedescriptionset", function (value, element, params) {
 	

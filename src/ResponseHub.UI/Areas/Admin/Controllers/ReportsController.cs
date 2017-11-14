@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 
-using Microsoft.Practices.Unity;
+using Unity;
 
 using Enivate.ResponseHub.Common.Extensions;
 using Enivate.ResponseHub.Model.Units;

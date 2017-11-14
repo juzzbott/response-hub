@@ -6,8 +6,8 @@ using System.Web.Http;
 using System.Web.Mvc;
 using System.Web.Routing;
 
-using Microsoft.Practices.Unity;
 using Microsoft.Practices.Unity.Configuration;
+using Unity;
 
 using Enivate.ResponseHub.Common;
 using Enivate.ResponseHub.DataAccess.MongoDB;
