@@ -36,6 +36,7 @@
 				}
 				<th>Total</th>
 				<th>Attendance</th>
+				<th>Attendance Variance</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -76,6 +77,22 @@
 							else
 							{
 								<span class="text-success">@String.Format("{0}%", memberReport.AttendancePercent)</span>
+							}
+						</strong>
+					</td>
+					<td>
+						<strong>
+							@if (memberReport.AttendancePercentVariance < 40)
+							{
+								<span class="text-danger">@String.Format("{0}%", memberReport.AttendancePercentVariance)</span>
+							}
+							else if (memberReport.AttendancePercent < 60)
+							{
+								<span class="text-warning">@String.Format("{0}%", memberReport.AttendancePercentVariance)</span>
+							}
+							else
+							{
+								<span class="text-success">@String.Format("{0}%", memberReport.AttendancePercentVariance)</span>
 							}
 						</strong>
 					</td>

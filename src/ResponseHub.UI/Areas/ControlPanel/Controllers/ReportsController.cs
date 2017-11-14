@@ -38,6 +38,7 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 		protected IReportService ReportService = ServiceLocator.Get<IReportService>();
 		public ITrainingService TrainingService = ServiceLocator.Get<ITrainingService>();
 		protected IJobMessageService JobMessageService = ServiceLocator.Get<IJobMessageService>();
+		private const int TrainingSessionVariance = 3;
 
 		[Route]
 		// GET: ControlPanel/DataExport
@@ -444,10 +445,14 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 				// Get the training session where the user is recorded as either a member or trainer
 				IList<TrainingSession> userSessions = trainingSessions.Where(i => i.Members.Contains(user.Id) || i.Trainers.Contains(user.Id)).Distinct().ToList();
 
-				// Get the percentage of attendance
+				// If there is more than one training session for the member, calculate some percentages.
 				if (trainingSessions.Count > 0)
 				{
+					// Get the actual reported percentage of attendance
 					memberTrainingRecord.AttendancePercent = (int)(((decimal)userSessions.Count / (decimal)trainingSessionDays) * 100);
+
+					// Get the percentage of attendance varince by include an additional 3 sessions on 3 days to account for any variance in reporting
+					memberTrainingRecord.AttendancePercentVariance = (int)(((decimal)(userSessions.Count + TrainingSessionVariance) / (decimal)(trainingSessionDays + TrainingSessionVariance)) * 100);
 				}
 
 				// Get the training types

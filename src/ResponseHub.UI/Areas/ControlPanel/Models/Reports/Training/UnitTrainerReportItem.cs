@@ -16,6 +16,8 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Models.Reports.Training
 
 		public int AttendancePercent { get; set; }
 
+		public int AttendancePercentVariance { get; set; }
+
 		public UnitTrainingMemberReportItem()
 		{
 			TrainingSessions = new Dictionary<string, int>();
