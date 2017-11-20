@@ -21,6 +21,11 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 		private IMongoCollection<Asset> _assetCollection;
 
 		/// <summary>
+		/// The MongoDB collection for the tasks repository.
+		/// </summary>
+		private IMongoCollection<UpkeepTask> _tasksCollection;
+
+		/// <summary>
 		/// Contains the reference to the mongo client object.
 		/// </summary>
 		private MongoClient _mongoClient;
@@ -31,6 +36,8 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 		private IMongoDatabase _mongoDb;
 
 		private const string _assetCollectionName = "assets";
+
+		private const string _tasksCollectionName = "tasks";
 
 		public UpkeepRepository() : this(ConfigurationManager.ConnectionStrings["MongoServer"].ConnectionString)
 		{
@@ -49,6 +56,7 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 			_mongoDb = _mongoClient.GetDatabase(mongoUrl.DatabaseName);
 
 			_assetCollection = _mongoDb.GetCollection<Asset>(_assetCollectionName);
+			_tasksCollection = _mongoDb.GetCollection<UpkeepTask>(_tasksCollectionName);
 		}
 
 		/// <summary>
@@ -91,6 +99,50 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 
 			// Get the asset based on the filter
 			return await _assetCollection.Find(filter).ToListAsync();
+		}
+
+
+
+		/// <summary>
+		/// Saves a task to the database. If the task does not exist, it is created.
+		/// </summary>
+		/// <param name="task">The task to add to the database</param>
+		public async Task<UpkeepTask> SaveTask(UpkeepTask task)
+		{
+
+			// Save the object to the collection.
+			ReplaceOneResult result = await _tasksCollection.ReplaceOneAsync(Builders<UpkeepTask>.Filter.Eq(i => i.Id, task.Id), task, new UpdateOptions() { IsUpsert = true });
+
+			// return the saved user object.
+			return task;
+		}
+
+		/// <summary>
+		/// Gets an task from the database based on the id.
+		/// </summary>
+		/// <param name="id">The id of the task to get from the database.</param>
+		/// <returns>The task based on the id.</returns>
+		public async Task<UpkeepTask> GetTaskById(Guid id)
+		{
+			// Create the filter
+			FilterDefinition<UpkeepTask> filter = Builders<UpkeepTask>.Filter.Eq(i => i.Id, id);
+
+			// Get the task based on the filter
+			return await _tasksCollection.Find(filter).FirstOrDefaultAsync();
+		}
+
+		/// <summary>
+		/// Gets the list of tasks for the specific unit id. 
+		/// </summary>
+		/// <param name="unitId">The Id of the unit to get the tasks for.</param>
+		/// <returns>The list of tasks for the unit.</returns>
+		public async Task<IList<UpkeepTask>> GetTasksByUnitId(Guid unitId)
+		{
+			// Create the filter
+			FilterDefinition<UpkeepTask> filter = Builders<UpkeepTask>.Filter.Eq(i => i.UnitId, unitId);
+
+			// Get the asset based on the filter
+			return await _tasksCollection.Find(filter).ToListAsync();
 		}
 	}
 }

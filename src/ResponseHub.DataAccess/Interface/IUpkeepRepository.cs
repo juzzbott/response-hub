@@ -15,5 +15,11 @@ namespace Enivate.ResponseHub.DataAccess.Interface
 		Task<Asset> GetAssetById(Guid id);
 
 		Task<IList<Asset>> GetAssetsByUnitId(Guid unitId);
+
+		Task<UpkeepTask> SaveTask(UpkeepTask task);
+
+		Task<UpkeepTask> GetTaskById(Guid id);
+
+		Task<IList<UpkeepTask>> GetTasksByUnitId(Guid unitId);
 	}
 }

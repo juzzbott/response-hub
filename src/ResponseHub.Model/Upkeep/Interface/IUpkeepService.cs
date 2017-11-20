@@ -17,5 +17,13 @@ namespace Enivate.ResponseHub.Model.Upkeep.Interface
 
 		Task<IList<Asset>> GetAssetsByUnitId(Guid unitId);
 
+		Task<UpkeepTask> CreateTask(string name, Guid unitId, Guid? assetId, IList<string> taskItems);
+
+		Task<UpkeepTask> SaveTask(UpkeepTask task);
+
+		Task<UpkeepTask> GetTaskById(Guid id);
+
+		Task<IList<UpkeepTask>> GetTasksByUnitId(Guid unitId);
+
 	}
 }

@@ -142,12 +142,9 @@
 
 				// If there is a failed result, display that
 				if (data.Success == true) {
-
-					console.log(data);
-
+					
 					// If the user was signed in, we want to send them to the sign in page to sign other members in, otherwise we just want to display the progress updates
 					if (data.UserSignedIn) {
-						console.log('redirecting...');
 						window.location = window.location + '/sign-in';
 					}
 					else {

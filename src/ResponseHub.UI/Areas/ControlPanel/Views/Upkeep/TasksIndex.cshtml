@@ -1,0 +1,42 @@
+﻿@model IList<Enivate.ResponseHub.UI.Areas.ControlPanel.Models.Upkeep.ViewTaskViewModel>
+@{
+    ViewBag.Title = "Tasks";
+    Layout = "~/Areas/ControlPanel/Views/Shared/_Layout.cshtml";
+}
+
+<h1>@ViewBag.Title</h1>
+
+<p class="lead">Tasks are jobs that need to be completed as part of a maintenance crew. Tasks can have a single asset assigned to them or just regular tasks.</p>
+
+@if (Model == null || Model.Count == 0)
+{
+	<p><strong>No tasks have been created yet.</strong></p>
+	<p><a href="/control-panel/upkeep/tasks/add" class="btn btn-primary btn-icon"><i class="fa fa-fw fa-plus"></i>Add task</a></p>
+}
+else
+{
+	<p class="lead">Found @Model.Count task@(Model.Count != 1 ? "s" : "")</p>
+	<p><a href="/control-panel/upkeep/tasks/add" class="btn btn-primary btn-icon"><i class="fa fa-fw fa-plus"></i>Add task</a></p>
+	<table class="table table-striped table-responsive table-hover">
+		<thead>
+			<tr>
+				<th>Name</th>
+				<th>Asset</th>
+				<th>Tasks</th>
+			</tr>
+		</thead>
+		<tbody>
+			@foreach (var unitTask in Model)
+			{
+				<tr>
+					<td><a href="/control-panel/upkeep/assets/@unitTask.Id">@unitTask.Name</a></td>
+					<td>@(unitTask.Asset != null ? unitTask.Asset.Name : "")</td>
+					<td>@unitTask.TaskItems.Count</td>
+				</tr>
+			}
+		</tbody>
+	</table>
+}
+
+
+

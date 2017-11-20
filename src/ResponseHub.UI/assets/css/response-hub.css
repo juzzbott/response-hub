@@ -1813,7 +1813,11 @@ div.generated-report .month-group td {
 #inventory-builder .catalog-item .col-xs-2 {
   padding-right: 0;
 }
-#inventory-builder .handle {
+#task-items .task-item {
+  margin-bottom: 10px;
+}
+#inventory-builder .handle,
+#task-items .handle {
   display: inline-block;
   width: 8px;
   background-color: #ccc;

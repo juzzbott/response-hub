@@ -241,7 +241,9 @@
     <Compile Include="Areas\ControlPanel\Models\Training\TrainingHomeViewModel.cs" />
     <Compile Include="Areas\ControlPanel\Models\Training\TrainingSessionListItemViewModel.cs" />
     <Compile Include="Areas\ControlPanel\Models\Training\ViewTrainingSessionViewModel.cs" />
+    <Compile Include="Areas\ControlPanel\Models\Upkeep\AddTaskViewModel.cs" />
     <Compile Include="Areas\ControlPanel\Models\Upkeep\ViewAssetModel.cs" />
+    <Compile Include="Areas\ControlPanel\Models\Upkeep\ViewTaskViewModel.cs" />
     <Compile Include="Controllers\Api\GoogleApiController.cs" />
     <Compile Include="Controllers\Api\SearchController.cs" />
     <Compile Include="Controllers\Api\SignInController.cs" />
@@ -751,6 +753,12 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Areas\ControlPanel\Views\Upkeep\ViewAsset.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Areas\ControlPanel\Views\Upkeep\AddTask.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Areas\ControlPanel\Views\Upkeep\TasksIndex.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

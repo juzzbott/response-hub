@@ -78,5 +78,67 @@ namespace Enivate.ResponseHub.ApplicationServices
 		{
 			return await _repository.GetAssetsByUnitId(unitId);
 		}
+
+		/// <summary>
+		/// Saves the new task to the database
+		/// </summary>
+		/// <param name="name">The name of the task.</param>
+		/// <param name="unitId">The ID of the unit the task belongs to.</param>
+		/// <param name="assetId">The Id of the asset (if any) that the task refers to.</param>
+		/// <param name="taskItems">The task items for the current task.</param>
+		/// <returns></returns>
+		public async Task<UpkeepTask> CreateTask(string name, Guid unitId, Guid? assetId, IList<string> taskItems)
+		{
+
+			// Create the upkeep task
+			UpkeepTask task = new UpkeepTask
+			{
+				AssetId = assetId,
+				Name = name,
+				UnitId = unitId,
+				TaskItems = taskItems
+			};
+
+			// Create the task
+			await _repository.SaveTask(task);
+
+			// reutrn the task
+			return task;
+		}
+
+		/// <summary>
+		/// Saves the task to the database.
+		/// </summary>
+		/// <param name="task">The task to save to the database</param>
+		/// <returns></returns>
+		public async Task<UpkeepTask> SaveTask(UpkeepTask task)
+		{
+
+			// Create the task
+			await _repository.SaveTask(task);
+
+			// reutrn the task
+			return task;
+		}
+
+		/// <summary>
+		/// Gets the specified task from the database based on the id. 
+		/// </summary>
+		/// <param name="id">The id of the task to return.</param>
+		/// <returns>The task if it found, otherwise null.</returns>
+		public async Task<UpkeepTask> GetTaskById(Guid id)
+		{
+			return await _repository.GetTaskById(id);
+		}
+
+		/// <summary>
+		/// Gets the collection of tasks based on the unit id.
+		/// </summary>
+		/// <param name="unitId">The ID of the unit to get the tasks for.</param>
+		/// <returns>The collection of tasks for the unit.</returns>
+		public async Task<IList<UpkeepTask>> GetTasksByUnitId(Guid unitId)
+		{
+			return await _repository.GetTasksByUnitId(unitId);
+		}
 	}
 }
