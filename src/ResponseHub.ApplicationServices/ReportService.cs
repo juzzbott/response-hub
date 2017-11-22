@@ -25,15 +25,25 @@ namespace Enivate.ResponseHub.ApplicationServices
 			_pdfGenerationService = pdfGenerationService;
 		}
 
-		public async Task<byte[]> GenerateTrainingReportPdfFile(Guid unitId, DateTime dateFrom, DateTime dateTo, HttpCookieCollection cookies)
+		public async Task<byte[]> GenerateTrainingReportPdfFile(Guid unitId, DateTime dateFrom, DateTime dateTo, Guid? memberId, HttpCookieCollection cookies)
 		{
-			// Get the web response for the report
-			// To force a page break: style="page-break-before: always"
-			HttpWebRequest request = HttpWebRequest.CreateHttp(String.Format("{0}/control-panel/reports/generate-training-report-html?unit_id={1}&date_from={2}&date_to={3}",
+
+			// Generate the report url
+			string url = String.Format("{0}/control-panel/reports/generate-training-report-html?unit_id={1}&date_from={2}&date_to={3}",
 				ConfigurationManager.AppSettings[ConfigurationKeys.BaseWebsiteUrl],
 				unitId,
 				dateFrom.ToString("yyyyMMddHHmmss"),
-				dateTo.ToString("yyyyMMddHHmmss")));
+				dateTo.ToString("yyyyMMddHHmmss"));
+
+			// If there is a member id, then add it to the query string
+			if (memberId.HasValue && memberId.Value != Guid.Empty)
+			{
+				url = String.Format("{0}&member_id={1}", url, memberId.Value);
+			}
+
+			// Get the web response for the report
+			// To force a page break: style="page-break-before: always"
+			HttpWebRequest request = HttpWebRequest.CreateHttp(url);
 
 			request.ServerCertificateValidationCallback = delegate (object s, System.Security.Cryptography.X509Certificates.X509Certificate certificate, System.Security.Cryptography.X509Certificates.X509Chain chain, System.Net.Security.SslPolicyErrors sslPolicyErrors)
 			{

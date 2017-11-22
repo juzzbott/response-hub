@@ -34,7 +34,7 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 		{
 
 			// Get the current training sessions
-			IList<TrainingSession> trainingSessions = await TrainingService.GetTrainingSessionsForUnit(GetControlPanelUnitId());
+			IList<TrainingSession> trainingSessions = await TrainingService.GetTrainingSessionsForUnit(GetControlPanelUnitId(), null);
 
 			// Create the model
 			TrainingHomeViewModel model = new TrainingHomeViewModel();

@@ -22,9 +22,17 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 		/// </summary>
 		/// <param name="unitId">The id of the unit to get the training sessions for.</param>
 		/// <returns>The list of training sessions.</returns>
-		public async Task<IList<TrainingSession>> GetTrainingSessionsForUnit(Guid unitId, IEnumerable<TrainingType> trainingTypes)
+		public async Task<IList<TrainingSession>> GetTrainingSessionsForUnit(Guid unitId, IEnumerable<TrainingType> trainingTypes, Guid? memberId)
 		{
 			FilterDefinition<TrainingSessionDto> filter = Builders<TrainingSessionDto>.Filter.Eq(i => i.UnitId, unitId);
+
+			// If a member is specified, only return training sessions that member participated or trained in. 
+			if (memberId != null && memberId != Guid.Empty)
+			{
+				FilterDefinition<TrainingSessionDto> memberFilter = Builders<TrainingSessionDto>.Filter.AnyEq(i => i.Members, memberId.Value) | Builders<TrainingSessionDto>.Filter.AnyEq(i => i.Trainers, memberId.Value);
+				filter = filter & memberFilter;
+			}
+
 			SortDefinition<TrainingSessionDto> sort = Builders<TrainingSessionDto>.Sort.Descending(i => i.SessionDate);
 
 			// Get the results from the db
@@ -41,13 +49,20 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 		/// <param name="dateFrom">The date to get the training sessions from.</param>
 		/// <param name="dateTo">The date to get the training sessions to.</param>
 		/// <returns>The list of training sessions.</returns>
-		public async Task<IList<TrainingSession>> GetTrainingSessionsForUnit(Guid unitId, DateTime from, DateTime to, IEnumerable<TrainingType> trainingTypes)
+		public async Task<IList<TrainingSession>> GetTrainingSessionsForUnit(Guid unitId, DateTime from, DateTime to, IEnumerable<TrainingType> trainingTypes, Guid? memberId)
 		{
 			FilterDefinitionBuilder<TrainingSessionDto> builder = Builders<TrainingSessionDto>.Filter;
 			FilterDefinition<TrainingSessionDto> filter = builder.Eq(i => i.UnitId, unitId);
 
 			// Set the date range
 			filter = filter & builder.Gte(i => i.SessionDate, from) & builder.Lte(i => i.SessionDate, to);
+
+			// If a member is specified, only return training sessions that member participated or trained in. 
+			if (memberId != null && memberId != Guid.Empty)
+			{
+				FilterDefinition<TrainingSessionDto> memberFilter = Builders<TrainingSessionDto>.Filter.AnyEq(i => i.Members, memberId.Value) | Builders<TrainingSessionDto>.Filter.AnyEq(i => i.Trainers, memberId.Value);
+				filter = filter & memberFilter;
+			}
 
 			// Create the sort
 			SortDefinition<TrainingSessionDto> sort = Builders<TrainingSessionDto>.Sort.Descending(i => i.SessionDate);
@@ -64,9 +79,17 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 		/// </summary>
 		/// <param name="unitId">The id of the unit to get the training sessions for.</param>
 		/// <returns>The list of training sessions.</returns>
-		public async Task<IList<TrainingSession>> GetTrainingSessionsForUnit(Guid unitId, int limit, IEnumerable<TrainingType> trainingTypes)
+		public async Task<IList<TrainingSession>> GetTrainingSessionsForUnit(Guid unitId, int limit, IEnumerable<TrainingType> trainingTypes, Guid? memberId)
 		{
 			FilterDefinition<TrainingSessionDto> filter = Builders<TrainingSessionDto>.Filter.Eq(i => i.UnitId, unitId);
+
+			// If a member is specified, only return training sessions that member participated or trained in. 
+			if (memberId != null && memberId != Guid.Empty)
+			{
+				FilterDefinition<TrainingSessionDto> memberFilter = Builders<TrainingSessionDto>.Filter.AnyEq(i => i.Members, memberId.Value) | Builders<TrainingSessionDto>.Filter.AnyEq(i => i.Trainers, memberId.Value);
+				filter = filter & memberFilter;
+			}
+
 			SortDefinition<TrainingSessionDto> sort = Builders<TrainingSessionDto>.Sort.Descending(i => i.SessionDate);
 
 			// Get the results from the db

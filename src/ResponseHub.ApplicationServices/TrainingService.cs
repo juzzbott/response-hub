@@ -40,9 +40,9 @@ namespace Enivate.ResponseHub.ApplicationServices
 		/// </summary>
 		/// <param name="unitId">The id of the unit to get the training sessions for.</param>
 		/// <returns>The list of training sessions.</returns>
-		public async Task<IList<TrainingSession>> GetTrainingSessionsForUnit(Guid unitId)
+		public async Task<IList<TrainingSession>> GetTrainingSessionsForUnit(Guid unitId, Guid? memberId)
 		{
-			return await _sessionRepository.GetTrainingSessionsForUnit(unitId, await GetAllTrainingTypes());
+			return await _sessionRepository.GetTrainingSessionsForUnit(unitId, await GetAllTrainingTypes(), memberId);
 		}
 
 		/// <summary>
@@ -50,9 +50,9 @@ namespace Enivate.ResponseHub.ApplicationServices
 		/// </summary>
 		/// <param name="unitId">The id of the unit to get the training sessions for.</param>
 		/// <returns>The list of training sessions.</returns>
-		public async Task<IList<TrainingSession>> GetTrainingSessionsForUnit(Guid unitId, int limit)
+		public async Task<IList<TrainingSession>> GetTrainingSessionsForUnit(Guid unitId, int limit, Guid? memberId)
 		{
-			return await _sessionRepository.GetTrainingSessionsForUnit(unitId, await GetAllTrainingTypes());
+			return await _sessionRepository.GetTrainingSessionsForUnit(unitId, await GetAllTrainingTypes(), memberId);
 		}
 
 		/// <summary>
@@ -62,9 +62,9 @@ namespace Enivate.ResponseHub.ApplicationServices
 		/// <param name="dateFrom">The date to get the training sessions from.</param>
 		/// <param name="dateTo">The date to get the training sessions to.</param>
 		/// <returns>The list of training sessions.</returns>
-		public async Task<IList<TrainingSession>> GetTrainingSessionsForUnit(Guid unitId, DateTime dateFrom, DateTime dateTo)
+		public async Task<IList<TrainingSession>> GetTrainingSessionsForUnit(Guid unitId, DateTime dateFrom, DateTime dateTo, Guid? memberId)
 		{
-			return await _sessionRepository.GetTrainingSessionsForUnit(unitId, dateFrom, dateTo, await GetAllTrainingTypes());
+			return await _sessionRepository.GetTrainingSessionsForUnit(unitId, dateFrom, dateTo, await GetAllTrainingTypes(), memberId);
 		}
 
 		/// <summary>
