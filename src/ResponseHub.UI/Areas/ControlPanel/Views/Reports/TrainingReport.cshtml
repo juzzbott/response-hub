@@ -1,4 +1,4 @@
-﻿@model Enivate.ResponseHub.UI.Areas.ControlPanel.Models.Reports.ReportFilterViewModel
+﻿@model Enivate.ResponseHub.UI.Areas.ControlPanel.Models.Reports.Training.TrainingReportFilterViewModel
 
 @{
 	ViewBag.Title = "Training report";
@@ -39,6 +39,21 @@
 				</div>
 				@Html.ValidationMessageFor(model => model.DateTo)
 				<div class="text-muted"><em>Date format should be dd/MM/yyyy.</em></div>
+			</div>
+		</div>
+	</div>
+
+	<p class="section-help bottom-10">You can limit the report to a single member to view that particular members training details.</p>
+	<div class="form-group">
+		<label for="AvailableMembers">Member</label>
+		<div class="row">
+			<div class="col-sm-8 col-md-6 col-lg-4">
+				<select class="form-control selectpicker" data-live-search="true" id="MemberId" name="MemberId" title="Select member...">
+					@foreach (var user in Model.AvailableMembers)
+					{
+						<option data-tokens="@user.Item2" value="@user.Item1">@user.Item2</option>
+					}
+				</select>
 			</div>
 		</div>
 	</div>

@@ -10,7 +10,7 @@ namespace Enivate.ResponseHub.Model.Reports.Interface
 	public interface IReportService
 	{
 
-		Task<byte[]> GenerateTrainingReportPdfFile(Guid unitId, DateTime dateFrom, DateTime dateTo, HttpCookieCollection cookies);
+		Task<byte[]> GenerateTrainingReportPdfFile(Guid unitId, DateTime dateFrom, DateTime dateTo, Guid? memberId, HttpCookieCollection cookies);
 
 		Task<byte[]> GenerateTrainersReportPdfFile(Guid unitId, DateTime dateFrom, DateTime dateTo, HttpCookieCollection cookies);
 

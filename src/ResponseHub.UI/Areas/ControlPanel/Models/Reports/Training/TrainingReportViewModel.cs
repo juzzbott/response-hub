@@ -14,6 +14,8 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Models.Reports.Training
 
 		public IList<UnitTrainingMemberReportItem> MemberReports { get; set; }
 
+		public IList<TrainingSessionItem> MemberSessions { get; set; }
+
 		public string ChartDataJs { get; set; }
 
 		public string ChartOptionsJs { get; set; }
@@ -24,10 +26,15 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Models.Reports.Training
 
 		public bool UseStandardLayout { get; set; }
 
+		public Guid? MemberId { get; set; }
+
+		public string MemberFullName { get; set; }
+
 		public TrainingReportViewModel()
 		{
 			TrainingTypes = new Dictionary<TrainingType, string>();
 			MemberReports = new List<UnitTrainingMemberReportItem>();
+			MemberSessions = new List<TrainingSessionItem>();
 		}
 	}
 }

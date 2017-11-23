@@ -13,7 +13,7 @@
 
 <div class="generated-report">
 
-	<h1 id="training-report">@ViewBag.Title</h1>
+	<h1 id="training-report">@ViewBag.Title @(Model.MemberId.HasValue && Model.MemberId.Value != Guid.Empty ? String.Format(" - {0}", Model.MemberFullName) : "")</h1>
 
 	<p class="lead text-info">
 		Report contains training sessions between @Model.DateFrom.ToLocalTime().ToString("dd/MM/yyyy") and @Model.DateTo.ToLocalTime().ToString("dd/MM/yyyy")
@@ -101,4 +101,30 @@
 		</tbody>
 	</table>
 
-</div>
+	<h2>Detailed training session information</h2>
+
+	<table class="table table-striped results-overview table-small">
+		<thead>
+			<tr>
+				<th>Name</th>
+				<th>Session date</th>
+				<th>Training type(s)</th>
+				<th>Activity description</th>
+				<th>Duration</th>
+			</tr>
+		</thead>
+		<tbody>
+			@foreach(var trainingSession in Model.MemberSessions)
+			{
+				<tr>
+					<td>@trainingSession.Name</td>
+					<td>@trainingSession.SessionDate.ToString("yyyy-MM-dd HH:mm")</td>
+					<td>@trainingSession.TrainingType</td>
+					<td>@trainingSession.Description</td>
+					<td>@trainingSession.Duration h</td>
+				</tr>
+			}
+		</tbody>
+	</table>
+
+	</div>

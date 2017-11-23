@@ -11,11 +11,11 @@ namespace Enivate.ResponseHub.Model.Training.Interface
 
 		Task CreateTrainingSession(TrainingSession trainingSession);
 
-		Task<IList<TrainingSession>> GetTrainingSessionsForUnit(Guid unitId);
+		Task<IList<TrainingSession>> GetTrainingSessionsForUnit(Guid unitId, Guid? memberId);
 
-		Task<IList<TrainingSession>> GetTrainingSessionsForUnit(Guid unitId, int limit);
+		Task<IList<TrainingSession>> GetTrainingSessionsForUnit(Guid unitId, int limit, Guid? memberId);
 
-		Task<IList<TrainingSession>> GetTrainingSessionsForUnit(Guid unitId, DateTime dateFrom, DateTime dateTo);
+		Task<IList<TrainingSession>> GetTrainingSessionsForUnit(Guid unitId, DateTime dateFrom, DateTime dateTo, Guid? memberId);
 
 		Task<TrainingSession> GetTrainingSessionById(Guid id);
 

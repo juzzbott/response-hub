@@ -228,6 +228,8 @@
     <Compile Include="Areas\ControlPanel\Models\Reports\ReportFilterViewModel.cs" />
     <Compile Include="Areas\ControlPanel\Models\Reports\Training\TrainerSessionItem.cs" />
     <Compile Include="Areas\ControlPanel\Models\Reports\Training\TrainersReportViewModel.cs" />
+    <Compile Include="Areas\ControlPanel\Models\Reports\Training\TrainingReportFilterViewModel.cs" />
+    <Compile Include="Areas\ControlPanel\Models\Reports\Training\TrainingSessionItem.cs" />
     <Compile Include="Areas\ControlPanel\Models\Reports\Training\UnitTrainerReportItem.cs" />
     <Compile Include="Areas\ControlPanel\Models\Reports\Training\UnitTrainingMemberReportItem.cs" />
     <Compile Include="Areas\ControlPanel\Models\Reports\Training\TrainingReportViewModel.cs" />
