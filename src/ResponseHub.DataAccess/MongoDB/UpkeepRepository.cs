@@ -26,6 +26,11 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 		private IMongoCollection<UpkeepTask> _tasksCollection;
 
 		/// <summary>
+		/// The MongoDB collection for the upkeep maintentace reports repository.
+		/// </summary>
+		private IMongoCollection<UpkeepReport> _reportsCollection;
+
+		/// <summary>
 		/// Contains the reference to the mongo client object.
 		/// </summary>
 		private MongoClient _mongoClient;
@@ -38,6 +43,8 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 		private const string _assetCollectionName = "assets";
 
 		private const string _tasksCollectionName = "tasks";
+
+		private const string _reportsCollectionName = "maintenance_reports";
 
 		public UpkeepRepository() : this(ConfigurationManager.ConnectionStrings["MongoServer"].ConnectionString)
 		{
@@ -57,6 +64,7 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 
 			_assetCollection = _mongoDb.GetCollection<Asset>(_assetCollectionName);
 			_tasksCollection = _mongoDb.GetCollection<UpkeepTask>(_tasksCollectionName);
+			_reportsCollection = _mongoDb.GetCollection<UpkeepReport>(_reportsCollectionName);
 		}
 
 		/// <summary>
@@ -95,13 +103,28 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 		public async Task<IList<Asset>> GetAssetsByUnitId(Guid unitId)
 		{
 			// Create the filter
-			FilterDefinition<Asset> filter = Builders<Asset>.Filter.Eq(i => i.UnitId, unitId);
+			FilterDefinition<Asset> filter = Builders<Asset>.Filter.Eq(i => i.UnitId, unitId) & Builders<Asset>.Filter.Eq(i => i.Deleted, false);
 
 			// Get the asset based on the filter
 			return await _assetCollection.Find(filter).ToListAsync();
 		}
 
+		/// <summary>
+		/// Marks the specified asset as deleted within the database. Cannot delete the asset as it be needed for reporting. 
+		/// </summary>
+		/// <param name="assetId">The ID of the asset to mark for deletion. </param>
+		/// <returns></returns>
+		public async Task DeleteAsset(Guid assetId)
+		{
+			// Create the filter
+			FilterDefinition<Asset> filter = Builders<Asset>.Filter.Eq(i => i.Id, assetId);
 
+			// Create the update
+			UpdateDefinition<Asset> update = Builders<Asset>.Update.Set(i => i.Deleted, true);
+
+			// Send to mongo
+			await _assetCollection.UpdateOneAsync(filter, update);
+		}
 
 		/// <summary>
 		/// Saves a task to the database. If the task does not exist, it is created.
@@ -139,10 +162,36 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 		public async Task<IList<UpkeepTask>> GetTasksByUnitId(Guid unitId)
 		{
 			// Create the filter
-			FilterDefinition<UpkeepTask> filter = Builders<UpkeepTask>.Filter.Eq(i => i.UnitId, unitId);
+			FilterDefinition<UpkeepTask> filter = Builders<UpkeepTask>.Filter.Eq(i => i.UnitId, unitId) & Builders<UpkeepTask>.Filter.Eq(i => i.Deleted, false);
 
 			// Get the asset based on the filter
 			return await _tasksCollection.Find(filter).ToListAsync();
+		}
+
+		/// <summary>
+		/// Marks the specified task as deleted within the database. Cannot delete the task as it be needed for reporting. 
+		/// </summary>
+		/// <param name="taskId">The ID of the task to mark for deletion. </param>
+		/// <returns></returns>
+		public async Task DeleteTask(Guid taskId)
+		{
+			// Create the filter
+			FilterDefinition<UpkeepTask> filter = Builders<UpkeepTask>.Filter.Eq(i => i.Id, taskId);
+
+			// Create the update
+			UpdateDefinition<UpkeepTask> update = Builders<UpkeepTask>.Update.Set(i => i.Deleted, true);
+
+			// Send to mongo
+			await _tasksCollection.UpdateOneAsync(filter, update);
+		}
+
+		public async Task<UpkeepReport> SaveReport(UpkeepReport report)
+		{
+			// Save the object to the collection.
+			ReplaceOneResult result = await _reportsCollection.ReplaceOneAsync(Builders<UpkeepReport>.Filter.Eq(i => i.Id, report.Id), report, new UpdateOptions() { IsUpsert = true });
+
+			// return the saved user object.
+			return report;
 		}
 	}
 }

@@ -6,25 +6,22 @@ using System.Threading.Tasks;
 
 namespace Enivate.ResponseHub.Model.Upkeep
 {
-	public class Asset : IEntity
+	public class ReportTask
 	{
-
 		public Guid Id { get; set; }
 
-		public Guid UnitId { get; set; }
+		public Guid TaskId { get; set; }
 
 		public string Name { get; set; }
 
-		public string Description { get; set; }
+		public IList<ReportItem> TaskItems { get; set; }
 
-		public Inventory Inventory { get; set; }
+		public ReportAsset Asset { get; set; }
 
-		public bool Deleted { get; set; }
-
-		public Asset()
+		public ReportTask()
 		{
 			Id = Guid.NewGuid();
+			TaskItems = new List<ReportItem>();
 		}
-
 	}
 }

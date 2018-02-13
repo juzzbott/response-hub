@@ -1,0 +1,26 @@
+﻿@model Enivate.ResponseHub.UI.Models.Upkeep.UpkeepViewModel
+@{
+	ViewBag.Title = "Upkeep - Maintenance reports";
+}
+
+<h1>@ViewBag.Title</h1>
+
+<h2>Open reports</h2>
+
+@if (Model.OpenReports == null || Model.OpenReports.Count == 0)
+{
+	<p>There are currently no open reports to view.</p>
+}
+
+<div class="row top-20">
+	<div class="col-sm-12">
+		<a href="/upkeep/new-report" class="btn btn-lg btn-primary btn-icon"><i class="fa fa-plus"></i>Create new report</a>
+	</div>
+</div>
+
+<h2>Submitted reports</h2>
+
+@if (Model.ClosedReports == null || Model.ClosedReports.Count == 0)
+{
+	<p>There are currently no submitted reports to view.</p>
+}

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Enivate.ResponseHub.Model.Upkeep
 {
-	public class Asset : IEntity
+	public class UpkeepReport : IEntity
 	{
 
 		public Guid Id { get; set; }
@@ -15,16 +15,22 @@ namespace Enivate.ResponseHub.Model.Upkeep
 
 		public string Name { get; set; }
 
-		public string Description { get; set; }
+		public DateTime Created { get; set; }
 
-		public Inventory Inventory { get; set; }
+		public Guid CreatedBy { get; set; }
 
-		public bool Deleted { get; set; }
+		public DateTime? Submitted { get; set; }
 
-		public Asset()
+		public Guid? SubmittedBy { get; set; }
+
+		public IList<ReportTask> Tasks { get; set; }
+
+		public UpkeepReport()
 		{
 			Id = Guid.NewGuid();
+			Tasks = new List<ReportTask>();
 		}
+
 
 	}
 }

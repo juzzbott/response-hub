@@ -80,6 +80,16 @@ namespace Enivate.ResponseHub.ApplicationServices
 		}
 
 		/// <summary>
+		/// Marks the specified asset as deleted within the database. Cannot delete the asset as it be needed for reporting. 
+		/// </summary>
+		/// <param name="assetId">The ID of the asset to mark for deletion. </param>
+		/// <returns></returns>
+		public async Task DeleteAsset(Guid assetId)
+		{
+			await _repository.DeleteAsset(assetId);
+		}
+
+		/// <summary>
 		/// Saves the new task to the database
 		/// </summary>
 		/// <param name="name">The name of the task.</param>
@@ -140,5 +150,179 @@ namespace Enivate.ResponseHub.ApplicationServices
 		{
 			return await _repository.GetTasksByUnitId(unitId);
 		}
+
+		/// <summary>
+		/// Marks the specified task as deleted within the database. Cannot delete the task as it be needed for reporting. 
+		/// </summary>
+		/// <param name="taskId">The ID of the task to mark for deletion. </param>
+		/// <returns></returns>
+		public async Task DeleteTask(Guid taskId)
+		{
+			await _repository.DeleteTask(taskId);
+		}
+
+		/// <summary>
+		/// Creates a new upkeep report.
+		/// </summary>
+		/// <param name="name">The name of the report.</param>
+		/// <param name="created">The date and time the report was created.</param>
+		/// <param name="createdBy">The Id of the user who created the report.</param>
+		/// <param name="tasks">The list of tasks to set for the report.</param>
+		/// <returns>The newly created upkeep report item</returns>
+		public async Task<UpkeepReport> CreateNewReport(string name, DateTime created, Guid createdBy, IList<UpkeepTask> tasks, Guid unitId)
+		{
+			// Create the object
+			UpkeepReport report = new UpkeepReport
+			{
+				Created = created,
+				CreatedBy = createdBy,
+				Name = name,
+				UnitId = unitId
+			};
+
+			// Map the tasks to the ReportTask class
+			foreach(UpkeepTask task in tasks)
+			{
+				report.Tasks.Add(await ReportTaskFromUpkeepTask(task));
+			}
+
+			// Save the report
+			await _repository.SaveReport(report);
+
+			// return the saved report
+			return report;
+
+		}
+
+		/// <summary>
+		/// Maps the UpkeepTask to the ReportClass object.
+		/// </summary>
+		/// <param name="task"></param>
+		/// <returns></returns>
+		public async Task<ReportTask> ReportTaskFromUpkeepTask(UpkeepTask task)
+		{
+
+			// If the task is null, throw exception
+			if (task == null)
+			{
+				throw new ArgumentNullException("task");
+			}
+
+			// Create the report task
+			ReportTask reportTask = new ReportTask
+			{
+				TaskId = task.Id,
+				Name = task.Name
+			};
+
+			// Set the items
+			foreach (string item in task.TaskItems)
+			{
+				reportTask.TaskItems.Add(new ReportItem() { Name = item });
+			}
+
+			// If there is an asset, then get that and convert to a report asset object
+			if (task.AssetId.HasValue && task.AssetId.Value != Guid.Empty)
+			{
+				// Get the asset
+				Asset asset = await GetAssetById(task.AssetId.Value);
+
+				// If the asset is not null, map to a ReportAsset item
+				if (asset != null)
+				{
+					reportTask.Asset = MapAssetToReportAsset(asset);
+				}
+
+			}
+
+			// return the report task
+			return reportTask;
+		}
+
+		/// <summary>
+		/// Maps the asset class to the ReportAsset class. 
+		/// </summary>
+		/// <param name="asset"></param>
+		/// <returns></returns>
+		private ReportAsset MapAssetToReportAsset(Asset asset)
+		{
+			ReportAsset reportAsset = new ReportAsset
+			{
+				AssetId = asset.Id,
+				Name = asset.Name,
+				Description = asset.Description
+			};
+
+			// Map the inventory
+			reportAsset.Inventory = new ReportInventory
+			{
+				Containers = MapContainersToReportContainer(asset.Inventory.Containers),
+				Items = MapItemsToReportItems(asset.Inventory.Items)
+			};
+
+			// return the report asset
+			return reportAsset;
+		}
+
+		/// <summary>
+		/// Maps the Container class to the ReportContainer class. 
+		/// </summary>
+		/// <param name="containers"></param>
+		/// <returns></returns>
+		private IList<ReportContainer> MapContainersToReportContainer(IList<Container> containers)
+		{
+
+			// create the list
+			IList<ReportContainer> reportContainers = new List<ReportContainer>();
+
+			// Loop through the containers
+			foreach (Container container in containers)
+			{
+
+				// Create the container
+				ReportContainer reportContainer = new ReportContainer
+				{
+					Name = container.Name
+				};
+
+				// Set the child containers
+				reportContainer.Containers = MapContainersToReportContainer(container.Containers);
+
+				// set the items
+				reportContainer.Items = MapItemsToReportItems(container.Items);
+
+				// add the report container to the list
+				reportContainers.Add(reportContainer);
+
+			}
+
+			// return the list
+			return reportContainers;
+		}
+
+		/// <summary>
+		/// Maps the CatalogItem class to the ReportItem class.
+		/// </summary>
+		/// <param name="items"></param>
+		/// <returns></returns>
+		private IList<ReportItem> MapItemsToReportItems(IList<CatalogItem> items)
+		{
+			// create the list
+			IList<ReportItem> reportItems = new List<ReportItem>();
+
+			// Loop through the containers
+			foreach (CatalogItem item in items)
+			{
+				reportItems.Add(new ReportItem
+				{
+					Name = item.Name,
+					Quantity = item.Quantity
+				});
+			}
+
+			return reportItems;
+
+		}
 	}
+
 }

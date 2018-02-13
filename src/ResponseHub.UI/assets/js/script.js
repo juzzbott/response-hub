@@ -4102,6 +4102,16 @@ responseHub.upkeep = (function () {
 		{
 			return;
 		}
+
+		// Parse the JSON task items
+		var taskItems = JSON.parse($('#TaskItemsJson').val());
+
+		// If it's not null and there is at least one element, then populate the task items
+		if (taskItems != null && taskItems.length > 0) {
+			for (var i = 0; i < taskItems.length; i++) {
+				addTaskItem(taskItems[i]);
+			}
+		}
 		
 		// Hide the loading animation.
 		$('#task-items .content-loading').remove();
@@ -4118,6 +4128,17 @@ responseHub.upkeep = (function () {
 	{
 
 		bindAssetInventoryUI();
+
+		$('#confirm-delete.delete-task').on('show.bs.modal', function (e) {
+
+			// Generate the confirm message
+			$(this).find('.modal-body p span').text($(e.relatedTarget).data('task-name'));
+
+		});
+
+		if ($('#tasks-table').length > 0) {
+			bindUpkeepTasks();
+		}
 
 	}
 
@@ -4635,13 +4656,105 @@ responseHub.upkeep = (function () {
 
 	}
 
+	/**
+	 * REPORTS
+	 */
+	function removeTaskItemFromReport(elem) {
+		// Get the element to remove
+		var link = $(elem);
+
+		// get the hidden id
+		var hiddenId = link.closest('table').data('selected-list');
+		var tableId = link.closest('table').attr('id');
+
+		// Find the task id
+		var taskId = link.closest("tr").data('task-id');
+
+		// Remove the task id from the hidden
+		$('#' + hiddenId).val($('#' + hiddenId).val().replace(taskId, ""));
+
+		// If there is only | characters, set to empty to re-trip validation
+		if ($('#' + hiddenId).val().match(/^\|*$/)) {
+			$('#' + hiddenId).val('');
+		}
+
+		// Remove the row with the user details
+		link.closest("tr").remove();
+
+		// If there are no rows left, add the default message
+		if ($('#' + tableId + ' tbody tr').length == 0) {
+			$('#' + tableId + ' tbody ').append('<tr><td colspan="3" class="none-selected">No tasks have been added to the this report yet.</td></tr>');
+		}
+
+	}
+
+	function bindUpkeepTasks() {
+
+		$('#AvailableTasks').on('change', function () {
+
+			var listId = 'AvailableTasks'
+			var selectedId = 'SelectedTasks'
+			var tableId = 'tasks-table';
+
+			// Find the taskId
+			var taskId = $(this).val();
+
+			// Get the task
+			var task = findTask(taskId);
+
+			// If the task id already exists in the selected tasks element, just return
+			if ($('#' + selectedId).val().indexOf(taskId) != -1) {
+				$('#' + listId).selectpicker('val', '');
+				return;
+			}
+
+			// If the first table row in the body is nothing selecting, then remove it
+			if ($('#' + tableId + ' td.none-selected').length > 0) {
+				$('#' + tableId + ' tbody tr').remove();
+			}
+
+			// Build the markup 
+			var row = $('<tr data-task-id="' + task.id + '"></tr>');
+			row.append('<td>' + task.name + '</td>');
+			row.append('<td>&nbsp;</td>');
+			row.append('<td><a href="#" onclick="responseHub.upkeep.removeTaskItemFromReport(this); return false;" title="Remove task" class="text-danger"><i class="fa fa-fw fa-times"></i></a></td>');
+			$('#' + tableId + ' tbody').append(row);
+
+			// Add the task id to the selected tasks
+			$('#' + selectedId).val($('#' + selectedId).val() + task.id + '|');
+
+			// Deselect the previous option
+			$('#' + listId).selectpicker('val', '');
+		});
+
+	}
+
+	// Find the task object in the list of users.
+	function findTask(taskId) {
+
+		// Create the task object
+		var task = null;
+
+		// Loop through the tasks to find the selected one.
+		for (var i = 0; i < tasks.length; i++) {
+			if (tasks[i].id == taskId) {
+				task = tasks[i];
+				break;
+			}
+		}
+
+		// return the task object
+		return task;
+	}
+
 	// Init the upkeep controls.
 	init();
 	bindUI();
 
 	return {
 		buildInventory: buildInventory,
-		buildTaskItems: buildTaskItems
+		buildTaskItems: buildTaskItems,
+		removeTaskItemFromReport: removeTaskItemFromReport
 	}
 
 })();

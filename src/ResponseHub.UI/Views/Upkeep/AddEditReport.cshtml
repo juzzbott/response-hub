@@ -1,0 +1,92 @@
+﻿@model Enivate.ResponseHub.UI.Models.Upkeep.UpkeepReportViewModel
+
+<h1>@ViewBag.Title</h1>
+
+<form action="@Request.Url.LocalPath" method="post">
+
+	@Html.AntiForgeryToken()
+
+	@Html.ValidationSummary()
+
+	<div class="form-group">
+		<label for="Service">Name *</label>
+		<div class="row">
+			<div class="col-sm-8 col-md-6 col-lg-4">
+				@Html.TextBoxFor(model => model.Name, new { @class = "form-control", placeholder = "e.g. Sunday 1 Jan, 2017" })
+			</div>
+		</div>
+		@Html.ValidationMessageFor(model => model.Name)
+	</div>
+
+	<script language="javascript">
+	var tasks = [
+		@for (int i = 0; i < Model.AvailableTasks.Count; i++)
+		{
+			@Html.Raw(String.Format("{0}{{id: \"{1}\", name: \"{2}\"}}", (i > 0 ? "," : ""), Model.AvailableTasks[i].Value, Model.AvailableTasks[i].Text));
+			@Html.Raw("\r\n");
+		}
+	];
+	</script>
+
+	<h3>Tasks</h3>
+	<div class="form-group">
+		<label for="AvailableMembers">Find tasks *</label>
+		<div class="row">
+			<div class="col-sm-8 col-md-6 col-lg-4">
+				<select class="form-control selectpicker" data-live-search="true" id="AvailableTasks" title="Select task...">
+					@foreach (var user in Model.AvailableTasks)
+					{
+						<option data-tokens="@user.Text" value="@user.Value">@user.Text</option>
+					}
+				</select>
+			</div>
+		</div>
+		@Html.ValidationMessageFor(model => model.SelectedTasks)
+	</div>
+	@Html.HiddenFor(model => model.SelectedTasks)
+
+	<table class="table table-responsive table-striped table-hover" id="tasks-table" data-selected-list="SelectedTasks" data-select-box="AvailableTasks">
+		<thead>
+			<tr>
+				<th>Task</th>
+				<th>Asset</th>
+				<th width="50">&nbsp;</th>
+			</tr>
+		</thead>
+		<tbody>
+			@if (String.IsNullOrEmpty(Model.SelectedTasks))
+			{
+				<tr>
+					<td colspan="3" class="none-selected">No tasks have been added to the this report yet.</td>
+				</tr>
+			}
+			else
+			{
+				foreach (var strTaskId in Model.SelectedTasks.Split(new char[] { '|' }, StringSplitOptions.RemoveEmptyEntries))
+				{
+					SelectListItem task = Model.AvailableTasks.FirstOrDefault(i => i.Value == strTaskId);
+					if (task != null)
+					{
+						<tr data-task-id="@task.Value">
+							<td>@task.Text</td>
+							<td>&nbsp;</td>
+							<td><a href="#" onclick="responseHub.upkeep.removeTaskItemFromReport(this); return false;" title="Remove task" class="text-danger"><i class="fa fa-fw fa-times"></i></a></td>
+						</tr>
+					}
+				}
+			}
+		</tbody>
+	</table>
+
+
+	@if (ViewContext.RouteData.Values["action"].ToString().ToLower() == "edit")
+	{
+		<button type="submit" class="btn btn-primary btn-icon"><i class="fa fa-save"></i>Save report</button>
+	}
+	else
+	{
+		<button type="submit" class="btn btn-primary btn-icon"><i class="fa fa-plus"></i>Create report</button>
+	}
+	<a href="/upkeep" class="btn btn-link">Cancel</a>
+
+</form>

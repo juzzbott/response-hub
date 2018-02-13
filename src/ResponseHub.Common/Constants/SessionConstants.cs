@@ -9,6 +9,8 @@ namespace Enivate.ResponseHub.Common.Constants
 	public class SessionConstants
 	{
 
+		public const string ContextUnitId = "ContextUnitId";
+
 		public const string ControlPanelContextUnitId = "ControlPanelContextUnitId";
 
 	}

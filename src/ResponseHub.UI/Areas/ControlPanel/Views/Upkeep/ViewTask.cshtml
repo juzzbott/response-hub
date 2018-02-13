@@ -1,0 +1,48 @@
+﻿@model Enivate.ResponseHub.UI.Areas.ControlPanel.Models.Upkeep.ViewTaskViewModel
+
+@{
+    Layout = "~/Areas/ControlPanel/Views/Shared/_Layout.cshtml";
+}
+
+<h1>@ViewBag.Title</h1>
+
+<form action="@Request.Url.LocalPath" method="post">
+
+	@Html.AntiForgeryToken()
+
+	@Html.ValidationSummary()
+
+	<div class="form-group">
+		<label for="Name">Name *</label>
+		<div class="row">
+			<div class="col-sm-8 col-md-6 col-lg-4">
+				@Html.TextBoxFor(model => model.Name, new { @class = "form-control", placeholder = "Task name" })
+			</div>
+		</div>
+		@Html.ValidationMessageFor(model => model.Name)
+	</div>
+
+	<div class="form-group">
+		<label for="AssetId">Asset *</label>
+		<div class="row">
+			<div class="col-sm-8 col-md-6 col-lg-4">
+				@Html.DropDownListFor(model => model.AssetId, Model.AvailableAssets, new { @class = "form-control" })
+			</div>
+		</div>
+	</div>
+
+	<h3>Items</h3>
+
+	<div id="task-items">
+		<p class="content-loading btn-icon"><i class="fa fa-refresh fa-spin text-primary"></i> <strong>Loading task items...</strong></p>
+	</div>
+
+	@Html.HiddenFor(i => i.TaskItemsJson)
+
+	<div class="top-20">
+		<button type="submit" class="btn btn-primary" onclick="responseHub.upkeep.buildTaskItems();">Create task</button>
+		<a href="/control-panel/upkeep/tasks" class="btn btn-link">Cancel</a>
+	</div>
+
+</form>
+

@@ -26,9 +26,7 @@ namespace Enivate.ResponseHub.UI.Controllers
 	public abstract class BaseJobsMessagesController : BaseController
 	{
 
-		protected readonly ICapcodeService CapcodeService = ServiceLocator.Get<ICapcodeService>();
 		protected readonly IJobMessageService JobMessageService = ServiceLocator.Get<IJobMessageService>();
-		protected readonly IUnitService UnitService = ServiceLocator.Get<IUnitService>();
 		protected readonly ISignInEntryService SignInEntryService = ServiceLocator.Get<ISignInEntryService>();
 		protected readonly IAttachmentService AttachmentService = ServiceLocator.Get<IAttachmentService>();
 

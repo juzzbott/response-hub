@@ -26,9 +26,7 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
     {
 		
 		protected const string AddMemberViewModelSessionKey = "NewUserViewModel";
-
-		protected IUnitService UnitService = ServiceLocator.Get<IUnitService>();
-		protected ICapcodeService CapcodeService = ServiceLocator.Get<ICapcodeService>();		
+		
 		protected IMailService MailService = ServiceLocator.Get<IMailService>();
 
 		protected string AreaPrefix

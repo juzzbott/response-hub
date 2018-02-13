@@ -21,16 +21,16 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 	[RoutePrefix("upkeep")]
 	[ClaimsAuthorize(Roles = RoleTypes.UnitAdministrator)]
 	public class UpkeepController : BaseControlPanelController
-    {
+	{
 
 		protected IUpkeepService UpkeepService = ServiceLocator.Get<IUpkeepService>();
 
 		// GET: ControlPanel/Upkeep
 		[Route]
 		public ActionResult Index()
-        {
-            return View();
-        }
+		{
+			return View();
+		}
 
 		#region Assets
 
@@ -45,7 +45,7 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 			IList<Asset> unitAssets = await UpkeepService.GetAssetsByUnitId(GetControlPanelUnitId());
 
 			// Loop through the assets and create the models
-			foreach(Asset unitAsset in unitAssets)
+			foreach (Asset unitAsset in unitAssets)
 			{
 				model.Add(new ViewAssetModel
 				{
@@ -99,7 +99,7 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 
 			// If there is an inventory, then deserialise it
 			string inventoryJson = asset.Inventory != null ? JsonConvert.SerializeObject(asset.Inventory) : "";
-			
+
 			// Create the model from the asset
 			ViewAssetModel model = new ViewAssetModel
 			{
@@ -176,7 +176,7 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 
 			// Get the assets based on the unit
 			IList<Asset> unitAssets = await UpkeepService.GetAssetsByUnitId(GetControlPanelUnitId());
-			
+
 			// Get the tasks based on the unit
 			IList<UpkeepTask> unitTasks = await UpkeepService.GetTasksByUnitId(GetControlPanelUnitId());
 
@@ -244,7 +244,7 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 			};
 
 			// Iterate through the assets and convert to a select list item
-			foreach(Asset asset in unitAssets)
+			foreach (Asset asset in unitAssets)
 			{
 				availableAssets.Add(new SelectListItem
 				{
@@ -255,6 +255,54 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 
 			// return the list of available assets
 			return availableAssets;
+
+		}
+
+
+		[Route("tasks/{id:guid}")]
+		public async Task<ActionResult> ViewTask(Guid id)
+		{
+
+			// Get the task based on the id
+			UpkeepTask task = await UpkeepService.GetTaskById(id);
+
+			// If the tsk is null, throw 404
+			if (task == null)
+			{
+				throw new HttpException((int)HttpStatusCode.NotFound, "The requested page cannot be found.");
+			}
+
+			// If there is a collection of task items, then deserialise it
+			string taskItemJson = task.TaskItems != null ? JsonConvert.SerializeObject(task.TaskItems) : "";
+
+			// Create the model from the task
+			ViewTaskViewModel model = new ViewTaskViewModel
+			{
+				Id = task.Id,
+				Name = task.Name,
+				TaskItemsJson = taskItemJson,
+				AssetId = task.AssetId
+			};
+
+			// Set the available assets
+			model.AvailableAssets = await GetAvailableAssets();
+
+			// Set the title
+			ViewBag.Title = model.Name;
+
+			// Return the view
+			return View("ViewTask", model);
+		}
+
+		[Route("tasks/{id:guid}/delete")]
+		public async Task<ActionResult> DeleteTask(Guid id)
+		{
+
+			// Delete the task
+			await UpkeepService.DeleteTask(id);
+
+			// redirect to the tasks page
+			return new RedirectResult(String.Format("/control-panel/upkeep/tasks"));
 
 		}
 
@@ -277,7 +325,7 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 				TaskItems = task.TaskItems,
 				Name = task.Name,
 				Asset = unitAssets.FirstOrDefault(i => i.Id == task.AssetId),
-				TaskItemJson = JsonConvert.SerializeObject(task.TaskItems)
+				TaskItemsJson = JsonConvert.SerializeObject(task.TaskItems)
 			};
 		}
 

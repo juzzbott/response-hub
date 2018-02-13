@@ -1,7 +1,7 @@
 ﻿@model IList<Enivate.ResponseHub.UI.Areas.ControlPanel.Models.Upkeep.ViewTaskViewModel>
 @{
-    ViewBag.Title = "Tasks";
-    Layout = "~/Areas/ControlPanel/Views/Shared/_Layout.cshtml";
+	ViewBag.Title = "Tasks";
+	Layout = "~/Areas/ControlPanel/Views/Shared/_Layout.cshtml";
 }
 
 <h1>@ViewBag.Title</h1>
@@ -23,20 +23,37 @@ else
 				<th>Name</th>
 				<th>Asset</th>
 				<th>Tasks</th>
+				<th>&nbsp;</th>
 			</tr>
 		</thead>
 		<tbody>
 			@foreach (var unitTask in Model)
 			{
 				<tr>
-					<td><a href="/control-panel/upkeep/assets/@unitTask.Id">@unitTask.Name</a></td>
+					<td><a href="/control-panel/upkeep/tasks/@unitTask.Id">@unitTask.Name</a></td>
 					<td>@(unitTask.Asset != null ? unitTask.Asset.Name : "")</td>
 					<td>@unitTask.TaskItems.Count</td>
+					<td><a data-href="/control-panel/upkeep/tasks/@unitTask.Id/delete" data-toggle="modal" data-target="#confirm-delete" class="cursor-pointer btn-icon btn-action-icon" title="Delete tasks" data-task-name="@unitTask.Name"><i class="fa fa-times"></i></a></td>
 				</tr>
 			}
 		</tbody>
 	</table>
 }
 
-
-
+<div class="modal fade delete-container delete-task" tabindex="-1" role="dialog" id="confirm-delete">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h4 class="modal-title">Confirm delete task</h4>
+			</div>
+			<div class="modal-body">
+				<p>Are you sure you want to remove the task '<span></span>'?</p>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-link" data-dismiss="modal">Cancel</button>
+				<a class="btn btn-primary btn-ok">Delete task</a>
+			</div>
+		</div><!-- /.modal-content -->
+	</div><!-- /.modal-dialog -->
+</div><!-- /.modal -->

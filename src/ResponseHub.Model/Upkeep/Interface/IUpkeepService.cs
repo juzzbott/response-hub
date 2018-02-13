@@ -17,6 +17,8 @@ namespace Enivate.ResponseHub.Model.Upkeep.Interface
 
 		Task<IList<Asset>> GetAssetsByUnitId(Guid unitId);
 
+		Task DeleteAsset(Guid assetId);
+
 		Task<UpkeepTask> CreateTask(string name, Guid unitId, Guid? assetId, IList<string> taskItems);
 
 		Task<UpkeepTask> SaveTask(UpkeepTask task);
@@ -24,6 +26,12 @@ namespace Enivate.ResponseHub.Model.Upkeep.Interface
 		Task<UpkeepTask> GetTaskById(Guid id);
 
 		Task<IList<UpkeepTask>> GetTasksByUnitId(Guid unitId);
+
+		Task DeleteTask(Guid assetId);
+
+		Task<UpkeepReport> CreateNewReport(string name, DateTime created, Guid createdBy, IList<UpkeepTask> tasks, Guid unitId);
+
+		Task<ReportTask> ReportTaskFromUpkeepTask(UpkeepTask task);
 
 	}
 }

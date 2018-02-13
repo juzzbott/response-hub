@@ -262,8 +262,10 @@
     <Compile Include="Controllers\ProfileController.cs" />
     <Compile Include="Controllers\SearchController.cs" />
     <Compile Include="Controllers\SignInController.cs" />
+    <Compile Include="Controllers\UpkeepController.cs" />
     <Compile Include="Controllers\WeatherCentreController.cs" />
     <Compile Include="Filters\EnforceControlPanelUnitSelectionAttribute.cs" />
+    <Compile Include="Filters\EnsureContextUnitAttribute.cs" />
     <Compile Include="Filters\ExceptionLogFilter.cs" />
     <Compile Include="Filters\SystemAdminUserRedirectAttribute.cs" />
     <Compile Include="Helpers\JobMessageModelHelper.cs" />
@@ -333,6 +335,8 @@
     <Compile Include="Models\SignIn\SignInOperationItem.cs" />
     <Compile Include="Models\SignIn\SignInViewModel.cs" />
     <Compile Include="Models\SignIn\SignOutViewModel.cs" />
+    <Compile Include="Models\Upkeep\UpkeepReportViewModel.cs" />
+    <Compile Include="Models\Upkeep\UpkeepViewModel.cs" />
     <Compile Include="Models\Users\UnitMemberViewModel.cs" />
     <Compile Include="Models\Wallboard\WallboardViewModel.cs" />
     <Compile Include="Models\WeatherCentre\RadarLoopViewModel.cs" />
@@ -759,6 +763,15 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Areas\ControlPanel\Views\Upkeep\TasksIndex.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Areas\ControlPanel\Views\Upkeep\ViewTask.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Upkeep\Index.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Upkeep\AddEditReport.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

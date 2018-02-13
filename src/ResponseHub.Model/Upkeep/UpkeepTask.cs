@@ -19,6 +19,8 @@ namespace Enivate.ResponseHub.Model.Upkeep
 
 		public IList<string> TaskItems { get; set; }
 
+		public bool Deleted { get; set; }
+
 		public UpkeepTask()
 		{
 			Id = Guid.NewGuid();

@@ -126,6 +126,12 @@
     <Compile Include="Upkeep\Container.cs" />
     <Compile Include="Upkeep\Interface\IUpkeepService.cs" />
     <Compile Include="Upkeep\Inventory.cs" />
+    <Compile Include="Upkeep\ReportAsset.cs" />
+    <Compile Include="Upkeep\ReportContainer.cs" />
+    <Compile Include="Upkeep\ReportInventory.cs" />
+    <Compile Include="Upkeep\ReportItem.cs" />
+    <Compile Include="Upkeep\ReportTask.cs" />
+    <Compile Include="Upkeep\UpkeepReport.cs" />
     <Compile Include="Upkeep\UpkeepTask.cs" />
     <Compile Include="WeatherData\Interface\IWeatherDataService.cs" />
     <Compile Include="ServiceType.cs" />
