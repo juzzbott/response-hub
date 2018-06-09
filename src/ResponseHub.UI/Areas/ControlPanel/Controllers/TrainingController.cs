@@ -14,7 +14,7 @@ using Enivate.ResponseHub.UI.Areas.ControlPanel.Models.Training;
 using Enivate.ResponseHub.Model.Training;
 using Enivate.ResponseHub.Model.Training.Interface;
 using Enivate.ResponseHub.Common;
-using Enivate.ResponseHub.Common.Extensions;
+using Enivate.ResponseHub.Common.Constants;
 using Enivate.ResponseHub.Model.Units;
 
 namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
@@ -56,13 +56,15 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 				KeyValuePair<string, int> item = aggregate.ElementAt(i);
 				sbChartData.AppendFormat("{0}\"{1}\"", (i == 0 ? "" : ","), item.Key);
 			}
-			sbChartData.Append("],\"series\": [");
+			sbChartData.Append("],\"datasets\": [{\"data\":[");
 			for (int i = 0; i < aggregate.Count; i++)
 			{
 				KeyValuePair<string, int> item = aggregate.ElementAt(i);
 				sbChartData.AppendFormat("{0}{1}", (i == 0 ? "" : ","), item.Value);
 			}
-			sbChartData.Append("]}");
+			sbChartData.Append("],");
+			sbChartData.AppendFormat("\"backgroundColor\":[{0}],\"borderColor\":[{1}],\"borderWidth\":1", ChartConstants.ChartFillColourSet, ChartConstants.ChartBorderColourSet);
+			sbChartData.Append("}]}");
 
 			// Set the json data
 			model.TrainingOverviewChartData = sbChartData.ToString();

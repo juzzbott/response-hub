@@ -24,6 +24,7 @@ using Enivate.ResponseHub.Model.Messages.Interface;
 using Enivate.ResponseHub.UI.Areas.ControlPanel.Models.Reports.Operations;
 using Enivate.ResponseHub.Model.Units;
 using Enivate.ResponseHub.UI.Areas.ControlPanel.Models.Reports.Attendance;
+using Enivate.ResponseHub.Common.Constants;
 
 namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 {
@@ -444,13 +445,15 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 				KeyValuePair<string, int> item = aggregate.ElementAt(i);
 				sbChartData.AppendFormat("{0}\"{1}\"", (i == 0 ? "" : ","), item.Key);
 			}
-			sbChartData.Append("],\"series\": [");
+			sbChartData.Append("],\"datasets\": [{\"data\":[");
 			for (int i = 0; i < aggregate.Count; i++)
 			{
 				KeyValuePair<string, int> item = aggregate.ElementAt(i);
 				sbChartData.AppendFormat("{0}{1}", (i == 0 ? "" : ","), item.Value);
 			}
-			sbChartData.Append("]}");
+			sbChartData.Append("],");
+			sbChartData.AppendFormat("\"backgroundColor\":[{0}],\"borderColor\":[{1}],\"borderWidth\":1", ChartConstants.ChartFillColourSet, ChartConstants.ChartBorderColourSet);
+			sbChartData.Append("}]}");
 
 			StringBuilder sbChartOptionsJs = new StringBuilder();
 
