@@ -75,6 +75,7 @@
     <Compile Include="Configuration\WeatherDataConfigurationSection.cs" />
     <Compile Include="Configuration\WeatherLocationElement.cs" />
     <Compile Include="Configuration\WeatherLocationElementCollection.cs" />
+    <Compile Include="Constants\ChartConstants.cs" />
     <Compile Include="Constants\ConfigurationKeys.cs" />
     <Compile Include="Constants\CustomClaimTypes.cs" />
     <Compile Include="Constants\GeneralConstants.cs" />
