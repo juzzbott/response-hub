@@ -513,7 +513,7 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 			// If the progress already exists, then update the timestamp of the existing progress update.
 			FilterDefinition<JobMessageDto> countFilter = Builders<JobMessageDto>.Filter.Eq(i => i.Id, jobMessageId) &
 														  Builders<JobMessageDto>.Filter.ElemMatch(i => i.ProgressUpdates, p => p.ProgressType == progress.ProgressType);
-			long count = await Collection.CountAsync(countFilter);
+			long count = await Collection.CountDocumentsAsync(countFilter);
 
 			// Create the filter and update
 			FilterDefinition<JobMessageDto> filter;

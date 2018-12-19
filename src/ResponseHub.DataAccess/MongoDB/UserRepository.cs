@@ -442,7 +442,7 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 		public async Task<bool> EmailAddressExists(string emailAddress)
 		{
 			// Get the number of users with the email address
-			long results = await Collection.CountAsync(i => i.EmailAddress.ToLower() == emailAddress.ToLower());
+			long results = await Collection.CountDocumentsAsync(i => i.EmailAddress.ToLower() == emailAddress.ToLower());
 
 			// If no results, then no users.
 			return (results > 0);

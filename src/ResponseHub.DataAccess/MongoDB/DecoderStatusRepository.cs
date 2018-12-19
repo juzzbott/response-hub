@@ -121,7 +121,7 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 			FilterDefinition<DecoderStatus> filter = Builders<DecoderStatus>.Filter.ElemMatch(i => i.InvalidMessages, p => p.Value.ToUpper() == invalidMessage.ToUpper());
 
 			// Count the results
-			long count = await _collection.CountAsync(filter);
+			long count = await _collection.CountDocumentsAsync(filter);
 
 			// return true if there is a result.
 			return count > 0;

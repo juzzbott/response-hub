@@ -130,7 +130,7 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 			FilterDefinition<SignInEntry> filter = Builders<SignInEntry>.Filter.Eq(i => i.UserId, userId) & Builders<SignInEntry>.Filter.Eq(i => i.SignOutTime, null);
 
 			// return the count of matched documents
-			long results = await Collection.CountAsync(filter);
+			long results = await Collection.CountDocumentsAsync(filter);
 			return (int)results;
 		}
 

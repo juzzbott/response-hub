@@ -39,7 +39,7 @@ namespace Enivate.ResponseHub.Tests.Integration
 
 				// Ensure the results are not null, and there is 5 of them...
 				Assert.NotNull(results);
-				Assert.Equal(results.Count, 5);
+				Assert.Equal(5, results.Count);
 
 			});
 			t.Wait();
@@ -71,7 +71,7 @@ namespace Enivate.ResponseHub.Tests.Integration
 
 				// Ensure the results are not null, and there is 5 of them...
 				Assert.NotNull(results);
-				Assert.Equal(results.Count, 1);
+				Assert.Equal(1, results.Count);
 
 			});
 			t.Wait();

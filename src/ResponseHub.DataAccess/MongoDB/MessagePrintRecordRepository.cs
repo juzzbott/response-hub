@@ -19,7 +19,7 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 
             FilterDefinition<MessagePrintRecord> filter = Builders<MessagePrintRecord>.Filter.Eq(i => i.JobMessageId, jobId);
 
-            long count = await Collection.CountAsync(filter);
+            long count = await Collection.CountDocumentsAsync(filter);
 
             return count > 0;
         }
