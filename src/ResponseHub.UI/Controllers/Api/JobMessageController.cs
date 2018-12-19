@@ -80,7 +80,7 @@ namespace Enivate.ResponseHub.UI.Controllers.Api
 			if (qs.Any(i => i.Key.ToLower() == "date_from") && qs.Any(i => i.Key.ToLower() == "date_to"))
 			{
 				// Get the job messages
-				jobMessages = await JobMessageService.GetMostRecent(capcodes, messageType, count, skip);
+				jobMessages = await JobMessageService.GetMostRecent(capcodes.Select(i => i.CapcodeAddress), messageType, count, skip);
 			}
 			else
 			{
@@ -101,7 +101,7 @@ namespace Enivate.ResponseHub.UI.Controllers.Api
 				}
 
 				// Load the job messages between dates
-				jobMessages = await JobMessageService.GetMessagesBetweenDates(capcodes, messageType, count, skip, dateFrom, dateTo);
+				jobMessages = await JobMessageService.GetMessagesBetweenDates(capcodes.Select(i => i.CapcodeAddress), messageType, count, skip, dateFrom, dateTo);
 
 			}
 

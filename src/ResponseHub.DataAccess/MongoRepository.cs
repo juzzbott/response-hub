@@ -166,7 +166,7 @@ namespace Enivate.ResponseHub.DataAccess
 			long totalCount = 0;
 			if (countTotal)
 			{
-				totalCount = await Collection.Find<T>(filter).CountAsync();
+                totalCount = await Collection.Find<T>(filter).CountDocumentsAsync();
 			}
 
 			// Return the find results.

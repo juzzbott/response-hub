@@ -62,15 +62,37 @@ namespace Enivate.ResponseHub.ApplicationServices
 		public async Task<IList<JobMessage>> GetMostRecent(int count, int skip)
 		{
 			return await _repository.GetMostRecent(count, skip);
-		}
+        }
 
-		/// <summary>
-		/// Gets the most recent job messages, up to the last message id.
-		/// </summary>
-		/// <param name="count"></param>
-		/// <param name="skip"></param>
-		/// <returns></returns>
-		public async Task<IList<JobMessage>> GetMostRecent(Guid lastId)
+        /// <summary>
+        /// Gets the most recent count capcodes. 
+        /// </summary>
+        /// <param name="capcodes"></param>
+        /// <param name="count"></param>
+        /// <returns></returns>
+        public async Task<IList<JobMessage>> GetMostRecent(IEnumerable<string> capcodes, int count, int skip)
+        {
+            return await _repository.GetMostRecent(capcodes, count, skip);
+        }
+
+        /// <summary>
+        /// Gets the most recent count capcodes. 
+        /// </summary>
+        /// <param name="capcodes"></param>
+        /// <param name="count"></param>
+        /// <returns></returns>
+        public async Task<IList<JobMessage>> GetMostRecent(IEnumerable<string> capcodes, MessageType messageTypes, int count, int skip)
+        {
+            return await _repository.GetMostRecent(capcodes, messageTypes, count, skip);
+        }
+
+        /// <summary>
+        /// Gets the most recent job messages, up to the last message id.
+        /// </summary>
+        /// <param name="count"></param>
+        /// <param name="skip"></param>
+        /// <returns></returns>
+        public async Task<IList<JobMessage>> GetMostRecent(Guid lastId)
 		{
 			return await _repository.GetMostRecent(lastId);
 		}
@@ -85,9 +107,9 @@ namespace Enivate.ResponseHub.ApplicationServices
 		/// <param name="dateFrom"></param>
 		/// <param name="dateTo"></param>
 		/// <returns></returns>
-		public async Task<IList<JobMessage>> GetMessagesBetweenDates(IEnumerable<Capcode> capcodes, MessageType messageTypes, int count, int skip, DateTime? dateFrom, DateTime? dateTo)
+		public async Task<IList<JobMessage>> GetMessagesBetweenDates(IEnumerable<string> capcodes, MessageType messageTypes, int count, int skip, DateTime? dateFrom, DateTime? dateTo)
 		{
-			return await _repository.GetMessagesBetweenDates(capcodes.Select(i => i.CapcodeAddress), messageTypes, count, skip, dateFrom, dateTo);
+			return await _repository.GetMessagesBetweenDates(capcodes, messageTypes, count, skip, dateFrom, dateTo);
 		}
 
 		/// <summary>
@@ -98,20 +120,9 @@ namespace Enivate.ResponseHub.ApplicationServices
 		/// <param name="dateFrom"></param>
 		/// <param name="dateTo"></param>
 		/// <returns></returns>
-		public async Task<IList<Guid>> GetMessageIdsBetweenDates(IEnumerable<Capcode> capcodes, MessageType messageTypes, DateTime? dateFrom, DateTime? dateTo)
+		public async Task<IList<Guid>> GetMessageIdsBetweenDates(IEnumerable<string> capcodes, MessageType messageTypes, DateTime? dateFrom, DateTime? dateTo)
 		{
-			return await _repository.GetMessageIdsBetweenDates(capcodes.Select(i => i.CapcodeAddress), messageTypes, dateFrom, dateTo);
-		}
-
-		/// <summary>
-		/// Gets the most recent count capcodes. 
-		/// </summary>
-		/// <param name="capcodes"></param>
-		/// <param name="count"></param>
-		/// <returns></returns>
-		public async Task<IList<JobMessage>> GetMostRecent(IEnumerable<Capcode> capcodes, MessageType messageTypes, int count, int skip)
-		{
-			return await _repository.GetMostRecent(capcodes.Select(i => i.CapcodeAddress), messageTypes, count, skip);
+			return await _repository.GetMessageIdsBetweenDates(capcodes, messageTypes, dateFrom, dateTo);
 		}
 
 		/// <summary>

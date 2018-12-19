@@ -55,7 +55,7 @@ namespace Enivate.ResponseHub.UI.Controllers
 			if (String.IsNullOrEmpty(Request.QueryString["date_from"]) && String.IsNullOrEmpty(Request.QueryString["date_to"]))
 			{
 				// Get the messages for the capcodes
-				jobMessages = await JobMessageService.GetMostRecent(capcodes, messageType, count, skip);
+				jobMessages = await JobMessageService.GetMostRecent(capcodes.Select(i => i.CapcodeAddress), messageType, count, skip);
 			}
 			else
 			{
@@ -79,7 +79,7 @@ namespace Enivate.ResponseHub.UI.Controllers
 				}
 
 				// Get the messages for the capcodes
-				jobMessages = await JobMessageService.GetMessagesBetweenDates(capcodes, messageType, count, skip, dateFrom, dateTo);
+				jobMessages = await JobMessageService.GetMessagesBetweenDates(capcodes.Select(i => i.CapcodeAddress), messageType, count, skip, dateFrom, dateTo);
 			}
 
 			// Create the jobs list view model.

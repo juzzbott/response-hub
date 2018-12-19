@@ -245,7 +245,7 @@ namespace Enivate.ResponseHub.UI.Controllers
 			IList<Capcode> capcodes = await CapcodeService.GetCapcodesForUser(UserId);
 
 			// Get the messages for the capcodes
-			IList<JobMessage> jobMessages = await JobMessageService.GetMostRecent(capcodes, MessageType.Job, 3, 0);
+			IList<JobMessage> jobMessages = await JobMessageService.GetMostRecent(capcodes.Select(i => i.CapcodeAddress), MessageType.Job, 3, 0);
 
 			// Create the dictionary of jobs
 			IList<SignInOperationItem> availableOperations = new List<SignInOperationItem>();
