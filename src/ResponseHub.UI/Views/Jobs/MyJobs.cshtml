@@ -7,6 +7,19 @@
 
 <h1>@ViewBag.Title</h1>
 
+<div class="row">
+	<div class="col-sm-12 col-md-6">
+		<div class="section-help">
+			My Jobs list displays a list of all jobs that you have been associated with. This can be: 
+			<ul>
+				<li>giving progress updates;</li>
+				<li>signing into the job;</li>
+				<li>uploading attachments; or</li>
+				<li>submitting notes to jobs.</li>
+			</ul>
+		</div>
+	</div>
+</div>
 
 <div class="row">
 	<div id="@(Model.MessageType == Enivate.ResponseHub.Model.Messages.MessageType.Job ? "jobs-list-container" : "message-list-container")" class="col-sm-12">

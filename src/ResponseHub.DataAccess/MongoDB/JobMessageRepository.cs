@@ -436,7 +436,7 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
             FilterDefinitionBuilder<JobMessageDto> builder = Builders<JobMessageDto>.Filter;
 
             FilterDefinition<JobMessageDto> filter = builder.In(i => i.Id, jobIds);
-            filter |= builder.In(i => i.Id, jobIds);
+            filter |= builder.AnyIn(i => i.AttachmentIds, attachmentIds);
             filter |= builder.ElemMatch(i => i.ProgressUpdates, p => p.UserId == userId);
             filter |= builder.ElemMatch(i => i.Notes, p => p.UserId == userId);
 
