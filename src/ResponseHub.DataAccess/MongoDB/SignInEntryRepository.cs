@@ -72,15 +72,37 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 			// return the list of mapped sign ins
 			return signIns;
 
-		}
+        }
 
-		/// <summary>
-		/// Gets the sign in entries for the specific unit, based on the type of sign in types.
-		/// </summary>
-		/// <param name="unitId">The unit id to get the results for.</param>
-		/// <param name="signInTypes">The sign in flag types to return.</param>
-		/// <returns>The list of sign in types for the unit.</returns>
-		public async Task<IList<SignInEntry>> GetSignInsForUnit(Guid unitId, DateTime from, DateTime to, SignInType signInTypes)
+        /// <summary>
+        /// Gets the sign in history for the specified user.
+        /// </summary>
+        /// <param name="userId">The ID of the user to get the sign ins for.</param>
+        /// <returns>The list of sign in entries for the user.</returns>
+        public async Task<IList<SignInEntry>> GetSignInsForUser(Guid userId, SignInType signInType)
+        {
+            // Create the filter definition
+            FilterDefinition<SignInEntry> filter = Builders<SignInEntry>.Filter.Eq(i => i.UserId, userId);
+            filter &= Builders<SignInEntry>.Filter.Eq(i => i.SignInType, signInType);
+
+            // Create the sort definition
+            SortDefinition<SignInEntry> sort = Builders<SignInEntry>.Sort.Descending(i => i.SignInTime).Descending(i => i.Created);
+
+            // Get the sign ins for the user
+            IList<SignInEntry> signIns = await Collection.Find(filter).Sort(sort).ToListAsync();
+
+            // return the list of mapped sign ins
+            return signIns;
+
+        }
+
+        /// <summary>
+        /// Gets the sign in entries for the specific unit, based on the type of sign in types.
+        /// </summary>
+        /// <param name="unitId">The unit id to get the results for.</param>
+        /// <param name="signInTypes">The sign in flag types to return.</param>
+        /// <returns>The list of sign in types for the unit.</returns>
+        public async Task<IList<SignInEntry>> GetSignInsForUnit(Guid unitId, DateTime from, DateTime to, SignInType signInTypes)
 		{
 			
 			// Create the filter

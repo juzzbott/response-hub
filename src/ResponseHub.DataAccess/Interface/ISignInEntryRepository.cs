@@ -19,7 +19,9 @@ namespace Enivate.ResponseHub.DataAccess.Interface
 
 		Task<IList<SignInEntry>> GetSignInsForUser(Guid userId);
 
-		Task<IList<SignInEntry>> GetSignInsForUnit(Guid unitId, DateTime from, DateTime to, SignInType signInTypes);
+        Task<IList<SignInEntry>> GetSignInsForUser(Guid userId, SignInType signInType);
+
+        Task<IList<SignInEntry>> GetSignInsForUnit(Guid unitId, DateTime from, DateTime to, SignInType signInTypes);
 
 		Task<IList<SignInEntry>> GetSignInsForJobMessages(IEnumerable<Guid> jobMessageIds);
 

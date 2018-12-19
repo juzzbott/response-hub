@@ -72,14 +72,35 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 
 			// return the mapped results
 			return results.Select(i => MapDtoToModel(i)).ToList();
-		}
+        }
 
-		/// <summary>
-		/// Stores the attachment, including file data, into the database.
-		/// </summary>
-		/// <param name="attachment"></param>
-		/// <returns></returns>
-		public async Task StoreAttachment(Attachment attachment)
+        /// <summary>
+        /// Gets the collection of attachments as a list.
+        /// </summary>
+        /// <param name="ids"></param>
+        /// <returns></returns>
+        public async Task<IList<Attachment>> GetAttachmentsByUserId(Guid userId)
+        {
+
+            // Build the query
+            FilterDefinition<AttachmentDto> filter = Builders<AttachmentDto>.Filter.Eq(i => i.CreatedBy, userId);
+
+            // Create the sort order
+            SortDefinition<AttachmentDto> sort = Builders<AttachmentDto>.Sort.Descending(i => i.Created);
+
+            // Get the results from the database
+            IList<AttachmentDto> results = await Collection.Find(filter).Sort(sort).ToListAsync();
+
+            // return the mapped results
+            return results.Select(i => MapDtoToModel(i)).ToList();
+        }
+
+        /// <summary>
+        /// Stores the attachment, including file data, into the database.
+        /// </summary>
+        /// <param name="attachment"></param>
+        /// <returns></returns>
+        public async Task StoreAttachment(Attachment attachment)
 		{
 			// Write the binary data to the GridFS store
 			IGridFSBucket bucket = new GridFSBucket(Collection.Database, new GridFSBucketOptions { BucketName = GridFSBucketName });

@@ -611,7 +611,7 @@
     <Content Include="Views\Shared\SearchControl.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Views\Jobs\AllJobs.cshtml" />
+    <Content Include="Views\Jobs\MyJobs.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Areas\Admin\Views\Users\Index.cshtml" />
@@ -757,6 +757,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Areas\ControlPanel\Views\Reports\GenerateTrainersReportHtml.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Jobs\AllJobs.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

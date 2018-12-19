@@ -227,7 +227,9 @@ namespace Enivate.ResponseHub.MessageGenerator
 			{
 				ILogger log = new FileLogger();
 				IJobMessageRepository jobMessageRepository = new JobMessageRepository();
-				IJobMessageService jobMessageService = new JobMessageService(jobMessageRepository, log);
+                ISignInEntryRepository signInRepository = new SignInEntryRepository();
+                IAttachmentRepository attachmentRepository = new AttachmentRepository();
+                IJobMessageService jobMessageService = new JobMessageService(jobMessageRepository, signInRepository, attachmentRepository, log);
 
 				// Submit the job messages to the database
 				jobMessageService.AddMessages(jobMessages.Select(i => i.Value).ToList());

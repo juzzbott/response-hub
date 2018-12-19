@@ -61,10 +61,22 @@ namespace Enivate.ResponseHub.UI.Controllers
 			// return the view
 			return View(model);
 
-		}
+        }
 
-		// GET: Jobs
-		[Route("all-jobs")]
+        [Route("my-jobs")]
+        public async Task<ActionResult> MyJobs()
+        {
+
+            // Build the event job list
+            JobMessageListViewModel model = await GetJobsMessagesForUserViewModel(UserId, MessageType.Job);
+
+            // return the view
+            return View(model);
+
+        }
+
+        // GET: Jobs
+        [Route("all-jobs")]
         public async Task<ActionResult> AllJobs()
 		{
 

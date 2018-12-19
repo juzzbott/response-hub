@@ -283,6 +283,20 @@
 	 * Gets the next set of pager messages to display.
 	 */
 	function getNextJobMessages(messageType) {
+		loadNextJobMessages(messageType, 'job-messages');
+	}
+
+	/**
+	 * Gets the next set of pager messages to display.
+	 */
+	function getMyNextJobMessages(messageType) {
+		loadNextJobMessages(messageType, 'job-messages/my-jobs');
+	}
+
+	/**
+	 * Gets the next set of pager messages to display.
+	 */
+	function loadNextJobMessages(messageType, apiEndPoint) {
 
 		// Get the skip count
 		var skipCount = $(".job-list li").length;
@@ -303,7 +317,7 @@
 
 		// Create the ajax request
 		$.ajax({
-			url: responseHub.apiPrefix + '/job-messages/?skip=' + skipCount + '&msg_type=' + messageType + filterQuery,
+			url: responseHub.apiPrefix + '/' + apiEndPoint + '/?skip=' + skipCount + '&msg_type=' + messageType + filterQuery,
 			dataType: 'json',
 			success: function (data) {
 
@@ -731,6 +745,7 @@
 
 	return {
 		getNextJobMessages: getNextJobMessages,
+		getMyNextJobMessages: getMyNextJobMessages,
 		submitEditProgressTime: submitEditProgressTime,
 		closeEditProgressForm: closeEditProgressForm,
 		getDistanceBetweenJobs: getDistanceBetweenJobs,

@@ -9,7 +9,8 @@ using Enivate.ResponseHub.Model;
 using Enivate.ResponseHub.Model.Messages;
 using Enivate.ResponseHub.Model.Messages.Interface;
 using Enivate.ResponseHub.DataAccess.Interface;
-using Enivate.ResponseHub.Model.Units;
+using Enivate.ResponseHub.Model.SignIn;
+using Enivate.ResponseHub.Model.Attachments;
 
 namespace Enivate.ResponseHub.ApplicationServices
 {
@@ -18,15 +19,19 @@ namespace Enivate.ResponseHub.ApplicationServices
 
 		private ILogger _log;
 		private IJobMessageRepository _repository;
+        private ISignInEntryRepository _signInRepository;
+        private IAttachmentRepository _attachmentRepository;
 
-		/// <summary>
-		/// Creates a new instance of the ILogger log writer
-		/// </summary>
-		/// <param name="log"></param>
-		public JobMessageService(IJobMessageRepository repository, ILogger log)
+        /// <summary>
+        /// Creates a new instance of the ILogger log writer
+        /// </summary>
+        /// <param name="log"></param>
+        public JobMessageService(IJobMessageRepository repository, ISignInEntryRepository signInRepository, IAttachmentRepository attachmentRepository, ILogger log)
 		{
 			_log = log;
 			_repository = repository;
+            _signInRepository = signInRepository;
+            _attachmentRepository = attachmentRepository;
 		}
 
 		/// <summary>
@@ -180,12 +185,37 @@ namespace Enivate.ResponseHub.ApplicationServices
 			return messages;
 		}
 
-		/// <summary>
-		/// Gets the specific job message by the job number.
-		/// </summary>
-		/// <param name="id">The number of the job to return.</param>
-		/// <returns>The job message if found, otherwise null.</returns>
-		public async Task<JobMessage> GetByJobNumber(string jobNumber)
+
+
+        /// <summary>
+        /// Gets a list of JobMessages the user has interacted with in some way.
+        /// </summary>
+        /// <param name="userId">The id of the user to get the jobs for.</param>
+        /// <returns>The list of job messages.</returns>
+        public async Task<IList<JobMessage>> GetByUserId(Guid userId, int count, int skip)
+        {
+
+            // Get the job ids for the user signins
+            IList<SignInEntry> userSignIns = await _signInRepository.GetSignInsForUser(userId, SignInType.Operation);
+            IList<Guid> jobIds = userSignIns.Select(i => i.OperationDetails.JobId).ToList();
+
+            // Get the JobIds for the attachments
+            IList<Attachment> attachments = await _attachmentRepository.GetAttachmentsByUserId(userId);
+            IList<Guid> attachmentIds = attachments.Select(i => i.Id).ToList();
+
+            // Return the list of job messages from the database.
+            IList<JobMessage> messages = await _repository.GetByUserId(userId, jobIds, attachmentIds, count, skip);
+
+            // return the message
+            return messages;
+        }
+
+        /// <summary>
+        /// Gets the specific job message by the job number.
+        /// </summary>
+        /// <param name="id">The number of the job to return.</param>
+        /// <returns>The job message if found, otherwise null.</returns>
+        public async Task<JobMessage> GetByJobNumber(string jobNumber)
 		{
 			JobMessage message = await _repository.GetByJobNumber(jobNumber);
 

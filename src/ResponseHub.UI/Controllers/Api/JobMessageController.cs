@@ -130,7 +130,100 @@ namespace Enivate.ResponseHub.UI.Controllers.Api
 
 		}
 
-		[Route("pager-messages")]
+        [Route("my-jobs")]
+        [HttpGet]
+        public async Task<IList<JobMessageListItemViewModel>> GetMyJobs()
+        {
+
+            // Get the capcodes for the user.
+            IList<Capcode> capcodes = await CapcodeService.GetCapcodesForUser(UserId);
+
+            // Store the skip and count values
+            int count = 50;
+            Int32.TryParse(ConfigurationManager.AppSettings["JobMessages.DefaultResultLimit"], out count);
+            int skip = 0;
+            MessageType messageType = MessageType.Job;
+
+            // Create the list of job messages
+            IList<JobMessage> jobMessages;
+
+            // Get the query string
+            IEnumerable<KeyValuePair<string, string>> qs = ControllerContext.Request.GetQueryNameValuePairs();
+
+            // if there is a skip value, then get it from the query string
+            if (qs.Any(i => i.Key.ToLower() == "skip"))
+            {
+                Int32.TryParse(qs.FirstOrDefault(i => i.Key.ToLower() == "skip").Value, out skip);
+            }
+
+            // Check to see if the job type is overridden in the query string
+            if (qs.Any(i => i.Key.ToLower() == "msg_type"))
+            {
+                if (qs.FirstOrDefault(i => i.Key.ToLower() == "msg_type").Value == "job")
+                {
+                    messageType = MessageType.Job;
+                }
+                else if (qs.FirstOrDefault(i => i.Key.ToLower() == "msg_type").Value == "message")
+                {
+                    messageType = MessageType.Message;
+                }
+            }
+
+            // If there is no date values set, then just get the most recent
+            if (qs.Any(i => i.Key.ToLower() == "date_from") && qs.Any(i => i.Key.ToLower() == "date_to"))
+            {
+                // Get the job messages
+                jobMessages = await JobMessageService.GetByUserId(UserId, count, skip);
+            }
+            else
+            {
+
+                // Set the date time values
+                DateTime? dateFrom = null;
+                DateTime? dateTo = null;
+
+                // Get the query string values
+                if (qs.Count(i => i.Key.ToLower() == "date_from") > 0 && !String.IsNullOrEmpty(qs.FirstOrDefault(i => i.Key.ToLower() == "date_from").Value))
+                {
+                    dateFrom = DateTime.ParseExact(qs.FirstOrDefault(x => x.Key == "date_from").Value, "dd/MM/yyyy", CultureInfo.CurrentCulture, DateTimeStyles.AssumeLocal);
+                }
+
+                if (qs.Count(i => i.Key.ToLower() == "date_to") > 0 && !String.IsNullOrEmpty(qs.FirstOrDefault(i => i.Key.ToLower() == "date_to").Value))
+                {
+                    dateTo = DateTime.ParseExact(qs.FirstOrDefault(x => x.Key == "date_to").Value, "dd/MM/yyyy", CultureInfo.CurrentCulture, DateTimeStyles.AssumeLocal);
+                }
+
+                // Get the job messages
+                jobMessages = await JobMessageService.GetByUserId(UserId, count, skip);
+
+            }
+
+            // Get all the user ids for the progress in te jobs
+            List<Guid> allUserIds = new List<Guid>();
+            allUserIds.AddRange(jobMessages.SelectMany(i => i.ProgressUpdates.Select(j => j.UserId)).ToList());
+            allUserIds = allUserIds.Distinct().ToList();
+
+            // Get all the users that match the ids
+            IList<IdentityUser> users = await UserService.GetUsersByIds(allUserIds);
+
+            // return the mapped view models
+            IList<JobMessageListItemViewModel> models = new List<JobMessageListItemViewModel>();
+            foreach (JobMessage message in jobMessages)
+            {
+
+                // Get the capcode
+                Capcode capcode = capcodes.FirstOrDefault(i => i.CapcodeAddress == message.Capcode);
+
+                // Add the mapped job message view model
+                models.Add(JobMessageListItemViewModel.FromJobMessage(message, capcode, users));
+            }
+
+            // return the mapped models
+            return models;
+
+        }
+
+        [Route("pager-messages")]
 		[HttpGet]
 		public async Task<IList<JobMessage>> PagerMessages()
 		{

@@ -425,12 +425,37 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 			return messages.Select(i => MapDbObjectToModel(i)).ToList();
 		}
 
-		/// <summary>
-		/// Gets a JobMessage based on the job number.
-		/// </summary>
-		/// <param name="jobNumber">The number of the job message to get.</param>
-		/// <returns>The job message if found, otherwise null.</returns>
-		public async Task<JobMessage> GetByJobNumber(string jobNumber)
+        /// <summary>
+        /// Gets a list of JobMessages the user has interacted with in some way.
+        /// </summary>
+        /// <param name="userId">The id of the user to get the jobs for.</param>
+        /// <returns>The list of job messages.</returns>
+        public async Task<IList<JobMessage>> GetByUserId(Guid userId, IList<Guid> jobIds, IList<Guid> attachmentIds, int limit, int skip)
+        {
+            // Create the filter builder
+            FilterDefinitionBuilder<JobMessageDto> builder = Builders<JobMessageDto>.Filter;
+
+            FilterDefinition<JobMessageDto> filter = builder.In(i => i.Id, jobIds);
+            filter |= builder.In(i => i.Id, jobIds);
+            filter |= builder.ElemMatch(i => i.ProgressUpdates, p => p.UserId == userId);
+            filter |= builder.ElemMatch(i => i.Notes, p => p.UserId == userId);
+
+            // Create the sort definition
+            SortDefinition<JobMessageDto> sort = Builders<JobMessageDto>.Sort.Descending(i => i.Timestamp);
+
+            // Get the data object from the db
+            IList<JobMessageDto> messages = await Collection.Find(filter).Sort(sort).Skip(skip).Limit(limit).ToListAsync();
+
+            // return the mapped job message
+            return messages.Select(i => MapDbObjectToModel(i)).ToList();
+        }
+
+        /// <summary>
+        /// Gets a JobMessage based on the job number.
+        /// </summary>
+        /// <param name="jobNumber">The number of the job message to get.</param>
+        /// <returns>The job message if found, otherwise null.</returns>
+        public async Task<JobMessage> GetByJobNumber(string jobNumber)
 		{
 			// Get the data object from the db
 			JobMessageDto message = await Collection.Find(Builders<JobMessageDto>.Filter.Eq(i => i.JobNumber, jobNumber.ToUpper())).FirstOrDefaultAsync();

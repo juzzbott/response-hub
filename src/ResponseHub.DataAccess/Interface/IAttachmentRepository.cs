@@ -18,5 +18,8 @@ namespace Enivate.ResponseHub.DataAccess.Interface
 
 		Task<IList<Attachment>> GetAttachmentsById(IEnumerable<Guid> ids);
 
-	}
+        Task<IList<Attachment>> GetAttachmentsByUserId(Guid userId);
+
+
+    }
 }

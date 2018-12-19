@@ -35,7 +35,9 @@ namespace Enivate.ResponseHub.Model.Messages.Interface
 
 		Task<IList<JobMessage>> GetByIds(IEnumerable<Guid> ids);
 
-		Task<JobMessage> GetByJobNumber(string jobNumber);
+        Task<IList<JobMessage>> GetByUserId(Guid userId, int count, int skip);
+
+        Task<JobMessage> GetByJobNumber(string jobNumber);
 
 		Task<JobNote> AddNoteToJobMessage(Guid jobMessageId, string noteBody, bool isWordBack, Guid userId);
 

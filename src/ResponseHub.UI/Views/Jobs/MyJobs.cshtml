@@ -1,0 +1,40 @@
+﻿@model Enivate.ResponseHub.UI.Models.Messages.JobMessageListViewModel
+
+@{
+	ViewBag.Title = ViewContext.RouteData.Values["Controller"].ToString().ToLower() == "jobs" ? "My Jobs" : "My Messages";
+	ViewBag.JobsOrMessages = ViewContext.RouteData.Values["Controller"].ToString().ToLower() == "jobs" ? "jobs" : "messages";
+}
+
+<h1>@ViewBag.Title</h1>
+
+
+<div class="row">
+	<div id="@(Model.MessageType == Enivate.ResponseHub.Model.Messages.MessageType.Job ? "jobs-list-container" : "message-list-container")" class="col-sm-12">
+
+
+			@if (Model.JobMessages == null || Model.JobMessages.Count == 0)
+			{
+				<p class="lead">There are no @ViewBag.JobsOrMessages to display.</p>
+			}
+			else
+			{
+				
+				@Html.Partial("~/Views/Shared/JobMessageFilter.cshtml", Model.Filter);
+
+				<ul class="job-list list-unstyled">	
+					@foreach (var message in Model.JobMessages)
+					{
+						@Html.Partial("~/Views/Jobs/JobListItem.cshtml", message);
+					}
+				</ul>
+			}
+
+	</div>
+</div>
+
+<div class="row bottom-20 top-20" id="jobs-load-more">
+	<div class="col-sm-12 text-center">
+		<p class="text-primary btn-icon loading hidden lead"><i class="fa fa-spinner fa-spin"></i>Loading more @(Model.MessageType == Enivate.ResponseHub.Model.Messages.MessageType.Job ? "jobs" : "messages") ...</p>
+		<button class="btn btn-primary" onclick="responseHub.jobMessages.getMyNextJobMessages('@(Model.MessageType == Enivate.ResponseHub.Model.Messages.MessageType.Job ? "job" : "message")');">Load more</button>
+	</div>
+</div>

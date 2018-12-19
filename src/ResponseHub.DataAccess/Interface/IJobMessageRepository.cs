@@ -36,7 +36,9 @@ namespace Enivate.ResponseHub.DataAccess.Interface
 
 		Task<IList<JobMessage>> GetByIds(IEnumerable<Guid> ids);
 
-		Task<JobMessage> GetByJobNumber(string jobNumber);
+        Task<IList<JobMessage>> GetByUserId(Guid userId, IList<Guid> jobIds, IList<Guid> attachmentIds, int limit, int skip);
+
+        Task<JobMessage> GetByJobNumber(string jobNumber);
 
 		Task AddNoteToJobMessage(Guid jobMessageId, JobNote note);
 

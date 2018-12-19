@@ -90,13 +90,47 @@ namespace Enivate.ResponseHub.UI.Controllers
 			return model;
 		}
 
-		/// <summary>
-		/// Creates the JobMessageListViewModel object from the list of messages and capcodes.
-		/// </summary>
-		/// <param name="capcodes"></param>
-		/// <param name="jobMessages"></param>
-		/// <returns></returns>
-		public JobMessageListViewModel CreateJobMessageListModel(IList<Capcode> capcodes, IList<JobMessage> jobMessages)
+        /// <summary>
+        /// Gets the view model to get all the jobs a user has interacted with.
+        /// </summary>
+        /// <param name="userId">The ID of the user.</param>
+        /// <param name="messageType">The message types.</param>
+        /// <returns>The ViewModel of the jobs a user has interacted with.</returns>
+        protected async Task<JobMessageListViewModel> GetJobsMessagesForUserViewModel(Guid userId, MessageType messageType)
+        {
+
+
+            // Get the capcodes for the current user
+            IList<Capcode> capcodes = await CapcodeService.GetCapcodesForUser(userId);
+
+            // create the job messages list
+            IList<JobMessage> jobMessages;
+
+            int count = 50;
+            Int32.TryParse(ConfigurationManager.AppSettings["JobMessages.DefaultResultLimit"], out count);
+            int skip = 0;
+
+            // Determine if filter is applied
+            bool filterApplied = false;
+
+            // Get the messages for the capcodes
+            jobMessages = await JobMessageService.GetByUserId(userId, count, skip);
+            
+            // Create the jobs list view model.
+            JobMessageListViewModel model = CreateJobMessageListModel(capcodes, jobMessages);
+            model.MessageType = messageType;
+            model.Filter.FilterApplied = filterApplied;
+
+            return model;
+        }
+
+        /// <summary>
+        /// Creates the JobMessageListViewModel object from the list of messages and capcodes.
+        /// </summary>
+        /// <param name="capcodes"></param>
+        /// <param name="jobMessages"></param>
+        /// <returns></returns>
+        public JobMessageListViewModel CreateJobMessageListModel(IList<Capcode> capcodes, IList<JobMessage> jobMessages)
 		{
 			// Create the list of job message view models
 			IList<JobMessageListItemViewModel> jobMessageViewModels = new List<JobMessageListItemViewModel>();
