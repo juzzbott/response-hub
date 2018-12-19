@@ -390,7 +390,7 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 
 			// Get the list of messages for the capcode
 			IList<JobMessage> jobMessages = await JobMessageService.GetMessagesBetweenDates(
-				selectedCapcodes,
+				selectedCapcodes.Select(i => i.CapcodeAddress),
 				MessageType.Job & MessageType.Message,
 				999999, 
 				0,

@@ -13,13 +13,15 @@ namespace Enivate.ResponseHub.Model.Messages.Interface
 
 		Task AddMessages(IList<JobMessage> messages);
 
-		Task<IList<JobMessage>> GetMostRecent(IEnumerable<Capcode> capcodes, MessageType messageTypes, int count, int skip);
+		Task<IList<JobMessage>> GetMostRecent(IEnumerable<string> capcodes, MessageType messageTypes, int count, int skip);
 
-		Task<IList<JobMessage>> GetMostRecent(int count, int skip);
+        Task<IList<JobMessage>> GetMostRecent(IEnumerable<string> capcodes, int count, int skip);
 
-		Task<IList<JobMessage>> GetMessagesBetweenDates(IEnumerable<Capcode> capcodes, MessageType messageTypes, int count, int skip, DateTime? dateFrom, DateTime? dateTo);
+        Task<IList<JobMessage>> GetMostRecent(int count, int skip);
 
-		Task<IList<Guid>> GetMessageIdsBetweenDates(IEnumerable<Capcode> capcodes, MessageType messageTypes, DateTime? dateFrom, DateTime? dateTo);
+		Task<IList<JobMessage>> GetMessagesBetweenDates(IEnumerable<string> capcodes, MessageType messageTypes, int count, int skip, DateTime? dateFrom, DateTime? dateTo);
+
+		Task<IList<Guid>> GetMessageIdsBetweenDates(IEnumerable<string> capcodes, MessageType messageTypes, DateTime? dateFrom, DateTime? dateTo);
 
 		Task<IList<JobMessage>> GetMostRecent(Guid lastId);
 

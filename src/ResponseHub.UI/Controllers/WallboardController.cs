@@ -45,7 +45,7 @@ namespace Enivate.ResponseHub.UI.Controllers
 			IList<Capcode> capcodes = await CapcodeService.GetCapcodesForUser(UserId);
 
 			// Get the messages for the capcodes
-			IList<JobMessage> jobMessages = await JobMessageService.GetMostRecent(capcodes, MessageType.Job, 30, 0);
+			IList<JobMessage> jobMessages = await JobMessageService.GetMostRecent(capcodes.Select(i => i.CapcodeAddress), MessageType.Job, 30, 0);
 
 			// Create the jobs list view model.
 			JobsController jobsController = new JobsController();

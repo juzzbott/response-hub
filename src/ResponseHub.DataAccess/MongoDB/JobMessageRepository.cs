@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -34,15 +34,15 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 
 			// Write the job messages to the database.
 			await Collection.InsertManyAsync(messages.Select(i => MapModelToDbObject(i)));
-		}
+        }
 
-		/// <summary>
-		///  Gets the most recent job messages for the list of capcodes specified. Results are limited to count number of items.
-		/// </summary>
-		/// <param name="capcodes"></param>
-		/// <param name="count"></param>
-		/// <returns></returns>
-		public async Task<IList<JobMessage>> GetMostRecent(IEnumerable<string> capcodes, MessageType messageTypes, int count, int skip)
+        /// <summary>
+        ///  Gets the most recent job messages for the list of capcodes specified. Results are limited to count number of items.
+        /// </summary>
+        /// <param name="capcodes"></param>
+        /// <param name="count"></param>
+        /// <returns></returns>
+        public async Task<IList<JobMessage>> GetMostRecent(IEnumerable<string> capcodes, MessageType messageTypes, int count, int skip)
 		{
 			// return the messages without date filters
 			return await GetMessagesBetweenDates(capcodes, messageTypes, count, skip, null, null);
@@ -177,29 +177,49 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 		/// <returns></returns>
 		public async Task<IList<JobMessage>> GetMostRecent(int count, int skip)
 		{
-			// Create the sort filter
-			SortDefinition<JobMessageDto> sort = Builders<JobMessageDto>.Sort.Descending(i => i.Timestamp);
+            return await GetMostRecent(null, count, skip);
+        }
 
-			// Find the job messages by capcode
-			IList<JobMessageDto> results = await Collection.Find(new BsonDocument()).Sort(sort).Limit(count).Skip(skip).ToListAsync();
+        /// <summary>
+        ///  Gets the most recent job messages for the list of capcodes specified. Results are limited to count number of items.
+        /// </summary>
+        /// <param name="capcodes"></param>
+        /// <param name="count"></param>
+        /// <returns></returns>
+        public async Task<IList<JobMessage>> GetMostRecent(IEnumerable<string> capcodes, int count, int skip)
+        {
+            
+            // Create the filter and sort
+            FilterDefinitionBuilder<JobMessageDto> builder = Builders<JobMessageDto>.Filter;
+            FilterDefinition<JobMessageDto> filter = builder.Empty;
 
-			// Map the dto objects to model objects and return
-			List<JobMessage> messages = new List<JobMessage>();
-			messages.AddRange(results.Select(i => MapDbObjectToModel(i)));
+            if (capcodes != null && capcodes.Count() > 0)
+            {
+                filter &= builder.In(i => i.Capcode, capcodes);
+            }
 
-			// return the messages
-			return messages;
+            // Create the sort filter
+            SortDefinition<JobMessageDto> sort = Builders<JobMessageDto>.Sort.Descending(i => i.Timestamp);
 
-		}
+            // Find the job messages by capcode
+            IList<JobMessageDto> results = await Collection.Find(filter).Sort(sort).Limit(count).Skip(skip).ToListAsync();
 
-		/// <summary>
-		/// Gets the list of latest messages that are new since the last message.
-		/// </summary>
-		/// <param name="lastId"></param>
-		/// <param name="capcodes"></param>
-		/// <param name="messageTypes"></param>
-		/// <returns></returns>
-		public async Task<IList<JobMessage>> GetMostRecent(Guid lastId)
+            // Map the dto objects to model objects and return
+            List<JobMessage> messages = new List<JobMessage>();
+            messages.AddRange(results.Select(i => MapDbObjectToModel(i)));
+
+            // return the messages
+            return messages;
+        }
+
+        /// <summary>
+        /// Gets the list of latest messages that are new since the last message.
+        /// </summary>
+        /// <param name="lastId"></param>
+        /// <param name="capcodes"></param>
+        /// <param name="messageTypes"></param>
+        /// <returns></returns>
+        public async Task<IList<JobMessage>> GetMostRecent(Guid lastId)
 		{
 			// Get the 'Created' date from the last message id.
 			JobMessageDto lastMessage = await Collection.Find(i => i.Id == lastId).SingleOrDefaultAsync();
@@ -619,7 +639,7 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 			long totalCount = 0;
 			if (countTotal)
 			{
-				totalCount = await Collection.Find<JobMessageDto>(filter).CountAsync();
+				totalCount = await Collection.Find<JobMessageDto>(filter).CountDocumentsAsync();
 			}
 
 			// Create the sort definition

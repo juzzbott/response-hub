@@ -264,7 +264,7 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 			FilterDefinition<Event> filter = Builders<Event>.Filter.ElemMatch(i => i.Crews, Builders<Crew>.Filter.AnyEq(i => i.CrewMembers, userId)) & Builders<Event>.Filter.Eq(i => i.FinishedDate, null);
 
 			// return the number of events that match the filter
-			long results = await Collection.Find(filter).CountAsync();
+			long results = await Collection.Find(filter).CountDocumentsAsync();
 
 			// return the results
 			return (int)results;

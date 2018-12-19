@@ -41,7 +41,7 @@ namespace Enivate.ResponseHub.ApplicationServices
 
 			// Get the list of messages for the capcode
 			IList<JobMessage> messages = await _jobMessageService.GetMessagesBetweenDates(
-				new List<Capcode> { new Capcode() { CapcodeAddress = unit.Capcode } },
+				new List<string> { unit.Capcode },
 				MessageType.Job & MessageType.Message,
 				999999,
 				0,
