@@ -23,5 +23,9 @@
 	</metadata>
 	<files>
 		<file src="MongoDB\Scripts\VersionUpdates.js" target="Content" />
+    <file src="bin\Release\ResponseHub.DataAccess.dll" target="lib\net46" />
+    <file src="bin\Release\ResponseHub.DataAccess.pdb" target="lib\net46" />
+    <file src="bin\Release\ResponseHub.DataAccess.dll" target="lib\net472" />
+    <file src="bin\Release\ResponseHub.DataAccess.pdb" target="lib\net472" />
 	</files>
 </package>

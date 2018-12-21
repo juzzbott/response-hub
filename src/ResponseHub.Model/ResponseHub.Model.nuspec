@@ -16,4 +16,10 @@
       <dependency id="Microsoft.AspNet.Identity.Core" version="2.2.2" />
     </dependencies>
   </metadata>
+  <files>
+    <file src="bin\Release\ResponseHub.Model.dll" target="lib\net46" />
+    <file src="bin\Release\ResponseHub.Model.pdb" target="lib\net46" />
+    <file src="bin\Release\ResponseHub.Model.dll" target="lib\net472" />
+    <file src="bin\Release\ResponseHub.Model.pdb" target="lib\net472" />
+  </files>
 </package>

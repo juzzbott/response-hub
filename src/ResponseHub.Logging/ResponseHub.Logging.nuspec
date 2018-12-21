@@ -14,6 +14,10 @@
     <tags>ResponseHub</tags>
   </metadata>
   <files>
-    <file src="Nuget\app.config.transform" target="" />
+    <file src="Nuget\app.config.transform" target="Content" />
+    <file src="bin\Release\ResponseHub.Logging.dll" target="lib\net46" />
+    <file src="bin\Release\ResponseHub.Logging.pdb" target="lib\net46" />
+    <file src="bin\Release\ResponseHub.Logging.dll" target="lib\net472" />
+    <file src="bin\Release\ResponseHub.Logging.pdb" target="lib\net472" />
   </files>
 </package>

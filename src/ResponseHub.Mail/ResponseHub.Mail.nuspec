@@ -17,4 +17,10 @@
       <dependency id="ResponseHub.Logging" version="$version$" />
     </dependencies>
   </metadata>
+  <files>
+    <file src="bin\Release\ResponseHub.Mail.dll" target="lib\net46" />
+    <file src="bin\Release\ResponseHub.Mail.pdb" target="lib\net46" />
+    <file src="bin\Release\ResponseHub.Mail.dll" target="lib\net472" />
+    <file src="bin\Release\ResponseHub.Mail.pdb" target="lib\net472" />
+  </files>
 </package>

@@ -13,4 +13,10 @@
     <copyright>Copyright 2018</copyright>
     <tags>ResponseHub</tags>
   </metadata>
+  <files>
+    <file src="bin\Release\ResponseHub.Caching.dll" target="lib\net46" />
+    <file src="bin\Release\ResponseHub.Caching.pdb" target="lib\net46" />
+    <file src="bin\Release\ResponseHub.Caching.dll" target="lib\net472" />
+    <file src="bin\Release\ResponseHub.Caching.pdb" target="lib\net472" />
+  </files>
 </package>

@@ -17,4 +17,10 @@
       <dependency id="CommonServiceLocator" version="2.0.4" />
     </dependencies>
   </metadata>
+  <files>
+    <file src="bin\Release\ResponseHub.Common.dll" target="lib\net46" />
+    <file src="bin\Release\ResponseHub.Common.pdb" target="lib\net46" />
+    <file src="bin\Release\ResponseHub.Common.dll" target="lib\net472" />
+    <file src="bin\Release\ResponseHub.Common.pdb" target="lib\net472" />
+  </files>
 </package>
