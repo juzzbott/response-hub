@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>ResponseHub.Common</id>
+    <version>$version$</version>
+    <title>ResponseHub.Common</title>
+    <authors>Justin McKay</authors>
+    <owners>Justin McKay</owners>
+    <projectUrl>https://bitbucket.org/responsehub/response-hub/src/master/</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Provides a common library for the ResponseHub application.</description>
+    <releaseNotes>Provides a common library for the ResponseHub application.</releaseNotes>
+    <copyright>Copyright 2018</copyright>
+    <tags>ResponseHub Common</tags>
+  </metadata>
+</package>

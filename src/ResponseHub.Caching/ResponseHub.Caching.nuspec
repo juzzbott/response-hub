@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>ResponseHub.Caching</id>
+    <version>$version$</version>
+    <title>ResponseHub.Caching</title>
+    <authors>Justin McKay</authors>
+    <owners>Justin McKay</owners>
+    <projectUrl>https://bitbucket.org/responsehub/response-hub/src/master/</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Provides a library for caching application data.</description>
+    <releaseNotes>Provides a library for caching application data.</releaseNotes>
+    <copyright>Copyright 2018</copyright>
+    <tags>ResponseHub Caching</tags>
+  </metadata>
+</package>
