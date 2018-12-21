@@ -15,6 +15,7 @@ using Microsoft.AspNet.Identity;
 using Enivate.ResponseHub.Model.Units.Interface;
 using Enivate.ResponseHub.Common;
 using System.Threading.Tasks;
+using System.Reflection;
 
 namespace Enivate.ResponseHub.UI.Helpers
 {
@@ -317,6 +318,12 @@ namespace Enivate.ResponseHub.UI.Helpers
 				return new MvcHtmlString(String.Format("{0} mb", Math.Round(mb, 2)));
 			}
 		}
+
+        public static MvcHtmlString GetProductVersion(this HtmlHelper helper)
+        {
+            Version version = Assembly.GetExecutingAssembly().GetName().Version;
+            return new MvcHtmlString(String.Format("{0}.{1}.{2}", version.Major, version.Minor, version.Revision));
+        }
 		
 	}
 }
