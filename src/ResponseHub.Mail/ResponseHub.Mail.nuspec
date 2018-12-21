@@ -13,8 +13,8 @@
     <copyright>Copyright 2018</copyright>
     <tags></tags>
     <dependencies>
-      <dependency id="ResponseHub.Common" version="*" />
-      <dependency id="ResponseHub.Logging" version="*" />
+      <dependency id="ResponseHub.Common" version="$version$" />
+      <dependency id="ResponseHub.Logging" version="$version$" />
     </dependencies>
   </metadata>
 </package>

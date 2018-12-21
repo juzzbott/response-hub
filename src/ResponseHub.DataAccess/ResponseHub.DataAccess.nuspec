@@ -16,9 +16,9 @@
       <dependency id="Microsoft.AspNet.Identity.Core" version="2.2.2" />
       <dependency id="MongoDB.Driver" version="2.7.2" />
       <dependency id="MongoDB.Driver.GridFS" version="2.7.2" />
-      <dependency id="ResponseHub.Common" version="*" />
-      <dependency id="ResponseHub.Model" version="*" />
-      <dependency id="ResponseHub.Logging" version="*" />
+      <dependency id="ResponseHub.Common" version="$version$" />
+      <dependency id="ResponseHub.Model" version="$version$" />
+      <dependency id="ResponseHub.Logging" version="$version$" />
     </dependencies>
 	</metadata>
 	<files>

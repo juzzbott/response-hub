@@ -18,12 +18,12 @@
       <dependency id="CommonServiceLocator" version="2.0.4" />
       <dependency id="Newtonsoft.Json" version="12.0.1" />
       <dependency id="SharpZipLib" version="1.0.0" />
-      <dependency id="ResponseHub.Caching" version="*" />
-      <dependency id="ResponseHub.Common" version="*" />
-      <dependency id="ResponseHub.DataAccess" version="*" />
-      <dependency id="ResponseHub.Logging" version="*" />
-      <dependency id="ResponseHub.Mail" version="*" />
-      <dependency id="ResponseHub.Model" version="*" />
+      <dependency id="ResponseHub.Caching" version="$version$" />
+      <dependency id="ResponseHub.Common" version="$version$" />
+      <dependency id="ResponseHub.DataAccess" version="$version$" />
+      <dependency id="ResponseHub.Logging" version="$version$" />
+      <dependency id="ResponseHub.Mail" version="$version$" />
+      <dependency id="ResponseHub.Model" version="$version$" />
     </dependencies>
   </metadata>
 </package>
