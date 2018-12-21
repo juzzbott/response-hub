@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
-    <id>ResponseHub.Common</id>
+    <id>ResponseHub.Model</id>
     <version>$version$</version>
-    <title>ResponseHub.Common</title>
+    <title>ResponseHub.Model</title>
     <authors>Justin McKay</authors>
     <owners>Justin McKay</owners>
     <projectUrl>https://bitbucket.org/responsehub/response-hub/src/master/</projectUrl>
