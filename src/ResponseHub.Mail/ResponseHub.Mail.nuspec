@@ -1,16 +1,20 @@
 <?xml version="1.0"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
-    <id>ResponseHub.Caching</id>
+    <id>ResponseHub.Mail</id>
     <version>$version$</version>
-    <title>ResponseHub.Caching</title>
+    <title>ResponseHub.Mail</title>
     <authors>Justin McKay</authors>
     <owners>Justin McKay</owners>
     <projectUrl>https://bitbucket.org/responsehub/response-hub/src/master/</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>Provides a library for caching application data.</description>
-    <releaseNotes>Provides a library for caching application data.</releaseNotes>
+    <description>Contains functionality for sending application emails.</description>
+    <releaseNotes>Contains functionality for sending application emails.</releaseNotes>
     <copyright>Copyright 2018</copyright>
-    <tags>ResponseHub</tags>
+    <tags></tags>
+    <dependencies>
+      <dependency id="ResponseHub.Common" version="*" />
+      <dependency id="ResponseHub.Logging" version="*" />
+    </dependencies>
   </metadata>
 </package>

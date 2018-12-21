@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>ResponseHub.ApplicationServices</id>
+    <version>$version$</version>
+    <title>ResponseHub.ApplicationServices</title>
+    <authors>Justin McKay</authors>
+    <owners>Justin McKay</owners>
+    <projectUrl>https://bitbucket.org/responsehub/response-hub/src/master/</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Contains application services for access to functional services within the ResponseHub application.</description>
+    <releaseNotes>Contains application services for access to functional services within the ResponseHub application.</releaseNotes>
+    <copyright>Copyright 2018</copyright>
+    <tags></tags>
+    <dependencies>
+      <dependency id="Microsoft.AspNet.Identity.Core" version="2.2.2" />
+      <dependency id="Unity" version="5.8.13" />
+      <dependency id="CommonServiceLocator" version="2.0.4" />
+      <dependency id="Newtonsoft.Json" version="12.0.1" />
+      <dependency id="SharpZipLib" version="1.0.0" />
+      <dependency id="ResponseHub.Caching" version="*" />
+      <dependency id="ResponseHub.Common" version="*" />
+      <dependency id="ResponseHub.DataAccess" version="*" />
+      <dependency id="ResponseHub.Logging" version="*" />
+      <dependency id="ResponseHub.Mail" version="*" />
+      <dependency id="ResponseHub.Model" version="*" />
+    </dependencies>
+  </metadata>
+</package>

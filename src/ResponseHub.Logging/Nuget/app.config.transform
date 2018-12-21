@@ -1,0 +1,7 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<configuration>
+  <configSections>
+    <section name="logging" type="Enivate.ResponseHub.Logging.Configuration.LoggingConfigurationSection, ResponseHub.Logging" allowLocation="true" allowDefinition="Everywhere" />
+  </configSections>
+  <logging logDirectory=".\logs" logLevel="INFO" />
+</configuration>

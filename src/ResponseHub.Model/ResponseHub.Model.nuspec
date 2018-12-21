@@ -1,16 +1,19 @@
 <?xml version="1.0"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
-    <id>ResponseHub.Caching</id>
+    <id>ResponseHub.Common</id>
     <version>$version$</version>
-    <title>ResponseHub.Caching</title>
+    <title>ResponseHub.Common</title>
     <authors>Justin McKay</authors>
     <owners>Justin McKay</owners>
     <projectUrl>https://bitbucket.org/responsehub/response-hub/src/master/</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>Provides a library for caching application data.</description>
-    <releaseNotes>Provides a library for caching application data.</releaseNotes>
+    <description>Contains model objects and interfaces for the ResponseHub application.</description>
+    <releaseNotes>Contains model objects and interfaces for the ResponseHub application.</releaseNotes>
     <copyright>Copyright 2018</copyright>
-    <tags>ResponseHub</tags>
+    <tags></tags>
+    <dependencies>
+      <dependency id="Microsoft.AspNet.Identity.Core" version="2.2.2" />
+    </dependencies>
   </metadata>
 </package>

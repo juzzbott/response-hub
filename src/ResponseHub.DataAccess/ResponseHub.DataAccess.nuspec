@@ -2,15 +2,24 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
 	<metadata>
 		<id>ResponseHub.DataAccess</id>
-		<title>ResponseHub database updates</title>
+		<title>ResponseHub.DataAccess</title>
 		<version>$version$</version>
 		<authors>Justin McKay</authors>
 		<owners>Justin McKay</owners>
-		<licenseUrl>http://yourcompany.com</licenseUrl>
-		<projectUrl>http://yourcompany.com</projectUrl>
+    <projectUrl>https://bitbucket.org/responsehub/response-hub/src/master/</projectUrl>
 		<requireLicenseAcceptance>false</requireLicenseAcceptance>
-		<description>Contains the version updates for data access changes.</description>
-		<releaseNotes>Contains the version updates for data access changes.</releaseNotes>
+		<description>Contains the data access for the ResponseHub application.</description>
+		<releaseNotes>Contains the data access for the ResponseHub application.</releaseNotes>
+    <copyright>Copyright 2018</copyright>
+    <tags></tags>
+    <dependencies>
+      <dependency id="Microsoft.AspNet.Identity.Core" version="2.2.2" />
+      <dependency id="MongoDB.Driver" version="2.7.2" />
+      <dependency id="MongoDB.Driver.GridFS" version="2.7.2" />
+      <dependency id="ResponseHub.Common" version="*" />
+      <dependency id="ResponseHub.Model" version="*" />
+      <dependency id="ResponseHub.Logging" version="*" />
+    </dependencies>
 	</metadata>
 	<files>
 		<file src="MongoDB\Scripts\VersionUpdates.js" target="Content" />
