@@ -135,8 +135,6 @@
     <Compile Include="PagerMessageService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="WarningService.cs" />
-    <Compile Include="Wrappers\GoogleDirectionsWrapper.cs" />
-    <Compile Include="Wrappers\GoogleGeocodeWrapper.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ResponseHub.Caching\ResponseHub.Caching.csproj">
@@ -162,6 +160,10 @@
     <ProjectReference Include="..\ResponseHub.Model\ResponseHub.Model.csproj">
       <Project>{63ebc394-caed-4b0b-974c-ba56f619f853}</Project>
       <Name>ResponseHub.Model</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ResponseHub.Wrappers\ResponseHub.Wrappers.csproj">
+      <Project>{d481de0c-c17e-4bc0-97c9-cca064618477}</Project>
+      <Name>ResponseHub.Wrappers</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

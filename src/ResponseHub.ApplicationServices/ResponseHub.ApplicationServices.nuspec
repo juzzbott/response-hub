@@ -24,6 +24,7 @@
       <dependency id="ResponseHub.Logging" version="$version$" />
       <dependency id="ResponseHub.Mail" version="$version$" />
       <dependency id="ResponseHub.Model" version="$version$" />
+      <dependency id="ResponseHub.Wrappers" version="$version$" />
     </dependencies>
   </metadata>
   <files>

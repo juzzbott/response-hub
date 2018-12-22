@@ -126,6 +126,10 @@
       <Project>{63ebc394-caed-4b0b-974c-ba56f619f853}</Project>
       <Name>ResponseHub.Model</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\ResponseHub.Wrappers\ResponseHub.Wrappers.csproj">
+      <Project>{d481de0c-c17e-4bc0-97c9-cca064618477}</Project>
+      <Name>ResponseHub.Wrappers</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />

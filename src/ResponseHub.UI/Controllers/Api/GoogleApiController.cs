@@ -1,4 +1,4 @@
-﻿using Enivate.ResponseHub.ApplicationServices.Wrappers;
+﻿using Enivate.ResponseHub.Wrappers.Google;
 using Enivate.ResponseHub.Model.Spatial;
 using System;
 using System.Collections.Generic;

@@ -10,7 +10,7 @@ using Enivate.ResponseHub.Model.Spatial;
 using System.Net.Http;
 using Newtonsoft.Json.Linq;
 
-namespace Enivate.ResponseHub.ApplicationServices.Wrappers
+namespace Enivate.ResponseHub.Wrappers.Google
 {
 	public class GoogleDirectionsWrapper
 	{

@@ -23,7 +23,7 @@ using Enivate.ResponseHub.UI.Helpers;
 using Enivate.ResponseHub.Model.SignIn;
 using Enivate.ResponseHub.Model.SignIn.Interface;
 using System.Globalization;
-using Enivate.ResponseHub.ApplicationServices.Wrappers;
+using Enivate.ResponseHub.Wrappers.Google;
 using Enivate.ResponseHub.Model.Spatial;
 
 namespace Enivate.ResponseHub.UI.Controllers.Api

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 using Xunit;
 
-using Enivate.ResponseHub.ApplicationServices.Wrappers;
+using Enivate.ResponseHub.Wrappers.Google;
 using Enivate.ResponseHub.Logging;
 using Enivate.ResponseHub.Model.Addresses;
 

@@ -49,6 +49,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ResponseHub.WebTasks.Applic
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ResponseHub.WebTasks.ConsoleRunner", "WebTasks\ResponseHub.WebTasks.ConsoleRunner\ResponseHub.WebTasks.ConsoleRunner.csproj", "{F4EBEF18-79DB-4637-A561-4E4CF1E72A45}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ResponseHub.Wrappers", "ResponseHub.Wrappers\ResponseHub.Wrappers.csproj", "{D481DE0C-C17E-4BC0-97C9-CCA064618477}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -209,6 +211,14 @@ Global
 		{F4EBEF18-79DB-4637-A561-4E4CF1E72A45}.Staging|Any CPU.Build.0 = Release|Any CPU
 		{F4EBEF18-79DB-4637-A561-4E4CF1E72A45}.Test|Any CPU.ActiveCfg = Release|Any CPU
 		{F4EBEF18-79DB-4637-A561-4E4CF1E72A45}.Test|Any CPU.Build.0 = Release|Any CPU
+		{D481DE0C-C17E-4BC0-97C9-CCA064618477}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D481DE0C-C17E-4BC0-97C9-CCA064618477}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D481DE0C-C17E-4BC0-97C9-CCA064618477}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D481DE0C-C17E-4BC0-97C9-CCA064618477}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D481DE0C-C17E-4BC0-97C9-CCA064618477}.Staging|Any CPU.ActiveCfg = Release|Any CPU
+		{D481DE0C-C17E-4BC0-97C9-CCA064618477}.Staging|Any CPU.Build.0 = Release|Any CPU
+		{D481DE0C-C17E-4BC0-97C9-CCA064618477}.Test|Any CPU.ActiveCfg = Release|Any CPU
+		{D481DE0C-C17E-4BC0-97C9-CCA064618477}.Test|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -12,7 +12,7 @@ using Newtonsoft.Json.Linq;
 using Enivate.ResponseHub.Model.Addresses;
 using Enivate.ResponseHub.Logging;
 
-namespace Enivate.ResponseHub.ApplicationServices.Wrappers
+namespace Enivate.ResponseHub.Wrappers.Google
 {
 	public class GoogleGeocodeWrapper
 	{

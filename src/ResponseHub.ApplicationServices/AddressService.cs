@@ -9,7 +9,7 @@ using Enivate.ResponseHub.DataAccess.Interface;
 using Enivate.ResponseHub.Logging;
 using Enivate.ResponseHub.Model.Addresses;
 using Enivate.ResponseHub.Model.Addresses.Interface;
-using Enivate.ResponseHub.ApplicationServices.Wrappers;
+using Enivate.ResponseHub.Wrappers.Google;
 
 namespace Enivate.ResponseHub.ApplicationServices
 {
