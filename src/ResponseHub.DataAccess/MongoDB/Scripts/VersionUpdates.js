@@ -101,7 +101,7 @@ while (current_version < schema_version) {
 			// rename events field
 			db.events.updateMany({}, { $rename: { "GroupId": "UnitId" } });
 			db.events.dropIndex({ "GroupId": 1 });
-			db.events.createIndex({ "unit_id": 1 }, { background: true });
+			db.events.createIndex({ "UnitId": 1 }, { background: true });
 
 			// rename training_sessions field
 			db.training_sessions.updateMany({}, { $rename: { "GroupId": "UnitId" } });
