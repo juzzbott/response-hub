@@ -143,7 +143,6 @@ namespace Enivate.ResponseHub.UI.Controllers.Api
             int count = 50;
             Int32.TryParse(ConfigurationManager.AppSettings["JobMessages.DefaultResultLimit"], out count);
             int skip = 0;
-            MessageType messageType = MessageType.Job;
 
             // Create the list of job messages
             IList<JobMessage> jobMessages;
@@ -155,19 +154,6 @@ namespace Enivate.ResponseHub.UI.Controllers.Api
             if (qs.Any(i => i.Key.ToLower() == "skip"))
             {
                 Int32.TryParse(qs.FirstOrDefault(i => i.Key.ToLower() == "skip").Value, out skip);
-            }
-
-            // Check to see if the job type is overridden in the query string
-            if (qs.Any(i => i.Key.ToLower() == "msg_type"))
-            {
-                if (qs.FirstOrDefault(i => i.Key.ToLower() == "msg_type").Value == "job")
-                {
-                    messageType = MessageType.Job;
-                }
-                else if (qs.FirstOrDefault(i => i.Key.ToLower() == "msg_type").Value == "message")
-                {
-                    messageType = MessageType.Message;
-                }
             }
 
             // If there is no date values set, then just get the most recent
