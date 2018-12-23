@@ -25,6 +25,7 @@ using Enivate.ResponseHub.Model.SignIn.Interface;
 using System.Globalization;
 using Enivate.ResponseHub.Wrappers.Google;
 using Enivate.ResponseHub.Model.Spatial;
+using Enivate.ResponseHub.UI.Filters;
 
 namespace Enivate.ResponseHub.UI.Controllers.Api
 {
@@ -249,47 +250,73 @@ namespace Enivate.ResponseHub.UI.Controllers.Api
 			return await JobMessageService.GetMostRecent(lastId);
 		}
 
+        [Route("unit/{unitId}")]
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<IList<JobMessage>> LatestJobMessagesByUnit(Guid unitId)
+        {
+
+            // Validate the APiKey header
+            if (await ValidateApiKeyHeader() == false)
+            {
+                return null;
+            }
+
+            int count = 50;
+            Int32.TryParse(ConfigurationManager.AppSettings["JobMessages.DefaultResultLimit"], out count);
+            int skip = 0;
+
+            // Get the skip query string
+            var queryString = Request.GetQueryNameValuePairs().Where(i => i.Key.ToLower() == "skip");
+            if (queryString.Any())
+            {
+                Int32.TryParse(queryString.First().Value, out skip);
+            }
+
+            // Get the unit based on the id
+            Unit unit = await UnitService.GetById(unitId);
+
+            // If the unit is null, throw exception
+            if (unit == null)
+            {
+                throw new HttpResponseException(HttpStatusCode.BadRequest);
+            }
+
+            // Get the capcodes for the unit and return the latest job messages
+            IList<Capcode> capcodes = await CapcodeService.GetCapcodesForUnit(unitId);
+            return await JobMessageService.GetMostRecent(capcodes.Select(i => i.CapcodeAddress), count, skip);
+        }
+
 		[Route]
 		[HttpPost]
+        [AllowAnonymous]
 		public async Task<bool> Post(IList<JobMessage> jobMessages)
-		{
+        {
 
-			// Get the authHeader
-			AuthenticationHeaderValue authHeader = Request.Headers.Authorization;
+            // Validate the APiKey header
+            if (await ValidateApiKeyHeader() == false)
+            {
+                return false;
+            }
 
-			string apiKey = ConfigurationManager.AppSettings["ResponseHubService.ApiKey"];
+            try
+            {
 
-			// If the api key is null or empty, log error message and return not authorized
-			if (String.IsNullOrWhiteSpace(apiKey))
-			{
-				await Log.Error("The ResponseHub service API key is invalid.");
-				throw new HttpResponseException(HttpStatusCode.Unauthorized);
-			}
+                // Save the pager message
+                await JobMessageService.AddMessages(jobMessages);
 
-			// If there is no auth header, or it's no of type APIKEY with matching Api key, then throw not authorized.
-			if (authHeader == null || !authHeader.Scheme.Equals("APIKEY", StringComparison.CurrentCultureIgnoreCase) || !authHeader.Parameter.Equals(apiKey))
-			{
-				throw new HttpResponseException(HttpStatusCode.Unauthorized);
-			}
+                // return the last message sha
+                return true;
 
-			try
-			{
-
-				// Save the pager message
-				await JobMessageService.AddMessages(jobMessages);
-
-				// return the last message sha
-				return true;
-
-			}
-			catch (Exception ex)
-			{
-				await Log.Error(String.Format("Error adding the job messages to the database from the api. Message: {0}", ex.Message), ex);
-				throw new HttpResponseException(HttpStatusCode.InternalServerError);
-			}
-		}
-
-		[Route("{id:guid}/notes")]
+            }
+            catch (Exception ex)
+            {
+                await Log.Error(String.Format("Error adding the job messages to the database from the api. Message: {0}", ex.Message), ex);
+                throw new HttpResponseException(HttpStatusCode.InternalServerError);
+            }
+        }
+        
+        [Route("{id:guid}/notes")]
 		[HttpPost]
 		public async Task<JobNote> PostNote(Guid id, PostJobNoteModel jobNote)
 		{

@@ -264,6 +264,7 @@
     <Compile Include="Controllers\Api\GoogleApiController.cs" />
     <Compile Include="Controllers\Api\SearchController.cs" />
     <Compile Include="Controllers\Api\SignInController.cs" />
+    <Compile Include="Controllers\Api\UnitsController.cs" />
     <Compile Include="Controllers\ErrorController.cs" />
     <Compile Include="Controllers\PagerMessagesController.cs" />
     <Compile Include="Areas\ControlPanel\Controllers\BaseControlPanelController.cs" />

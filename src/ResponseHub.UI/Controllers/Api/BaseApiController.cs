@@ -13,6 +13,8 @@ using Enivate.ResponseHub.Common;
 using Enivate.ResponseHub.Logging;
 using Enivate.ResponseHub.Model.Identity.Interface;
 using Enivate.ResponseHub.Model.Identity;
+using System.Net.Http.Headers;
+using System.Configuration;
 
 namespace Enivate.ResponseHub.UI.Controllers.Api
 {
@@ -70,5 +72,29 @@ namespace Enivate.ResponseHub.UI.Controllers.Api
 			throw new HttpResponseException(message);
 		}
 
+        public async Task<bool> ValidateApiKeyHeader()
+        {
+            // Get the authHeader
+            AuthenticationHeaderValue authHeader = Request.Headers.Authorization;
+
+            string apiKey = ConfigurationManager.AppSettings["ResponseHubService.ApiKey"];
+
+            // If the api key is null or empty, log error message and return not authorized
+            if (String.IsNullOrWhiteSpace(apiKey))
+            {
+                await _log.Error("The ResponseHub service API key is invalid.");
+                return false;
+            }
+
+            // If there is no auth header, or it's no of type APIKEY with matching Api key, then throw not authorized.
+            if (authHeader == null || !authHeader.Scheme.Equals("APIKEY", StringComparison.CurrentCultureIgnoreCase) || !authHeader.Parameter.Equals(apiKey))
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
 	}
 }
