@@ -284,7 +284,7 @@ namespace Enivate.ResponseHub.UI.Controllers.Api
 
             // Get the capcodes for the unit and return the latest job messages
             IList<Capcode> capcodes = await CapcodeService.GetCapcodesForUnit(unitId);
-            return await JobMessageService.GetMostRecent(capcodes.Select(i => i.CapcodeAddress), count, skip);
+            return await JobMessageService.GetMostRecent(new List<string>() { unit.Capcode }, count, skip);
         }
 
 		[Route]

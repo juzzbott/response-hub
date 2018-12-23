@@ -93,7 +93,6 @@
     <Compile Include="Interface\ICapcodeRepository.cs" />
     <Compile Include="Interface\IDecoderStatusRepository.cs" />
     <Compile Include="Interface\IEventRepository.cs" />
-    <Compile Include="Interface\IMessagePrintRecordRepository.cs" />
     <Compile Include="Interface\IUnitRepository.cs" />
     <Compile Include="Interface\IJobMessageRepository.cs" />
     <Compile Include="Interface\IMapIndexRepository.cs" />
@@ -120,7 +119,6 @@
     <Compile Include="MongoDB\DataObjects\Users\IdentityUserDto.cs" />
     <Compile Include="MongoDB\DecoderStatusRepository.cs" />
     <Compile Include="MongoDB\EventRepository.cs" />
-    <Compile Include="MongoDB\MessagePrintRecordRepository.cs" />
     <Compile Include="MongoDB\UnitRepository.cs" />
     <Compile Include="MongoCollectionNameAttribute.cs" />
     <Compile Include="MongoDB\JobMessageRepository.cs" />
