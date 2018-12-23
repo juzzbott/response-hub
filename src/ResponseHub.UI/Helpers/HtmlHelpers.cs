@@ -322,7 +322,7 @@ namespace Enivate.ResponseHub.UI.Helpers
         public static MvcHtmlString GetProductVersion(this HtmlHelper helper)
         {
             Version version = Assembly.GetExecutingAssembly().GetName().Version;
-            return new MvcHtmlString(String.Format("{0}.{1}.{2}", version.Major, version.Minor, version.Revision));
+            return new MvcHtmlString(String.Format("{0}.{1}.{2}", version.Major, version.Minor, version.Build));
         }
 		
 	}
