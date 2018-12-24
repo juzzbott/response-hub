@@ -197,29 +197,39 @@ namespace Enivate.ResponseHub.ApplicationServices
 
 			// Create the web request
 			HttpWebRequest request = (HttpWebRequest)HttpWebRequest.Create(requestUrl);
+            request.UserAgent = "ResponseHub";
 
-			// Get the response
-			HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-			
-			// Ensure it's a valid response
-			if (response.StatusCode == HttpStatusCode.OK)
-			{
+            try
+            {
 
-				// Store the json data
-				string jsonData = "";
-				using (StreamReader reader = new StreamReader(response.GetResponseStream()))
-				{
-					jsonData = reader.ReadToEnd();
-				}
+                // Get the response
+                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
 
-				// Write the json file
-				string cacheDirectory = GetCacheDirectory(locationCode);
-				string filename = String.Format("{0}\\{1}.json", cacheDirectory, observationId);
-				using (StreamWriter writer = new StreamWriter(filename, false))
-				{
-					writer.Write(jsonData);
-				}
-			}
+                // Ensure it's a valid response
+                if (response.StatusCode == HttpStatusCode.OK)
+                {
+
+                    // Store the json data
+                    string jsonData = "";
+                    using (StreamReader reader = new StreamReader(response.GetResponseStream()))
+                    {
+                        jsonData = reader.ReadToEnd();
+                    }
+
+                    // Write the json file
+                    string cacheDirectory = GetCacheDirectory(locationCode);
+                    string filename = String.Format("{0}\\{1}.json", cacheDirectory, observationId);
+                    using (StreamWriter writer = new StreamWriter(filename, false))
+                    {
+                        writer.Write(jsonData);
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                _log.Error("Unable to download the observation data.", ex);
+            }
 
 
 		}
