@@ -28,9 +28,11 @@ The solution contains the following components:
 * Other projects such as model, data access, application services etc...
 
 ## Build results
-|Test|Production|
+|CI|Production|
 |---|---|
-|![alt text](https://responsehub.visualstudio.com/_apis/public/build/definitions/500d2900-f667-4dc5-9eb4-56dc83bcb1e6/1/badge "Test build result")|![alt text](https://responsehub.visualstudio.com/_apis/public/build/definitions/500d2900-f667-4dc5-9eb4-56dc83bcb1e6/2/badge "Production build result")|
+|![Build status](https://juzzbott.visualstudio.com/ResponseHub/_apis/build/status/ResponseHub%20Website%20-%20CI%20Build "CI build result")|![Build status](https://responsehub.visualstudio.com/_apis/public/build/definitions/500d2900-f667-4dc5-9eb4-56dc83bcb1e6/2/badge "Production build result")|
 
 ## Tests
 Tests are written using the xUnit testing framework.
+
+
