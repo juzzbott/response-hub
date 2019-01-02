@@ -9,6 +9,7 @@ using Enivate.ResponseHub.Model.Identity;
 using Enivate.ResponseHub.UI.Areas.Admin.Models.Units;
 using Enivate.ResponseHub.UI.Filters;
 using Enivate.ResponseHub.Common.Constants;
+using Enivate.ResponseHub.Common.CsvParser;
 
 namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 {
@@ -139,11 +140,54 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 			return await PostConfirmMemberViewResult(unitId, model, "~/Areas/ControlPanel/Views/Units/ConfirmUser.cshtml");
 		}
 
-		#endregion
+        #endregion
 
-		#region Remove User From Unit
+        #region Bulk Add Members
 
-		[Route("{unitId:guid}/remove-user/{userId:guid}")]
+        [Route("{unitId:guid}/bulk-add-members")]
+        [HttpGet]
+        public async Task<ActionResult> BulkAddMembers(Guid unitId)
+        {
+
+            BulkMemberUploadViewModel model = new BulkMemberUploadViewModel()
+            {
+                UnitId = unitId
+            };
+
+            // If the current user is not a unit admin of the specified unit, error out.
+            if (await CurrentUserIsAdminOfUnit(unitId) == false)
+            {
+                throw new HttpException(403, "The user does not have access to this url.");
+            }
+
+            return View("~/Areas/ControlPanel/Views/Units/BulkAddMembers.cshtml", model);
+        }
+
+        [Route("{unitId:guid}/bulk-add-members")]
+        [HttpPost]
+        public async Task<ActionResult> BulkAddMembers(Guid unitId, BulkMemberUploadViewModel model)
+        {
+
+            // If the current user is not a unit admin of the specified unit, error out.
+            if (await CurrentUserIsAdminOfUnit(unitId) == false)
+            {
+                throw new HttpException(403, "The user does not have access to this url.");
+            }
+
+            model.UnitId = unitId;
+
+            // Parse the CSV file
+            CsvParser parser = new CsvParser(model.File.InputStream, true);
+            IList<IList<KeyValuePair<string, string>>> parsedFile = parser.ReadCsvDataWithKeys();
+
+            return View("~/Areas/ControlPanel/Views/Units/BulkAddMembers.cshtml", model);
+        }
+
+        #endregion
+
+        #region Remove User From Unit
+
+        [Route("{unitId:guid}/remove-user/{userId:guid}")]
 		public async Task<ActionResult> RemoveUserFromUnit(Guid unitId, Guid userId)
 		{
 
