@@ -1,3 +1,4 @@
+/// <binding ProjectOpened='watch' />
 var gulp = require('gulp');
 var less = require('gulp-less');
 var path = require('path');
@@ -86,7 +87,9 @@ gulp.task('concat:script_js', function() {
     .pipe(gulp.dest('./assets/js'));
 });
 
-gulp.task('build-all', ['concat:framework_css', 'concat:framework_js', 'concat:script_js', 'less']);
+gulp.task('build-all', gulp.series('concat:framework_css', 'concat:framework_js', 'concat:script_js', 'less'));
 
-gulp.watch('assets/js/modules/*.js', ['concat:script_js']);
-gulp.watch('assets/css/less/*.less', ['less']);
+gulp.task('watch', function () {
+	gulp.watch('assets/js/modules/*.js', gulp.series('concat:script_js'));
+	gulp.watch('assets/css/less/*.less', gulp.series('less'));
+});

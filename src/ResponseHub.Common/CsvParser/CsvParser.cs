@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -22,7 +23,7 @@ namespace Enivate.ResponseHub.Common.CsvParser
 
         private const string RegexCsvPattern = "^((\"(?:[^\"]|\"\")*\" |[^,] *)(, (\"(?:[^\"]| \"\")*\"|[^,]*))*)$";
 
-        public IList<string> ColumnKeys { get; set; }
+        public IList<string> ColumnHeaders { get; set; }
 
         /// <summary>
         /// Creates a new instance of the CsvParser with the stream to read the CSV data from.
@@ -43,7 +44,7 @@ namespace Enivate.ResponseHub.Common.CsvParser
             _firstRowHeader = firstRowHeader;
 
             // Instantiate the column keys
-            ColumnKeys = new List<string>();
+            ColumnHeaders = new List<string>();
         }
 
         /// <summary>
@@ -61,7 +62,7 @@ namespace Enivate.ResponseHub.Common.CsvParser
             _firstRowHeader = firstRowHeader;
 
             // Instantiate the column keys
-            ColumnKeys = new List<string>();
+            ColumnHeaders = new List<string>();
         }
 
         /// <summary>
@@ -77,13 +78,16 @@ namespace Enivate.ResponseHub.Common.CsvParser
         /// Read the CSV data into the list of keyed records.
         /// </summary>
         /// <returns></returns>
-        public IList<IList<KeyValuePair<string, string>>> ReadCsvDataWithKeys()
+        public DataTable ReadCsvDataTable()
         {
 
             // Create the list of records
-            IList<IList<KeyValuePair<string, string>>> keyRecords = new List<IList<KeyValuePair<string, string>>>();
+            DataTable table = new DataTable();
 
             IList<IList<string>> records = ProcessCsvFile();
+
+            // Create the columns in the datatable
+            CreateDataTableColumns(ColumnHeaders, ref table);
 
             // If there is no header loaded, throw exception as we don't have keys to load
             if (!_headerLoaded)
@@ -95,23 +99,41 @@ namespace Enivate.ResponseHub.Common.CsvParser
             foreach (IList<string> record in records)
             {
                 // If the record count and column cound is not the same, we don't have the same amount of fields to headers
-                if (record.Count != ColumnKeys.Count)
+                if (record.Count != ColumnHeaders.Count)
                 {
                     throw new ApplicationException("Unequal number of columns for the specified header columns");
                 }
 
-                IList<KeyValuePair<string, string>> keyRecord = new List<KeyValuePair<string, string>>();
+                DataRow row = table.NewRow();
 
                 for (int i = 0; i < record.Count; i++)
                 {
-                    keyRecord.Add(new KeyValuePair<string, string>(ColumnKeys[i], record[i]));
+                    row[ColumnHeaders[i]] = record[i];
                 }
 
-                keyRecords.Add(keyRecord);
+                table.Rows.Add(row);
             }
 
-            return keyRecords;
+            return table;
 
+        }
+
+        private void CreateDataTableColumns(IList<string> columnKeys, ref DataTable table)
+        {
+            // Loop through the column headers and create the data columns
+            foreach (string columnHeader in columnKeys)
+            {
+                DataColumn column = new DataColumn()
+                {
+                    DataType = Type.GetType("System.String"),
+                    ColumnName = columnHeader,
+                    AutoIncrement = false,
+                    Caption = columnHeader,
+                    ReadOnly = false,
+                    Unique = false,
+                };
+                table.Columns.Add(column);
+            }
         }
 
         private IList<IList<string>> ProcessCsvFile()
@@ -132,7 +154,7 @@ namespace Enivate.ResponseHub.Common.CsvParser
 
                 if (_firstRowHeader && !_headerLoaded)
                 {
-                    ColumnKeys = record;
+                    ColumnHeaders = record;
                     _headerLoaded = true;
                 }
                 else
@@ -153,21 +175,34 @@ namespace Enivate.ResponseHub.Common.CsvParser
         {
 
             IList<string> lineParts = new List<string>();
+            StringBuilder value = new StringBuilder();
+            bool quoteState = false;
 
-            // Loop through each string
-            foreach(string part in Regex.Split(csvLine, RegexCsvPattern))
+            // Loop through each char in the string
+            for(int i = 0; i < csvLine.Length; i++)
             {
 
-                string linePart = part.Trim();
-
-                // If the line starts with " and ends with " get the substring of 1 char from each end so that the " are removed from start and end
-                if (linePart.StartsWith("\"") && linePart.EndsWith("\""))
+                // If the char is a ", flip the quoteToken state
+                if (csvLine[i] == '"')
                 {
-                    linePart = linePart.Substring(1, (linePart.Length - 1));
+                    quoteState = !quoteState;
+                    continue;
                 }
 
-                lineParts.Add(linePart);
+                if (csvLine[i] == ',' && !quoteState)
+                {
+                    lineParts.Add(value.ToString());
+                    value.Clear();
+                    continue;
+                }
+
+                // Append the value
+                value.Append(csvLine[i]);
             }
+
+            // Add the final value
+            lineParts.Add(value.ToString());
+            
 
             return lineParts;
 

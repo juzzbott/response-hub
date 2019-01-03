@@ -494,11 +494,21 @@ namespace Enivate.ResponseHub.ApplicationServices
 			return await _repository.EmailAddressExists(emailAddress);
 		}
 
-		/// <summary>
-		/// Gets all the users currently in the system.
-		/// </summary>
-		/// <returns></returns>
-		public async Task<IList<IdentityUser>> GetAll()
+        /// <summary>
+        /// Find the IdentityUser based on the ID.
+        /// </summary>
+        /// <param name="emailAddress">The email address to search for.</param>
+        /// <returns>The IdentityUser object with the email address.</returns>
+        public async Task<IdentityUser> GetByEmailAddress(string emailAddress)
+        {
+            return await _repository.FindByEmailAsync(emailAddress);
+        }
+
+        /// <summary>
+        /// Gets all the users currently in the system.
+        /// </summary>
+        /// <returns></returns>
+        public async Task<IList<IdentityUser>> GetAll()
 		{
 			return await _repository.GetAll();
 		}

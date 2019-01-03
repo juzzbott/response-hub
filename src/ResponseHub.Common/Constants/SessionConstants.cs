@@ -11,5 +11,8 @@ namespace Enivate.ResponseHub.Common.Constants
 
 		public const string ControlPanelContextUnitId = "ControlPanelContextUnitId";
 
-	}
+        public const string BulkMemberUploadDataTable = "BulkMemberUploadDataTable";
+
+
+    }
 }
