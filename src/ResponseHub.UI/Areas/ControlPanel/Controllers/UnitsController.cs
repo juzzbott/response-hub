@@ -263,7 +263,28 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
                 model.UsersToBeImported.Add(bulkMemberItem);
             }
 
+            // Add the model to session to be used for the actual import
+            Session.Add(SessionConstants.BulkMemberUploadModel, model);
+
             return View("~/Areas/ControlPanel/Views/Units/BulkAddMembers.cshtml", model);
+        }
+
+        [Route("{unitId:guid}/bulk-add-members/import-members")]
+        [HttpGet]
+        public ActionResult ImportMembers(Guid unitId)
+        {
+
+            // Get the model from the session
+            BulkMemberUploadViewModel model = (BulkMemberUploadViewModel)Session[SessionConstants.BulkMemberUploadModel];
+
+            // If the model is null, something went wrong with session, so redirect back
+            if (model == null)
+            {
+                return new RedirectResult(Request.Url.PathAndQuery.ToLower().Replace("/import-members", ""));
+            }
+
+
+            return View("~/Areas/ControlPanel/Views/Units/BulkMembersImported.cshtml", model);
         }
 
         /// <summary>

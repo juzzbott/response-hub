@@ -774,6 +774,9 @@
   <ItemGroup>
     <Content Include="Areas\ControlPanel\Views\Units\BulkAddMembers.cshtml" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="Areas\ControlPanel\Views\Units\BulkMembersImported.cshtml" />
+  </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>

@@ -1,0 +1,37 @@
+﻿@model Enivate.ResponseHub.UI.Areas.Admin.Models.Units.BulkMemberUploadViewModel
+
+@{
+	/**/
+
+	ViewBag.Title = "Members imported";
+	Layout = "~/Areas/ControlPanel/Views/Shared/_Layout.cshtml";
+}
+
+<h1>@ViewBag.Title</h1>
+
+<p>Upload a file containing the user information to bulk add members to your unit.</p>
+
+<h2>File summary</h2>
+<p class="lead">@Model.TotalMembersInFile member@(Model.TotalMembersInFile == 1 ? "" : "s") found in data file.</p>
+
+<div class="row">
+	<div class="col-sm-4">
+		<div class="event-overview-item event-unassigned-jobs-count text-success">
+			<span>@Model.UsersToBeImported.Count</span>Members imported
+		</div>
+	</div>
+	<div class="col-sm-4">
+		<div class="event-overview-item event-total-jobs-count text-danger">
+			<span>@Model.InvalidUsers.Count</span>Errors detected
+		</div>
+	</div>
+	<div class="col-sm-4">
+		<div class="event-overview-item no-border event-completed-jobs-count text-muted">
+			<span>@Model.MembersToBeAddedToUnit.Count</span>Members added to unit
+		</div>
+	</div>
+</div>
+
+<p>
+	<a href="/control-panel/units/@Model.UnitId" class="btn btn-primary">Return to unit</a>
+</p>
