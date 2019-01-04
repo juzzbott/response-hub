@@ -121,7 +121,9 @@ namespace Enivate.ResponseHub.Model.Identity.Interface
 
 		Task<bool> EmailAddressExists(string emailAddress);
 
-		Task<IList<IdentityUser>> GetAll();
+        Task<IdentityUser> GetByEmailAddress(string emailAddress);
+
+        Task<IList<IdentityUser>> GetAll();
 
 		Task<IdentityResult> CreatePasswordAsync(IdentityUser user, string passwordHash);
 

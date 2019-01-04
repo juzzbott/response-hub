@@ -96,6 +96,9 @@ table {
 .table-small {
   font-size: 10px;
 }
+.table-medium {
+  font-size: 11px;
+}
 .btn-icon i {
   margin-right: 6px;
 }
@@ -1609,6 +1612,11 @@ div.generated-report .month-group td {
 }
 .alert-info a:hover {
   color: #31708f;
+}
+.alert-muted {
+  background-color: #f8f8f8;
+  color: #777;
+  border-color: #ccc;
 }
 /**
  * Map styles

@@ -231,6 +231,9 @@
     <Compile Include="Areas\Admin\Controllers\UnitsController.cs" />
     <Compile Include="Areas\Admin\Controllers\TrainingTypesController.cs" />
     <Compile Include="Areas\Admin\Models\TrainingTypes\AddEditTrainingTypeViewModel.cs" />
+    <Compile Include="Areas\Admin\Models\Units\BulkMemberImportedViewModel.cs" />
+    <Compile Include="Areas\Admin\Models\Units\BulkMemberUploadItemViewModel.cs" />
+    <Compile Include="Areas\Admin\Models\Units\BulkMemberUploadViewModel.cs" />
     <Compile Include="Areas\Admin\Models\Users\EditUserViewModel.cs" />
     <Compile Include="Areas\ControlPanel\Controllers\UnitSelectionController.cs" />
     <Compile Include="Areas\Admin\Controllers\HomeController.cs" />
@@ -765,6 +768,15 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Jobs\AllJobs.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Areas\ControlPanel\Views\_ViewStart.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Areas\ControlPanel\Views\Units\BulkAddMembers.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Areas\ControlPanel\Views\Units\BulkMembersImported.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

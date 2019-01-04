@@ -87,6 +87,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CacheTests\CacheManagerTests.cs" />
+    <Compile Include="CsvParserTests.cs" />
     <Compile Include="FakeEntity.cs" />
     <Compile Include="GeocodingTests.cs" />
     <Compile Include="MailProviderTests.cs" />
@@ -156,6 +157,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+    <Content Include="App_Data\csv_example_headers.csv">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="App_Data\csv_example_no_headers.csv">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

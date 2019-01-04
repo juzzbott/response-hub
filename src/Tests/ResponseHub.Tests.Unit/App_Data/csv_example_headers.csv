@@ -1,0 +1,7 @@
+Email,FirstName,Last Name,MemberNo,Access Type
+"test_user_1@email.com","Test","User","65001","General user"
+"test_user_2@email.com","Test2","User2","65002","General user"
+"test_user_3@email.com","Test2","User2","65003","Unit administrator"
+"test_user_4@email.com","Test2","User2","65004","General user"
+"test_user_5@email.com","Test2","User2","65005","General user"
+"test_user_6@email.com","Test2","User2","65006","General user"
