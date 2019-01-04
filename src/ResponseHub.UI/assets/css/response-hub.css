@@ -1614,15 +1614,9 @@ div.generated-report .month-group td {
   color: #31708f;
 }
 .alert-muted {
-  background-color: #f4f4f4;
+  background-color: #f8f8f8;
   color: #777;
   border-color: #ccc;
-}
-.alert-muted a {
-  color: #919191;
-}
-.alert-muted a:hover {
-  color: #777;
 }
 /**
  * Map styles

@@ -271,20 +271,104 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 
         [Route("{unitId:guid}/bulk-add-members/import-members")]
         [HttpGet]
-        public ActionResult ImportMembers(Guid unitId)
+        public async Task<ActionResult> ImportMembers(Guid unitId)
         {
 
-            // Get the model from the session
-            BulkMemberUploadViewModel model = (BulkMemberUploadViewModel)Session[SessionConstants.BulkMemberUploadModel];
-
-            // If the model is null, something went wrong with session, so redirect back
-            if (model == null)
+            // If the current user is not a unit admin of the specified unit, error out.
+            if (await CurrentUserIsAdminOfUnit(unitId) == false)
             {
-                return new RedirectResult(Request.Url.PathAndQuery.ToLower().Replace("/import-members", ""));
+                throw new HttpException(403, "The user does not have access to this url.");
             }
 
+            // Get the model from the session
+            BulkMemberUploadViewModel importModel = (BulkMemberUploadViewModel)Session[SessionConstants.BulkMemberUploadModel];
+
+            // If the model is null, something went wrong with session, so redirect back
+            if (importModel == null)
+            {
+                return new RedirectResult(string.Format("{0}?invalid_session=1", Request.Url.PathAndQuery.ToLower().Replace("/import-members", "")));
+            }
+
+            BulkMemberImportedViewModel model = new BulkMemberImportedViewModel()
+            {
+                UnitId = unitId
+            };
+            
+            // Loop through the users to be created
+            foreach(BulkMemberUploadItemViewModel item in importModel.UsersToBeImported)
+            {
+                try
+                {
+                    // Create the profile
+                    UserProfile profile = new UserProfile()
+                    {
+                        MemberNumber = item.MemberNumber
+                    };
+
+                    // Get the roles for the imported user
+                    List<string> roles = GetUserRoleForImportedUser(item);
+
+                    // Create the new user, and then create the unit mapping for the new user.
+                    IdentityUser newUser = await UserService.CreateAsync(item.EmailAddress, item.FirstName, item.Surname, roles, profile, false);
+
+                    // Now that we have the newUser, create the user mapping.
+                    await UnitService.AddUserToUnit(newUser.Id, roles[0], unitId);
+
+                    // Update the model data
+                    model.ImportedMembers.Add(item);
+                    model.TotalMembersProcessed++;
+                }
+                catch (Exception ex)
+                {
+                    string errorMessage = string.Format("Error bulk importing member '{0}'.", item.EmailAddress);
+                    await Log.Error(errorMessage, ex);
+                    model.ErrorMembers.Add(new KeyValuePair<BulkMemberUploadItemViewModel, string>(item, errorMessage));
+                }
+            }
+
+            // Loop through the existing users to be added to the unit
+            foreach (BulkMemberUploadItemViewModel item in importModel.MembersToBeAddedToUnit)
+            {
+                try
+                {
+                    // Get the identity user related to the specified unit admin
+                    IdentityUser newUser = await UserService.FindByEmailAsync(item.EmailAddress);
+
+                    // Get the roles for the imported user
+                    List<string> roles = GetUserRoleForImportedUser(item);
+
+                    // Create the user mapping for the existing user
+                    await UnitService.AddUserToUnit(newUser.Id, roles[0], unitId);
+
+                    // Update the model data
+                    model.AddedToUnit.Add(item);
+                    model.TotalMembersProcessed++;
+                }
+                catch (Exception ex)
+                {
+                    string errorMessage = string.Format("Error bulk adding member '{0}' to unit .", item.EmailAddress);
+                    await Log.Error(errorMessage, ex);
+                    model.ErrorMembers.Add(new KeyValuePair<BulkMemberUploadItemViewModel, string>(item, errorMessage));
+                }
+            }
 
             return View("~/Areas/ControlPanel/Views/Units/BulkMembersImported.cshtml", model);
+        }
+
+        private static List<string> GetUserRoleForImportedUser(BulkMemberUploadItemViewModel item)
+        {
+            string role = (item.UserAccessType.Equals("Unit administrator", StringComparison.CurrentCultureIgnoreCase) ? RoleTypes.UnitAdministrator : RoleTypes.GeneralUser);
+
+            // Create the list of roles
+            List<string> roles = new List<string>() { role };
+
+            // If there is no "General User" role, add it so that they can access the basic site areas
+            if (!roles.Contains(RoleTypes.GeneralUser))
+            {
+                roles.Add(RoleTypes.GeneralUser);
+            }
+
+            return roles;
         }
 
         /// <summary>
