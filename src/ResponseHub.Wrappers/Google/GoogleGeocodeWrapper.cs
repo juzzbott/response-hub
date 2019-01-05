@@ -67,9 +67,15 @@ namespace Enivate.ResponseHub.Wrappers.Google
 
 				// Double check any spaces are removed from the query
 				addressQuery = addressQuery.Replace(" ", "+");
+                
+                // If the address query does not end in ',+AU', then append it here
+                if (!addressQuery.EndsWith(",+AU", StringComparison.CurrentCultureIgnoreCase))
+                {
+                    addressQuery = String.Format("{0},+AU", addressQuery);
+                }
 
-				// Get the service url. If the API Key is available, then use that.
-				string serviceUrl = String.Format("https://maps.googleapis.com/maps/api/geocode/json?address={0}&key={1}", addressQuery, _apiKey);
+                // Get the service url. If the API Key is available, then use that.
+                string serviceUrl = String.Format("https://maps.googleapis.com/maps/api/geocode/json?address={0}&key={1}", addressQuery, _apiKey);
 
 				// Create the client and request objects
 				HttpClient client = new HttpClient();

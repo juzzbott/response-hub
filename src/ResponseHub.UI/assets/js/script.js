@@ -1114,7 +1114,8 @@ responseHub.jobMessages = (function () {
 
 		// Build the filter query
 		var filterQuery = '';
-		if (dateTo != null || dateFrom != null) {
+		if (dateTo != null || dateFrom != null)
+		{
 			filterQuery = 'date_from=' + dateFrom + '&date_to=' + dateTo;
 		}
 

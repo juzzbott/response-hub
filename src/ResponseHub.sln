@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.28407.52
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.168
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ResponseHub.UI", "ResponseHub.UI\ResponseHub.UI.csproj", "{AE4E432F-C3FA-49DC-A0C3-CCC564F1E3A8}"
 EndProject
@@ -50,6 +50,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ResponseHub.WebTasks.ConsoleRunner", "WebTasks\ResponseHub.WebTasks.ConsoleRunner\ResponseHub.WebTasks.ConsoleRunner.csproj", "{F4EBEF18-79DB-4637-A561-4E4CF1E72A45}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ResponseHub.Wrappers", "ResponseHub.Wrappers\ResponseHub.Wrappers.csproj", "{D481DE0C-C17E-4BC0-97C9-CCA064618477}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ResponseHub.GeocodingTestUtil", "Tests\ResponseHub.GeocodingTestUtil\ResponseHub.GeocodingTestUtil.csproj", "{38109EE6-9933-4388-8CA5-98D076FA1EEB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -219,6 +221,14 @@ Global
 		{D481DE0C-C17E-4BC0-97C9-CCA064618477}.Staging|Any CPU.Build.0 = Release|Any CPU
 		{D481DE0C-C17E-4BC0-97C9-CCA064618477}.Test|Any CPU.ActiveCfg = Release|Any CPU
 		{D481DE0C-C17E-4BC0-97C9-CCA064618477}.Test|Any CPU.Build.0 = Release|Any CPU
+		{38109EE6-9933-4388-8CA5-98D076FA1EEB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{38109EE6-9933-4388-8CA5-98D076FA1EEB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{38109EE6-9933-4388-8CA5-98D076FA1EEB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{38109EE6-9933-4388-8CA5-98D076FA1EEB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{38109EE6-9933-4388-8CA5-98D076FA1EEB}.Staging|Any CPU.ActiveCfg = Release|Any CPU
+		{38109EE6-9933-4388-8CA5-98D076FA1EEB}.Staging|Any CPU.Build.0 = Release|Any CPU
+		{38109EE6-9933-4388-8CA5-98D076FA1EEB}.Test|Any CPU.ActiveCfg = Release|Any CPU
+		{38109EE6-9933-4388-8CA5-98D076FA1EEB}.Test|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -235,6 +245,7 @@ Global
 		{83F6E0EC-2206-4A70-BC10-57B7CF4D687B} = {F6D2AE6D-44EF-4B81-A7B6-D005F18BBB97}
 		{8393C805-EEBD-4C2C-A49E-396AF158A4B4} = {F6D2AE6D-44EF-4B81-A7B6-D005F18BBB97}
 		{F4EBEF18-79DB-4637-A561-4E4CF1E72A45} = {F6D2AE6D-44EF-4B81-A7B6-D005F18BBB97}
+		{38109EE6-9933-4388-8CA5-98D076FA1EEB} = {F118DA4A-AF5A-4C8A-9651-AF604DB40467}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {F8874D65-CB43-4B02-9ACD-1A5A2D89FBA2}
