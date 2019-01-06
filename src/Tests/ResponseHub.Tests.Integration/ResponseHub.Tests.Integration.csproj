@@ -110,6 +110,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\PagerDecoding\ResponseHub.PagerDecoder.ApplicationServices\ResponseHub.PagerDecoder.ApplicationServices.csproj">
+      <Project>{677C45D9-103D-473F-99E3-4C6403DE5D78}</Project>
+      <Name>ResponseHub.PagerDecoder.ApplicationServices</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\ResponseHub.ApplicationServices\ResponseHub.ApplicationServices.csproj">
       <Project>{a77ef1a1-1492-41ac-b62e-d14f9c01014f}</Project>
       <Name>ResponseHub.ApplicationServices</Name>

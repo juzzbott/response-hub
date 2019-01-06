@@ -8,6 +8,12 @@ using Xunit;
 
 using Enivate.ResponseHub.Tests.Integration.Fixtures;
 using Enivate.ResponseHub.DataAccess.MongoDB;
+using Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers;
+using Enivate.ResponseHub.Model.Addresses.Interface;
+using Enivate.ResponseHub.Common;
+using Enivate.ResponseHub.DataAccess.Interface;
+using Enivate.ResponseHub.Logging;
+using Enivate.ResponseHub.Model.Messages;
 
 namespace Enivate.ResponseHub.Tests.Integration
 {
@@ -77,6 +83,27 @@ namespace Enivate.ResponseHub.Tests.Integration
 			t.Wait();
 
 		}
+
+        [Trait("Integration Tests", "Generate JobMessage object")]
+        [Theory(DisplayName = "Can generate job message - From pager message.")]
+        [InlineData("0241249", "S190150219 BACC - BUILDING DAMAGE - TILES OFF ROOF BUILDING DAMAGE - 5 KEITH CT DARLEY /SILVERDALE DR M 333 F3 (727285) LEO GLEDEGEVQURE 0466153217 [BACC]")]
+        public async void CanGenerateJobMessage_FromPagerMessage(string capcode, string rawMessageString)
+        {
+
+            IAddressService addressService = ServiceLocator.Get<IAddressService>();
+            IMapIndexRepository mapIndexRepo = ServiceLocator.Get<IMapIndexRepository>();
+            ILogger logger = ServiceLocator.Get<ILogger>();
+
+            PagerMessageParser pagerParser = new PagerMessageParser(logger);
+            string rawMessage = String.Format("{0} {1} POCSAG-1  ALPHA   512  {2}", capcode, DateTime.Now.ToString("HH:mm:ss dd-MM-yy"), rawMessageString);
+            PagerMessage pagerMessage = pagerParser.ParsePagerMessage(rawMessage);
+
+            JobMessageParser parser = new JobMessageParser(addressService, mapIndexRepo, logger);
+            JobMessage message = await parser.ParseMessage(pagerMessage);
+
+            Assert.NotNull(message);
+
+        }
 
 
 	}

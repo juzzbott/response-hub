@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -10,7 +11,7 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Models.SystemSettings
 
 		public long TotalItems { get; set; }
 
-		public Dictionary<string, DateTime> CacheKeys { get; set; }
+		public ConcurrentDictionary<string, DateTime> CacheKeys { get; set; }
 
 		public decimal CacheMemoryLimit { get; set; }
 
@@ -20,7 +21,7 @@ namespace Enivate.ResponseHub.UI.Areas.Admin.Models.SystemSettings
 
 		public CacheDetails()
 		{
-			CacheKeys = new Dictionary<string, DateTime>();
+			CacheKeys = new ConcurrentDictionary<string, DateTime>();
 		}
 
 	}

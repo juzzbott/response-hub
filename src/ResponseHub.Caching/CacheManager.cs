@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Caching;
@@ -15,7 +16,7 @@ namespace Enivate.ResponseHub.Caching
 		private const string CacheName = "ResponseHub_Cache";
 
 		private static volatile MemoryCache _instance;
-		private static volatile Dictionary<string, DateTime> _keysInstance = new Dictionary<string, DateTime>();
+		private static volatile ConcurrentDictionary<string, DateTime> _keysInstance = new ConcurrentDictionary<string, DateTime>();
 		private static object _lock = new Object();
 		private static object _keysLock = new Object();
 
@@ -39,7 +40,7 @@ namespace Enivate.ResponseHub.Caching
 			}
 		}
 
-		private static Dictionary<string, DateTime> Keys
+		private static ConcurrentDictionary<string, DateTime> Keys
 		{
 			get
 			{
@@ -50,7 +51,7 @@ namespace Enivate.ResponseHub.Caching
 					{
 						if (_keysInstance == null)
 						{
-							_keysInstance = new Dictionary<string, DateTime>();
+							_keysInstance = new ConcurrentDictionary<string, DateTime>();
 						}
 					}
 				}
@@ -157,11 +158,11 @@ namespace Enivate.ResponseHub.Caching
 			// If the cache key already exists, remove it
 			if (Keys.ContainsKey(key))
 			{
-				Keys.Remove(key);
-			}
+                Keys.TryRemove(key, out DateTime dt);
+            }
 
 			// Add the cache key to the lookup keys.
-			Keys.Add(key, policy.AbsoluteExpiration.DateTime);
+			Keys.TryAdd(key, policy.AbsoluteExpiration.DateTime);
 
 		}
 
@@ -260,7 +261,7 @@ namespace Enivate.ResponseHub.Caching
 			lock (_lock)
 			{
 				_instance = new MemoryCache(CacheName);
-				_keysInstance = new Dictionary<string, DateTime>();
+				_keysInstance = new ConcurrentDictionary<string, DateTime>();
 			}
 		}
 
@@ -285,7 +286,7 @@ namespace Enivate.ResponseHub.Caching
 			return Keys.Select(i => i.Key).ToList();
 		}
 
-		public static Dictionary<string, DateTime> GetCacheKeysWithExpiry()
+		public static ConcurrentDictionary<string, DateTime> GetCacheKeysWithExpiry()
 		{
 			return Keys;
 		}
@@ -310,8 +311,8 @@ namespace Enivate.ResponseHub.Caching
 		#region Remove item callback
 		private static void CacheRemovedCallback(CacheEntryRemovedArguments args)
 		{
-			Keys.Remove(args.CacheItem.Key);
-		}
+            Keys.TryRemove(args.CacheItem.Key, out DateTime dt);
+        }
 		#endregion
 
 	}
