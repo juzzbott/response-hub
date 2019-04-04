@@ -21,8 +21,13 @@
 
 	<h2>Training overview</h2>
 
-	<canvas id="training-overview-chart" style="width: 900px; height: 400px;"></canvas>
+	<canvas id="training-report-overview-chart" style="width: 900px; height: 400px;"></canvas>
 	<input type="hidden" id="training-overview-chart-data" value="@Model.ChartDataJs" />
+
+	@if (Model.CanvasToImage)
+	{
+		<input type="hidden" id="change-canvas-to-image" value="1" />
+	}
 
 	<h2 style="page-break-before: always">Member training sessions</h2>
 

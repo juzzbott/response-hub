@@ -3105,14 +3105,14 @@ responseHub.reports = (function () {
 
 		var jsonData = $('#training-overview-chart-data').val().replace(/&quot;/g, '"');
 		var chartData = JSON.parse(jsonData);
-		var ctx = document.getElementById("training-overview-chart").getContext('2d');
+		var ctx = document.getElementById("training-report-overview-chart").getContext('2d');
 
 		var chart = new Chart(ctx, {
-			type: 'bar',
+			type: 'horizontalBar',
 			data: chartData,
 			options: {
 				scales: {
-					yAxes: [{
+					xAxes: [{
 						ticks: {
 							beginAtZero: true,
 							stepSize: 1,
@@ -3133,10 +3133,16 @@ responseHub.reports = (function () {
 						label: tooltipItem => `${tooltipItem.yLabel}: ${tooltipItem.xLabel}`,
 						title: () => null,
 					}
+				},
+				animation: {
+					duration: 0
 				}
 			}
 		});
 
+		if ($('#change-canvas-to-image').val() == "1") {
+			swapCanvasToImage();
+		}
 	}
 
 	function bindUI() {
@@ -3145,6 +3151,14 @@ responseHub.reports = (function () {
 			displayTrainingReportGraph();
 		}
 	}
+
+	function swapCanvasToImage() {
+		var canvas = document.getElementById("training-report-overview-chart");
+		var img = canvas.toDataURL("image/png");
+		$('<img src="' + img + '"/>').insertAfter('#change-canvas-to-image');
+		$('<h1>testing</h1>').insertAfter('#change-canvas-to-image');
+		$('#training-report-overview-chart').remove();
+	};
 
 	bindUI();
 
@@ -3213,11 +3227,11 @@ responseHub.training = (function () {
 		var ctx = document.getElementById("training-overview-chart").getContext('2d');
 
 		var chart = new Chart(ctx, {
-			type: 'bar',
+			type: 'horizontalBar',
 			data: chartData,
 			options: {
 				scales: {
-					yAxes: [{
+					xAxes: [{
 						ticks: {
 							beginAtZero: true,
 							stepSize: 1,

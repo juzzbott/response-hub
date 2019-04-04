@@ -30,7 +30,9 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Models.Reports.Training
 
 		public string MemberFullName { get; set; }
 
-		public TrainingReportViewModel()
+        public bool CanvasToImage { get; set; }
+
+        public TrainingReportViewModel()
 		{
 			TrainingTypes = new Dictionary<TrainingType, string>();
 			MemberReports = new List<UnitTrainingMemberReportItem>();

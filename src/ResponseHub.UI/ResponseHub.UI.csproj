@@ -255,7 +255,11 @@
     <Compile Include="Areas\ControlPanel\Models\Reports\ReportFilterViewModel.cs" />
     <Compile Include="Areas\ControlPanel\Models\Reports\Training\TrainerSessionItem.cs" />
     <Compile Include="Areas\ControlPanel\Models\Reports\Training\TrainersReportViewModel.cs" />
+    <Compile Include="Areas\ControlPanel\Models\Reports\Training\TrainingActivityItem.cs" />
+    <Compile Include="Areas\ControlPanel\Models\Reports\Training\TrainingActivityReportFilterViewModel.cs" />
+    <Compile Include="Areas\ControlPanel\Models\Reports\Training\TrainingAttendanceItem.cs" />
     <Compile Include="Areas\ControlPanel\Models\Reports\Training\TrainingReportFilterViewModel.cs" />
+    <Compile Include="Areas\ControlPanel\Models\Reports\Training\TrainingActivityReportViewModel.cs" />
     <Compile Include="Areas\ControlPanel\Models\Reports\Training\TrainingSessionItem.cs" />
     <Compile Include="Areas\ControlPanel\Models\Reports\Training\UnitTrainerReportItem.cs" />
     <Compile Include="Areas\ControlPanel\Models\Reports\Training\UnitTrainingMemberReportItem.cs" />
@@ -777,6 +781,12 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Areas\ControlPanel\Views\Units\BulkMembersImported.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Areas\ControlPanel\Views\Reports\TrainingActivityReport.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Areas\ControlPanel\Views\Reports\GenerateTrainingActivityReportHtml.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

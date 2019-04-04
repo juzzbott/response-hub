@@ -62,11 +62,11 @@
 		var ctx = document.getElementById("training-overview-chart").getContext('2d');
 
 		var chart = new Chart(ctx, {
-			type: 'bar',
+			type: 'horizontalBar',
 			data: chartData,
 			options: {
 				scales: {
-					yAxes: [{
+					xAxes: [{
 						ticks: {
 							beginAtZero: true,
 							stepSize: 1,

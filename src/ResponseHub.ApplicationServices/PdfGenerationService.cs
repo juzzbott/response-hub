@@ -51,8 +51,11 @@ namespace Enivate.ResponseHub.ApplicationServices
 			// compress the images in PDF with JPEG to reduce the PDF document size
 			converter.PdfDocumentOptions.JpegCompressionEnabled = false;
 
-			// If there is a http context, and it's got cookies, add them to the converter
-			if (cookies != null && cookies.Count > 0)
+            converter.TriggeringMode = TriggeringMode.ConversionDelay;
+            converter.ConversionDelay = 10;
+
+            // If there is a http context, and it's got cookies, add them to the converter
+            if (cookies != null && cookies.Count > 0)
 			{
 				foreach(string cookieName in cookies)
 				{

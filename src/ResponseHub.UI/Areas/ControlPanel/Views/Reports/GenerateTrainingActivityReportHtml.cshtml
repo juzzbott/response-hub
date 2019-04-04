@@ -1,0 +1,102 @@
+﻿@model Enivate.ResponseHub.UI.Areas.ControlPanel.Models.Reports.Training.TrainingActivityReportViewModel
+@{
+	ViewBag.Title = "Training activity report";
+	if (Model.UseStandardLayout)
+	{
+		Layout = "~/Areas/ControlPanel/Views/Shared/_Layout.cshtml";
+	}
+	else
+	{
+		Layout = "~/Areas/ControlPanel/Views/Shared/HtmlExportLayout.cshtml";
+	}
+}
+
+	<div class="generated-report">
+
+		<h1 id="training-report">@ViewBag.Title</h1>
+
+		<p class="lead">
+			<strong>Unit:</strong> @Model.UnitName
+		</p>
+
+		<p class="lead text-info">
+			Report contains training sessions between @Model.DateFrom.ToLocalTime().ToString("dd/MM/yyyy") and @Model.DateTo.ToLocalTime().ToString("dd/MM/yyyy")
+		</p>
+
+		@if (Model.TrainingActivitySessions.Count == 0)
+		{
+			<p class="text-danger"><strong>No training sessions found for the date range specified.</strong></p>
+		}
+
+		@foreach (var trainingSession in Model.TrainingActivitySessions)
+		{
+			<p>
+				<strong>Session name:</strong><br />
+				<span class="lead">@trainingSession.Name</span>
+			</p>
+			<table class="table table-striped results-overview table-small">
+				<thead>
+					<tr>
+						<th width="150">Session date</th>
+						<th width="250">Training type(s)</th>
+						<th>Activity description</th>
+						<th width="100">Session type</th>
+						<th width="100">Duration</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>@trainingSession.SessionDate.ToString("yyyy-MM-dd HH:mm")</td>
+						<td>@trainingSession.TrainingType</td>
+						<td>@trainingSession.Description</td>
+						<td>@trainingSession.SessionType</td>
+						<td>@trainingSession.Duration h</td>
+					</tr>
+				</tbody>
+			</table>
+
+			<h4>Members</h4>
+			<table class="table table-striped results-overview table-small">
+				<thead>
+					<tr>
+						<th width="150">Member number</th>
+						<th>Name</th>
+					</tr>
+				</thead>
+				<tbody>
+					@foreach (var member in trainingSession.Members)
+					{
+						<tr>
+							<td>@member.MemberNumber</td>
+							<td>@member.FirstName @member.Surname</td>
+						</tr>
+					}
+				</tbody>
+			</table>
+
+			<h4>Trainers</h4>
+			<table class="table table-striped results-overview table-small">
+				<thead>
+					<tr>
+						<th width="150">Member number</th>
+						<th>Name</th>
+					</tr>
+				</thead>
+				<tbody>
+					@foreach (var member in trainingSession.Trainers)
+					{
+						<tr>
+							<td>@member.MemberNumber</td>
+							<td>@member.FirstName @member.Surname</td>
+						</tr>
+					}
+				</tbody>
+			</table>
+
+			<p>@trainingSession.Members.Count members attended, @trainingSession.Trainers.Count trainers.</p>
+			<br />
+			<hr style="page-break-after: always"/>
+			<br />
+		}
+
+	</div>

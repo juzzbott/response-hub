@@ -86,7 +86,7 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 
 			if (model.ReportFormat.ToLower() == "display")
 			{
-				TrainingReportViewModel reportViewModel = await GetTrainingReportModel(GetControlPanelUnitId(), dateFrom, dateTo, model.MemberId);
+				TrainingReportViewModel reportViewModel = await GetTrainingReportModel(GetControlPanelUnitId(), dateFrom, dateTo, false, model.MemberId);
 				reportViewModel.UseStandardLayout = true;
 				return View("GenerateTrainingReportHtml", reportViewModel);
 			}
@@ -120,19 +120,83 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 			{
 				memberId = new Guid(Request.QueryString["member_id"]);
 			}
+            bool canvasToImage = (Request.QueryString["canvas_to_image"] != null && Request.QueryString["canvas_to_image"] == "1");
 
 			// Get the training report model
-			TrainingReportViewModel model = await GetTrainingReportModel(unitId, dateFrom, dateTo, memberId);
+			TrainingReportViewModel model = await GetTrainingReportModel(unitId, dateFrom, dateTo, canvasToImage, memberId);
 
 			return View(model);
 
 		}
 
-		#endregion
+        #endregion
 
-		#region Trainers report
+        #region Training Activity report
 
-		[Route("trainers-report")]
+        [Route("training-activity-report")]
+        public ActionResult TrainingActivityReport()
+        {
+
+            // Create the model
+            TrainingActivityReportFilterViewModel model = new TrainingActivityReportFilterViewModel();
+
+            return View(model);
+        }
+
+        [Route("training-activity-report")]
+        [HttpPost]
+        public async Task<ActionResult> TrainingActivityReport(TrainingActivityReportFilterViewModel model)
+        {
+
+            // Get the list of jobs between the start and end dates
+            DateTime dateFrom = model.DateFrom.Date;
+            DateTime dateTo = new DateTime(model.DateTo.Year, model.DateTo.Month, model.DateTo.Day, 23, 59, 59);
+
+            if (model.ReportFormat.ToLower() == "display")
+            {
+                TrainingActivityReportViewModel reportViewModel = await GetTrainingActivityReportModel(GetControlPanelUnitId(), dateFrom, dateTo);
+                reportViewModel.UseStandardLayout = true;
+                return View("GenerateTrainingActivityReportHtml", reportViewModel);
+            }
+            else if (model.ReportFormat.ToLower() == "pdf")
+            {
+                // Get the PDF bytes
+                byte[] pdfBytes = await ReportService.GenerateTrainingActivityReportPdfFile(GetControlPanelUnitId(), dateFrom, dateTo, Request.Cookies);
+
+                FileContentResult result = new FileContentResult(pdfBytes, "application/pdf");
+                result.FileDownloadName = String.Format("training-activity-report-{0}.pdf", DateTime.Now.ToString("yyyy-MM-dd"));
+                return result;
+            }
+            else
+            {
+                throw new HttpException((int)HttpStatusCode.BadRequest, "Bad request.");
+            }
+        }
+
+
+        [Route("generate-training-activity-report-html")]
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<ActionResult> GenerateTrainingActivityReportHtml()
+        {
+
+            // Get the parameters from the query string
+            Guid unitId = new Guid(Request.QueryString["unit_id"]);
+            DateTime dateFrom = DateTime.ParseExact(Request.QueryString["date_from"], "yyyyMMddHHmmss", CultureInfo.CurrentCulture);
+            DateTime dateTo = DateTime.ParseExact(Request.QueryString["date_to"], "yyyyMMddHHmmss", CultureInfo.CurrentCulture);
+
+            // Get the training report model
+            TrainingActivityReportViewModel model = await GetTrainingActivityReportModel(unitId, dateFrom, dateTo);
+
+            return View(model);
+
+        }
+
+        #endregion
+
+        #region Trainers report
+
+        [Route("trainers-report")]
 		public ActionResult TrainersReport()
 		{
 			return View();
@@ -418,7 +482,7 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 		/// <param name="dateFrom"></param>
 		/// <param name="dateTo"></param>
 		/// <returns></returns>
-		private async Task<TrainingReportViewModel> GetTrainingReportModel(Guid unitId, DateTime dateFrom, DateTime dateTo, Guid? memberId)
+		private async Task<TrainingReportViewModel> GetTrainingReportModel(Guid unitId, DateTime dateFrom, DateTime dateTo, bool canvasToImage, Guid? memberId)
 		{
 			// Get the training sessions
 			IList<TrainingSession> trainingSessions = await TrainingService.GetTrainingSessionsForUnit(unitId, dateFrom, dateTo, memberId);
@@ -509,14 +573,15 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 				});
 			}
 
-			// Create the model
-			TrainingReportViewModel model = new TrainingReportViewModel()
-			{
-				ChartDataJs = sbChartData.ToString(),
-				ChartOptionsJs = sbChartOptionsJs.ToString(),
-				MemberReports = unitMemberReports,
-				DateFrom = dateFrom,
-				DateTo = dateTo,
+            // Create the model
+            TrainingReportViewModel model = new TrainingReportViewModel()
+            {
+                ChartDataJs = sbChartData.ToString(),
+                ChartOptionsJs = sbChartOptionsJs.ToString(),
+                MemberReports = unitMemberReports,
+                DateFrom = dateFrom,
+                DateTo = dateTo,
+                CanvasToImage = canvasToImage,
 				MemberId = memberId,
 				MemberFullName = memberFullname,
 				MemberSessions = memberTrainingSessions
@@ -575,14 +640,102 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 			unitMemberReports.Add(memberTrainingRecord);
 		}
 
-		/// <summary>
+        /// <summary>
 		/// Gets the training report model to display to the page.
 		/// </summary>
 		/// <param name="unitId"></param>
 		/// <param name="dateFrom"></param>
 		/// <param name="dateTo"></param>
 		/// <returns></returns>
-		private async Task<TrainersReportViewModel> GetTrainersReportModel(Guid unitId, DateTime dateFrom, DateTime dateTo)
+		private async Task<TrainingActivityReportViewModel> GetTrainingActivityReportModel(Guid unitId, DateTime dateFrom, DateTime dateTo)
+        {
+            // Get the training sessions
+            IList<TrainingSession> trainingSessions = await TrainingService.GetTrainingSessionsForUnit(unitId, dateFrom, dateTo, null);
+
+            // Get the members for the unit
+            IList<IdentityUser> unitMembers = await UnitService.GetUsersForUnit(unitId);
+
+            // Get the training types.
+            IList<TrainingType> trainingTypes = await TrainingService.GetAllTrainingTypes();
+            
+            // Generate the list of member training sessions
+            List<TrainingActivityItem> trainingActivitySessions = new List<TrainingActivityItem>();
+
+            // Loop through the training sessions
+            foreach (TrainingSession session in trainingSessions)
+            {
+                // Create the training activity item
+                TrainingActivityItem activity = new TrainingActivityItem
+                {
+                    Description = session.Description,
+                    Duration = session.Duration.ToString(),
+                    Id = session.Id,
+                    Name = session.Name,
+                    SessionDate = session.SessionDate.ToLocalTime(),
+                    TrainingType = String.Join(", ", session.TrainingTypes.Select(i => i.Name)),
+                    SessionType = session.SessionType.GetEnumDescription()
+                };
+
+                // Map the members
+                foreach(Guid id in session.Members)
+                {
+                    IdentityUser member = unitMembers.FirstOrDefault(i => i.Id == id);
+                    activity.Members.Add(new TrainingAttendanceItem()
+                    {
+                        MemberId = id,
+                        FirstName = member.FirstName,
+                        Surname = member.Surname,
+                        MemberNumber = member.Profile.MemberNumber
+                    });
+                }
+
+
+                // Map the trainers
+                foreach (Guid id in session.Trainers)
+                {
+                    IdentityUser member = unitMembers.FirstOrDefault(i => i.Id == id);
+                    activity.Trainers.Add(new TrainingAttendanceItem()
+                    {
+                        MemberId = id,
+                        FirstName = member.FirstName,
+                        Surname = member.Surname,
+                        MemberNumber = member.Profile.MemberNumber
+                    });
+                }
+
+                trainingActivitySessions.Add(activity);
+            }
+
+            // Get the unit
+            Unit unit = await UnitService.GetById(unitId);
+
+            // Create the model
+            TrainingActivityReportViewModel model = new TrainingActivityReportViewModel()
+            {
+                DateFrom = dateFrom,
+                DateTo = dateTo,
+                TrainingActivitySessions = trainingActivitySessions,
+                UnitName = unit.Name
+            };
+
+            // Get the training types
+            foreach (TrainingType trainingType in trainingTypes)
+            {
+                model.TrainingTypes.Add(trainingType, trainingType.ShortName);
+            }
+
+            return model;
+        }
+
+
+        /// <summary>
+        /// Gets the training report model to display to the page.
+        /// </summary>
+        /// <param name="unitId"></param>
+        /// <param name="dateFrom"></param>
+        /// <param name="dateTo"></param>
+        /// <returns></returns>
+        private async Task<TrainersReportViewModel> GetTrainersReportModel(Guid unitId, DateTime dateFrom, DateTime dateTo)
 		{
 			// Get the training sessions
 			IList<TrainingSession> trainingSessions = await TrainingService.GetTrainingSessionsForUnit(unitId, dateFrom, dateTo, null);
