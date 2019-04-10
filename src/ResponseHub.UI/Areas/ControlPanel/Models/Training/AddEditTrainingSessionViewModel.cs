@@ -34,7 +34,8 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Models.Training
 
 		public string SelectedTrainers { get; set; }
 
-		public string Description { get; set; }
+        [Required(ErrorMessage = "You must provide a description for the session.")]
+        public string Description { get; set; }
 
 		[Required(ErrorMessage = "You must select a training session type.")]
 		public TrainingSessionType SessionType { get; set; }
@@ -44,7 +45,9 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Models.Training
 		[Range(0.25, 999999, ErrorMessage = "Training sessions must be a minimum of 15 minutes.")]
 		public decimal Duration { get; set; }
 
-		public AddEditTrainingSessionViewModel()
+        public string EquipmentUsed { get; set; }
+
+        public AddEditTrainingSessionViewModel()
 		{
 			AvailableTrainingTypes = new List<TrainingType>();
 			AvailableUsers = new List<Tuple<Guid, string, string>>();

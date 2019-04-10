@@ -19,7 +19,9 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Models.Training
 
 		public string Name { get; set; }
 
-		public DateTime SessionDate { get; set; }
+        public string Description { get; set; }
+
+        public DateTime SessionDate { get; set; }
 
 		public decimal Duration { get; set; }
 
@@ -55,6 +57,7 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Models.Training
 				Trainers = trainingSession.Trainers,
 				TrainingTypes = trainingSession.TrainingTypes,
 				Name = trainingSession.Name,
+                Description = trainingSession.Description,
 				SessionDate = trainingSession.SessionDate,
 				Duration = trainingSession.Duration,
 				SessionType = trainingSession.SessionType

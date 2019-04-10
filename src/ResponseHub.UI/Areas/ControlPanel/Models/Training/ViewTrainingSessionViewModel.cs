@@ -31,7 +31,9 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Models.Training
 
 		public decimal Duration { get; set; }
 
-		public int MemberCount
+        public string EquipmentUsed { get; set; }
+
+        public int MemberCount
 		{
 			get
 			{

@@ -569,7 +569,8 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 					Id = session.Id,
 					Name = session.Name,
 					SessionDate = session.SessionDate.ToLocalTime(),
-					TrainingType = String.Join(", ", session.TrainingTypes.Select(i => i.Name))
+					TrainingType = String.Join(", ", session.TrainingTypes.Select(i => i.Name)),
+                    EquipmentUsed = session.EquipmentUsed
 				});
 			}
 
@@ -673,7 +674,8 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
                     Name = session.Name,
                     SessionDate = session.SessionDate.ToLocalTime(),
                     TrainingType = String.Join(", ", session.TrainingTypes.Select(i => i.Name)),
-                    SessionType = session.SessionType.GetEnumDescription()
+                    SessionType = session.SessionType.GetEnumDescription(),
+                    EquipmentUsed = session.EquipmentUsed
                 };
 
                 // Map the members

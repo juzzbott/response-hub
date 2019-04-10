@@ -1,8 +1,8 @@
 ﻿@model Enivate.ResponseHub.UI.Areas.ControlPanel.Models.Training.ViewTrainingSessionViewModel
 
 @{
-    ViewBag.Title = String.Format("{0} training", Model.Name);
-    Layout = "~/Areas/ControlPanel/Views/Shared/_Layout.cshtml";
+	ViewBag.Title = String.Format("{0} training", Model.Name);
+	Layout = "~/Areas/ControlPanel/Views/Shared/_Layout.cshtml";
 }
 
 <div class="row title-row">
@@ -40,6 +40,11 @@
 </p>
 
 <p>
+	<strong>Equipment used:</strong><br />
+	@Model.EquipmentUsed
+</p>
+
+<p>
 	<strong>Unit members trained:</strong><br />
 	@Model.MemberCount <br />
 	@if (Model.MemberPercentTrained > 30)
@@ -55,7 +60,7 @@
 		<span class="text-danger small">@String.Format("{0}%", Model.MemberPercentTrained) of unit</span>
 	}
 
-	
+
 </p>
 
 <h3>Participating members</h3>
@@ -67,7 +72,7 @@
 		</tr>
 	</thead>
 	<tbody>
-		@foreach(var member in Model.Members)
+		@foreach (var member in Model.Members)
 		{
 			<tr>
 				<td>@member.Item2</td>

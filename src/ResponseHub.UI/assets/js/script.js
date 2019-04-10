@@ -3103,6 +3103,10 @@ responseHub.reports = (function () {
 
 	function displayTrainingReportGraph() {
 
+		// If there is no element for chart data, just exit function
+		if ($('#training-overview-chart-data').length == 0) {
+			return;
+		}
 		var jsonData = $('#training-overview-chart-data').val().replace(/&quot;/g, '"');
 		var chartData = JSON.parse(jsonData);
 		var ctx = document.getElementById("training-report-overview-chart").getContext('2d');

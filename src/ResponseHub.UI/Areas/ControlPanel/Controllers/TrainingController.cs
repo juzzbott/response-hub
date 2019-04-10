@@ -149,8 +149,9 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 					Name = model.Name,
 					Description = model.Description,
 					SessionType = model.SessionType,
-					Duration = model.Duration
-				};
+					Duration = model.Duration,
+                    EquipmentUsed = model.EquipmentUsed
+                };
 
 				// Map the members and trainers
 				MapMembersAndTrainersToSession(model, ref session);
@@ -199,7 +200,8 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 				SessionDate = session.SessionDate,
 				SessionType = session.SessionType,
 				TrainingTypes = session.TrainingTypes,
-				Duration = session.Duration
+				Duration = session.Duration,
+                EquipmentUsed = session.EquipmentUsed
 			};			
 
 			// Load the users for the model
@@ -274,7 +276,8 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 				TrainingTypes = String.Format("{0}|", String.Join("|", session.TrainingTypes.Select(i => i.Id))),
 				Duration = session.Duration,
 				SelectedMembers = String.Format("{0}|", String.Join("|", session.Members)),
-				SelectedTrainers = String.Format("{0}|", String.Join("|", session.Trainers))
+				SelectedTrainers = String.Format("{0}|", String.Join("|", session.Trainers)),
+                EquipmentUsed = session.EquipmentUsed
 			};
 
 			// Set the available training types
@@ -345,6 +348,7 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 				session.Description = model.Description;
 				session.SessionType = model.SessionType;
 				session.Duration = model.Duration;
+                session.EquipmentUsed = model.EquipmentUsed;
 
 				// Map the members and trainers
 				MapMembersAndTrainersToSession(model, ref session);

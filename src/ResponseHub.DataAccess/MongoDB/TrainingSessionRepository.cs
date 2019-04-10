@@ -175,7 +175,8 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 				SessionDate = dbObject.SessionDate,
 				SessionType = dbObject.SessionType,
 				Trainers = dbObject.Trainers,
-				TrainingTypes = trainingTypes.Where(i => dbObject.TrainingTypeIds.Contains(i.Id)).ToList()
+				TrainingTypes = trainingTypes.Where(i => dbObject.TrainingTypeIds.Contains(i.Id)).ToList(),
+                EquipmentUsed = dbObject.EquipmentUsed
 			};
 		}
 
@@ -206,7 +207,8 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 				SessionDate = modelObject.SessionDate,
 				SessionType = modelObject.SessionType,
 				Trainers = modelObject.Trainers,
-				TrainingTypeIds = modelObject.TrainingTypes.Select(i => i.Id).ToList()
+				TrainingTypeIds = modelObject.TrainingTypes.Select(i => i.Id).ToList(),
+                EquipmentUsed = modelObject.EquipmentUsed
 			};
 		}
 

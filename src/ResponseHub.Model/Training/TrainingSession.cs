@@ -31,7 +31,9 @@ namespace Enivate.ResponseHub.Model.Training
 
 		public decimal Duration { get; set; }
 
-		public TrainingSession()
+        public string EquipmentUsed { get; set; }
+
+        public TrainingSession()
 		{
 			Id = Guid.NewGuid();
 			Members = new List<Guid>();

@@ -115,6 +115,7 @@
 				@Html.TextAreaFor(model => model.Description, new { @class = "form-control", rows = "3" })
 			</div>
 		</div>
+		@Html.ValidationMessageFor(model => model.Description)
 	</div>
 
 	<div class="form-group">
@@ -143,6 +144,15 @@
 			</div>
 		</div>
 		@Html.ValidationMessageFor(model => model.SessionType)
+	</div>
+
+	<div class="form-group">
+		<label for="Service">Equipment used</label>
+		<div class="row">
+			<div class="col-sm-8 col-md-6 col-lg-4">
+				@Html.TextAreaFor(model => model.EquipmentUsed, new { @class = "form-control", rows = "3" })
+			</div>
+		</div>
 	</div>
 
 
@@ -183,7 +193,7 @@
 		</thead>
 		<tbody>
 			@if (String.IsNullOrEmpty(Model.SelectedMembers))
-		{
+			{
 				<tr>
 					<td colspan="3" class="none-selected">No members have been added to the this training session yet.</td>
 				</tr>
@@ -201,9 +211,9 @@
 							<td>@user.Item3</td>
 							<td><a href="#" onclick="responseHub.training.removeTrainingMember(this); return false;" title="Remove member" class="text-danger"><i class="fa fa-fw fa-times"></i></a></td>
 						</tr>
+					}
 				}
 			}
-		}
 		</tbody>
 	</table>
 
@@ -233,7 +243,7 @@
 		</thead>
 		<tbody>
 			@if (String.IsNullOrEmpty(Model.SelectedTrainers))
-		{
+			{
 				<tr>
 					<td colspan="3" class="none-selected">No trainers have been added to the this training session yet.</td>
 				</tr>
@@ -253,9 +263,9 @@
 							<td>@user.Item3</td>
 							<td><a href="#" onclick="responseHub.training.removeTrainingMember(this); return false;" title="Remove member" class="text-danger"><i class="fa fa-fw fa-times"></i></a></td>
 						</tr>
+					}
 				}
 			}
-		}
 		</tbody>
 	</table>
 

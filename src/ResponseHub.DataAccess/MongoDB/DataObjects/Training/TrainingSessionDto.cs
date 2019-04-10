@@ -34,7 +34,9 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB.DataObjects.Training
 
 		public decimal Duration { get; set; }
 
-		public TrainingSessionDto()
+        public string EquipmentUsed { get; set; }
+
+        public TrainingSessionDto()
 		{
 			Id = Guid.NewGuid();
 			Members = new List<Guid>();

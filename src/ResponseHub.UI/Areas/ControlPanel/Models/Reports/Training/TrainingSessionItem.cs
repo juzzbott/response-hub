@@ -21,5 +21,7 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Models.Reports.Training
 
 		public string TrainingType { get; set; }
 
-	}
+        public string EquipmentUsed { get; set; }
+
+    }
 }
