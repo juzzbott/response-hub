@@ -144,7 +144,7 @@ namespace Enivate.ResponseHub.Common.CsvParser
             foreach (string line in _csvDataLines)
             {
                 // If the line starts with '#' it's a comment so skip it
-                if (line[0] == '#')
+                if (String.IsNullOrEmpty(line) || line[0] == '#')
                 {
                     continue;
                 }
