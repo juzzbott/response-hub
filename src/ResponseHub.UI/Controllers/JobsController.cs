@@ -103,7 +103,8 @@ namespace Enivate.ResponseHub.UI.Controllers
 			{ 
 
 				// Get the capcode for the message
-				Capcode capcode = await CapcodeService.GetByCapcodeAddress(job.Capcode);
+                // HACK: Fix this
+				Capcode capcode = await CapcodeService.GetByCapcodeAddress(job.Capcodes.First().Capcode);
 
 				// Get the units based on the capcode
 				Unit unit = await UnitService.GetUnitByCapcode(capcode);
@@ -204,7 +205,8 @@ namespace Enivate.ResponseHub.UI.Controllers
 			}
 
 			// Get the capcode for the message
-			Capcode capcode = await CapcodeService.GetByCapcodeAddress(job.Capcode);
+            // HACK: Fix this
+			Capcode capcode = await CapcodeService.GetByCapcodeAddress(job.Capcodes.First().Capcode);
 
 			// Get the units based on the capcode
 			Unit unit = await UnitService.GetUnitByCapcode(capcode);
@@ -217,7 +219,7 @@ namespace Enivate.ResponseHub.UI.Controllers
 			{
 				JobId = jobId,
 				JobNumber = job.JobNumber,
-				Priority = job.Priority,
+				Priority = job.Capcodes.FirstOrDefault(i => i.Capcode == unit.Capcode).Priority,
 				Timestamp = job.Timestamp.ToLocalTime(),
 				CapcodeUnitName = capcode.ToString(),
 				SelectedMembers = String.Format("{0}|", String.Join("|", jobSignIns.Select(i => i.UserId).ToList()))
@@ -256,7 +258,8 @@ namespace Enivate.ResponseHub.UI.Controllers
 			}
 
 			// Get the capcode for the message
-			Capcode capcode = await CapcodeService.GetByCapcodeAddress(job.Capcode);
+            // HACK: Fix this
+			Capcode capcode = await CapcodeService.GetByCapcodeAddress(job.Capcodes.First().Capcode);
 
 			// Get the units based on the capcode
 			Unit unit = await UnitService.GetUnitByCapcode(capcode);
@@ -267,7 +270,7 @@ namespace Enivate.ResponseHub.UI.Controllers
 			// Create the model
 			model.JobId = jobId;
 			model.JobNumber = job.JobNumber;
-			model.Priority = job.Priority;
+			model.Priority = job.Capcodes.FirstOrDefault(i => i.Capcode == unit.Capcode).Priority;
 			model.Timestamp = job.Timestamp.ToLocalTime();
 			model.CapcodeUnitName = capcode.ToString();
 
@@ -347,10 +350,13 @@ namespace Enivate.ResponseHub.UI.Controllers
 
 				// Loop through the job messages for the event
 				foreach(JobMessage jobMessage in allJobs.Where(i => jobMessageIds.Contains(i.Id)))
-				{
+                {
 
-					// Get the capcode for the job
-					Capcode capcode = capcodes.FirstOrDefault(i => i.CapcodeAddress == jobMessage.Capcode);
+                    // Find a capcode that matches the job and what the user has. We just need the first to match
+                    string capcodeString = capcodes.Select(i => i.CapcodeAddress).Intersect(jobMessage.Capcodes.Select(i => i.Capcode)).FirstOrDefault();
+
+                    // Get the capcode for the job
+                    Capcode capcode = capcodes.FirstOrDefault(i => i.CapcodeAddress == capcodeString);
 
 					// Add the JobMessageListItemViewModel model to the list
 					JobMessageListItemViewModel listItemModel = JobMessageListItemViewModel.FromJobMessage(jobMessage, capcode, null);

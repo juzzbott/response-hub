@@ -72,7 +72,7 @@ namespace Enivate.ResponseHub.UI.Models.Messages
 				JobNumber = jobMessage.JobNumber,
 				MessageBody = jobMessage.MessageContent,
 				AdditionalMessageCount = jobMessage.AdditionalMessages != null ? jobMessage.AdditionalMessages.Count : 0,
-				Priority = jobMessage.Priority,
+				Priority = jobMessage.Capcodes.First(i => i.Capcode == capcode.CapcodeAddress).Priority,
 				Timestamp = jobMessage.Timestamp.ToLocalTime(),
 				Location = jobMessage.Location
 			};

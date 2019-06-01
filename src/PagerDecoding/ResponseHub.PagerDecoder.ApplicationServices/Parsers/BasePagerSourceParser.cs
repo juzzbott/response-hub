@@ -125,9 +125,10 @@ namespace Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers
 			{
 
 				// Get the list of key value pair of job numbers and capcodes from the list of messages to submit
+                // HACK: Fix this
 				IList<KeyValuePair<string, string>> capcodeJobNumbers = JobMessagesToSubmit
 				.Where(i => !String.IsNullOrEmpty(i.Value.JobNumber))
-				.Select(i => new KeyValuePair<string, string>(i.Value.Capcode, i.Value.JobNumber))
+				.Select(i => new KeyValuePair<string, string>(i.Value.Capcodes.First().Capcode, i.Value.JobNumber))
 				.ToList();
 
 				// Now we need to get the messages that 

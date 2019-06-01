@@ -59,7 +59,7 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 			
 			// Create the filter and sort
 			FilterDefinitionBuilder<JobMessageDto> builder = Builders<JobMessageDto>.Filter;
-			FilterDefinition<JobMessageDto> filter = builder.In(i => i.Capcode, capcodes);
+			FilterDefinition<JobMessageDto> filter = builder.In("Capcodes.Capcode", capcodes);
 
 			// If there is dateFrom and dateTo filters, add them
 			if (dateFrom.HasValue)
@@ -116,7 +116,7 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 		{
 			// Create the filter and sort
 			FilterDefinitionBuilder<JobMessageDto> builder = Builders<JobMessageDto>.Filter;
-			FilterDefinition<JobMessageDto> filter = builder.In(i => i.Capcode, capcodes);
+			FilterDefinition<JobMessageDto> filter = builder.In("Capcodes.Capcode", capcodes);
 
 			// If there is dateFrom and dateTo filters, add them
 			if (dateFrom.HasValue)
@@ -195,7 +195,7 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 
             if (capcodes != null && capcodes.Count() > 0)
             {
-                filter &= builder.In(i => i.Capcode, capcodes);
+                filter &= builder.In("Capcodes.Capcode", capcodes);
             }
 
             // Create the sort filter
@@ -275,19 +275,20 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 
 			// Create the filter and sort
 			FilterDefinitionBuilder<JobMessageDto> builder = Builders<JobMessageDto>.Filter;
-			FilterDefinition<JobMessageDto> filter = builder.In(i => i.Capcode, capcodes);
+			FilterDefinition<JobMessageDto> filter = builder.In("Capcodes.Capcode", capcodes);
 
 			// Add the message type to the filter.
 			FilterDefinition<JobMessageDto> priorityFilter = builder.Or();
 			bool prioritySet = false;
+            // HACK: Fix this
 			if (messageTypes.HasFlag(MessageType.Job))
 			{
-				priorityFilter = priorityFilter | (builder.Eq(i => i.Priority, MessagePriority.Emergency) | builder.Eq(i => i.Priority, MessagePriority.NonEmergency));
+				priorityFilter = priorityFilter | (builder.Eq(i => i.Capcodes.First().Priority, MessagePriority.Emergency) | builder.Eq(i => i.Capcodes.First().Priority, MessagePriority.NonEmergency));
 				prioritySet = true;
 			}
 			if (messageTypes.HasFlag(MessageType.Message))
 			{
-				priorityFilter = priorityFilter | builder.Eq(i => i.Priority, MessagePriority.Administration);
+				priorityFilter = priorityFilter | builder.Eq(i => i.Capcodes.First().Priority, MessagePriority.Administration);
 				prioritySet = true;
 			}
 			if (prioritySet)
@@ -327,7 +328,7 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 			FilterDefinitionBuilder<JobMessageDto> builder = Builders<JobMessageDto>.Filter;
 
 			// Create the main filter from the first capcode job number combo
-			FilterDefinition<JobMessageDto> mainFilter = builder.Eq(i => i.Capcode, capcodeJobNumbers[0].Key) & builder.Eq(i => i.JobNumber, capcodeJobNumbers[0].Value.ToUpper());
+			FilterDefinition<JobMessageDto> mainFilter = builder.ElemMatch(i => i.Capcodes, p => p.Capcode == capcodeJobNumbers[0].Key) & builder.Eq(i => i.JobNumber, capcodeJobNumbers[0].Value.ToUpper());
 
 			// Create the list of filters
 			IList<FilterDefinition<JobMessageDto>> filters = new List<FilterDefinition<JobMessageDto>>();
@@ -336,7 +337,7 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 			foreach (KeyValuePair<string, string> capcodeJobNumber in capcodeJobNumbers.Skip(1))
 			{
 				// Create the filter
-				FilterDefinition<JobMessageDto> filter = builder.Eq(i => i.Capcode, capcodeJobNumber.Key) & builder.Eq(i => i.JobNumber, capcodeJobNumber.Value.ToUpper());
+				FilterDefinition<JobMessageDto> filter = builder.ElemMatch(i => i.Capcodes, p => p.Capcode == capcodeJobNumbers[0].Key) & builder.Eq(i => i.JobNumber, capcodeJobNumber.Value.ToUpper());
 				filters.Add(filter);
 			}
 
@@ -632,20 +633,21 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 
 			if (capcodes != null)
 			{
-				filter = filter & builder.In(i => i.Capcode, capcodes);
+				filter = filter & builder.In("Capcodes.Capcode", capcodes);
 			}
 
 			// Add the message type to the filter.
 			FilterDefinition<JobMessageDto> priorityFilter = builder.Or();
 			bool prioritySet = false;
+            // HACK: Fix this
 			if (messageTypes.HasFlag(MessageType.Job))
 			{
-				priorityFilter = priorityFilter | (builder.Eq(i => i.Priority, MessagePriority.Emergency) | builder.Eq(i => i.Priority, MessagePriority.NonEmergency));
+				priorityFilter = priorityFilter | (builder.Eq(i => i.Capcodes.First().Priority, MessagePriority.Emergency) | builder.Eq(i => i.Capcodes.First().Priority, MessagePriority.NonEmergency));
 				prioritySet = true;
 			}
 			if (messageTypes.HasFlag(MessageType.Message))
 			{
-				priorityFilter = priorityFilter | builder.Eq(i => i.Priority, MessagePriority.Administration);
+				priorityFilter = priorityFilter | builder.Eq(i => i.Capcodes.First().Priority, MessagePriority.Administration);
 				prioritySet = true;
 			}
 			if (prioritySet)
@@ -706,12 +708,11 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 
 			JobMessage model = new JobMessage()
 			{
-				Capcode = dbObject.Capcode,
+				Capcodes = dbObject.Capcodes,
 				Id = dbObject.Id,
 				JobNumber = dbObject.JobNumber,
 				MessageContent = dbObject.MessageContent,
 				AdditionalMessages = dbObject.AdditionalMessages,
-				Priority = dbObject.Priority,
 				Timestamp = dbObject.Timestamp,
 				Notes = dbObject.Notes,
 				ProgressUpdates = dbObject.ProgressUpdates,
@@ -747,12 +748,11 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 
 			JobMessageDto dbObject = new JobMessageDto()
 			{
-				Capcode = modelObject.Capcode,
+				Capcodes = modelObject.Capcodes,
 				Id = modelObject.Id,
 				JobNumber = modelObject.JobNumber,
 				MessageContent = modelObject.MessageContent,
 				AdditionalMessages = modelObject.AdditionalMessages,
-				Priority = modelObject.Priority,
 				Timestamp = modelObject.Timestamp,
 				Notes = modelObject.Notes,
 				ProgressUpdates = modelObject.ProgressUpdates,

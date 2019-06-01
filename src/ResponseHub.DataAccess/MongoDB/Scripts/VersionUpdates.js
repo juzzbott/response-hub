@@ -133,3 +133,25 @@ while (current_version < schema_version) {
 	db.schema_info.update({ _id: schema_info_id }, { $set: { version: current_version } })
 
 }
+
+//db.job_messages.find().forEach(
+//	function (elem) {
+//		db.job_messages.update(
+//			{
+//				_id: elem._id
+//			},
+//			{
+//				$set: {
+//					Capcodes: [{
+//						Capcode: elem.Capcode,
+//						Priority: elem.Priority
+//					}]
+//				},
+//				$unset: {
+//					Capcode: "",
+//					Priority: ""
+//				}
+//			}
+//		);
+//	}
+//);

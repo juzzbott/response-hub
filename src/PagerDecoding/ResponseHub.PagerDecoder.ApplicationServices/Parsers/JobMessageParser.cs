@@ -79,13 +79,14 @@ namespace Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers
 			// Create the message 
 			JobMessage msg = new JobMessage()
 			{
-				Capcode = pagerMessage.Address,
 				Timestamp = pagerMessage.Timestamp
 			};
 
 			// Now we need to get the priority
 			// We must call the GetMessagePriority method before the GetMessageBody method GetMessageBody will strip the priority prefix characters.
-			msg.Priority = GetMessgePriority(pagerMessage.MessageContent);
+            MessagePriority priority = GetMessgePriority(pagerMessage.MessageContent);
+
+            msg.Capcodes.Add(new MessageCapcode(pagerMessage.Address, priority));
 
 			// Get the message body
 			msg.MessageContent = GetMessageBody(pagerMessage.MessageContent);

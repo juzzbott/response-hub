@@ -250,8 +250,8 @@ namespace Enivate.ResponseHub.MessageGenerator
 			// Add the summary
 			generatedMessagesMarkup.AppendLine(String.Format("<p><strong>{0} messages generated: {1} emergency, {2} non-emergency</strong></p>",
 				jobMessages.Count,
-				jobMessages.Count(i => i.Value.Priority == MessagePriority.Emergency),
-				jobMessages.Count(i => i.Value.Priority == MessagePriority.NonEmergency)));
+				jobMessages.Count(i => i.Value.Capcodes.First().Priority == MessagePriority.Emergency),
+				jobMessages.Count(i => i.Value.Capcodes.First().Priority == MessagePriority.NonEmergency)));
 
 			// Create the list of messages
 			generatedMessagesMarkup.AppendLine("<ul class=\"message-list\">");
@@ -259,7 +259,7 @@ namespace Enivate.ResponseHub.MessageGenerator
 			// Loop through each of the job messages
 			foreach (JobMessage message in jobMessages.Select(i => i.Value))
 			{
-				generatedMessagesMarkup.AppendLine(String.Format("<li class=\"{0}\">{1}</li>", (message.Priority == MessagePriority.Emergency ? "emerg" : "non-emerg"), message.MessageContent));
+				generatedMessagesMarkup.AppendLine(String.Format("<li class=\"{0}\">{1}</li>", (message.Capcodes.First().Priority == MessagePriority.Emergency ? "emerg" : "non-emerg"), message.MessageContent));
 			}
 
 			// Close the list

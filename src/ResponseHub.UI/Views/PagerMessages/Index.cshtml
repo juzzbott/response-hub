@@ -18,11 +18,11 @@
 		<li data-message-id="@message.Id">
 			<p class="bottom-0">
 			<strong>
-				@if (message.Priority == Enivate.ResponseHub.Model.Messages.MessagePriority.Emergency)
+				@if (message.Capcodes.First().Priority == Enivate.ResponseHub.Model.Messages.MessagePriority.Emergency)
 				{
 					<i class="fa fa-exclamation-triangle p-message-emergency"></i>
 				}
-				else if (message.Priority == Enivate.ResponseHub.Model.Messages.MessagePriority.NonEmergency)
+				else if (message.Capcodes.First().Priority == Enivate.ResponseHub.Model.Messages.MessagePriority.NonEmergency)
 				{
 					<i class="fa fa-exclamation-circle p-message-non-emergency"></i>
 				}
@@ -35,7 +35,7 @@
 					@Html.Raw(message.JobNumber) 
 					@Html.Raw(" - ")
 				}
-			</strong><span class="text-info">@message.Timestamp.ToLocalTime().ToString("HH:mm:ss d MMMM yyyy")</span> - <span class="text-muted">(@message.Capcode)</span></p>
+			</strong><span class="text-info">@message.Timestamp.ToLocalTime().ToString("HH:mm:ss d MMMM yyyy")</span> - <span class="text-muted">(@message.Capcodes.First().Capcode)</span></p>
 			<p class="message-content">@message.MessageContent</p>
 		</li>
 	}

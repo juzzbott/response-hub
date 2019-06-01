@@ -118,10 +118,13 @@ namespace Enivate.ResponseHub.UI.Controllers.Api
 			// Create the list of job message view models
 			IList<JobMessageListItemViewModel> jobMessageViewModels = new List<JobMessageListItemViewModel>();
 			foreach (JobMessage jobMessage in jobMessages)
-			{
+            {
 
-				// Get the capcode for the job message
-				Capcode capcode = capcodes.FirstOrDefault(i => i.CapcodeAddress == jobMessage.Capcode);
+                // Find a capcode that matches the job and what the user has. We just need the first to match
+                string capcodeString = capcodes.Select(i => i.CapcodeAddress).Intersect(jobMessage.Capcodes.Select(i => i.Capcode)).FirstOrDefault();
+
+                // Get the capcode for the job message
+                Capcode capcode = capcodes.FirstOrDefault(i => i.CapcodeAddress == capcodeString);
 
 				// Map the view model and add to the list
 				JobMessageListItemViewModel jobListItem = JobMessageListItemViewModel.FromJobMessage(jobMessage, capcode, null);

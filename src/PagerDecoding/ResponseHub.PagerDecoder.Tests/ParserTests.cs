@@ -64,7 +64,7 @@ namespace Enivate.ResponseHub.WindowsService.Tests
 			JobMessage parsedMessage = parser.ParseMessage(pagerMessage).Result;
 
 			// Ensure the message priority matches
-			Assert.Equal(parsedMessage.Priority, actualPriority);
+			Assert.Equal(parsedMessage.Capcodes.First().Priority, actualPriority);
 		}
 
 		[Trait("Category", "Parser tests - Parsed messages")]

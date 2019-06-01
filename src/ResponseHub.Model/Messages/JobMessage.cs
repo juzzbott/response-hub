@@ -16,7 +16,7 @@ namespace Enivate.ResponseHub.Model.Messages
 
 		public DateTime Timestamp { get; set; }
 
-		public string Capcode { get; set; }
+		public IList<MessageCapcode> Capcodes { get; set; }
 
 		public string MessageContent { get; set; }
 
@@ -25,8 +25,6 @@ namespace Enivate.ResponseHub.Model.Messages
 		public string JobNumber { get; set; }
 
 		public LocationInfo Location { get; set; }
-
-		public MessagePriority Priority { get; set; }
 
 		public IList<JobNote> Notes { get; set; }
 
@@ -47,15 +45,14 @@ namespace Enivate.ResponseHub.Model.Messages
 			// Default to version 1
 			Version = 1;
 
-			// Default to administration.
-			Priority = MessagePriority.Administration;
-
 			Notes = new List<JobNote>();
 			ProgressUpdates = new List<MessageProgress>();
 
 			AttachmentIds = new List<Guid>();
 
 			AdditionalMessages = new List<AdditionalMessage>();
+
+            Capcodes = new List<MessageCapcode>();
 		}
 
 	}

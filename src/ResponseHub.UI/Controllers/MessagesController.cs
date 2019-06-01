@@ -57,7 +57,8 @@ namespace Enivate.ResponseHub.UI.Controllers
 				}
 
 				// Get the capcode for the message
-				Capcode capcode = await CapcodeService.GetByCapcodeAddress(job.Capcode);
+                // HACK: Fix this
+				Capcode capcode = await CapcodeService.GetByCapcodeAddress(job.Capcodes.FirstOrDefault().Capcode);
 
 				// Get the sign ins for the job
 				IList<SignInEntry> jobSignIns = await SignInEntryService.GetSignInsForJobMessage(job.Id);
