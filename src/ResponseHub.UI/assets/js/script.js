@@ -480,6 +480,11 @@ responseHub.maps = (function () {
 
 	}
 
+	function addPagerMessageMarkerToMap(lat, lng, id, jobNumber, messageContent)
+	{
+		mapMarkers[id] = L.marker([lat, lng]).addTo(map).bindPopup('<a href="/pager-messages/' + id + '"><strong>' + jobNumber + '</strong></a><br /><span>' + messageContent + '</span>');
+	}
+
 	/**
 	 * Determines the current location on the map
 	 */
@@ -726,6 +731,7 @@ responseHub.maps = (function () {
 		displayMap: displayMap,
 		mapMarkers: mapMarkers,
 		addMarkerToMap: addMarkerToMap,
+		addPagerMessageMarkerToMap: addPagerMessageMarkerToMap,
 		clearMarkers: clearMarkers,
 		getCurrentLocation: getCurrentLocation,
 		setMapCenter: setMapCenter,

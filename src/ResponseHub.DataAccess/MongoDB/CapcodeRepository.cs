@@ -60,13 +60,23 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 		public async Task<Capcode> GetByCapcodeAddress(string capcodeAddress)
 		{
 			return await Collection.Find(Builders<Capcode>.Filter.Eq(i => i.CapcodeAddress, capcodeAddress)).FirstOrDefaultAsync();
-		}
+        }
 
-		/// <summary>
-		/// Gets the capcodes that are not specified as Unit capcodes.
+        /// <summary>
+		/// Gets the capcodes that match the collection of capcodeAddresses.
 		/// </summary>
-		/// <returns>The list of capcodes where IsUnitCapcode is false.</returns>
-		public async Task<IList<Capcode>> GetSharedCapcodes()
+		/// <param name="capcodeAddressed"></param>
+		/// <returns></returns>
+        public async Task<IList<Capcode>> GetByCapcodeAddress(IEnumerable<string> capcodeAddresses)
+        {
+            return await Collection.Find(Builders<Capcode>.Filter.In(i => i.CapcodeAddress, capcodeAddresses)).ToListAsync();
+        }
+
+        /// <summary>
+        /// Gets the capcodes that are not specified as Unit capcodes.
+        /// </summary>
+        /// <returns>The list of capcodes where IsUnitCapcode is false.</returns>
+        public async Task<IList<Capcode>> GetSharedCapcodes()
 		{
 			return await Collection.Find(Builders<Capcode>.Filter.Eq(i => i.IsUnitCapcode, false)).ToListAsync();
 		}

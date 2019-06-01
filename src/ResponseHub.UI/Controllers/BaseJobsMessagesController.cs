@@ -32,9 +32,9 @@ namespace Enivate.ResponseHub.UI.Controllers
 		protected readonly ISignInEntryService SignInEntryService = ServiceLocator.Get<ISignInEntryService>();
 		protected readonly IAttachmentService AttachmentService = ServiceLocator.Get<IAttachmentService>();
 
-		#region Helpers
+        #region Helpers
 
-		protected async Task<JobMessageListViewModel> GetAllJobsMessagesViewModel(Guid userId, MessageType messageType)
+        protected async Task<JobMessageListViewModel> GetAllJobsMessagesViewModel(Guid userId, MessageType messageType)
 		{
 
 
@@ -239,8 +239,13 @@ namespace Enivate.ResponseHub.UI.Controllers
 				model.LhqCoordinates = unit.HeadquartersCoordinates;
 			}
 
-			// return the mapped job view model
-			return model;
+            // Get the capcodes for the job
+            ICapcodeService capcodeService = ServiceLocator.Get<ICapcodeService>();
+            IList<Capcode> jobCapcodes = await capcodeService.GetByCapcodeAddress(job.Capcodes.Select(i => i.Capcode));
+            model.JobCapcodes = jobCapcodes;
+
+            // return the mapped job view model
+            return model;
 
 		}
 		

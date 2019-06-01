@@ -1,50 +1,103 @@
-﻿@model System.Collections.Generic.List<Enivate.ResponseHub.Model.Messages.JobMessage>
+﻿@model Enivate.ResponseHub.UI.Models.PagerMessages.PagerMessageListViewModel
 
 @{
-    ViewBag.Title = "Pager messages";
+	ViewBag.Title = "Pager messages";
 }
 
 <h1>@ViewBag.Title</h1>
 
-@if (Model == null || Model.Count == 0)
-{
-	<p class="text-danger"><i class="fa fa-fw fa-times-circle"></i>&nbsp;&nbsp;There are no pager messages to show.</p>
-}
+<div id="job-tabs">
 
-<ul class="list-unstyled" id="all-pages-list">
+	<!-- Nav tabs -->
+	<ul class="nav nav-tabs" role="tablist">
+		<li role="presentation" class="active"><a href="#tab-map" aria-controls="tab-map" role="tab" data-toggle="tab" class="btn-icon"><i class="fa fa-fw fa-map"></i><span class="tab-title">Map view</span></a></li>
+		<li role="presentation"><a href="#tab-list" aria-controls="tab-list" role="tab" data-toggle="tab" class="btn-icon" id="tab-header-list"><i class="fa fa-fw fa-list"></i><span class="tab-title">List view</span></a></li>
+	</ul>
 
-	@foreach(var message in Model)
-	{
-		<li data-message-id="@message.Id">
-			<p class="bottom-0">
-			<strong>
-				@if (message.Capcodes.First().Priority == Enivate.ResponseHub.Model.Messages.MessagePriority.Emergency)
-				{
-					<i class="fa fa-exclamation-triangle p-message-emergency"></i>
-				}
-				else if (message.Capcodes.First().Priority == Enivate.ResponseHub.Model.Messages.MessagePriority.NonEmergency)
-				{
-					<i class="fa fa-exclamation-circle p-message-non-emergency"></i>
-				}
-				else
-				{
-					<i class="fa fa-info-circle p-message-admin"></i>
-				}
-				@if (!String.IsNullOrEmpty(message.JobNumber))
-				{
-					@Html.Raw(message.JobNumber) 
-					@Html.Raw(" - ")
-				}
-			</strong><span class="text-info">@message.Timestamp.ToLocalTime().ToString("HH:mm:ss d MMMM yyyy")</span> - <span class="text-muted">(@message.Capcodes.First().Capcode)</span></p>
-			<p class="message-content">@message.MessageContent</p>
-		</li>
-	}
+	<!-- Tab panes -->
+	<div class="tab-content">
+		
+		<!-- Map View -->
+		<div role="tabpanel" class="tab-pane active" id="tab-map">
 
-</ul>
+			<div id="map-messages"></div>
+			<div id="map-canvas" style="height: 600px;" class="top-20"></div>
+			<script type="text/javascript">
 
-<div class="row bottom-20 top-20" id="all-pages-load-more">
-	<div class="col-sm-12 text-center">
-		<p class="text-primary btn-icon loading hidden"><i class="fa fa-spinner fa-spin"></i>Loading...</p>
-		<button class="btn btn-primary" onclick="responseHub.pagerMessages.getNextPages();">Load more</button>
+			var mapConfig = {
+				lat: -36.854167,
+				lon: 144.281111,
+				zoom: 7,
+				minZoom: 4,
+				scrollWheel: false,
+				mapContainer: 'map-canvas',
+				loadCallback: function () {
+
+					@foreach(var message in Model.MapMessages)
+					{
+						@:responseHub.maps.addPagerMessageMarkerToMap(Number(@message.Location.Coordinates.Latitude), Number(@message.Location.Coordinates.Longitude), '@message.Id', '@message.JobNumber', '@message.MessageContent');
+					}
+
+					// Add the current location to the map
+					if (responseHub.isMobile()) {
+						responseHub.maps.addCurrentLocationToMap();
+					}
+
+				}
+			};
+
+			</script>
+
+		</div>
+
+		<!-- List view -->
+		<div role="tabpanel" class="tab-pane" id="tab-list">
+
+			@if (Model == null || Model.LatestMessages == null || Model.LatestMessages.Count == 0)
+			{
+				<p class="text-danger top-20"><i class="fa fa-fw fa-times-circle"></i>&nbsp;&nbsp;There are no pager messages to show.</p>
+			}
+
+			<ul class="list-unstyled top-20" id="all-pages-list">
+
+				@foreach (var message in Model.LatestMessages)
+				{
+					<li data-message-id="@message.Id">
+						<p class="bottom-0">
+							<strong>
+								@if (message.Capcodes.Any(i => i.Priority == Enivate.ResponseHub.Model.Messages.MessagePriority.Emergency))
+								{
+									<i class="fa fa-exclamation-triangle p-message-emergency"></i>
+								}
+								else if (message.Capcodes.Any(i => i.Priority == Enivate.ResponseHub.Model.Messages.MessagePriority.NonEmergency))
+								{
+									<i class="fa fa-exclamation-circle p-message-non-emergency"></i>
+								}
+								else
+								{
+									<i class="fa fa-info-circle p-message-admin"></i>
+								}
+								@if (!String.IsNullOrEmpty(message.JobNumber))
+								{
+									<a href="/pager-messages/@message.Id">@message.JobNumber</a>
+									@Html.Raw(" - ")
+								}
+							</strong><span class="text-info">@message.Timestamp.ToLocalTime().ToString("HH:mm:ss d MMMM yyyy")</span>
+						</p>
+						<p class="message-content">@message.MessageContent</p>
+					</li>
+				}
+
+			</ul>
+
+			<div class="row bottom-20 top-20" id="all-pages-load-more">
+				<div class="col-sm-12 text-center">
+					<p class="text-primary btn-icon loading hidden"><i class="fa fa-spinner fa-spin"></i>Loading...</p>
+					<button class="btn btn-primary" onclick="responseHub.pagerMessages.getNextPages();">Load more</button>
+				</div>
+			</div>
+
+		</div>
+
 	</div>
 </div>

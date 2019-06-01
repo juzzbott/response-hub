@@ -2,6 +2,7 @@
 using Enivate.ResponseHub.Model.Attachments;
 using Enivate.ResponseHub.Model.Messages;
 using Enivate.ResponseHub.Model.Spatial;
+using Enivate.ResponseHub.Model.Units;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -72,6 +73,8 @@ namespace Enivate.ResponseHub.UI.Models.Messages
 
 		public int Version { get; set; }
 
+        public IList<Capcode> JobCapcodes { get; set; }
+
 		public JobMessageViewModel()
 		{
 			Location = new LocationInfo();
@@ -80,6 +83,7 @@ namespace Enivate.ResponseHub.UI.Models.Messages
 			ImageAttachments = new List<Attachment>();
 			SignIns = new List<JobMessageSignInEntry>();
 			AdditionalMessages = new List<AdditionalMessage>();
+            JobCapcodes = new List<Capcode>();
 
 			// Set the default date and time values
 			EditProgressDate = DateTime.Now.ToString("yyyy-MM-dd");

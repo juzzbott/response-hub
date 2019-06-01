@@ -1,0 +1,108 @@
+﻿@model Enivate.ResponseHub.UI.Models.PagerMessages.PagerMessageViewModel
+
+@{
+	ViewBag.Title = (!String.IsNullOrEmpty(Model.JobNumber) ? Model.JobNumber : Model.Timestamp.ToString("dd/MM/yyyy HH:mm:ss"));
+}
+
+<div class="row">
+	<div class="col-sm-7">
+
+		<h1>
+			@if (Model.Priority == Enivate.ResponseHub.Model.Messages.MessagePriority.Emergency)
+			{
+				<i class="fa fa-exclamation-triangle p-message-emergency"></i>
+			}
+			else if (Model.Priority == Enivate.ResponseHub.Model.Messages.MessagePriority.NonEmergency)
+			{
+				<i class="fa fa-exclamation-circle p-message-non-emergency"></i>
+			}
+			else
+			{
+				<i class="fa fa-info-circle p-message-admin"></i>
+			}
+			@ViewBag.Title
+		</h1>
+
+	</div>
+	<div class="col-sm-5">
+		<h3 class="text-right text-xs-left text-info">@Model.Timestamp.ToString("yyyy-MM-dd HH:mm:ss")</h3>
+	</div>
+</div>
+
+<p class="lead">@Model.MessageBody</p>
+
+@if (Model.AdditionalMessages != null && Model.AdditionalMessages.Count > 0)
+{
+	<h4>Additional messages</h4>
+	<div class="bottom-20">
+		@foreach (var additionalMessage in Model.AdditionalMessages)
+		{
+			<p>
+				<span class="text-info">@additionalMessage.Timestamp.ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss")</span><br />
+				@additionalMessage.MessageContent
+			</p>
+		}
+	</div>
+}
+
+@if (Model.Location != null)
+{
+
+	<h3>Location</h3>
+
+	if (Model.Location.Address != null && !String.IsNullOrEmpty(Model.Location.Address.FormattedAddress))
+	{
+		<p class="text-info lead bottom-5">@Model.Location.Address.FormattedAddress.Replace(", Australia", "")</p>
+		<p class="bottom-20 text-muted">Map ref: @Html.EnumDescription(Model.Location.MapType) @Model.Location.MapReference</p>
+	}
+	else
+	{
+		<p class="lead text-info">Map ref: @Html.EnumDescription(Model.Location.MapType) @Model.Location.MapReference</p>
+	}
+
+	if (Model.Location.Coordinates.Latitude != 0 && Model.Location.Coordinates.Longitude != 0)
+	{
+		<div id="map-messages"></div>
+		<div id="map-canvas" style="height: 400px;"></div>
+		<script type="text/javascript">
+
+			var mapConfig = {
+				lat: Number(@Model.Location.Coordinates.Latitude),
+				lon: Number(@Model.Location.Coordinates.Longitude),
+				zoom: 15,
+				minZoom: 4,
+				scrollWheel: false,
+				mapContainer: 'map-canvas',
+				loadCallback: function () {
+
+					// Add the map marker for the place.
+					responseHub.maps.addMarkerToMap(Number(@Model.Location.Coordinates.Latitude), Number(@Model.Location.Coordinates.Longitude));
+
+					// Add the current location to the map
+					if (responseHub.isMobile()) {
+						responseHub.maps.addCurrentLocationToMap();
+					}
+
+				}
+			};
+
+		</script>
+	}
+}
+
+<div class="row">
+	<div class="col-sm-12">
+		<h3>Additional notifications</h3>
+	</div>
+</div>
+
+<div class="row bottom-20">
+	<div class="col-sm-12">
+		<ul>
+			@foreach (var capcode in Model.JobCapcodes)
+			{
+				<li><h4>@capcode.Name <span class="text-muted">[@(!String.IsNullOrEmpty(capcode.ShortName) ? capcode.ShortName : capcode.CapcodeAddress)]</span></h4></li>
+			}
+		</ul>
+	</div>
+</div>

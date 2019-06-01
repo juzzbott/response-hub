@@ -33,7 +33,9 @@ namespace Enivate.ResponseHub.Model.Units.Interface
 
 		Task<Capcode> GetByCapcodeAddress(string capcodeAddress);
 
-		Task Remove(Guid id);
+        Task<IList<Capcode>> GetByCapcodeAddress(IEnumerable<string> capcodeAddresses);
+
+        Task Remove(Guid id);
 
         Task AddCapcodes(Dictionary<string, string> capcodes);
 

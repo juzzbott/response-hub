@@ -70,20 +70,38 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 		{
 			// return the messages without date filters
 			return await GetMessagesBetweenDates(capcodes, messageTypes, count, skip, null, null);
-		}
+        }
 
-		/// <summary>
-		///  Gets the job messages for the list of capcodes specified between the specific dates. Results are limited to count number of items.
-		/// </summary>
-		/// <param name="capcodes"></param>
-		/// <param name="count"></param>
-		/// <returns></returns>
-		public async Task<IList<JobMessage>> GetMessagesBetweenDates(IEnumerable<string> capcodes, MessageType messageTypes, int count, int skip, DateTime? dateFrom, DateTime? dateTo)
+        /// <summary>
+        ///  Gets the most recent job messages for the message types specified. Results are limited to count number of items.
+        /// </summary>
+        /// <param name="capcodes"></param>
+        /// <param name="count"></param>
+        /// <returns></returns>
+        public async Task<IList<JobMessage>> GetMostRecent(MessageType messageTypes, int count, int skip)
+        {
+            // return the messages without date filters
+            return await GetMessagesBetweenDates(null, messageTypes, count, skip, null, null);
+        }
+
+        /// <summary>
+        ///  Gets the job messages for the list of capcodes specified between the specific dates. Results are limited to count number of items.
+        /// </summary>
+        /// <param name="capcodes"></param>
+        /// <param name="count"></param>
+        /// <returns></returns>
+        public async Task<IList<JobMessage>> GetMessagesBetweenDates(IEnumerable<string> capcodes, MessageType messageTypes, int count, int skip, DateTime? dateFrom, DateTime? dateTo)
 		{
 			
 			// Create the filter and sort
 			FilterDefinitionBuilder<JobMessageDto> builder = Builders<JobMessageDto>.Filter;
-			FilterDefinition<JobMessageDto> filter = builder.In("Capcodes.Capcode", capcodes);
+            FilterDefinition<JobMessageDto> filter = builder.Empty;
+
+            // If there are capcodes, then search for them
+            if (capcodes != null)
+            {
+                filter &= builder.In("Capcodes.Capcode", capcodes);
+            }
 
 			// If there is dateFrom and dateTo filters, add them
 			if (dateFrom.HasValue)
@@ -140,10 +158,16 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 		{
 			// Create the filter and sort
 			FilterDefinitionBuilder<JobMessageDto> builder = Builders<JobMessageDto>.Filter;
-			FilterDefinition<JobMessageDto> filter = builder.In("Capcodes.Capcode", capcodes);
+			FilterDefinition<JobMessageDto> filter = builder.Empty;
 
-			// If there is dateFrom and dateTo filters, add them
-			if (dateFrom.HasValue)
+            // If there are capcodes, then search for them
+            if (capcodes != null)
+            {
+                filter &= builder.In("Capcodes.Capcode", capcodes);
+            }
+
+            // If there is dateFrom and dateTo filters, add them
+            if (dateFrom.HasValue)
 			{
 				filter &= builder.Gte(i => i.Timestamp, dateFrom.Value.ToUniversalTime());
 			}
