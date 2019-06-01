@@ -19,6 +19,7 @@ using Enivate.ResponseHub.Model;
 using Enivate.ResponseHub.Model.Messages.Interface;
 using Enivate.ResponseHub.Model.Addresses.Interface;
 using System.IO;
+using Enivate.ResponseHub.Model.Units.Interface;
 
 namespace Enivate.ResponseHub.WindowsService.Tests
 {
@@ -148,7 +149,7 @@ namespace Enivate.ResponseHub.WindowsService.Tests
 		{
 
 			// Create the parser
-			PdwLogFileParser parser = new PdwLogFileParser(new Mock<ILogger>().Object, new Mock<IMapIndexRepository>().Object, new Mock<IDecoderStatusRepository>().Object, new Mock<IJobMessageService>().Object, new Mock<IAddressService>().Object);
+			PdwLogFileParser parser = new PdwLogFileParser(new Mock<ILogger>().Object, new Mock<IMapIndexRepository>().Object, new Mock<IDecoderStatusRepository>().Object, new Mock<IJobMessageService>().Object, new Mock<IAddressService>().Object, new Mock<ICapcodeService>().Object);
 			bool isInvalid = parser.MessageAppearsInvalid(message);
 
 			Assert.True(invalid == isInvalid, "The message does not match the expected invalid value.");
@@ -203,7 +204,7 @@ namespace Enivate.ResponseHub.WindowsService.Tests
 			string html = File.ReadAllText(String.Format("{0}\\mazzonet_html.txt", Environment.CurrentDirectory));
 
 			// Create the Mazzonet Web Parser
-			MazzanetWebParser parser = new MazzanetWebParser(new Mock<ILogger>().Object, new Mock<IMapIndexRepository>().Object, new Mock<IDecoderStatusRepository>().Object, new Mock<IJobMessageService>().Object, new Mock<IAddressService>().Object);
+			MazzanetWebParser parser = new MazzanetWebParser(new Mock<ILogger>().Object, new Mock<IMapIndexRepository>().Object, new Mock<IDecoderStatusRepository>().Object, new Mock<IJobMessageService>().Object, new Mock<IAddressService>().Object, new Mock<ICapcodeService>().Object);
 
 			// Parse the html into pager messages
 			IList<PagerMessage> messages = parser.ParsePagerMessagesFromHtml(html);

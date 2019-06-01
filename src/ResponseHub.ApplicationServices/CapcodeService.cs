@@ -308,5 +308,11 @@ namespace Enivate.ResponseHub.ApplicationServices
 			CacheManager.RemoveItem(AllCapcodesCacheKey);
 		}
 
-	}
+        public async Task AddCapcodes(Dictionary<string, string> capcodes)
+        {
+            await _repository.AddCapcodes(capcodes);
+        }
+
+
+    }
 }

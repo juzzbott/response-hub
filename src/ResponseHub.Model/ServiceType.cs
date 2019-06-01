@@ -13,6 +13,9 @@ namespace Enivate.ResponseHub.Model
 		[Description("All Services")]
 		AllServices = 1,
 
+        [Description("Unknown")]
+        Unknown = 2,
+
 		[Description("State Emergency Service")]
 		StateEmergencyService = 5,
 

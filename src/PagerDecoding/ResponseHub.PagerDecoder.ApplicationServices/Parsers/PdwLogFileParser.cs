@@ -13,6 +13,7 @@ using Enivate.ResponseHub.Model.Messages;
 using Enivate.ResponseHub.DataAccess.Interface;
 using Enivate.ResponseHub.Model.Messages.Interface;
 using Enivate.ResponseHub.Model.Addresses.Interface;
+using Enivate.ResponseHub.Model.Units.Interface;
 
 namespace Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers
 {
@@ -29,7 +30,7 @@ namespace Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers
 		/// </summary>
 		private int _maxLogFileAttempts = 5;
 
-		public PdwLogFileParser(ILogger log, IMapIndexRepository mapIndexRepository, IDecoderStatusRepository decoderStatusRepository, IJobMessageService jobMessageService, IAddressService addressService)
+		public PdwLogFileParser(ILogger log, IMapIndexRepository mapIndexRepository, IDecoderStatusRepository decoderStatusRepository, IJobMessageService jobMessageService, IAddressService addressService, ICapcodeService capcodeService)
 		{
 
 			// Instantiate the interfaces.
@@ -38,10 +39,12 @@ namespace Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers
 			DecoderStatusRepository = decoderStatusRepository;
 			JobMessageService = jobMessageService;
 			AddressService = addressService;
+            CapcodeService = capcodeService;
 
 			// Initialise the list of pager messages to submit.
 			PagerMessagesToSubmit = new List<PagerMessage>();
 			JobMessagesToSubmit = new Dictionary<string, JobMessage>();
+            CapcodesToSubmit = new Dictionary<string, string>();
 
 			// Instantiate the message parsers
 			PagerMessageParser = new PagerMessageParser(Log);
@@ -67,9 +70,16 @@ namespace Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers
 			// Write some stats to the log files.
 			Log.Info(String.Format("Processed and submitted '{0}' job message{1}", JobMessagesToSubmit.Count, (JobMessagesToSubmit.Count != 1 ? "s" : "")));
 
-			// Clear the lists
-			PagerMessagesToSubmit.Clear();
+            // Extract list of capcodes from the pager messages
+            ExtractAndSubmitCapcodesFromPagerMessages();
+
+            // Write some stats to the log files.
+            Log.Info(String.Format("Processed and submitted '{0}' capcode{1}", CapcodesToSubmit.Count, (CapcodesToSubmit.Count != 1 ? "s" : "")));
+
+            // Clear the lists
+            PagerMessagesToSubmit.Clear();
 			JobMessagesToSubmit.Clear();
+            CapcodesToSubmit.Clear();
 
 		}
 

@@ -23,6 +23,7 @@ using Enivate.ResponseHub.Model.Messages.Interface;
 using Enivate.ResponseHub.PagerDecoder.ApplicationServices;
 
 using Newtonsoft.Json;
+using Enivate.ResponseHub.Model.Units.Interface;
 
 namespace Enivate.ResponseHub.PagerDecoder
 {
@@ -79,8 +80,9 @@ namespace Enivate.ResponseHub.PagerDecoder
 		protected IJobMessageService JobMessageService = ServiceLocator.Get<IJobMessageService>();
 		protected IDecoderStatusRepository DecoderStatusRepository = ServiceLocator.Get<IDecoderStatusRepository>();
 		protected IAddressService AddressService = ServiceLocator.Get<IAddressService>();
+        protected ICapcodeService CapcodeService = ServiceLocator.Get<ICapcodeService>();
 
-		public MessageService()
+        public MessageService()
 		{
 			InitializeComponent();
 
@@ -219,12 +221,12 @@ namespace Enivate.ResponseHub.PagerDecoder
 				// Create the PdwLogFileParser
 				if (_pagerMessageSource.ToLower() == "pdw")
 				{
-					PdwLogFileParser pdwParser = new PdwLogFileParser(Log, MapIndexRepository, DecoderStatusRepository, JobMessageService, AddressService);
+					PdwLogFileParser pdwParser = new PdwLogFileParser(Log, MapIndexRepository, DecoderStatusRepository, JobMessageService, AddressService, CapcodeService);
 					pdwParser.GetLatestMessages();
 				}
 				else
 				{
-					MazzanetWebParser webParser = new MazzanetWebParser(Log, MapIndexRepository, DecoderStatusRepository, JobMessageService, AddressService);
+					MazzanetWebParser webParser = new MazzanetWebParser(Log, MapIndexRepository, DecoderStatusRepository, JobMessageService, AddressService, CapcodeService);
 					webParser.GetLatestMessages();
 				}
 

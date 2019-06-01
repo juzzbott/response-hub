@@ -2,7 +2,7 @@
 var schema_info_id = ObjectId("58e492e962cb703bc785da68");
 
 // Define the max schema version
-var schema_version = 8;
+var schema_version = 9;
 
 // Ensure we have a schema to start with
 var schema_count = db.schema_info.count({});
@@ -126,6 +126,10 @@ while (current_version < schema_version) {
 			db.user_sign_ins.updateMany({ OtherDetails: { $exists: false } }, { $set: { OtherDetails: null } });
 			db.user_sign_ins.updateMany({ TrainingDetails: { $exists: false } }, { $set: { TrainingDetails: null } });
 			db.units.updateMany({}, { $set: { TrainingNight: { DayOfWeek: 2, StartTime: "19:30" } } });
+
+		case 9:
+			db.capcodes.createIndex({ "CapcodeAddress": 1 }, { background: true, name: 'capcode_address' });
+			db.job_messages.createIndex({ "UniqueHash": 1 }, { background: true, name: 'job_messages_unique_hash' });
 
 	}
 

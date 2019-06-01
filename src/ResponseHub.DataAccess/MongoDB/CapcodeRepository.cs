@@ -80,5 +80,40 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 			return await Collection.Find(Builders<Capcode>.Filter.Eq(i => i.IsUnitCapcode, unitOnly)).ToListAsync();
 		}
 
+        public async Task AddCapcodes(Dictionary<string, string> capcodes)
+        {
+            foreach(KeyValuePair<string, string> capcode in capcodes)
+            {
+                // First, check if a capcode exists with the existing address
+                Capcode existingCapcode = await Collection.Find(Builders<Capcode>.Filter.Eq(i => i.CapcodeAddress, capcode.Key)).SingleOrDefaultAsync();
+
+                // If an existing capcode exists, and the short name is empty, update the short name
+                if (existingCapcode != null && String.IsNullOrEmpty(existingCapcode.ShortName))
+                {
+                    // Create the filter
+                    FilterDefinition<Capcode> filter = Builders<Capcode>.Filter.Eq(i => i.Id, existingCapcode.Id);
+
+                    // Create the update
+                    UpdateDefinition<Capcode> update = Builders<Capcode>.Update.Set(i => i.ShortName, capcode.Value).Set(i => i.Updated, DateTime.UtcNow);
+
+                    // Send to mongo
+                    await Collection.UpdateOneAsync(filter, update);
+                }
+                else
+                {
+                    // Write the new capcode to the database.
+                    Capcode newCapcode = new Capcode()
+                    {
+                        CapcodeAddress = capcode.Key,
+                        Created = DateTime.UtcNow,
+                        Updated = DateTime.UtcNow,
+                        ShortName = capcode.Value,
+                        Service = ServiceType.Unknown
+                    };
+                    await Collection.InsertOneAsync(newCapcode);
+                }
+            }
+        }
+
 	}
 }

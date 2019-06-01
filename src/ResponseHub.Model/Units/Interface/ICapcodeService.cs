@@ -35,5 +35,8 @@ namespace Enivate.ResponseHub.Model.Units.Interface
 
 		Task Remove(Guid id);
 
-	}
+        Task AddCapcodes(Dictionary<string, string> capcodes);
+
+
+    }
 }
