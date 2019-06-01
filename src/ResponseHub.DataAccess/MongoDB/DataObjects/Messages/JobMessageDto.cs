@@ -37,7 +37,9 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB.DataObjects.Messages
 
 		public int Version { get; set; }
 
-		public JobMessageDto()
+        public string UniqueHash { get; set; }
+
+        public JobMessageDto()
 		{
 
 			// Instantiate the id

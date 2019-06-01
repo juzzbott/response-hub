@@ -213,6 +213,25 @@ namespace Enivate.ResponseHub.WindowsService.Tests
 
 		}
 
+        [Trait("Category", "Parser tests - Unique hash generation")]
+        [Theory(DisplayName = "Can generate unique hash from job message")]
+        [InlineData("YAGL1 RESCC1 * CAR ACCIDENT - POSS PERSON TRAPPED CNR ELTHAM-YARRA GLEN RD/STEELS CREEK RD YARRA GLEN M 266 J10 (560321) AFPR CCHRI F190530462", "F190530462", "a283f9381e19931b98844d670e644c329b9ac5c2ad6308f8effcaa1ff8f92b45")]
+        [InlineData("ALERT YAGL1 RESCC1 * CAR ACCIDENT - POSS PERSON TRAPPED CNR ELTHAM-YARRA GLEN RD/STEELS CREEK RD YARRA GLEN M 266 J10 (560321) AFPR CCHRI F190530462 [CHRI]", "F190530462", "a283f9381e19931b98844d670e644c329b9ac5c2ad6308f8effcaa1ff8f92b45")]
+        [InlineData("YAGL1 RESCC1 * CAR ACCIDENT - POSS PERSON TRAPPED CNR ELTHAM-YARRA GLEN RD/STEELS CREEK RD YARRA GLEN M 266 J10 (560321) F190530462 CCOLD CYAGL LILY1 [CTDO]", "F190530462", "a283f9381e19931b98844d670e644c329b9ac5c2ad6308f8effcaa1ff8f92b45")]
+        [InlineData("ALERT F190530462 YAGL1 RESCC1 * CAR ACCIDENT - POSS PERSON TRAPPED CNR ELTHAM-YARRA GLEN RD/STEELS CREEK RD YARRA GLEN M 266 J10 (560321) CCOLD CYAGL LILY1 [LILY]", "F190530462", "a283f9381e19931b98844d670e644c329b9ac5c2ad6308f8effcaa1ff8f92b45")]
+        [InlineData("There is a working bee at the Powell farm this Sunday at 9am. General clean up and some chainsaw work. If anyone has some spare time it would be really appreciated. If available please ring or msg Cookie 0409 257 110 [SCOT]", "", "a9593f16cacdf282f6b470bed0eafab7926ac7f598955f3def6f841cdb41d418")]
+        [InlineData("There is a working bee at the Powell farm this Sunday at 9am. General clean up and some chainsaw work. If anyone has some spare time it would be really appreciated. If available please ring or msg Cookie 0409 257 110 [PRIN]", "", "a9593f16cacdf282f6b470bed0eafab7926ac7f598955f3def6f841cdb41d418")]
+        public void CanGenerateUniqueHashFromJobMessage(string message, string jobNumber, string hash)
+        {
+
+            // Create the parser
+            JobMessageParser parser = new JobMessageParser(new Mock<IAddressService>().Object, new Mock<IMapIndexRepository>().Object, new Mock<ILogger>().Object);
+
+            string generatedHash = parser.GetMessageUniqueHash(message, jobNumber);
+
+            Assert.Equal(hash, generatedHash);
+        }
+
 		#region Helpers
 
 		/// <summary>

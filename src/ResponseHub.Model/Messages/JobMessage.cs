@@ -36,6 +36,8 @@ namespace Enivate.ResponseHub.Model.Messages
 
 		public int Version { get; set; }
 
+        public string UniqueHash { get; set; }
+
 		public JobMessage()
 		{
 

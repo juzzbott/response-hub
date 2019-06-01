@@ -11,6 +11,7 @@ using Enivate.ResponseHub.DataAccess.Interface;
 using Enivate.ResponseHub.Logging;
 using Enivate.ResponseHub.Model.Addresses;
 using Enivate.ResponseHub.Model.Addresses.Interface;
+using System.Security.Cryptography;
 
 namespace Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers
 {
@@ -121,11 +122,14 @@ namespace Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers
 				}
 			}
 
+            // Set the unique hash for the message
+            msg.UniqueHash = GetMessageUniqueHash(msg.MessageContent, msg.JobNumber);
+
 			// return the message
 			return msg;
 		}
 
-		private bool AddressCoordsValid(double addressLat, double addressLong, double jobMessageLat, double jobMessageLong)
+        private bool AddressCoordsValid(double addressLat, double addressLong, double jobMessageLat, double jobMessageLong)
 		{
 			return false;
 		}
@@ -381,6 +385,64 @@ namespace Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers
 				default:
 					return MessagePriority.Administration;
 			}
-		}
-	}
+        }
+
+        /// <summary>
+        /// Gets the unique hash for the message. Used to determine if the message already exists in the DB.
+        /// The following is stripped to get message contents
+        /// - 'ALERT'
+        /// - JobNumber (prepended to message in format JobNumber-[MessageContent]
+        /// - All content After grid reference
+        /// </summary>
+        /// <param name="messageContent"></param>
+        /// <returns></returns>
+        public string GetMessageUniqueHash(string messageContent, string jobNumber)
+        {
+
+            // Remove the 'ALERT ' if it exists
+            if (messageContent.StartsWith("ALERT "))
+            {
+                messageContent = messageContent.Substring(6);
+            }
+
+            // Remove all content after grid reference
+            Match match = Regex.Match(messageContent, @"^.*(?:[A-Z]\d{1,2}\s\(\d{6}\)\s)(.*)$");
+            if (match.Groups.Count > 1)
+            {
+                messageContent = messageContent.Substring(0, match.Groups[1].Index);
+            }
+
+            // Remove last pager address short name
+            match = Regex.Match(messageContent, @"^.*(\[[A-Z0-9]{4,8}\])$");
+            if (match.Groups.Count > 1)
+            {
+                messageContent = messageContent.Substring(0, match.Groups[1].Index);
+            }
+
+            if (!String.IsNullOrEmpty(jobNumber))
+            {
+                // Remove the job number
+                messageContent = messageContent.Replace(jobNumber + " ", "");
+
+                // Prepend the job number
+                messageContent = String.Format("{0}-{1}", jobNumber, messageContent);
+
+            }
+
+            // Generate hash of the message content
+            using (SHA256 sha256Hash = SHA256.Create())
+            {
+                // ComputeHash - returns byte array  
+                byte[] bytes = sha256Hash.ComputeHash(Encoding.UTF8.GetBytes(messageContent.Trim()));
+
+                // Convert byte array to a string   
+                StringBuilder builder = new StringBuilder();
+                for (int i = 0; i < bytes.Length; i++)
+                {
+                    builder.Append(bytes[i].ToString("x2"));
+                }
+                return builder.ToString();
+            }
+        }
+    }
 }

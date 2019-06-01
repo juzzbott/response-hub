@@ -32,8 +32,32 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 		public async Task AddMessages(IList<JobMessage> messages)
 		{
 
-			// Write the job messages to the database.
-			await Collection.InsertManyAsync(messages.Select(i => MapModelToDbObject(i)));
+            // Iterate through the job messages
+            foreach(JobMessage message in messages)
+            {
+
+                // First, check if a message exists with the existing hash
+                JobMessageDto existingMessage = await Collection.Find(Builders<JobMessageDto>.Filter.Eq(i => i.UniqueHash, message.UniqueHash)).SingleOrDefaultAsync();
+
+                // If an existing message exists, add the additional capcode and priority to that job
+                if (existingMessage != null)
+                {
+                    // Create the filter
+                    FilterDefinition<JobMessageDto> filter = Builders<JobMessageDto>.Filter.Eq(i => i.Id, existingMessage.Id);
+
+                    // Create the update
+                    UpdateDefinition<JobMessageDto> update = Builders<JobMessageDto>.Update.Push(i => i.Capcodes, message.Capcodes.First());
+
+                    // Send to mongo
+                    await Collection.UpdateOneAsync(filter, update);
+                }
+                else
+                {
+                    // Write the job message to the database.
+                    await Collection.InsertOneAsync(MapModelToDbObject(message));
+                }
+
+            }
         }
 
         /// <summary>
@@ -718,9 +742,10 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 				ProgressUpdates = dbObject.ProgressUpdates,
 				AttachmentIds = dbObject.AttachmentIds,
 				Type = dbObject.Type,
-				Version = dbObject.Version
-				
-			};
+				Version = dbObject.Version,
+                UniqueHash = dbObject.UniqueHash
+
+            };
 
 			// Map the location property.
 			if (dbObject.Location != null)
@@ -758,7 +783,8 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 				ProgressUpdates = modelObject.ProgressUpdates,
 				AttachmentIds = modelObject.AttachmentIds,
 				Type = modelObject.Type,
-				Version = modelObject.Version
+				Version = modelObject.Version,
+                UniqueHash = modelObject.UniqueHash
 			};
 
 			// Map the location property
