@@ -336,10 +336,10 @@ namespace Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers
 			}
 
 			// Write the sha to the file
-			//using (StreamWriter writer = new StreamWriter(GetLastMessageFilePath(), false))
-			//{
-			//	writer.Write(lastMessageSha);
-			//}
+			using (StreamWriter writer = new StreamWriter(GetLastMessageFilePath(), false))
+			{
+				writer.Write(lastMessageSha);
+			}
 
 		}
 
