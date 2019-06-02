@@ -51,7 +51,8 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
                     // Send to mongo
                     await Collection.UpdateOneAsync(filter, update);
                 }
-                else
+                // Message does not exist, add it.
+                else if (existingMessage == null)
                 {
                     // Write the job message to the database.
                     await Collection.InsertOneAsync(MapModelToDbObject(message));
