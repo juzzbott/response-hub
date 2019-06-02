@@ -15,51 +15,12 @@ using Enivate.ResponseHub.Model.Addresses.Interface;
 
 using Microsoft.Practices.Unity.Configuration;
 using Unity;
+using Enivate.ResponseHub.Model.Units.Interface;
 
 namespace Enivate.ResponseHub.PagerDecoder.ConsoleRunner
 {
 	class Program
 	{
-
-		protected ILogger Log
-		{
-			get
-			{
-				return ServiceLocator.Get<ILogger>();
-			}
-		}
-
-		protected IMapIndexRepository MapIndexRepository
-		{
-			get
-			{
-				return ServiceLocator.Get<IMapIndexRepository>();
-			}
-		}
-
-		protected IJobMessageService JobMessageService
-		{
-			get
-			{
-				return ServiceLocator.Get<IJobMessageService>();
-			}
-		}
-
-		protected IDecoderStatusRepository DecoderStatusRepository
-		{
-			get
-			{
-				return ServiceLocator.Get<IDecoderStatusRepository>();
-			}
-		}
-
-		protected IAddressService AddressSerice
-		{
-			get
-			{
-				return ServiceLocator.Get<IAddressService>();
-			}
-		}
 
 		static void Main(string[] args)
 		{
@@ -72,12 +33,13 @@ namespace Enivate.ResponseHub.PagerDecoder.ConsoleRunner
 			IDecoderStatusRepository decoderStatusRepository = ServiceLocator.Get<IDecoderStatusRepository>();
 			IJobMessageService jobMessageService = ServiceLocator.Get<IJobMessageService>();
 			IAddressService addressService = ServiceLocator.Get<IAddressService>();
+            ICapcodeService capcodeService = ServiceLocator.Get<ICapcodeService>();
 
-			if (args.Length > 0 && args[0].ToLower() == "-pdw")
+            if (args.Length > 0 && args[0].ToLower() == "-pdw")
 			{ 
 				
 				// Create the PdwLogFileParser
-				PdwLogFileParser pdwParser = new PdwLogFileParser(log, mapIndexRepository, decoderStatusRepository, jobMessageService, addressService);
+				PdwLogFileParser pdwParser = new PdwLogFileParser(log, mapIndexRepository, decoderStatusRepository, jobMessageService, addressService, capcodeService);
 				pdwParser.GetLatestMessages();
 
 				Console.WriteLine("Press any key to exit.");
@@ -89,14 +51,25 @@ namespace Enivate.ResponseHub.PagerDecoder.ConsoleRunner
 			{
 
 				// Create the PdwLogFileParser
-				MazzanetWebParser pdwParser = new MazzanetWebParser(log, mapIndexRepository, decoderStatusRepository, jobMessageService, addressService);
+				MazzanetWebParser pdwParser = new MazzanetWebParser(log, mapIndexRepository, decoderStatusRepository, jobMessageService, addressService, capcodeService);
 				pdwParser.GetLatestMessages();
 
 				Console.WriteLine("Press any key to exit.");
 				Console.Read();
 
-			}
-			else if (args.Length > 0 && args[0].ToLower() == "-addr")
+            }
+            else if (args.Length > 0 && args[0].ToLower() == "-test")
+            {
+
+                // Create the PdwLogFileParser
+                TestFileParser testFileParser = new TestFileParser(log, mapIndexRepository, decoderStatusRepository, jobMessageService, addressService, capcodeService);
+                testFileParser.GetLatestMessages();
+
+                Console.WriteLine("Press any key to exit.");
+                Console.Read();
+
+            }
+            else if (args.Length > 0 && args[0].ToLower() == "-addr")
 			{
 
 				// Get the path to the test messages

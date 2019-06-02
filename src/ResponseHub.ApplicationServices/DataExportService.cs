@@ -59,11 +59,11 @@ namespace Enivate.ResponseHub.ApplicationServices
 			{
 				sb.AppendLine(String.Format("{0},{1},{2},{3},\"{4}\",{5},{6},{7},{8},{9},{10}",
 					message.Id,
-					message.Capcode,
+					message.Capcodes.First(i => i.Capcode == unit.Capcode).Capcode,
 					message.JobNumber,
 					message.Timestamp.ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss"),
 					message.MessageContent,
-					message.Priority,
+                    message.Capcodes.First(i => i.Capcode == unit.Capcode).Priority,
 					GetMapReference(message.Location),
 					GetGpsCoordinates(message.Location),
 					GetJobProgress(message, MessageProgressType.OnRoute),

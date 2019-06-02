@@ -3,6 +3,7 @@ using Enivate.ResponseHub.Logging;
 using Enivate.ResponseHub.Model.Addresses.Interface;
 using Enivate.ResponseHub.Model.Messages;
 using Enivate.ResponseHub.Model.Messages.Interface;
+using Enivate.ResponseHub.Model.Units.Interface;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -31,6 +32,15 @@ namespace Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers
 		/// Contains the list of parsed job messages to submit.
 		/// </summary>
 		protected Dictionary<string, JobMessage> JobMessagesToSubmit { get; set; }
+
+        /// <summary>
+        /// Contains the list of capcodes to submit.
+        /// </summary>
+        protected Dictionary<string, string> CapcodesToSubmit { get; set; }
+
+        /// <summary>
+        /// The job message parser to parse job messages from pager messages.
+        /// </summary>
 		protected IJobMessageService JobMessageService { get => jobMessageService; set => jobMessageService = value; }
 
 		/// <summary>
@@ -73,7 +83,12 @@ namespace Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers
 		/// </summary>
 		protected IAddressService AddressService;
 
-		public abstract void GetLatestMessages();
+        /// <summary>
+        /// The capcode service interface.
+        /// </summary>
+        protected ICapcodeService CapcodeService;
+
+        public abstract void GetLatestMessages();
 
 		/// <summary>
 		/// Parse the pager messages into JobMessages.
@@ -127,7 +142,7 @@ namespace Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers
 				// Get the list of key value pair of job numbers and capcodes from the list of messages to submit
 				IList<KeyValuePair<string, string>> capcodeJobNumbers = JobMessagesToSubmit
 				.Where(i => !String.IsNullOrEmpty(i.Value.JobNumber))
-				.Select(i => new KeyValuePair<string, string>(i.Value.Capcode, i.Value.JobNumber))
+				.Select(i => new KeyValuePair<string, string>(i.Value.Capcodes.First().Capcode, i.Value.JobNumber))
 				.ToList();
 
 				// Now we need to get the messages that 
@@ -184,14 +199,14 @@ namespace Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers
 			}
 		}
 
-		#region Invalid message checking
+        #region Invalid message checking
 
-		/// <summary>
-		/// Determines if the message appears to be invalid or not.
-		/// </summary>
-		/// <param name="message">The message to check.</param>
-		/// <returns>True if the message appears to be invaid</returns>
-		public bool MessageAppearsInvalid(string message)
+        /// <summary>
+        /// Determines if the message appears to be invalid or not.
+        /// </summary>
+        /// <param name="message">The message to check.</param>
+        /// <returns>True if the message appears to be invaid</returns>
+        public bool MessageAppearsInvalid(string message)
 		{
 
 			// If the message does not start with one of the message qualifiers, then flag as invalid
@@ -321,13 +336,56 @@ namespace Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers
 			}
 
 			// Write the sha to the file
-			using (StreamWriter writer = new StreamWriter(GetLastMessageFilePath(), false))
-			{
-				writer.Write(lastMessageSha);
-			}
+			//using (StreamWriter writer = new StreamWriter(GetLastMessageFilePath(), false))
+			//{
+			//	writer.Write(lastMessageSha);
+			//}
 
 		}
 
-		#endregion
-	}
+        #endregion
+
+        #region Extract Capcodes from Job Messages
+
+        protected void ExtractAndSubmitCapcodesFromPagerMessages()
+        {
+            // Extract the capcodes from the job messages
+            ExtractCapcodesFromPagerMessages();
+
+            // Submit the messages
+            Task t = Task.Run(async () =>
+            {
+                await CapcodeService.AddCapcodes(CapcodesToSubmit);
+            });
+            t.Wait();
+        }
+
+        private void ExtractCapcodesFromPagerMessages()
+        {
+            // Loop through the pager messages
+            foreach(PagerMessage pagerMessage in PagerMessagesToSubmit)
+            {
+                // Get the capcode address
+                string capcodeAddress = pagerMessage.Address;
+
+                // Get the short name from the message if it exists
+                string shortName = "";
+
+                // Get the short name for the capcode from the message
+                Match match = Regex.Match(pagerMessage.MessageContent, @"^.*\[([A-Z0-9]{4,8})\]$");
+                if (match.Groups.Count > 1)
+                {
+                    shortName = match.Groups[1].Value;
+                }
+
+                // If the capcode doesn't already exist in the list, add it.
+                if (!CapcodesToSubmit.ContainsKey(capcodeAddress))
+                {
+                    CapcodesToSubmit.Add(capcodeAddress, shortName);
+                }
+            }
+        }
+
+        #endregion
+    }
 }

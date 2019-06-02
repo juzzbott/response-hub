@@ -100,16 +100,17 @@ namespace Enivate.ResponseHub.UI.Controllers
 			}
 
 			try
-			{ 
+			{
 
-				// Get the capcode for the message
-				Capcode capcode = await CapcodeService.GetByCapcodeAddress(job.Capcode);
+                // Get the current user unit
+                IList<Unit> userUnits = await UnitService.GetUnitsForUser(UserId);
+                Unit unit = userUnits.First();
 
-				// Get the units based on the capcode
-				Unit unit = await UnitService.GetUnitByCapcode(capcode);
+                // Get the capcode for the message
+                Capcode capcode = await CapcodeService.GetByCapcodeAddress(unit.Capcode);
 
-				// Get the sign ins for the job
-				IList<SignInEntry> jobSignIns = await SignInEntryService.GetSignInsForJobMessage(job.Id);
+                // Get the sign ins for the job
+                IList<SignInEntry> jobSignIns = await SignInEntryService.GetSignInsForJobMessage(job.Id);
 
 				// Get the list of users who signed in for the job
 				IList<IdentityUser> signInUsers = await UserService.GetUsersByIds(jobSignIns.Select(i => i.UserId));
@@ -203,21 +204,24 @@ namespace Enivate.ResponseHub.UI.Controllers
 				throw new HttpException((int)HttpStatusCode.NotFound, "The requested page cannot be found.");
 			}
 
-			// Get the capcode for the message
-			Capcode capcode = await CapcodeService.GetByCapcodeAddress(job.Capcode);
 
-			// Get the units based on the capcode
-			Unit unit = await UnitService.GetUnitByCapcode(capcode);
 
-			// Get the sign ins for the job
-			IList<SignInEntry> jobSignIns = await SignInEntryService.GetSignInsForJobMessage(job.Id);
+            // Get the current user unit
+            IList<Unit> userUnits = await UnitService.GetUnitsForUser(UserId);
+            Unit unit = userUnits.First();
+
+            // Get the capcode for the message
+            Capcode capcode = await CapcodeService.GetByCapcodeAddress(unit.Capcode);
+
+            // Get the sign ins for the job
+            IList<SignInEntry> jobSignIns = await SignInEntryService.GetSignInsForJobMessage(job.Id);
 
 			// Create the model
 			JobMessageSignInViewModel model = new JobMessageSignInViewModel()
 			{
 				JobId = jobId,
 				JobNumber = job.JobNumber,
-				Priority = job.Priority,
+				Priority = job.Capcodes.FirstOrDefault(i => i.Capcode == unit.Capcode).Priority,
 				Timestamp = job.Timestamp.ToLocalTime(),
 				CapcodeUnitName = capcode.ToString(),
 				SelectedMembers = String.Format("{0}|", String.Join("|", jobSignIns.Select(i => i.UserId).ToList()))
@@ -255,19 +259,20 @@ namespace Enivate.ResponseHub.UI.Controllers
 				throw new HttpException((int)HttpStatusCode.NotFound, "The requested page cannot be found.");
 			}
 
-			// Get the capcode for the message
-			Capcode capcode = await CapcodeService.GetByCapcodeAddress(job.Capcode);
+            // Get the current user unit
+            IList<Unit> userUnits = await UnitService.GetUnitsForUser(UserId);
+            Unit unit = userUnits.First();
 
-			// Get the units based on the capcode
-			Unit unit = await UnitService.GetUnitByCapcode(capcode);
+            // Get the capcode for the message
+            Capcode capcode = await CapcodeService.GetByCapcodeAddress(unit.Capcode);
 
-			// Get the sign ins for the job
-			IList<SignInEntry> jobSignIns = await SignInEntryService.GetSignInsForJobMessage(job.Id);
+            // Get the sign ins for the job
+            IList<SignInEntry> jobSignIns = await SignInEntryService.GetSignInsForJobMessage(job.Id);
 
 			// Create the model
 			model.JobId = jobId;
 			model.JobNumber = job.JobNumber;
-			model.Priority = job.Priority;
+			model.Priority = job.Capcodes.FirstOrDefault(i => i.Capcode == unit.Capcode).Priority;
 			model.Timestamp = job.Timestamp.ToLocalTime();
 			model.CapcodeUnitName = capcode.ToString();
 
@@ -347,10 +352,13 @@ namespace Enivate.ResponseHub.UI.Controllers
 
 				// Loop through the job messages for the event
 				foreach(JobMessage jobMessage in allJobs.Where(i => jobMessageIds.Contains(i.Id)))
-				{
+                {
 
-					// Get the capcode for the job
-					Capcode capcode = capcodes.FirstOrDefault(i => i.CapcodeAddress == jobMessage.Capcode);
+                    // Find a capcode that matches the job and what the user has. We just need the first to match
+                    string capcodeString = capcodes.Select(i => i.CapcodeAddress).Intersect(jobMessage.Capcodes.Select(i => i.Capcode)).FirstOrDefault();
+
+                    // Get the capcode for the job
+                    Capcode capcode = capcodes.FirstOrDefault(i => i.CapcodeAddress == capcodeString);
 
 					// Add the JobMessageListItemViewModel model to the list
 					JobMessageListItemViewModel listItemModel = JobMessageListItemViewModel.FromJobMessage(jobMessage, capcode, null);

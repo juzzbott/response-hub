@@ -114,12 +114,22 @@ namespace Enivate.ResponseHub.ApplicationServices
 			return await _repository.GetByCapcodeAddress(capcodeAddress);
 		}
 
-		/// <summary>
-		/// Get all the capcodes for the specified service. This will also return any capcodes that are "All Service".
+        /// <summary>
+		/// Gets the capcodes that match the collection of capcodeAddresses.
 		/// </summary>
-		/// <param name="service">The service to get the capcodes for.</param>
+		/// <param name="capcodeAddressed"></param>
 		/// <returns></returns>
-		public async Task<IList<Capcode>> GetAllByService(ServiceType service)
+        public async Task<IList<Capcode>> GetByCapcodeAddress(IEnumerable<string> capcodeAddresses)
+        {
+            return await _repository.GetByCapcodeAddress(capcodeAddresses);
+        }
+
+        /// <summary>
+        /// Get all the capcodes for the specified service. This will also return any capcodes that are "All Service".
+        /// </summary>
+        /// <param name="service">The service to get the capcodes for.</param>
+        /// <returns></returns>
+        public async Task<IList<Capcode>> GetAllByService(ServiceType service)
 		{
 			// Get all the capcodes
 			IList<Capcode> allCapcodes = await GetAll();
@@ -308,5 +318,11 @@ namespace Enivate.ResponseHub.ApplicationServices
 			CacheManager.RemoveItem(AllCapcodesCacheKey);
 		}
 
-	}
+        public async Task AddCapcodes(Dictionary<string, string> capcodes)
+        {
+            await _repository.AddCapcodes(capcodes);
+        }
+
+
+    }
 }

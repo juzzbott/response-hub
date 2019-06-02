@@ -23,5 +23,10 @@ namespace Enivate.ResponseHub.DataAccess.Interface
 
 		Task<Capcode> GetByCapcodeAddress(string capcodeAddress);
 
-	}
+        Task<IList<Capcode>> GetByCapcodeAddress(IEnumerable<string> capcodeAddresses);
+
+        Task AddCapcodes(Dictionary<string, string> capcodes);
+
+
+    }
 }

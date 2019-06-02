@@ -19,6 +19,7 @@ using Enivate.ResponseHub.Model;
 using Enivate.ResponseHub.Model.Messages.Interface;
 using Enivate.ResponseHub.Model.Addresses.Interface;
 using System.IO;
+using Enivate.ResponseHub.Model.Units.Interface;
 
 namespace Enivate.ResponseHub.WindowsService.Tests
 {
@@ -64,7 +65,7 @@ namespace Enivate.ResponseHub.WindowsService.Tests
 			JobMessage parsedMessage = parser.ParseMessage(pagerMessage).Result;
 
 			// Ensure the message priority matches
-			Assert.Equal(parsedMessage.Priority, actualPriority);
+			Assert.Equal(parsedMessage.Capcodes.First().Priority, actualPriority);
 		}
 
 		[Trait("Category", "Parser tests - Parsed messages")]
@@ -148,7 +149,7 @@ namespace Enivate.ResponseHub.WindowsService.Tests
 		{
 
 			// Create the parser
-			PdwLogFileParser parser = new PdwLogFileParser(new Mock<ILogger>().Object, new Mock<IMapIndexRepository>().Object, new Mock<IDecoderStatusRepository>().Object, new Mock<IJobMessageService>().Object, new Mock<IAddressService>().Object);
+			PdwLogFileParser parser = new PdwLogFileParser(new Mock<ILogger>().Object, new Mock<IMapIndexRepository>().Object, new Mock<IDecoderStatusRepository>().Object, new Mock<IJobMessageService>().Object, new Mock<IAddressService>().Object, new Mock<ICapcodeService>().Object);
 			bool isInvalid = parser.MessageAppearsInvalid(message);
 
 			Assert.True(invalid == isInvalid, "The message does not match the expected invalid value.");
@@ -179,6 +180,7 @@ namespace Enivate.ResponseHub.WindowsService.Tests
 		[InlineData("ALERT F160810936 MOEE1 NOSTC3 BINS ON FIRE OUT THE BACK OF HOME HARDWARE HOME TM AND H TIMBER AND HARDWARE - MOE - GEORGE ST 56 GEORGE ST MOE /PURVIS LANE //SAVIGES RD SVSE 8561 G7 (351743) CMOEE [MOEE]", "56 GEORGE ST MOE")]
         [InlineData("S180731887 BACC - TREE DOWN - GUM TREE CRACKED & FALLING - 20 RESERVE RD E MOUNT EGERTON /BLACKHORSE LANE //RYANNA LANE SVC 8190 F5 (447314) ANNE MAIRE 0413513824 [BACC]", "20 RESERVE RD E MOUNT EGERTON")]
         [InlineData("S190150219 BACC - BUILDING DAMAGE - TILES OFF ROOF BUILDING DAMAGE - 5 KEITH CT DARLEY /SILVERDALE DR M 333 F3 (727285) LEO GLEDEGEVQURE 0466153217 [BACC]", "5 KEITH CT DARLEY")]
+        [InlineData("ALERT WARI1 INCIC1 DURESS ALARM ACTIVATED WARRION CFA STATION 640 CORAGULAC-BEEAC RD WARRION /GLENN ST //MCCARTHYS RD SVSW 8491 J2 (252664) F CFAFSCC F190600726", "640 CORAGULAC-BEEAC RD WARRION")]
         public void CanGetAddressFromMessage(string message, string expectedAddressValue)
 		{
 
@@ -203,7 +205,7 @@ namespace Enivate.ResponseHub.WindowsService.Tests
 			string html = File.ReadAllText(String.Format("{0}\\mazzonet_html.txt", Environment.CurrentDirectory));
 
 			// Create the Mazzonet Web Parser
-			MazzanetWebParser parser = new MazzanetWebParser(new Mock<ILogger>().Object, new Mock<IMapIndexRepository>().Object, new Mock<IDecoderStatusRepository>().Object, new Mock<IJobMessageService>().Object, new Mock<IAddressService>().Object);
+			MazzanetWebParser parser = new MazzanetWebParser(new Mock<ILogger>().Object, new Mock<IMapIndexRepository>().Object, new Mock<IDecoderStatusRepository>().Object, new Mock<IJobMessageService>().Object, new Mock<IAddressService>().Object, new Mock<ICapcodeService>().Object);
 
 			// Parse the html into pager messages
 			IList<PagerMessage> messages = parser.ParsePagerMessagesFromHtml(html);
@@ -212,6 +214,25 @@ namespace Enivate.ResponseHub.WindowsService.Tests
 			Assert.True(messages.Count > 0);
 
 		}
+
+        [Trait("Category", "Parser tests - Unique hash generation")]
+        [Theory(DisplayName = "Can generate unique hash from job message")]
+        [InlineData("YAGL1 RESCC1 * CAR ACCIDENT - POSS PERSON TRAPPED CNR ELTHAM-YARRA GLEN RD/STEELS CREEK RD YARRA GLEN M 266 J10 (560321) AFPR CCHRI F190530462", "F190530462", "a283f9381e19931b98844d670e644c329b9ac5c2ad6308f8effcaa1ff8f92b45")]
+        [InlineData("ALERT YAGL1 RESCC1 * CAR ACCIDENT - POSS PERSON TRAPPED CNR ELTHAM-YARRA GLEN RD/STEELS CREEK RD YARRA GLEN M 266 J10 (560321) AFPR CCHRI F190530462 [CHRI]", "F190530462", "a283f9381e19931b98844d670e644c329b9ac5c2ad6308f8effcaa1ff8f92b45")]
+        [InlineData("YAGL1 RESCC1 * CAR ACCIDENT - POSS PERSON TRAPPED CNR ELTHAM-YARRA GLEN RD/STEELS CREEK RD YARRA GLEN M 266 J10 (560321) F190530462 CCOLD CYAGL LILY1 [CTDO]", "F190530462", "a283f9381e19931b98844d670e644c329b9ac5c2ad6308f8effcaa1ff8f92b45")]
+        [InlineData("ALERT F190530462 YAGL1 RESCC1 * CAR ACCIDENT - POSS PERSON TRAPPED CNR ELTHAM-YARRA GLEN RD/STEELS CREEK RD YARRA GLEN M 266 J10 (560321) CCOLD CYAGL LILY1 [LILY]", "F190530462", "a283f9381e19931b98844d670e644c329b9ac5c2ad6308f8effcaa1ff8f92b45")]
+        [InlineData("There is a working bee at the Powell farm this Sunday at 9am. General clean up and some chainsaw work. If anyone has some spare time it would be really appreciated. If available please ring or msg Cookie 0409 257 110 [SCOT]", "", "a9593f16cacdf282f6b470bed0eafab7926ac7f598955f3def6f841cdb41d418")]
+        [InlineData("There is a working bee at the Powell farm this Sunday at 9am. General clean up and some chainsaw work. If anyone has some spare time it would be really appreciated. If available please ring or msg Cookie 0409 257 110 [PRIN]", "", "a9593f16cacdf282f6b470bed0eafab7926ac7f598955f3def6f841cdb41d418")]
+        public void CanGenerateUniqueHashFromJobMessage(string message, string jobNumber, string hash)
+        {
+
+            // Create the parser
+            JobMessageParser parser = new JobMessageParser(new Mock<IAddressService>().Object, new Mock<IMapIndexRepository>().Object, new Mock<ILogger>().Object);
+
+            string generatedHash = parser.GetMessageUniqueHash(message, jobNumber);
+
+            Assert.Equal(hash, generatedHash);
+        }
 
 		#region Helpers
 

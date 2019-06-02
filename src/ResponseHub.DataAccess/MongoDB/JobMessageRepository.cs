@@ -32,8 +32,32 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 		public async Task AddMessages(IList<JobMessage> messages)
 		{
 
-			// Write the job messages to the database.
-			await Collection.InsertManyAsync(messages.Select(i => MapModelToDbObject(i)));
+            // Iterate through the job messages
+            foreach(JobMessage message in messages)
+            {
+
+                // First, check if a message exists with the existing hash
+                JobMessageDto existingMessage = await Collection.Find(Builders<JobMessageDto>.Filter.Eq(i => i.UniqueHash, message.UniqueHash)).SingleOrDefaultAsync();
+
+                // If an existing message exists, and the message doesn't already have the capcode, add the additional capcode and priority to that job
+                if (existingMessage != null && !existingMessage.Capcodes.Select(i => i.Capcode).Any(i => i.Equals(message.Capcodes.First().Capcode)))
+                {
+                    // Create the filter
+                    FilterDefinition<JobMessageDto> filter = Builders<JobMessageDto>.Filter.Eq(i => i.Id, existingMessage.Id);
+
+                    // Create the update
+                    UpdateDefinition<JobMessageDto> update = Builders<JobMessageDto>.Update.Push(i => i.Capcodes, message.Capcodes.First());
+
+                    // Send to mongo
+                    await Collection.UpdateOneAsync(filter, update);
+                }
+                else
+                {
+                    // Write the job message to the database.
+                    await Collection.InsertOneAsync(MapModelToDbObject(message));
+                }
+
+            }
         }
 
         /// <summary>
@@ -46,20 +70,38 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 		{
 			// return the messages without date filters
 			return await GetMessagesBetweenDates(capcodes, messageTypes, count, skip, null, null);
-		}
+        }
 
-		/// <summary>
-		///  Gets the job messages for the list of capcodes specified between the specific dates. Results are limited to count number of items.
-		/// </summary>
-		/// <param name="capcodes"></param>
-		/// <param name="count"></param>
-		/// <returns></returns>
-		public async Task<IList<JobMessage>> GetMessagesBetweenDates(IEnumerable<string> capcodes, MessageType messageTypes, int count, int skip, DateTime? dateFrom, DateTime? dateTo)
+        /// <summary>
+        ///  Gets the most recent job messages for the message types specified. Results are limited to count number of items.
+        /// </summary>
+        /// <param name="capcodes"></param>
+        /// <param name="count"></param>
+        /// <returns></returns>
+        public async Task<IList<JobMessage>> GetMostRecent(MessageType messageTypes, int count, int skip)
+        {
+            // return the messages without date filters
+            return await GetMessagesBetweenDates(null, messageTypes, count, skip, null, null);
+        }
+
+        /// <summary>
+        ///  Gets the job messages for the list of capcodes specified between the specific dates. Results are limited to count number of items.
+        /// </summary>
+        /// <param name="capcodes"></param>
+        /// <param name="count"></param>
+        /// <returns></returns>
+        public async Task<IList<JobMessage>> GetMessagesBetweenDates(IEnumerable<string> capcodes, MessageType messageTypes, int count, int skip, DateTime? dateFrom, DateTime? dateTo)
 		{
 			
 			// Create the filter and sort
 			FilterDefinitionBuilder<JobMessageDto> builder = Builders<JobMessageDto>.Filter;
-			FilterDefinition<JobMessageDto> filter = builder.In(i => i.Capcode, capcodes);
+            FilterDefinition<JobMessageDto> filter = builder.Empty;
+
+            // If there are capcodes, then search for them
+            if (capcodes != null)
+            {
+                filter &= builder.In("Capcodes.Capcode", capcodes);
+            }
 
 			// If there is dateFrom and dateTo filters, add them
 			if (dateFrom.HasValue)
@@ -116,10 +158,16 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 		{
 			// Create the filter and sort
 			FilterDefinitionBuilder<JobMessageDto> builder = Builders<JobMessageDto>.Filter;
-			FilterDefinition<JobMessageDto> filter = builder.In(i => i.Capcode, capcodes);
+			FilterDefinition<JobMessageDto> filter = builder.Empty;
 
-			// If there is dateFrom and dateTo filters, add them
-			if (dateFrom.HasValue)
+            // If there are capcodes, then search for them
+            if (capcodes != null)
+            {
+                filter &= builder.In("Capcodes.Capcode", capcodes);
+            }
+
+            // If there is dateFrom and dateTo filters, add them
+            if (dateFrom.HasValue)
 			{
 				filter &= builder.Gte(i => i.Timestamp, dateFrom.Value.ToUniversalTime());
 			}
@@ -195,7 +243,7 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 
             if (capcodes != null && capcodes.Count() > 0)
             {
-                filter &= builder.In(i => i.Capcode, capcodes);
+                filter &= builder.In("Capcodes.Capcode", capcodes);
             }
 
             // Create the sort filter
@@ -275,19 +323,19 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 
 			// Create the filter and sort
 			FilterDefinitionBuilder<JobMessageDto> builder = Builders<JobMessageDto>.Filter;
-			FilterDefinition<JobMessageDto> filter = builder.In(i => i.Capcode, capcodes);
+			FilterDefinition<JobMessageDto> filter = builder.In("Capcodes.Capcode", capcodes);
 
 			// Add the message type to the filter.
 			FilterDefinition<JobMessageDto> priorityFilter = builder.Or();
 			bool prioritySet = false;
 			if (messageTypes.HasFlag(MessageType.Job))
 			{
-				priorityFilter = priorityFilter | (builder.Eq(i => i.Priority, MessagePriority.Emergency) | builder.Eq(i => i.Priority, MessagePriority.NonEmergency));
+				priorityFilter = priorityFilter | (builder.Eq(i => i.Capcodes.First().Priority, MessagePriority.Emergency) | builder.Eq(i => i.Capcodes.First().Priority, MessagePriority.NonEmergency));
 				prioritySet = true;
 			}
 			if (messageTypes.HasFlag(MessageType.Message))
 			{
-				priorityFilter = priorityFilter | builder.Eq(i => i.Priority, MessagePriority.Administration);
+				priorityFilter = priorityFilter | builder.Eq(i => i.Capcodes.First().Priority, MessagePriority.Administration);
 				prioritySet = true;
 			}
 			if (prioritySet)
@@ -327,7 +375,7 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 			FilterDefinitionBuilder<JobMessageDto> builder = Builders<JobMessageDto>.Filter;
 
 			// Create the main filter from the first capcode job number combo
-			FilterDefinition<JobMessageDto> mainFilter = builder.Eq(i => i.Capcode, capcodeJobNumbers[0].Key) & builder.Eq(i => i.JobNumber, capcodeJobNumbers[0].Value.ToUpper());
+			FilterDefinition<JobMessageDto> mainFilter = builder.ElemMatch(i => i.Capcodes, p => p.Capcode == capcodeJobNumbers[0].Key) & builder.Eq(i => i.JobNumber, capcodeJobNumbers[0].Value.ToUpper());
 
 			// Create the list of filters
 			IList<FilterDefinition<JobMessageDto>> filters = new List<FilterDefinition<JobMessageDto>>();
@@ -336,7 +384,7 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 			foreach (KeyValuePair<string, string> capcodeJobNumber in capcodeJobNumbers.Skip(1))
 			{
 				// Create the filter
-				FilterDefinition<JobMessageDto> filter = builder.Eq(i => i.Capcode, capcodeJobNumber.Key) & builder.Eq(i => i.JobNumber, capcodeJobNumber.Value.ToUpper());
+				FilterDefinition<JobMessageDto> filter = builder.ElemMatch(i => i.Capcodes, p => p.Capcode == capcodeJobNumbers[0].Key) & builder.Eq(i => i.JobNumber, capcodeJobNumber.Value.ToUpper());
 				filters.Add(filter);
 			}
 
@@ -632,7 +680,7 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 
 			if (capcodes != null)
 			{
-				filter = filter & builder.In(i => i.Capcode, capcodes);
+				filter = filter & builder.In("Capcodes.Capcode", capcodes);
 			}
 
 			// Add the message type to the filter.
@@ -640,12 +688,12 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 			bool prioritySet = false;
 			if (messageTypes.HasFlag(MessageType.Job))
 			{
-				priorityFilter = priorityFilter | (builder.Eq(i => i.Priority, MessagePriority.Emergency) | builder.Eq(i => i.Priority, MessagePriority.NonEmergency));
+				priorityFilter = priorityFilter | (builder.Eq(i => i.Capcodes.First().Priority, MessagePriority.Emergency) | builder.Eq(i => i.Capcodes.First().Priority, MessagePriority.NonEmergency));
 				prioritySet = true;
 			}
 			if (messageTypes.HasFlag(MessageType.Message))
 			{
-				priorityFilter = priorityFilter | builder.Eq(i => i.Priority, MessagePriority.Administration);
+				priorityFilter = priorityFilter | builder.Eq(i => i.Capcodes.First().Priority, MessagePriority.Administration);
 				prioritySet = true;
 			}
 			if (prioritySet)
@@ -706,20 +754,20 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 
 			JobMessage model = new JobMessage()
 			{
-				Capcode = dbObject.Capcode,
+				Capcodes = dbObject.Capcodes,
 				Id = dbObject.Id,
 				JobNumber = dbObject.JobNumber,
 				MessageContent = dbObject.MessageContent,
 				AdditionalMessages = dbObject.AdditionalMessages,
-				Priority = dbObject.Priority,
 				Timestamp = dbObject.Timestamp,
 				Notes = dbObject.Notes,
 				ProgressUpdates = dbObject.ProgressUpdates,
 				AttachmentIds = dbObject.AttachmentIds,
 				Type = dbObject.Type,
-				Version = dbObject.Version
-				
-			};
+				Version = dbObject.Version,
+                UniqueHash = dbObject.UniqueHash
+
+            };
 
 			// Map the location property.
 			if (dbObject.Location != null)
@@ -747,18 +795,18 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 
 			JobMessageDto dbObject = new JobMessageDto()
 			{
-				Capcode = modelObject.Capcode,
+				Capcodes = modelObject.Capcodes,
 				Id = modelObject.Id,
 				JobNumber = modelObject.JobNumber,
 				MessageContent = modelObject.MessageContent,
 				AdditionalMessages = modelObject.AdditionalMessages,
-				Priority = modelObject.Priority,
 				Timestamp = modelObject.Timestamp,
 				Notes = modelObject.Notes,
 				ProgressUpdates = modelObject.ProgressUpdates,
 				AttachmentIds = modelObject.AttachmentIds,
 				Type = modelObject.Type,
-				Version = modelObject.Version
+				Version = modelObject.Version,
+                UniqueHash = modelObject.UniqueHash
 			};
 
 			// Map the location property

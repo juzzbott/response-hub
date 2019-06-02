@@ -11,6 +11,7 @@ using Enivate.ResponseHub.DataAccess.Interface;
 using Enivate.ResponseHub.Logging;
 using Enivate.ResponseHub.Model.Addresses;
 using Enivate.ResponseHub.Model.Addresses.Interface;
+using System.Security.Cryptography;
 
 namespace Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers
 {
@@ -79,13 +80,14 @@ namespace Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers
 			// Create the message 
 			JobMessage msg = new JobMessage()
 			{
-				Capcode = pagerMessage.Address,
 				Timestamp = pagerMessage.Timestamp
 			};
 
 			// Now we need to get the priority
 			// We must call the GetMessagePriority method before the GetMessageBody method GetMessageBody will strip the priority prefix characters.
-			msg.Priority = GetMessgePriority(pagerMessage.MessageContent);
+            MessagePriority priority = GetMessgePriority(pagerMessage.MessageContent);
+
+            msg.Capcodes.Add(new MessageCapcode(pagerMessage.Address, priority));
 
 			// Get the message body
 			msg.MessageContent = GetMessageBody(pagerMessage.MessageContent);
@@ -106,25 +108,35 @@ namespace Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers
 				msg.Location.Address.AddressId = address.Id;
 				msg.Location.Address.FormattedAddress = address.ToString();
 
-				// If the coordinates of the returned address is within 1km of the current points of the address, update the location of the job to the exact address
-				if (msg.Location != null)
-				{
-					double distance = SpatialUtility.DistanceBetweenPoints(address.Latitude, address.Longitude, msg.Location.Coordinates.Latitude, msg.Location.Coordinates.Longitude);
+                // If the structured address from Google is in Victoria, then use that
+                if (msg.MessageContent.ToUpper().Contains(address.Suburb.ToUpper()))
+                {
+                    msg.Location.Coordinates.Latitude = address.Latitude;
+                    msg.Location.Coordinates.Longitude = address.Longitude;
+                }
 
-					// If the distance is < 1000m, it's a valid address coordinate, so use the moer precise coordinate
-					if (distance <= 1)
-					{
-						msg.Location.Coordinates.Latitude = address.Latitude;
-						msg.Location.Coordinates.Longitude = address.Longitude;
-					}
-				}
-			}
+                // If the coordinates of the returned address is within 1km of the current points of the address, update the location of the job to the exact address
+                //if (msg.Location != null)
+                //{
+                //	double distance = SpatialUtility.DistanceBetweenPoints(address.Latitude, address.Longitude, msg.Location.Coordinates.Latitude, msg.Location.Coordinates.Longitude);
+                //
+                //	// If the distance is < 100km, it's a valid address coordinate, so use the more precise coordinate
+                //	if (distance <= 1)
+                //	{
+                //		msg.Location.Coordinates.Latitude = address.Latitude;
+                //		msg.Location.Coordinates.Longitude = address.Longitude;
+                //	}
+                //}
+            }
+
+            // Set the unique hash for the message
+            msg.UniqueHash = GetMessageUniqueHash(msg.MessageContent, msg.JobNumber);
 
 			// return the message
 			return msg;
 		}
 
-		private bool AddressCoordsValid(double addressLat, double addressLong, double jobMessageLat, double jobMessageLong)
+        private bool AddressCoordsValid(double addressLat, double addressLong, double jobMessageLat, double jobMessageLong)
 		{
 			return false;
 		}
@@ -380,6 +392,64 @@ namespace Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers
 				default:
 					return MessagePriority.Administration;
 			}
-		}
-	}
+        }
+
+        /// <summary>
+        /// Gets the unique hash for the message. Used to determine if the message already exists in the DB.
+        /// The following is stripped to get message contents
+        /// - 'ALERT'
+        /// - JobNumber (prepended to message in format JobNumber-[MessageContent]
+        /// - All content After grid reference
+        /// </summary>
+        /// <param name="messageContent"></param>
+        /// <returns></returns>
+        public string GetMessageUniqueHash(string messageContent, string jobNumber)
+        {
+
+            // Remove the 'ALERT ' if it exists
+            if (messageContent.StartsWith("ALERT "))
+            {
+                messageContent = messageContent.Substring(6);
+            }
+
+            // Remove all content after grid reference
+            Match match = Regex.Match(messageContent, @"^.*(?:[A-Z]\d{1,2}\s\(\d{6}\)\s)(.*)$");
+            if (match.Groups.Count > 1)
+            {
+                messageContent = messageContent.Substring(0, match.Groups[1].Index);
+            }
+
+            // Remove last pager address short name
+            match = Regex.Match(messageContent, @"^.*(\[[A-Z0-9]{4,8}\])$");
+            if (match.Groups.Count > 1)
+            {
+                messageContent = messageContent.Substring(0, match.Groups[1].Index);
+            }
+
+            if (!String.IsNullOrEmpty(jobNumber))
+            {
+                // Remove the job number
+                messageContent = messageContent.Replace(jobNumber + " ", "");
+
+                // Prepend the job number
+                messageContent = String.Format("{0}-{1}", jobNumber, messageContent);
+
+            }
+
+            // Generate hash of the message content
+            using (SHA256 sha256Hash = SHA256.Create())
+            {
+                // ComputeHash - returns byte array  
+                byte[] bytes = sha256Hash.ComputeHash(Encoding.UTF8.GetBytes(messageContent.Trim()));
+
+                // Convert byte array to a string   
+                StringBuilder builder = new StringBuilder();
+                for (int i = 0; i < bytes.Length; i++)
+                {
+                    builder.Append(bytes[i].ToString("x2"));
+                }
+                return builder.ToString();
+            }
+        }
+    }
 }

@@ -76,6 +76,7 @@
     <Compile Include="Addresses\Interface\IAddressService.cs" />
     <Compile Include="Messages\AdditionalMessage.cs" />
     <Compile Include="Messages\JobNumberComparer.cs" />
+    <Compile Include="Messages\MessageCapcode.cs" />
     <Compile Include="SignIn\OtherSignInType.cs" />
     <Compile Include="SignIn\TrainingActivity.cs" />
     <Compile Include="Units\Capcode.cs" />

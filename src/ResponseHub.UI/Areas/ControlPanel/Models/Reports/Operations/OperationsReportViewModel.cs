@@ -20,6 +20,8 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Models.Reports.Operations
 
 		public bool UseStandardLayout { get; set; }
 
+        public string UnitCapcodeAddress { get; set; }
+
 		public OperationsReportViewModel()
 		{
 			Messages = new List<JobMessage>();
