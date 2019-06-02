@@ -37,7 +37,7 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
             {
 
                 // First, check if a message exists with the existing hash
-                JobMessageDto existingMessage = await Collection.Find(Builders<JobMessageDto>.Filter.Eq(i => i.UniqueHash, message.UniqueHash)).SingleOrDefaultAsync();
+                JobMessageDto existingMessage = await Collection.Find(Builders<JobMessageDto>.Filter.Eq(i => i.UniqueHash, message.UniqueHash)).FirstOrDefaultAsync();
 
                 // If an existing message exists, and the message doesn't already have the capcode, add the additional capcode and priority to that job
                 if (existingMessage != null && !existingMessage.Capcodes.Select(i => i.Capcode).Any(i => i.Equals(message.Capcodes.First().Capcode)))
