@@ -128,6 +128,8 @@ while (current_version < schema_version) {
 			db.units.updateMany({}, { $set: { TrainingNight: { DayOfWeek: 2, StartTime: "19:30" } } });
 
 		case 9:
+			db.capcodes.dropIndex('capcodes_text');
+			db.capcodes.createIndex({ Name: "text", ShortName: "text", CapcodeAddress: "text" }, { background: true, name: "capcodes_text" });
 			db.capcodes.createIndex({ "CapcodeAddress": 1 }, { background: true, name: 'capcode_address' });
 			db.job_messages.createIndex({ "UniqueHash": 1 }, { background: true, name: 'job_messages_unique_hash' });
 

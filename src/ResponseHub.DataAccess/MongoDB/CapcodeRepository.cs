@@ -95,7 +95,7 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
             foreach(KeyValuePair<string, string> capcode in capcodes)
             {
                 // First, check if a capcode exists with the existing address
-                Capcode existingCapcode = await Collection.Find(Builders<Capcode>.Filter.Eq(i => i.CapcodeAddress, capcode.Key)).SingleOrDefaultAsync();
+                Capcode existingCapcode = await Collection.Find(Builders<Capcode>.Filter.Eq(i => i.CapcodeAddress, capcode.Key)).FirstOrDefaultAsync();
 
                 // If an existing capcode exists, and the short name is empty, update the short name
                 if (existingCapcode != null && String.IsNullOrEmpty(existingCapcode.ShortName))
@@ -109,7 +109,8 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
                     // Send to mongo
                     await Collection.UpdateOneAsync(filter, update);
                 }
-                else
+                // If the capcode doesn't exist, then insert it.
+                else if (existingCapcode == null)
                 {
                     // Write the new capcode to the database.
                     Capcode newCapcode = new Capcode()
