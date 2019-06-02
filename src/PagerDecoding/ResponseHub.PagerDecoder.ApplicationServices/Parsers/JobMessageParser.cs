@@ -108,19 +108,26 @@ namespace Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers
 				msg.Location.Address.AddressId = address.Id;
 				msg.Location.Address.FormattedAddress = address.ToString();
 
-				// If the coordinates of the returned address is within 1km of the current points of the address, update the location of the job to the exact address
-				if (msg.Location != null)
-				{
-					double distance = SpatialUtility.DistanceBetweenPoints(address.Latitude, address.Longitude, msg.Location.Coordinates.Latitude, msg.Location.Coordinates.Longitude);
+                // If the structured address from Google is in Victoria, then use that
+                if (msg.MessageContent.ToUpper().Contains(address.Suburb.ToUpper()))
+                {
+                    msg.Location.Coordinates.Latitude = address.Latitude;
+                    msg.Location.Coordinates.Longitude = address.Longitude;
+                }
 
-					// If the distance is < 100km, it's a valid address coordinate, so use the more precise coordinate
-					if (distance <= 100)
-					{
-						msg.Location.Coordinates.Latitude = address.Latitude;
-						msg.Location.Coordinates.Longitude = address.Longitude;
-					}
-				}
-			}
+                // If the coordinates of the returned address is within 1km of the current points of the address, update the location of the job to the exact address
+                //if (msg.Location != null)
+                //{
+                //	double distance = SpatialUtility.DistanceBetweenPoints(address.Latitude, address.Longitude, msg.Location.Coordinates.Latitude, msg.Location.Coordinates.Longitude);
+                //
+                //	// If the distance is < 100km, it's a valid address coordinate, so use the more precise coordinate
+                //	if (distance <= 1)
+                //	{
+                //		msg.Location.Coordinates.Latitude = address.Latitude;
+                //		msg.Location.Coordinates.Longitude = address.Longitude;
+                //	}
+                //}
+            }
 
             // Set the unique hash for the message
             msg.UniqueHash = GetMessageUniqueHash(msg.MessageContent, msg.JobNumber);
