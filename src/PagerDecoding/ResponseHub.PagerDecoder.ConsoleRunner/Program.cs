@@ -57,8 +57,19 @@ namespace Enivate.ResponseHub.PagerDecoder.ConsoleRunner
 				Console.WriteLine("Press any key to exit.");
 				Console.Read();
 
-			}
-			else if (args.Length > 0 && args[0].ToLower() == "-addr")
+            }
+            else if (args.Length > 0 && args[0].ToLower() == "-test")
+            {
+
+                // Create the PdwLogFileParser
+                TestFileParser testFileParser = new TestFileParser(log, mapIndexRepository, decoderStatusRepository, jobMessageService, addressService, capcodeService);
+                testFileParser.GetLatestMessages();
+
+                Console.WriteLine("Press any key to exit.");
+                Console.Read();
+
+            }
+            else if (args.Length > 0 && args[0].ToLower() == "-addr")
 			{
 
 				// Get the path to the test messages

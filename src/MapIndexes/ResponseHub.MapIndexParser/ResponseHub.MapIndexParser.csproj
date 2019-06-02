@@ -161,64 +161,124 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <None Include="MapIndexFiles\SpatialVision\MAPBOOK_PAGEGRID_100_ED4.dbf">
+    <None Include="MapIndexFiles\SpatialVision\ED4\MAPBOOK_PAGEGRID_100_ED4.dbf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="MapIndexFiles\SpatialVision\MAPBOOK_PAGEGRID_100_ED4.prj">
+    <None Include="MapIndexFiles\SpatialVision\ED4\MAPBOOK_PAGEGRID_100_ED4.prj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="MapIndexFiles\SpatialVision\MAPBOOK_PAGEGRID_100_ED4.shp">
+    <None Include="MapIndexFiles\SpatialVision\ED4\MAPBOOK_PAGEGRID_100_ED4.shp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="MapIndexFiles\SpatialVision\MAPBOOK_PAGEGRID_100_ED4.shx">
+    <None Include="MapIndexFiles\SpatialVision\ED4\MAPBOOK_PAGEGRID_100_ED4.shx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="MapIndexFiles\SpatialVision\MAPBOOK_PAGEGRID_150_ED4.dbf">
+    <None Include="MapIndexFiles\SpatialVision\ED4\MAPBOOK_PAGEGRID_150_ED4.dbf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="MapIndexFiles\SpatialVision\MAPBOOK_PAGEGRID_150_ED4.prj">
+    <None Include="MapIndexFiles\SpatialVision\ED4\MAPBOOK_PAGEGRID_150_ED4.prj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="MapIndexFiles\SpatialVision\MAPBOOK_PAGEGRID_150_ED4.shp">
+    <None Include="MapIndexFiles\SpatialVision\ED4\MAPBOOK_PAGEGRID_150_ED4.shp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="MapIndexFiles\SpatialVision\MAPBOOK_PAGEGRID_150_ED4.shx">
+    <None Include="MapIndexFiles\SpatialVision\ED4\MAPBOOK_PAGEGRID_150_ED4.shx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="MapIndexFiles\SpatialVision\MAPBOOK_PAGEGRID_15_ED4.dbf">
+    <None Include="MapIndexFiles\SpatialVision\ED4\MAPBOOK_PAGEGRID_15_ED4.dbf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="MapIndexFiles\SpatialVision\MAPBOOK_PAGEGRID_15_ED4.prj">
+    <None Include="MapIndexFiles\SpatialVision\ED4\MAPBOOK_PAGEGRID_15_ED4.prj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="MapIndexFiles\SpatialVision\MAPBOOK_PAGEGRID_15_ED4.shp">
+    <None Include="MapIndexFiles\SpatialVision\ED4\MAPBOOK_PAGEGRID_15_ED4.shp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="MapIndexFiles\SpatialVision\MAPBOOK_PAGEGRID_15_ED4.shx">
+    <None Include="MapIndexFiles\SpatialVision\ED4\MAPBOOK_PAGEGRID_15_ED4.shx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="MapIndexFiles\SpatialVision\MAPBOOK_PAGEGRID_20_ED4.dbf">
+    <None Include="MapIndexFiles\SpatialVision\ED4\MAPBOOK_PAGEGRID_20_ED4.dbf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="MapIndexFiles\SpatialVision\MAPBOOK_PAGEGRID_20_ED4.prj">
+    <None Include="MapIndexFiles\SpatialVision\ED4\MAPBOOK_PAGEGRID_20_ED4.prj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="MapIndexFiles\SpatialVision\MAPBOOK_PAGEGRID_20_ED4.shp">
+    <None Include="MapIndexFiles\SpatialVision\ED4\MAPBOOK_PAGEGRID_20_ED4.shp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="MapIndexFiles\SpatialVision\MAPBOOK_PAGEGRID_20_ED4.shx">
+    <None Include="MapIndexFiles\SpatialVision\ED4\MAPBOOK_PAGEGRID_20_ED4.shx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="MapIndexFiles\SpatialVision\MAPBOOK_PAGEGRID_50_ED4.dbf">
+    <None Include="MapIndexFiles\SpatialVision\ED4\MAPBOOK_PAGEGRID_50_ED4.dbf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="MapIndexFiles\SpatialVision\MAPBOOK_PAGEGRID_50_ED4.prj">
+    <None Include="MapIndexFiles\SpatialVision\ED4\MAPBOOK_PAGEGRID_50_ED4.prj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="MapIndexFiles\SpatialVision\MAPBOOK_PAGEGRID_50_ED4.shp">
+    <None Include="MapIndexFiles\SpatialVision\ED4\MAPBOOK_PAGEGRID_50_ED4.shp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="MapIndexFiles\SpatialVision\MAPBOOK_PAGEGRID_50_ED4.shx">
+    <None Include="MapIndexFiles\SpatialVision\ED4\MAPBOOK_PAGEGRID_50_ED4.shx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="MapIndexFiles\SpatialVision\mapbook_pagegrid_100_ed5.dbf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="MapIndexFiles\SpatialVision\mapbook_pagegrid_100_ed5.prj">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="MapIndexFiles\SpatialVision\mapbook_pagegrid_100_ed5.shp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="MapIndexFiles\SpatialVision\mapbook_pagegrid_100_ed5.shx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="MapIndexFiles\SpatialVision\mapbook_pagegrid_150_ed5.dbf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="MapIndexFiles\SpatialVision\mapbook_pagegrid_150_ed5.prj">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="MapIndexFiles\SpatialVision\mapbook_pagegrid_150_ed5.shp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="MapIndexFiles\SpatialVision\mapbook_pagegrid_150_ed5.shx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="MapIndexFiles\SpatialVision\mapbook_pagegrid_15_ed5.dbf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="MapIndexFiles\SpatialVision\mapbook_pagegrid_15_ed5.prj">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="MapIndexFiles\SpatialVision\mapbook_pagegrid_15_ed5.shp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="MapIndexFiles\SpatialVision\mapbook_pagegrid_15_ed5.shx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="MapIndexFiles\SpatialVision\mapbook_pagegrid_20_ed5.dbf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="MapIndexFiles\SpatialVision\mapbook_pagegrid_20_ed5.prj">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="MapIndexFiles\SpatialVision\mapbook_pagegrid_20_ed5.shp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="MapIndexFiles\SpatialVision\mapbook_pagegrid_20_ed5.shx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="MapIndexFiles\SpatialVision\mapbook_pagegrid_50_ed5.dbf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="MapIndexFiles\SpatialVision\mapbook_pagegrid_50_ed5.prj">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="MapIndexFiles\SpatialVision\mapbook_pagegrid_50_ed5.shp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="MapIndexFiles\SpatialVision\mapbook_pagegrid_50_ed5.shx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="packages.config" />

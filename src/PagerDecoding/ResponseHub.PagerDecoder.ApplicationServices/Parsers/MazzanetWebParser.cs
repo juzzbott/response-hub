@@ -109,8 +109,6 @@ namespace Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers
 			JobMessagesToSubmit.Clear();
             CapcodesToSubmit.Clear();
 
-
-
         }
 
 		/// <summary>

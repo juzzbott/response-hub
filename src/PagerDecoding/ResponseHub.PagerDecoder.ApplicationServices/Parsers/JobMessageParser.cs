@@ -113,8 +113,8 @@ namespace Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers
 				{
 					double distance = SpatialUtility.DistanceBetweenPoints(address.Latitude, address.Longitude, msg.Location.Coordinates.Latitude, msg.Location.Coordinates.Longitude);
 
-					// If the distance is < 1000m, it's a valid address coordinate, so use the moer precise coordinate
-					if (distance <= 1)
+					// If the distance is < 100km, it's a valid address coordinate, so use the more precise coordinate
+					if (distance <= 100)
 					{
 						msg.Location.Coordinates.Latitude = address.Latitude;
 						msg.Location.Coordinates.Longitude = address.Longitude;
