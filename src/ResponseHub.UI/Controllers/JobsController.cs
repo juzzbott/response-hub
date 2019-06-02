@@ -100,17 +100,17 @@ namespace Enivate.ResponseHub.UI.Controllers
 			}
 
 			try
-			{ 
+			{
 
-				// Get the capcode for the message
-                // HACK: Fix this
-				Capcode capcode = await CapcodeService.GetByCapcodeAddress(job.Capcodes.First().Capcode);
+                // Get the current user unit
+                IList<Unit> userUnits = await UnitService.GetUnitsForUser(UserId);
+                Unit unit = userUnits.First();
 
-				// Get the units based on the capcode
-				Unit unit = await UnitService.GetUnitByCapcode(capcode);
+                // Get the capcode for the message
+                Capcode capcode = await CapcodeService.GetByCapcodeAddress(unit.Capcode);
 
-				// Get the sign ins for the job
-				IList<SignInEntry> jobSignIns = await SignInEntryService.GetSignInsForJobMessage(job.Id);
+                // Get the sign ins for the job
+                IList<SignInEntry> jobSignIns = await SignInEntryService.GetSignInsForJobMessage(job.Id);
 
 				// Get the list of users who signed in for the job
 				IList<IdentityUser> signInUsers = await UserService.GetUsersByIds(jobSignIns.Select(i => i.UserId));
@@ -204,15 +204,17 @@ namespace Enivate.ResponseHub.UI.Controllers
 				throw new HttpException((int)HttpStatusCode.NotFound, "The requested page cannot be found.");
 			}
 
-			// Get the capcode for the message
-            // HACK: Fix this
-			Capcode capcode = await CapcodeService.GetByCapcodeAddress(job.Capcodes.First().Capcode);
 
-			// Get the units based on the capcode
-			Unit unit = await UnitService.GetUnitByCapcode(capcode);
 
-			// Get the sign ins for the job
-			IList<SignInEntry> jobSignIns = await SignInEntryService.GetSignInsForJobMessage(job.Id);
+            // Get the current user unit
+            IList<Unit> userUnits = await UnitService.GetUnitsForUser(UserId);
+            Unit unit = userUnits.First();
+
+            // Get the capcode for the message
+            Capcode capcode = await CapcodeService.GetByCapcodeAddress(unit.Capcode);
+
+            // Get the sign ins for the job
+            IList<SignInEntry> jobSignIns = await SignInEntryService.GetSignInsForJobMessage(job.Id);
 
 			// Create the model
 			JobMessageSignInViewModel model = new JobMessageSignInViewModel()
@@ -257,15 +259,15 @@ namespace Enivate.ResponseHub.UI.Controllers
 				throw new HttpException((int)HttpStatusCode.NotFound, "The requested page cannot be found.");
 			}
 
-			// Get the capcode for the message
-            // HACK: Fix this
-			Capcode capcode = await CapcodeService.GetByCapcodeAddress(job.Capcodes.First().Capcode);
+            // Get the current user unit
+            IList<Unit> userUnits = await UnitService.GetUnitsForUser(UserId);
+            Unit unit = userUnits.First();
 
-			// Get the units based on the capcode
-			Unit unit = await UnitService.GetUnitByCapcode(capcode);
+            // Get the capcode for the message
+            Capcode capcode = await CapcodeService.GetByCapcodeAddress(unit.Capcode);
 
-			// Get the sign ins for the job
-			IList<SignInEntry> jobSignIns = await SignInEntryService.GetSignInsForJobMessage(job.Id);
+            // Get the sign ins for the job
+            IList<SignInEntry> jobSignIns = await SignInEntryService.GetSignInsForJobMessage(job.Id);
 
 			// Create the model
 			model.JobId = jobId;

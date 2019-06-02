@@ -454,6 +454,8 @@ namespace Enivate.ResponseHub.UI.Controllers.Api
 			try
 			{
 
+                
+
 				// Get the sign ins for the job
 				IList<SignInEntry> jobSignIns = await SignInEntryService.GetSignInsForJobMessage(job.Id);
 
@@ -461,12 +463,12 @@ namespace Enivate.ResponseHub.UI.Controllers.Api
 				if (!jobSignIns.Any(i => i.UserId == UserId))
 				{
 
-					// Get the capcode for the message
-                    // HACK: Fix this
-					Capcode capcode = await CapcodeService.GetByCapcodeAddress(job.Capcodes.FirstOrDefault().Capcode);
+                    // Get the current user unit
+                    IList<Unit> userUnits = await UnitService.GetUnitsForUser(UserId);
+                    Unit unit = userUnits.First();
 
-					// Get the units based on the capcode
-					Unit unit = await UnitService.GetUnitByCapcode(capcode);
+                    // Get the capcode for the message
+                    Capcode capcode = await CapcodeService.GetByCapcodeAddress(unit.Capcode);
 
 					// Create the sign in entry
 					SignInEntry signIn = new SignInEntry()

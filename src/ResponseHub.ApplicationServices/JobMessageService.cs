@@ -126,17 +126,32 @@ namespace Enivate.ResponseHub.ApplicationServices
 		public async Task<IList<JobMessage>> GetMessagesBetweenDates(IEnumerable<string> capcodes, MessageType messageTypes, int count, int skip, DateTime? dateFrom, DateTime? dateTo)
 		{
 			return await _repository.GetMessagesBetweenDates(capcodes, messageTypes, count, skip, dateFrom, dateTo);
-		}
+        }
 
-		/// <summary>
-		/// Gets the job messages for the list of capcodes specified between the specific dates. Results are limited to count number of items.
-		/// </summary>
-		/// <param name="capcodes"></param>
-		/// <param name="messageTypes"></param>
-		/// <param name="dateFrom"></param>
-		/// <param name="dateTo"></param>
-		/// <returns></returns>
-		public async Task<IList<Guid>> GetMessageIdsBetweenDates(IEnumerable<string> capcodes, MessageType messageTypes, DateTime? dateFrom, DateTime? dateTo)
+        /// <summary>
+        /// ///  Gets the job messages for the list of capcodes specified between the specific dates. Results are limited to count number of items.
+        /// </summary>
+        /// <param name="capcodes"></param>
+        /// <param name="messageTypes"></param>
+        /// <param name="count"></param>
+        /// <param name="skip"></param>
+        /// <param name="dateFrom"></param>
+        /// <param name="dateTo"></param>
+        /// <returns></returns>
+        public async Task<IList<JobMessage>> GetMessagesBetweenDates(MessageType messageTypes, int count, int skip, DateTime? dateFrom, DateTime? dateTo)
+        {
+            return await _repository.GetMessagesBetweenDates(null, messageTypes, count, skip, dateFrom, dateTo);
+        }
+
+        /// <summary>
+        /// Gets the job messages for the list of capcodes specified between the specific dates. Results are limited to count number of items.
+        /// </summary>
+        /// <param name="capcodes"></param>
+        /// <param name="messageTypes"></param>
+        /// <param name="dateFrom"></param>
+        /// <param name="dateTo"></param>
+        /// <returns></returns>
+        public async Task<IList<Guid>> GetMessageIdsBetweenDates(IEnumerable<string> capcodes, MessageType messageTypes, DateTime? dateFrom, DateTime? dateTo)
 		{
 			return await _repository.GetMessageIdsBetweenDates(capcodes, messageTypes, dateFrom, dateTo);
 		}

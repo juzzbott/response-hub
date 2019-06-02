@@ -5,17 +5,17 @@
 		<a href="/jobs"><i class="fa fa-fw fa-list-alt"></i>Jobs</a>
 		@if (ViewContext.RouteData.Values["Controller"].ToString() == "Jobs")
 		{
-		<ul>
-			<li>
-				<a href="/jobs/my-jobs">My jobs</a>
-			</li>
-			<li>
-				<a href="/jobs/event-jobs">Event jobs</a>
-			</li>
-			<li>
-				<a href="/jobs/all-jobs">All jobs</a>
-			</li>
-		</ul>
+			<ul>
+				<li>
+					<a href="/jobs/my-jobs">My jobs</a>
+				</li>
+				<li>
+					<a href="/jobs/event-jobs">Event jobs</a>
+				</li>
+				<li>
+					<a href="/jobs/all-jobs">All jobs</a>
+				</li>
+			</ul>
 		}
 	</li>
 	<li class="@(ViewContext.RouteData.Values["Controller"].ToString() == "Messages" ? "active" : "")">
@@ -35,6 +35,9 @@
 	<li class="@(ViewContext.RouteData.Values["Controller"].ToString() == "Events" ? "active" : "")">
 		<a href="/events"><i class="fa fa-fw fa-bullhorn"></i>Events</a>
 	</li>
+	<li class="@(ViewContext.RouteData.Values["Controller"].ToString() == "PagerMessages" ? "active" : "")">
+		<a href="/pager-messages"><i class="fa fa-fw fa-map"></i>State-wide view</a>
+	</li>
 	<li class="@(ViewContext.RouteData.Values["Controller"].ToString() == "Wallboard" ? "active" : "")">
 		<a href="/wallboard"><i class="fa fa-fw fa-desktop"></i>Wallboard view</a>
 	</li>
@@ -45,20 +48,20 @@
 		<a href="/my-account"><i class="fa fa-fw fa-user"></i>My account</a>
 		@if (ViewContext.RouteData.Values["Controller"].ToString() == "MyAccount")
 		{
-		<ul>
-			<li>
-				<a href="/my-account/update-account">Update account</a>
-			</li>
-			<li>
-				<a href="/my-account/sign-in-history">View sign in history</a>
-			</li>
-			<li>
-				<a href="/my-account/update-email">Update email address</a>
-			</li>
-			<li>
-				<a href="/my-account/change-password">Change password</a>
-			</li>
-		</ul>
+			<ul>
+				<li>
+					<a href="/my-account/update-account">Update account</a>
+				</li>
+				<li>
+					<a href="/my-account/sign-in-history">View sign in history</a>
+				</li>
+				<li>
+					<a href="/my-account/update-email">Update email address</a>
+				</li>
+				<li>
+					<a href="/my-account/change-password">Change password</a>
+				</li>
+			</ul>
 		}
 	</li>
 	@if (Html.IsUnitAdminUser())

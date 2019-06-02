@@ -39,8 +39,8 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
                 // First, check if a message exists with the existing hash
                 JobMessageDto existingMessage = await Collection.Find(Builders<JobMessageDto>.Filter.Eq(i => i.UniqueHash, message.UniqueHash)).SingleOrDefaultAsync();
 
-                // If an existing message exists, add the additional capcode and priority to that job
-                if (existingMessage != null)
+                // If an existing message exists, and the message doesn't already have the capcode, add the additional capcode and priority to that job
+                if (existingMessage != null && !existingMessage.Capcodes.Select(i => i.Capcode).Any(i => i.Equals(message.Capcodes.First().Capcode)))
                 {
                     // Create the filter
                     FilterDefinition<JobMessageDto> filter = Builders<JobMessageDto>.Filter.Eq(i => i.Id, existingMessage.Id);
@@ -328,7 +328,6 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 			// Add the message type to the filter.
 			FilterDefinition<JobMessageDto> priorityFilter = builder.Or();
 			bool prioritySet = false;
-            // HACK: Fix this
 			if (messageTypes.HasFlag(MessageType.Job))
 			{
 				priorityFilter = priorityFilter | (builder.Eq(i => i.Capcodes.First().Priority, MessagePriority.Emergency) | builder.Eq(i => i.Capcodes.First().Priority, MessagePriority.NonEmergency));
@@ -687,7 +686,6 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 			// Add the message type to the filter.
 			FilterDefinition<JobMessageDto> priorityFilter = builder.Or();
 			bool prioritySet = false;
-            // HACK: Fix this
 			if (messageTypes.HasFlag(MessageType.Job))
 			{
 				priorityFilter = priorityFilter | (builder.Eq(i => i.Capcodes.First().Priority, MessagePriority.Emergency) | builder.Eq(i => i.Capcodes.First().Priority, MessagePriority.NonEmergency));

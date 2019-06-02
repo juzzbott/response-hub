@@ -467,7 +467,8 @@ namespace Enivate.ResponseHub.UI.Areas.ControlPanel.Controllers
 				Messages = jobMessages.Where(i => i.Type == MessageType.Message).OrderByDescending(i => i.Timestamp).ToList(),
 				Jobs = jobMessages.Where(i => i.Type == MessageType.Job).OrderByDescending(i => i.Timestamp).ToList(),
 				StartDate = dateFrom,
-				FinishDate = dateTo
+				FinishDate = dateTo,
+                UnitCapcodeAddress = unit.Capcode
 			};
 
 			// return the model

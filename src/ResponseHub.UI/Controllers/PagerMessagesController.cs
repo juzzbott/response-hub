@@ -33,7 +33,7 @@ namespace Enivate.ResponseHub.UI.Controllers
 
 			// Get the 50 most recent messages
 			IList<JobMessage> messages = await JobMessageService.GetMostRecent(50, 0);
-            IList<JobMessage> mapMessages = await JobMessageService.GetMostRecent(MessageType.Job, 100, 0);
+            IList<JobMessage> mapMessages = await JobMessageService.GetMessagesBetweenDates(MessageType.Job, 1000, 0, DateTime.UtcNow.AddHours(-6), DateTime.UtcNow.AddHours(1));
 
             PagerMessageListViewModel model = new PagerMessageListViewModel()
             {
