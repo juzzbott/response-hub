@@ -1633,9 +1633,26 @@ responseHub.pagerMessages = (function () {
 		// Create the icon and name
 		var topMarkup = "<strong>";
 
+		// Loop through the capcodes
+		var priority = 0;
+		var capcode = "";
+		var capcodeCount = 0;
+		for (var i = 0; i < pagerMessage.Capcodes.length; i++) {
+
+			if (i == 0) {
+				priority = pagerMessage.Capcodes[i].Priority;
+				capcode = pagerMessage.Capcodes[i].Capcode;
+			}
+			else if (pagerMessage.Capcodes[i].Priority < priority) {
+				priority = pagerMessage.Capcodes[i].Priority;
+			}
+
+			capcodeCount++;
+		}
+
 		// Set the priority
 		// Add the priority icon
-		switch (pagerMessage.Priority) {
+		switch (priority) {
 			case 1:
 				topMarkup += '<i class="fa fa-exclamation-triangle p-message-emergency"></i> ';
 				break;
@@ -1651,7 +1668,7 @@ responseHub.pagerMessages = (function () {
 
 		// If there is job number, then show it here
 		if (pagerMessage.JobNumber != "") {
-			topMarkup += pagerMessage.JobNumber + " - "
+			topMarkup += '<a href="/pager-messages/' + pagerMessage.Id + '">' + pagerMessage.JobNumber + "</a> - "
 		}
 
 		// Close the job and icon section
@@ -1660,7 +1677,7 @@ responseHub.pagerMessages = (function () {
 		// Get the job date
 		var jobDate = moment(pagerMessage.Timestamp);
 		var localDateString = jobDate.format('HH:mm:ss D MMMM YYYY');
-		topMarkup += '<span class="text-info">' + localDateString + '</span> - <span class="text-muted">(' + pagerMessage.Capcode + ')</span>';
+		topMarkup += '<span class="text-info">' + localDateString + '</span> - <span class="text-muted">[' + capcode + '] (' + capcodeCount + ')</span>';
 		// Append the top row
 		topRow.append($(topMarkup));
 

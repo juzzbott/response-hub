@@ -10,7 +10,7 @@
 
 	<!-- Nav tabs -->
 	<ul class="nav nav-tabs" role="tablist">
-		<li role="presentation" class="active"><a href="#tab-map" aria-controls="tab-map" role="tab" data-toggle="tab" class="btn-icon"><i class="fa fa-fw fa-map"></i><span class="tab-title">Map view</span></a></li>
+		<li role="presentation" class="active"><a href="#tab-map" aria-controls="tab-map" role="tab" data-toggle="tab" class="btn-icon"><i class="fa fa-fw fa-map"></i><span class="tab-title">Map view (@Model.MapMessages.Count)</span></a></li>
 		<li role="presentation"><a href="#tab-list" aria-controls="tab-list" role="tab" data-toggle="tab" class="btn-icon" id="tab-header-list"><i class="fa fa-fw fa-list"></i><span class="tab-title">List view</span></a></li>
 	</ul>
 
@@ -77,7 +77,7 @@
 									<a href="/pager-messages/@message.Id">@message.JobNumber</a>
 									@Html.Raw(" - ")
 								}
-							</strong><span class="text-info">@message.Timestamp.ToLocalTime().ToString("HH:mm:ss d MMMM yyyy")</span>
+							</strong><span class="text-info">@message.Timestamp.ToLocalTime().ToString("HH:mm:ss d MMMM yyyy")</span> - <span class="text-muted">[@message.Capcodes.First().Capcode] (@message.Capcodes.Count)</span>
 						</p>
 						<p class="message-content">@message.MessageContent</p>
 					</li>

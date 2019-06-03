@@ -411,6 +411,12 @@ namespace Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers
             {
                 messageContent = messageContent.Substring(6);
             }
+            
+            // Remove the 'DO Notification: ' if it exists
+            if (messageContent.StartsWith("DO Notification: "))
+            {
+                messageContent = messageContent.Substring(17);
+            }
 
             // Remove all content after grid reference
             Match match = Regex.Match(messageContent, @"^.*(?:[A-Z]\d{1,2}\s\(\d{6}\)\s)(.*)$");
