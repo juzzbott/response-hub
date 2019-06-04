@@ -20,6 +20,7 @@ using Enivate.ResponseHub.Model.Messages.Interface;
 using Enivate.ResponseHub.Model.Addresses.Interface;
 using System.IO;
 using Enivate.ResponseHub.Model.Units.Interface;
+using Enivate.ResponseHub.PagerDecoder.Tests.Mocks;
 
 namespace Enivate.ResponseHub.WindowsService.Tests
 {
@@ -41,7 +42,7 @@ namespace Enivate.ResponseHub.WindowsService.Tests
 			PagerMessage pagerMessage = CreateTestPagerMessage(messageContent);
 
 			// Parse the pager message
-			JobMessageParser parser = new JobMessageParser(new Mock<IAddressService>().Object, new Mock<IJobMessageService>().Object, new Mock<IMapIndexRepository>().Object, new Mock<ILogger>().Object);
+			JobMessageParser parser = new JobMessageParser(new Mock<IAddressService>().Object, new MockJobMessageService(), new Mock<IMapIndexRepository>().Object, new Mock<ILogger>().Object);
 			JobMessage parsedMessage = parser.ParseMessage(pagerMessage).Result;
 
 			// Ensure the job numbers match.
@@ -61,7 +62,7 @@ namespace Enivate.ResponseHub.WindowsService.Tests
 			PagerMessage pagerMessage = CreateTestPagerMessage(messageContent);
 
 			// Parse the pager message
-			JobMessageParser parser = new JobMessageParser(new Mock<IAddressService>().Object, new Mock<IJobMessageService>().Object, new Mock<IMapIndexRepository>().Object, new Mock<ILogger>().Object);
+			JobMessageParser parser = new JobMessageParser(new Mock<IAddressService>().Object, new MockJobMessageService(), new Mock<IMapIndexRepository>().Object, new Mock<ILogger>().Object);
 			JobMessage parsedMessage = parser.ParseMessage(pagerMessage).Result;
 
 			// Ensure the message priority matches
@@ -79,7 +80,7 @@ namespace Enivate.ResponseHub.WindowsService.Tests
 			PagerMessage pagerMessage = CreateTestPagerMessage(messageContent);
 
 			// Parse the pager message
-			JobMessageParser parser = new JobMessageParser(new Mock<IAddressService>().Object, new Mock<IJobMessageService>().Object, new Mock<IMapIndexRepository>().Object, new Mock<ILogger>().Object);
+			JobMessageParser parser = new JobMessageParser(new Mock<IAddressService>().Object, new MockJobMessageService(), new Mock<IMapIndexRepository>().Object, new Mock<ILogger>().Object);
 			JobMessage parsedMessage = parser.ParseMessage(pagerMessage).Result;
 
 			// Ensure the message parses a valid location object
@@ -100,7 +101,7 @@ namespace Enivate.ResponseHub.WindowsService.Tests
 			PagerMessage pagerMessage = CreateTestPagerMessage(messageContent);
 
 			// Parse the pager message
-			JobMessageParser parser = new JobMessageParser(new Mock<IAddressService>().Object, new Mock<IJobMessageService>().Object, new Mock<IMapIndexRepository>().Object, new Mock<ILogger>().Object);
+			JobMessageParser parser = new JobMessageParser(new Mock<IAddressService>().Object, new MockJobMessageService(), new Mock<IMapIndexRepository>().Object, new Mock<ILogger>().Object);
 			JobMessage parsedMessage = parser.ParseMessage(pagerMessage).Result;
 
 			// Ensure the Location object is null as we don't have any location information
@@ -149,7 +150,7 @@ namespace Enivate.ResponseHub.WindowsService.Tests
 		{
 
 			// Create the parser
-			PdwLogFileParser parser = new PdwLogFileParser(new Mock<ILogger>().Object, new Mock<IMapIndexRepository>().Object, new Mock<IDecoderStatusRepository>().Object, new Mock<IJobMessageService>().Object, new Mock<IAddressService>().Object, new Mock<ICapcodeService>().Object);
+			PdwLogFileParser parser = new PdwLogFileParser(new Mock<ILogger>().Object, new Mock<IMapIndexRepository>().Object, new Mock<IDecoderStatusRepository>().Object, new MockJobMessageService(), new Mock<IAddressService>().Object, new Mock<ICapcodeService>().Object);
 			bool isInvalid = parser.MessageAppearsInvalid(message);
 
 			Assert.True(invalid == isInvalid, "The message does not match the expected invalid value.");
@@ -205,7 +206,7 @@ namespace Enivate.ResponseHub.WindowsService.Tests
 			string html = File.ReadAllText(String.Format("{0}\\mazzonet_html.txt", Environment.CurrentDirectory));
 
 			// Create the Mazzonet Web Parser
-			MazzanetWebParser parser = new MazzanetWebParser(new Mock<ILogger>().Object, new Mock<IMapIndexRepository>().Object, new Mock<IDecoderStatusRepository>().Object, new Mock<IJobMessageService>().Object, new Mock<IAddressService>().Object, new Mock<ICapcodeService>().Object);
+			MazzanetWebParser parser = new MazzanetWebParser(new Mock<ILogger>().Object, new Mock<IMapIndexRepository>().Object, new Mock<IDecoderStatusRepository>().Object, new MockJobMessageService(), new Mock<IAddressService>().Object, new Mock<ICapcodeService>().Object);
 
 			// Parse the html into pager messages
 			IList<PagerMessage> messages = parser.ParsePagerMessagesFromHtml(html);
@@ -227,7 +228,7 @@ namespace Enivate.ResponseHub.WindowsService.Tests
         {
 
             // Create the parser
-            JobMessageParser parser = new JobMessageParser(new Mock<IAddressService>().Object, new Mock<IJobMessageService>().Object, new Mock<IMapIndexRepository>().Object, new Mock<ILogger>().Object);
+            JobMessageParser parser = new JobMessageParser(new Mock<IAddressService>().Object, new MockJobMessageService(), new Mock<IMapIndexRepository>().Object, new Mock<ILogger>().Object);
 
             string generatedHash = parser.GetMessageUniqueHash(message, jobNumber);
 
