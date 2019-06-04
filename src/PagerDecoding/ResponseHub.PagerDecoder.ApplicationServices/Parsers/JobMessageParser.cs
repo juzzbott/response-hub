@@ -12,6 +12,7 @@ using Enivate.ResponseHub.Logging;
 using Enivate.ResponseHub.Model.Addresses;
 using Enivate.ResponseHub.Model.Addresses.Interface;
 using System.Security.Cryptography;
+using Enivate.ResponseHub.Model.Messages.Interface;
 
 namespace Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers
 {
@@ -54,17 +55,23 @@ namespace Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers
 		private ILogger _log;
 
 		/// <summary>
-		/// The log writer.
+		/// The address service.
 		/// </summary>
 		private IAddressService _addressService;
 
-		/// <summary>
-		/// Creates a new instance of the JobMessageParser class.
-		/// </summary>
-		/// <param name="repository"></param>
-		public JobMessageParser(IAddressService addressService, IMapIndexRepository repository, ILogger log)
+        /// <summary>
+        /// The job message service.
+        /// </summary>
+        private IJobMessageService _jobMessageService;
+
+        /// <summary>
+        /// Creates a new instance of the JobMessageParser class.
+        /// </summary>
+        /// <param name="repository"></param>
+        public JobMessageParser(IAddressService addressService, IJobMessageService jobMessageService, IMapIndexRepository repository, ILogger log)
 		{
 			_addressService = addressService;
+            _jobMessageService = jobMessageService;
 			_repository = repository;
 			_log = log;
 		}
@@ -97,6 +104,9 @@ namespace Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers
 
 			// Set the message type
 			msg.Type = (!String.IsNullOrEmpty(msg.JobNumber) ? MessageType.Job : MessageType.Message);
+
+            // Get the job type from the message
+            msg.JobCode = await GetJobCode(msg.MessageContent);
 
 			// Get any map references from the message
 			msg.Location = GetLocation(msg.MessageContent);
@@ -135,6 +145,37 @@ namespace Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers
 			// return the message
 			return msg;
 		}
+
+        /// <summary>
+        /// Gets the job code based on the message content.
+        /// </summary>
+        /// <param name="messageContent"></param>
+        /// <returns></returns>
+        private async Task<JobCodeType> GetJobCode(string messageContent)
+        {
+
+            IList<JobCode> jobCodes = await _jobMessageService.GetJobCodes();
+
+            string jobShortCode = "";
+            foreach (JobCode jobCode in jobCodes)
+            {
+                if (Regex.IsMatch(messageContent, jobCode.RegexPattern))
+                {
+                    jobShortCode = jobCode.ShortCode;
+                    break;
+                }
+            }
+
+            JobCodeType jobCodeType = JobCodeType.UKN;
+
+            if (!String.IsNullOrEmpty(jobShortCode))
+            {
+                JobCode jobCode = jobCodes.FirstOrDefault(i => i.ShortCode.Equals(jobShortCode, StringComparison.CurrentCultureIgnoreCase));
+                jobCodeType = (JobCodeType)jobCode.Id;
+            }
+
+            return jobCodeType;
+        }
 
         private bool AddressCoordsValid(double addressLat, double addressLong, double jobMessageLat, double jobMessageLong)
 		{

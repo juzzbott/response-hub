@@ -123,7 +123,20 @@ namespace Enivate.ResponseHub.PagerDecoder.ConsoleRunner
 				Console.Read();
 
 			}
+            else if (args.Length > 0 && args[0].ToLower() == "--job-codes")
+            {
 
-		}
+                Task t = Task.Run(async () =>
+                {
+                    JobCodeProcessor processor = new JobCodeProcessor();
+                    await processor.Process();
+                });
+
+                // wait on the task to complete.
+                t.Wait();
+            }
+
+
+        }
 	}
 }

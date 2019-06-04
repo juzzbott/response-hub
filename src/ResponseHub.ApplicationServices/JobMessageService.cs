@@ -11,6 +11,7 @@ using Enivate.ResponseHub.Model.Messages.Interface;
 using Enivate.ResponseHub.DataAccess.Interface;
 using Enivate.ResponseHub.Model.SignIn;
 using Enivate.ResponseHub.Model.Attachments;
+using Enivate.ResponseHub.Caching;
 
 namespace Enivate.ResponseHub.ApplicationServices
 {
@@ -21,17 +22,21 @@ namespace Enivate.ResponseHub.ApplicationServices
 		private IJobMessageRepository _repository;
         private ISignInEntryRepository _signInRepository;
         private IAttachmentRepository _attachmentRepository;
+        private IJobCodeRepository _jobCodeRepository;
+
+        private const string AllJobCodesCacheKey = "AllJobCodes";
 
         /// <summary>
         /// Creates a new instance of the ILogger log writer
         /// </summary>
         /// <param name="log"></param>
-        public JobMessageService(IJobMessageRepository repository, ISignInEntryRepository signInRepository, IAttachmentRepository attachmentRepository, ILogger log)
+        public JobMessageService(IJobMessageRepository repository, ISignInEntryRepository signInRepository, IAttachmentRepository attachmentRepository, IJobCodeRepository jobCodeRepository, ILogger log)
 		{
 			_log = log;
 			_repository = repository;
             _signInRepository = signInRepository;
             _attachmentRepository = attachmentRepository;
+            _jobCodeRepository = jobCodeRepository;
 		}
 
 		/// <summary>
@@ -352,6 +357,32 @@ namespace Enivate.ResponseHub.ApplicationServices
 		{
 			await _repository.RemoveAttachmentFromJob(jobMessageId, attachmentId);
 		}
+
+        /// <summary>
+        /// Gets the list of job codes from the database and caches the results.
+        /// </summary>
+        /// <returns></returns>
+        public async Task<IList<JobCode>> GetJobCodes()
+        {
+            // Get the job codes from the cache
+            IList<JobCode> jobCodes = CacheManager.GetItem<IList<JobCode>>(AllJobCodesCacheKey);
+
+            // If the list is null, it doesn't exist in the cache, so get from the db
+            if (jobCodes == null)
+            {
+                jobCodes = await _jobCodeRepository.GetAll();
+                jobCodes = jobCodes.OrderBy(i => i.Sort).ToList();
+
+                // If the job codes are not null and there is at least one in the list, then add to the cache
+                if (jobCodes != null && jobCodes.Any())
+                {
+                    CacheManager.AddItem(AllJobCodesCacheKey, jobCodes);
+                }
+            }
+
+            // return the job codes
+            return jobCodes;
+        }
 		
 	}
 }

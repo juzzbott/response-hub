@@ -25,6 +25,7 @@
 @on-route-color: #DC9A63;
 @cancelled-color: #AA3939;
 @job-status-color: #999;
+@job-type-color: #17a2b8;
 
 @brand-primary: #7b74a8;
 @text-info: #31708f;
@@ -528,6 +529,14 @@ table {
 /**
  * Mobile tabs
 */
+.nav-tabs li a {
+	padding: 10px 12px;
+
+	&.btn-icon i {
+		margin-right: 0;
+	}
+}
+
 #job-tabs ul.nav-tabs li i {
 	font-size: 15px;
 }
@@ -1184,6 +1193,17 @@ i.p-message-admin {
 .dist-from-lhq p {
 	margin-left: 15px;
 	margin-top: 17px;
+}
+
+.job-type-desc {
+	text-transform: uppercase;
+	color: @job-type-color;
+	font-size: 0.8em;
+	font-weight: bold;
+}
+
+.job-type-desc-lg {
+	font-size: 1em;
 }
 /**
 	Wallboard styles

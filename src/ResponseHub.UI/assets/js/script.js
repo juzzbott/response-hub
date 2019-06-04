@@ -247,6 +247,27 @@ var responseHub = (function () {
 		return decodeURIComponent(results[2].replace(/\+/g, " "));
 	}
 
+	function getJobTypes() {
+		var jobTypes = [
+			{ "Id": 0, "ShortCode": "UKN", "IncidentType": "Unknown" },
+			{ "Id": 1, "ShortCode": "INCI", "IncidentType": "Incident" },
+			{ "Id": 2, "ShortCode": "STRU", "IncidentType": "Structure Fire" },
+			{ "Id": 3, "ShortCode": "G&S", "IncidentType": "Grass & Scrub" },
+			{ "Id": 4, "ShortCode": "NOST", "IncidentType": "Non-Structure Fire" },
+			{ "Id": 5, "ShortCode": "ALAR", "IncidentType": "Alarm" },
+			{ "Id": 6, "ShortCode": "RESC", "IncidentType": "Rescue" },
+			{ "Id": 7, "ShortCode": "ASSIST POLICE", "IncidentType": "Assist Police" },
+			{ "Id": 8, "ShortCode": "ASSIST AV", "IncidentType": "Assist Ambulance" },
+			{ "Id": 9, "ShortCode": "FLOOD", "IncidentType": "Flood" },
+			{ "Id": 10, "ShortCode": "TREE DWN / TRF HZD", "IncidentType": "Tree Down / Traffic Hazard" },
+			{ "Id": 11, "ShortCode": "BLD DMG", "IncidentType": "Building Damage" },
+			{ "Id": 12, "ShortCode": "TREE DOWN", "IncidentType": "Tree Down" },
+			{ "Id": 13, "ShortCode": "ANIMAL INCIDENT", "IncidentType": "Animal Incident" },
+			{ "Id": 14, "ShortCode": "STCO", "IncidentType": "Structure Collapse" }
+		];
+		return jobTypes;
+	}
+
 	// Bind the modal
 	bindModals();
 
@@ -262,7 +283,8 @@ var responseHub = (function () {
 		isMobile: isMobile,
 		executeFunctionByName: executeFunctionByName,
 		setGraphicRadiosCheckboxes: setGraphicRadiosCheckboxes,
-		getQueryString: getQueryString
+		getQueryString: getQueryString,
+		getJobTypes: getJobTypes
 	}
 
 })();
@@ -480,9 +502,9 @@ responseHub.maps = (function () {
 
 	}
 
-	function addPagerMessageMarkerToMap(lat, lng, id, jobNumber, messageContent, timestamp)
+	function addPagerMessageMarkerToMap(lat, lng, id, jobNumber, messageContent, timestamp, jobType)
 	{
-		mapMarkers[id] = L.marker([lat, lng]).addTo(map).bindPopup('<a href="/pager-messages/' + id + '"><strong>' + jobNumber + ' - <span style="color: #666">' + timestamp + '</span></strong></a><br /><span>' + messageContent + '</span>');
+		mapMarkers[id] = L.marker([lat, lng]).addTo(map).bindPopup('<a href="/pager-messages/' + id + '"><strong>' + jobNumber + ' - <span style="color: #666">' + timestamp + '</span></strong></a><br /><span style="text-transform:uppercase; color: #17a2b8">' + jobType + '</span><br /><span>' + messageContent + '</span>');
 	}
 
 	/**
@@ -1164,7 +1186,7 @@ responseHub.jobMessages = (function () {
 		var localDateString = jobDate.local().format('DD/MM/YYYY HH:mm:ss');
 
 		// Create the header
-		var header = $('<h3></h3>');
+		var header = $('<h3 class="bottom-0"></h3>');
 
 		// Set the priority
 		// Add the priority icon
@@ -1227,6 +1249,19 @@ responseHub.jobMessages = (function () {
 
 		// Append the job message meta
 		listItem.append(metaContainer);
+
+		// Set the incident type
+		if (jobMessage.Type == 1) {
+			var jobTypes = responseHub.getJobTypes();
+			var jobType = jobTypes[0]
+			for (var i = 0; i < jobTypes.length; i++) {
+				if (jobTypes[i].Id == jobMessage.JobCode) {
+					jobType = jobTypes[i];
+					break;
+				}
+			}
+			listItem.append($('<p class="job-type-desc bottom-0">' + jobType.IncidentType + '</p>'))
+		}
 
 		// Append the pager message content
 		listItem.append($('<p>' + jobMessage.MessageBody + '</p>'));
@@ -1683,6 +1718,20 @@ responseHub.pagerMessages = (function () {
 
 		// Append the top row to the list item
 		listItem.append(topRow);
+
+		// Set the incident type
+		if (pagerMessage.Type == 1) {
+			var jobTypes = responseHub.getJobTypes();
+			var jobType = jobTypes[0]
+			for (var i = 0; i < jobTypes.length; i++) {
+				if (jobTypes[i].Id == pagerMessage.JobCode) {
+					jobType = jobTypes[i];
+					break;
+				}
+			}
+			listItem.append($('<p class="job-type-desc bottom-0">' + jobType.IncidentType + '</p>'))
+		}
+
 		listItem.append($('<p class="message-content">' + pagerMessage.MessageContent + '</p>'));
 
 		// Append the list item to list of jobs

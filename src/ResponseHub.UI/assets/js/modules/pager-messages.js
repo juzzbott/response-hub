@@ -118,6 +118,20 @@
 
 		// Append the top row to the list item
 		listItem.append(topRow);
+
+		// Set the incident type
+		if (pagerMessage.Type == 1) {
+			var jobTypes = responseHub.getJobTypes();
+			var jobType = jobTypes[0]
+			for (var i = 0; i < jobTypes.length; i++) {
+				if (jobTypes[i].Id == pagerMessage.JobCode) {
+					jobType = jobTypes[i];
+					break;
+				}
+			}
+			listItem.append($('<p class="job-type-desc bottom-0">' + jobType.IncidentType + '</p>'))
+		}
+
 		listItem.append($('<p class="message-content">' + pagerMessage.MessageContent + '</p>'));
 
 		// Append the list item to list of jobs

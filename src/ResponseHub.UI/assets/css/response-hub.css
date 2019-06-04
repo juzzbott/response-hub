@@ -397,6 +397,12 @@ table {
 /**
  * Mobile tabs
 */
+.nav-tabs li a {
+  padding: 10px 12px;
+}
+.nav-tabs li a.btn-icon i {
+  margin-right: 0;
+}
 #job-tabs ul.nav-tabs li i {
   font-size: 15px;
 }
@@ -940,6 +946,15 @@ i.p-message-admin {
 .dist-from-lhq p {
   margin-left: 15px;
   margin-top: 17px;
+}
+.job-type-desc {
+  text-transform: uppercase;
+  color: #17a2b8;
+  font-size: 0.8em;
+  font-weight: bold;
+}
+.job-type-desc-lg {
+  font-size: 1em;
 }
 /**
 	Wallboard styles

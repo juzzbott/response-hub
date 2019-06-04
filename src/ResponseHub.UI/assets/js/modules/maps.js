@@ -142,9 +142,9 @@
 
 	}
 
-	function addPagerMessageMarkerToMap(lat, lng, id, jobNumber, messageContent, timestamp)
+	function addPagerMessageMarkerToMap(lat, lng, id, jobNumber, messageContent, timestamp, jobType)
 	{
-		mapMarkers[id] = L.marker([lat, lng]).addTo(map).bindPopup('<a href="/pager-messages/' + id + '"><strong>' + jobNumber + ' - <span style="color: #666">' + timestamp + '</span></strong></a><br /><span>' + messageContent + '</span>');
+		mapMarkers[id] = L.marker([lat, lng]).addTo(map).bindPopup('<a href="/pager-messages/' + id + '"><strong>' + jobNumber + ' - <span style="color: #666">' + timestamp + '</span></strong></a><br /><span style="text-transform:uppercase; color: #17a2b8">' + jobType + '</span><br /><span>' + messageContent + '</span>');
 	}
 
 	/**

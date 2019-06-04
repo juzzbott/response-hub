@@ -247,6 +247,27 @@
 		return decodeURIComponent(results[2].replace(/\+/g, " "));
 	}
 
+	function getJobTypes() {
+		var jobTypes = [
+			{ "Id": 0, "ShortCode": "UKN", "IncidentType": "Unknown" },
+			{ "Id": 1, "ShortCode": "INCI", "IncidentType": "Incident" },
+			{ "Id": 2, "ShortCode": "STRU", "IncidentType": "Structure Fire" },
+			{ "Id": 3, "ShortCode": "G&S", "IncidentType": "Grass & Scrub" },
+			{ "Id": 4, "ShortCode": "NOST", "IncidentType": "Non-Structure Fire" },
+			{ "Id": 5, "ShortCode": "ALAR", "IncidentType": "Alarm" },
+			{ "Id": 6, "ShortCode": "RESC", "IncidentType": "Rescue" },
+			{ "Id": 7, "ShortCode": "ASSIST POLICE", "IncidentType": "Assist Police" },
+			{ "Id": 8, "ShortCode": "ASSIST AV", "IncidentType": "Assist Ambulance" },
+			{ "Id": 9, "ShortCode": "FLOOD", "IncidentType": "Flood" },
+			{ "Id": 10, "ShortCode": "TREE DWN / TRF HZD", "IncidentType": "Tree Down / Traffic Hazard" },
+			{ "Id": 11, "ShortCode": "BLD DMG", "IncidentType": "Building Damage" },
+			{ "Id": 12, "ShortCode": "TREE DOWN", "IncidentType": "Tree Down" },
+			{ "Id": 13, "ShortCode": "ANIMAL INCIDENT", "IncidentType": "Animal Incident" },
+			{ "Id": 14, "ShortCode": "STCO", "IncidentType": "Structure Collapse" }
+		];
+		return jobTypes;
+	}
+
 	// Bind the modal
 	bindModals();
 
@@ -262,7 +283,8 @@
 		isMobile: isMobile,
 		executeFunctionByName: executeFunctionByName,
 		setGraphicRadiosCheckboxes: setGraphicRadiosCheckboxes,
-		getQueryString: getQueryString
+		getQueryString: getQueryString,
+		getJobTypes: getJobTypes
 	}
 
 })();

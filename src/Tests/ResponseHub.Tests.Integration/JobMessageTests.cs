@@ -14,6 +14,7 @@ using Enivate.ResponseHub.Common;
 using Enivate.ResponseHub.DataAccess.Interface;
 using Enivate.ResponseHub.Logging;
 using Enivate.ResponseHub.Model.Messages;
+using Enivate.ResponseHub.Model.Messages.Interface;
 
 namespace Enivate.ResponseHub.Tests.Integration
 {
@@ -92,13 +93,14 @@ namespace Enivate.ResponseHub.Tests.Integration
 
             IAddressService addressService = ServiceLocator.Get<IAddressService>();
             IMapIndexRepository mapIndexRepo = ServiceLocator.Get<IMapIndexRepository>();
+            IJobMessageService jobMessageService = ServiceLocator.Get<IJobMessageService>();
             ILogger logger = ServiceLocator.Get<ILogger>();
 
             PagerMessageParser pagerParser = new PagerMessageParser(logger);
             string rawMessage = String.Format("{0} {1} POCSAG-1  ALPHA   512  {2}", capcode, DateTime.Now.ToString("HH:mm:ss dd-MM-yy"), rawMessageString);
             PagerMessage pagerMessage = pagerParser.ParsePagerMessage(rawMessage);
 
-            JobMessageParser parser = new JobMessageParser(addressService, mapIndexRepo, logger);
+            JobMessageParser parser = new JobMessageParser(addressService, jobMessageService, mapIndexRepo, logger);
             JobMessage message = await parser.ParseMessage(pagerMessage);
 
             Assert.NotNull(message);

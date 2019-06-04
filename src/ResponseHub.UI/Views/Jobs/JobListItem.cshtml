@@ -4,7 +4,7 @@
 }
 
 <li data-message-id="@Model.Id">
-	<h3>
+	<h3 class="bottom-0">
 		@if (Model.Priority == Enivate.ResponseHub.Model.Messages.MessagePriority.Emergency)
 		{
 			<i class="fa fa-fw fa-exclamation-triangle p-message-emergency"></i>
@@ -59,6 +59,10 @@
 		</span>
 		<span class="capcode-unit-name">@Model.CapcodeUnitName</span>
 	</p>
+	@if (Model.Type == Enivate.ResponseHub.Model.Messages.MessageType.Job)
+	{
+		<p class="job-type-desc bottom-0">@Html.EnumDescription(Model.JobCode)</p>
+	}
 	<p>@Model.MessageBody</p>
 </li>
 

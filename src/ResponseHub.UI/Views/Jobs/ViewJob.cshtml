@@ -40,18 +40,22 @@
 
 @Html.SuccessFromQueryString("attachment_removed", "1", "The attachment has been successfully removed.")
 
+@if (Model.Type == Enivate.ResponseHub.Model.Messages.MessageType.Job)
+{
+	<p class="job-type-desc job-type-desc-lg bottom-0">@Html.EnumDescription(Model.JobCode)</p>
+}
 <p class="lead">@Model.MessageBody</p>
 
 @if (Model.AdditionalMessages != null && Model.AdditionalMessages.Count > 0)
 {
 	<h4>Additional messages</h4>
 	<div class="bottom-20">
-		@foreach(var additionalMessage in Model.AdditionalMessages)
+		@foreach (var additionalMessage in Model.AdditionalMessages)
 		{
-		<p>
-			<span class="text-info">@additionalMessage.Timestamp.ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss")</span><br />
-			@additionalMessage.MessageContent
-		</p>
+			<p>
+				<span class="text-info">@additionalMessage.Timestamp.ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss")</span><br />
+				@additionalMessage.MessageContent
+			</p>
 		}
 	</div>
 }

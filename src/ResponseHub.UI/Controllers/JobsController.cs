@@ -126,7 +126,7 @@ namespace Enivate.ResponseHub.UI.Controllers
 			{
 				// Log the error
 				await Log.Error(String.Format("Unable to load the job details. Message: {0}", ex.Message, ex));
-				return View(new object());
+                return new RedirectResult("/error/server-error");
 
 			}
 

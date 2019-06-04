@@ -765,6 +765,7 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 				ProgressUpdates = dbObject.ProgressUpdates,
 				AttachmentIds = dbObject.AttachmentIds,
 				Type = dbObject.Type,
+                JobCode = dbObject.JobCode,
 				Version = dbObject.Version,
                 UniqueHash = dbObject.UniqueHash
 
@@ -806,7 +807,8 @@ namespace Enivate.ResponseHub.DataAccess.MongoDB
 				ProgressUpdates = modelObject.ProgressUpdates,
 				AttachmentIds = modelObject.AttachmentIds,
 				Type = modelObject.Type,
-				Version = modelObject.Version,
+                JobCode = modelObject.JobCode,
+                Version = modelObject.Version,
                 UniqueHash = modelObject.UniqueHash
 			};
 

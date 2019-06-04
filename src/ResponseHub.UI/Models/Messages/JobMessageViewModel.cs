@@ -75,7 +75,11 @@ namespace Enivate.ResponseHub.UI.Models.Messages
 
         public IList<Capcode> JobCapcodes { get; set; }
 
-		public JobMessageViewModel()
+        public MessageType Type { get; set; }
+
+        public JobCodeType JobCode { get; set; }
+
+        public JobMessageViewModel()
 		{
 			Location = new LocationInfo();
 			Notes = new List<JobNoteViewModel>();

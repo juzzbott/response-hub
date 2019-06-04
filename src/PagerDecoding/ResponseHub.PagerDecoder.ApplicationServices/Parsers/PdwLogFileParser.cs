@@ -48,7 +48,7 @@ namespace Enivate.ResponseHub.PagerDecoder.ApplicationServices.Parsers
 
 			// Instantiate the message parsers
 			PagerMessageParser = new PagerMessageParser(Log);
-			JobMessageParser = new JobMessageParser(AddressService, MapIndexRepository, Log);
+			JobMessageParser = new JobMessageParser(AddressService, JobMessageService, MapIndexRepository, Log);
 
 		}
 

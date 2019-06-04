@@ -48,13 +48,17 @@ namespace Enivate.ResponseHub.UI.Models.Messages
 
 		public MessageProgressViewModel Cancelled { get; set; }
 
-		/// <summary>
-		/// Gets the job message list item view model from the original job mesage model object.
-		/// </summary>
-		/// <param name="jobMessage">The job messages </param>
-		/// <param name="capcode">The capcode for the job.</param>
-		/// <returns>The mapped job message list item view mode.</returns>
-		public static JobMessageListItemViewModel FromJobMessage(JobMessage jobMessage, Capcode capcode, IList<IdentityUser> users)
+        public MessageType Type { get; set; }
+
+        public JobCodeType JobCode { get; set; }
+
+        /// <summary>
+        /// Gets the job message list item view model from the original job mesage model object.
+        /// </summary>
+        /// <param name="jobMessage">The job messages </param>
+        /// <param name="capcode">The capcode for the job.</param>
+        /// <returns>The mapped job message list item view mode.</returns>
+        public static JobMessageListItemViewModel FromJobMessage(JobMessage jobMessage, Capcode capcode, IList<IdentityUser> users)
 		{
 
 			// If the job message is null, just return null
@@ -74,7 +78,9 @@ namespace Enivate.ResponseHub.UI.Models.Messages
 				AdditionalMessageCount = jobMessage.AdditionalMessages != null ? jobMessage.AdditionalMessages.Count : 0,
 				Priority = jobMessage.Capcodes.First(i => i.Capcode == capcode.CapcodeAddress).Priority,
 				Timestamp = jobMessage.Timestamp.ToLocalTime(),
-				Location = jobMessage.Location
+				Location = jobMessage.Location,
+                Type = jobMessage.Type,
+                JobCode = jobMessage.JobCode
 			};
 
 			// Set the on route, on scene, job clear values

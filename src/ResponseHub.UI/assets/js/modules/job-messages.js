@@ -354,7 +354,7 @@
 		var localDateString = jobDate.local().format('DD/MM/YYYY HH:mm:ss');
 
 		// Create the header
-		var header = $('<h3></h3>');
+		var header = $('<h3 class="bottom-0"></h3>');
 
 		// Set the priority
 		// Add the priority icon
@@ -417,6 +417,19 @@
 
 		// Append the job message meta
 		listItem.append(metaContainer);
+
+		// Set the incident type
+		if (jobMessage.Type == 1) {
+			var jobTypes = responseHub.getJobTypes();
+			var jobType = jobTypes[0]
+			for (var i = 0; i < jobTypes.length; i++) {
+				if (jobTypes[i].Id == jobMessage.JobCode) {
+					jobType = jobTypes[i];
+					break;
+				}
+			}
+			listItem.append($('<p class="job-type-desc bottom-0">' + jobType.IncidentType + '</p>'))
+		}
 
 		// Append the pager message content
 		listItem.append($('<p>' + jobMessage.MessageBody + '</p>'));

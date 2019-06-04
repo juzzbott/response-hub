@@ -53,33 +53,14 @@ namespace Enivate.ResponseHub.MessageGenerator
 		string _htmlDisplayFooter;
 
 		StringBuilder _htmlContent;
-
-		protected ILogger Log
-		{
-			get
-			{
-				return ServiceLocator.Get<ILogger>();
-			}
-		}
-
-		protected IMapIndexRepository MapIndexRepository
-		{
-			get
-			{
-				return ServiceLocator.Get<IMapIndexRepository>();
-			}
-		}
-
-		protected IAddressService AddressService
-		{
-			get
-			{
-				return ServiceLocator.Get<IAddressService>();
-			}
-		}
+        
+        protected ILogger Log = ServiceLocator.Get<ILogger>();
+        protected IMapIndexRepository MapIndexRepository = ServiceLocator.Get<IMapIndexRepository>();
+        protected IJobMessageService JobMessageService = ServiceLocator.Get<IJobMessageService>();
+        protected IAddressService AddressService = ServiceLocator.Get<IAddressService>();
 
 
-		public frmMain()
+        public frmMain()
 		{
 			InitializeComponent();
 		}
@@ -91,7 +72,7 @@ namespace Enivate.ResponseHub.MessageGenerator
 			_configuration = JsonConvert.DeserializeObject<GeneratorConfiguration>(File.ReadAllText("config.json"));
 
 			// Instantiate the job message parser
-			_jobMessageParser = new JobMessageParser(AddressService, MapIndexRepository, Log);
+			_jobMessageParser = new JobMessageParser(AddressService, JobMessageService, MapIndexRepository, Log);
 
 			// Generate the html header
 			_htmlDisplayHeader = "<html><head><style type=\"text/css\">body { font-size: 13px; font-family: Arial, sans-serif; } ul.message-list { margin-bottom: 20px; margin-top: 0; padding-left: 0px; } li.emerg { color: #C7201D; } li.non-emerg { color: #C7A216; } p {margin-bottom: 5px; }</style></head><body>";
@@ -229,7 +210,8 @@ namespace Enivate.ResponseHub.MessageGenerator
 				IJobMessageRepository jobMessageRepository = new JobMessageRepository();
                 ISignInEntryRepository signInRepository = new SignInEntryRepository();
                 IAttachmentRepository attachmentRepository = new AttachmentRepository();
-                IJobMessageService jobMessageService = new JobMessageService(jobMessageRepository, signInRepository, attachmentRepository, log);
+                IJobCodeRepository jobCodeRepository = new JobCodeRepository();
+                IJobMessageService jobMessageService = new JobMessageService(jobMessageRepository, signInRepository, attachmentRepository, jobCodeRepository, log);
 
 				// Submit the job messages to the database
 				jobMessageService.AddMessages(jobMessages.Select(i => i.Value).ToList());

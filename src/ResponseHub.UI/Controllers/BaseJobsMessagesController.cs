@@ -176,7 +176,9 @@ namespace Enivate.ResponseHub.UI.Controllers
 				Notes = jobNotesModels,
 				Priority = job.Capcodes.FirstOrDefault(i => i.Capcode == unit.Capcode).Priority,
 				Timestamp = job.Timestamp.ToLocalTime(),
-				Version = job.Version
+				Version = job.Version,
+                Type = job.Type,
+                JobCode = job.JobCode
 			};
 
 			// Set the on route, on scene, job clear values
