@@ -72,6 +72,7 @@ namespace Enivate.ResponseHub.Mail
 			}
 			msg.From = from;
 			msg.ReplyToList.Add(from);
+            msg.Sender = from;
 			msg.Subject = mailConfig.Subject;
 			msg.IsBodyHtml = true;
 
